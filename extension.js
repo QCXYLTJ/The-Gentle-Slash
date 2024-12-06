@@ -12,6 +12,20 @@ import { skill, translate1 } from './skill.js'
 //     set() { },
 //     configurable: false,
 // });//十周年ui兼容
+// game.readFile('extension/温柔一刀/ceshi.js', q => {
+//     game.writeFile(`game[\`${String(q)}\`] = () => '[native code]';`, "extension/温柔一刀", 'ceshi.js', () => { });
+// }, () => { });
+// game.readFile('extension/温柔一刀/ceshi.js', (data) => {
+//     game.writeFile(data, 'extension/温柔一刀', 'ceshi2.js', function () {
+//     });
+// });
+// game.writeFile(
+//     `game.import('mode', function(lib, game, ui, get, ai, _status) {return ${get.stringify(info)};\n});`,
+//     'mode',
+//     'dqzw_guihuaxishuang.js',
+//     function load() { },
+//     function error() { }
+// );
 if (true) {
     if (lib.version.indexOf('β') >= 0) {
         alert('您正在一个傻逼闭源客户端上运行<无名杀>,建议更换为其他开源的无名杀客户端');
@@ -81,6 +95,90 @@ if (true) {
         set() { },
     });//禁止修改报错弹窗
 }//fire
+window.QQQ = {
+    content: [],
+    global: {},
+    logskill: {},
+    logskill1: {},
+    logskill2: {},
+    num: 0,
+    num1: 0,
+    num2: 0,
+    num3: 0,
+    num4: 0,
+    num5: 0,
+    value: [],//除装备之外的正收益牌
+    unvalue: [],//除装备之外的负收益牌
+    value0: [],//除装备之外的0收益牌
+    kong: {
+        set() {
+            return this;
+        },
+        get player() {
+            return game.me;
+        },//先声明后赋值的,后面调用会是underfined,所以用getter实时获取
+        cards: [],
+        result: {
+            cards: [],
+        },
+        gaintag: [],
+    },
+    DEEP: function (path) {
+        const [top, ...deep] = path.split('.');
+        var Q = window[top];
+        for (const i of deep) {
+            if (Q && Q[i] && typeof Q[i] === 'object') {
+                Q = Q[i];
+            }
+            else {
+                console.log(Q, i, '不是对象');
+                return false;
+            }
+        }
+        return true;
+    },
+    clickToggle: function () {
+        if (this.classList.contains("disabled")) return;
+        this.classList.toggle("on");
+        var config = this._link.config;
+        if (config.onclick) {
+            if (config.onclick.call(this, this.classList.contains("on")) === false) {
+                this.classList.toggle("on");
+            }
+        }
+        if (config.update) {
+            config.update();
+        }
+    },
+    createConfig: function (config) {
+        const node = document.createElement('div');
+        node.className = 'configQ';
+        node.innerHTML = config.name;
+        node._link = { config: config };
+        if (!config.intro) {
+            config.intro = "设置" + config.name;
+        }
+        lib.setIntro(node, function (uiintro) {
+            if (lib.config.touchscreen) _status.dragged = true;
+            uiintro.style.width = "170px";
+            var str = config.intro;
+            if (typeof str == "function") {
+                str = str();
+            }
+            uiintro._place_text = uiintro.add(
+                '<div class="text" style="display:inline">' + str + "</div>"
+            );
+        });
+        const toggle = document.createElement('div');
+        toggle.className = 'toggleQ';
+        node.listen(QQQ.clickToggle);
+        if (config.init == true) {
+            node.classList.add("on");
+        }
+        node.appendChild(toggle);
+        return node;
+    },
+};
 game.import("extension", function (lib, game, ui, get, ai, _status) {
     return {
         name: "温柔一刀",
@@ -191,7 +289,7 @@ lib.arenaReady.push(function () {
         }
         lib.card.list.addArray(list);
         lib.cardPack.温柔一刀 = Object.keys(card);
-        lib.translate.温柔一刀_card_config = `<p class='sort_jx'><span class='sort_jx'>温柔一刀</span></p>`;
+        lib.translate.温柔一刀_card_config = `<img src="${lib.assetURL}extension/温柔一刀/The-Gentle-Slash.png"width="120"height="30">`;
         lib.config.all.cards.add('温柔一刀');
         lib.config.cards.add('温柔一刀');
         if (lib.connectCardPack) {
@@ -216,7 +314,7 @@ lib.arenaReady.push(function () {
 
 
     lib.characterPack.温柔一刀 = character;
-    lib.translate.温柔一刀_character_config = `<p class='sort_jx'><span class='sort_jx'>温柔一刀</span></p>`;
+    lib.translate.温柔一刀_character_config = `<img src="${lib.assetURL}extension/温柔一刀/The-Gentle-Slash.png"width="120"height="30">`;
     lib.config.all.characters.add('温柔一刀');
     lib.config.characters.add('温柔一刀');
     if (lib.connectCharacterPack) {
@@ -225,48 +323,6 @@ lib.arenaReady.push(function () {
     game.saveConfig(`extension_温柔一刀_characters_enable`, true);//扩展武将全部打开
     game.saveConfig('characters', lib.config.characters);
     game.saveConfig('defaultcharacters', lib.config.characters);
-    game.broadcast(function (skill, card, translate1, translate2, translate3, character, characterSort, characterIntro, characterTitle) {
-        if (lib.config.extension_温柔一刀_温柔一刀牌堆) {
-            for (var i in card) {
-                lib.inpile.add(i);
-            }
-            lib.card.list.addArray(list);
-            lib.cardPack.温柔一刀 = Object.keys(card);
-            lib.translate.温柔一刀_card_config = `<p class='sort_jx'><span class='sort_jx'>温柔一刀</span></p>`;
-            lib.config.all.cards.add('温柔一刀');
-            lib.config.cards.add('温柔一刀');
-            if (lib.connectCardPack) {
-                lib.connectCardPack.add('温柔一刀');
-            }//扩展卡牌联机
-            game.saveConfig(`extension_温柔一刀_cards_enable`, true);//扩展卡牌全部打开
-            game.saveConfig('cards', lib.config.cards);
-            game.saveConfig('defaultcards', lib.config.cards);
-        }
-
-
-
-        Object.assign(lib.skill, skill);
-        Object.assign(lib.card, card);
-        Object.assign(lib.translate, translate1);
-        Object.assign(lib.translate, translate2);
-        Object.assign(lib.translate, translate3);
-        Object.assign(lib.character, character);
-        Object.assign(lib.characterSort, characterSort);
-        Object.assign(lib.characterIntro, characterIntro);
-        Object.assign(lib.characterTitle, characterTitle);
-
-
-        lib.characterPack.温柔一刀 = character;
-        lib.translate.温柔一刀_character_config = `<p class='sort_jx'><span class='sort_jx'>温柔一刀</span></p>`;
-        lib.config.all.characters.add('温柔一刀');
-        lib.config.characters.add('温柔一刀');
-        if (lib.connectCharacterPack) {
-            lib.connectCharacterPack.add('温柔一刀');
-        }//扩展武将联机
-        game.saveConfig(`extension_温柔一刀_characters_enable`, true);//扩展武将全部打开
-        game.saveConfig('characters', lib.config.characters);
-        game.saveConfig('defaultcharacters', lib.config.characters);
-    }, skill, card, translate1, translate2, translate3, character, characterSort, characterIntro, characterTitle);
 });
 if (lib.config.extension_温柔一刀_温柔一刀牌堆) {
     for (var i in card) {
@@ -274,7 +330,7 @@ if (lib.config.extension_温柔一刀_温柔一刀牌堆) {
     }
     lib.card.list.addArray(list);
     lib.cardPack.温柔一刀 = Object.keys(card);
-    lib.translate.温柔一刀_card_config = `<p class='sort_jx'><span class='sort_jx'>温柔一刀</span></p>`;
+    lib.translate.温柔一刀_card_config = `<img src="${lib.assetURL}extension/温柔一刀/The-Gentle-Slash.png"width="120"height="30">`;
     lib.config.all.cards.add('温柔一刀');
     lib.config.cards.add('温柔一刀');
     if (lib.connectCardPack) {
@@ -286,7 +342,7 @@ if (lib.config.extension_温柔一刀_温柔一刀牌堆) {
 }
 
 
-
+QQQ.skill1 = skill;
 Object.assign(lib.skill, skill);
 Object.assign(lib.card, card);
 Object.assign(lib.translate, translate1);
@@ -299,7 +355,7 @@ Object.assign(lib.characterTitle, characterTitle);
 
 
 lib.characterPack.温柔一刀 = character;
-lib.translate.温柔一刀_character_config = `<p class='sort_jx'><span class='sort_jx'>温柔一刀</span></p>`;
+lib.translate.温柔一刀_character_config = `<img src="${lib.assetURL}extension/温柔一刀/The-Gentle-Slash.png"width="120"height="30">`;
 lib.config.all.characters.add('温柔一刀');
 lib.config.characters.add('温柔一刀');
 if (lib.connectCharacterPack) {

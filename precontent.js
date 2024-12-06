@@ -71,27 +71,15 @@ while卡死,
 //player\.logSkill\(([^;]*;[^;]*)\)
 //\s\s\splayer\.logSkill\(.*\);
 //\n\s*\n//温柔一刀/**/*
-//$1:   //[\t\s][\t\s]["']([^"'--+・•★《?？①②③☆~♂♀、✴️:#&＆..=!…</<\d\s]+)["']\s*:
 //.$1   //(?<![\s:,[(=])\[["']([^·\.'" --+\d]*)["']\]
 //content:\s*function\s*\((?!storage\b).+\)
 //\s\sevent.name = //getdefaulthandertype函数报错eventname[0].touppercase没有eventname[0],是因为技能修改了event.name
-
-//\[['`]([^'`]*)['`]\s*\+\s*([^,+\[\]]*)\]//[`$1${$2}`]//先换括号里面的
-//\[([^,+\[\]]*)\s*\+\s*['`]([^'`]*)['`]\]//[`${$1}$2`]//先换括号里面的
-//\[["`]([^"`]*)["`]\s*\+\s*([^,+\[\]]*)\]//[`$1${$2}`]//先换括号里面的
-//\[([^,+\[\]]*)\s*\+\s*["`]([^"`]*)["`]\]//[`${$1}$2`]//先换括号里面的
-
-//`$1${$2}$3`
-//['`]([^'`]*)['`]\s*\+\s*([^+'`]*)\s*\+\s*['`]([^'`]*)['`]//再换字符串+变量+字符串
-//["`]([^"`]*)["`]\s*\+\s*([^+"`]*)\s*\+\s*["`]([^"`]*)["`]
-//["'`]([^"'`]*)["'`]\s*\+\s*([^+"'`]*)\s*\+\s*["'`]([^"'`]*)["'`]
-
 //PlayerCard\(.+set\('ai', function \(card\)//PlayerCard\(.+\n\s*\.set\('ai', function \(card\)
 //event.result.cards = []//delete event.result.skill
 
 
 
-
+//card.selfDestroy====>cards?.forEach(q => q.selfDestroy(event));//card可能是vcard,销毁应该用cards
 //.useCard(result.links[0][2])==>.useCard(result.links[0])
 //.useCard({ name: result.links[0] })==>.useCard({ name: result.links[0][2] })
 //countCards\(['"](?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)['"])[^'"]*['"]\)
@@ -178,90 +166,6 @@ import { character } from './character.js'
 //game.saveConfig('mode', 'boss');
 export async function precontent(config, pack) {
     //game.saveConfig('extension_温柔一刀_技能拦截', false);
-    window.QQQ = {
-        content: [],
-        global: {},
-        logskill: {},
-        logskill1: {},
-        logskill2: {},
-        num: 0,
-        num1: 0,
-        num2: 0,
-        num3: 0,
-        num4: 0,
-        num5: 0,
-        value: [],//除装备之外的正收益牌
-        unvalue: [],//除装备之外的负收益牌
-        value0: [],//除装备之外的0收益牌
-        kong: {
-            set() {
-                return this;
-            },
-            get player() {
-                return game.me;
-            },//先声明后赋值的,后面调用会是underfined,所以用getter实时获取
-            cards: [],
-            result: {
-                cards: [],
-            },
-            gaintag: [],
-        },
-        DEEP: function (path) {
-            const [top, ...deep] = path.split('.');
-            var Q = window[top];
-            for (const i of deep) {
-                if (Q && Q[i] && typeof Q[i] === 'object') {
-                    Q = Q[i];
-                }
-                else {
-                    console.log(Q, i, '不是对象');
-                    return false;
-                }
-            }
-            return true;
-        },
-        clickToggle: function () {
-            if (this.classList.contains("disabled")) return;
-            this.classList.toggle("on");
-            var config = this._link.config;
-            if (config.onclick) {
-                if (config.onclick.call(this, this.classList.contains("on")) === false) {
-                    this.classList.toggle("on");
-                }
-            }
-            if (config.update) {
-                config.update();
-            }
-        },
-        createConfig: function (config) {
-            const node = document.createElement('div');
-            node.className = 'configQ';
-            node.innerHTML = config.name;
-            node._link = { config: config };
-            if (!config.intro) {
-                config.intro = "设置" + config.name;
-            }
-            lib.setIntro(node, function (uiintro) {
-                if (lib.config.touchscreen) _status.dragged = true;
-                uiintro.style.width = "170px";
-                var str = config.intro;
-                if (typeof str == "function") {
-                    str = str();
-                }
-                uiintro._place_text = uiintro.add(
-                    '<div class="text" style="display:inline">' + str + "</div>"
-                );
-            });
-            const toggle = document.createElement('div');
-            toggle.className = 'toggleQ';
-            node.listen(QQQ.clickToggle);
-            if (config.init == true) {
-                node.classList.add("on");
-            }
-            node.appendChild(toggle);
-            return node;
-        },
-    };
     lib.number = [];
     for (var i = 1; i < 14; i++) {
         lib.number.push(i);
@@ -536,7 +440,16 @@ export async function precontent(config, pack) {
             game.finishCards();
             for (var i in mode.characterPack.mode_boss) {
                 lib.character[i] = lib.character[i] || mode.characterPack.mode_boss[i];
+                Reflect.defineProperty(lib.character[i], 'trashBin', {
+                    get() {
+                        return [`mode:boss`];
+                    },
+                    configurable: false,
+                    set() { },
+                });
             }
+            lib.characterPack.boss = mode.characterPack.mode_boss;
+            lib.translate.boss_character_config = "挑战武将";
         });//挑战模式
         game.loadModeAsync("versus", function (mode) {
             for (var i in mode.translate) {
@@ -556,7 +469,16 @@ export async function precontent(config, pack) {
             game.finishCards();
             for (var i in mode.jiangeboss) {
                 lib.character[i] = lib.character[i] || mode.jiangeboss[i];
+                Reflect.defineProperty(lib.character[i], 'trashBin', {
+                    get() {
+                        return [`mode:versus`];
+                    },
+                    configurable: false,
+                    set() { },
+                });
             }
+            lib.characterPack.jiange = mode.jiangeboss;
+            lib.translate.jiange_character_config = "剑阁武将";
         });//对决模式
     }//添加boss模式专属卡牌技能
     if (lib.config.extension_温柔一刀_文字闪烁) {
@@ -1129,6 +1051,73 @@ export async function precontent(config, pack) {
                 ui.backgroundMusic.loop = true;
             }, true);//BGM
         }//BGM
+        ui.create.system('换将', function () {
+            for (const player of game.players) {
+                player.classList.add('Qselectable');
+                player.onclick = function () {
+                    const play = this;
+                    const div = window.document.createElement('div');
+                    div.id = 'divQ';
+                    const list = [];
+                    const list1 = [];
+                    const node2 = window.document.createElement('div');
+                    node2.className = 'backQ';
+                    node2.innerHTML = '确定';
+                    node2.onclick = function () {
+                        div.remove();
+                        node2.remove();
+                        for (const player of game.players) {
+                            player.classList.remove('Qselectable');
+                            player.onclick = null;
+                        }
+                    };
+                    document.body.appendChild(node2);
+                    for (const i in lib.characterPack) {
+                        const node = window.document.createElement('div');
+                        node.className = 'packQ';
+                        node.innerHTML = get.translation(i + '_character_config');
+                        node.link = i;
+                        node.onclick = function () {
+                            for (const x of list) {
+                                x.remove();
+                            }
+                            for (const j in lib.characterPack[this.link]) {
+                                const node1 = window.document.createElement('div');
+                                node1.style.backgroundImage = `url('${game.src(j)}')`;
+                                node1.className = 'characterQ';
+                                node1.innerHTML = get.translation(j);
+                                node1.link = j;
+                                node1.onclick = function () {
+                                    for (const u of list1) {
+                                        u.remove();
+                                    }
+                                    if (div.log) {
+                                        div.log.classList.remove('selected');
+                                    }
+                                    div.log = this;
+                                    this.classList.add('selected');
+                                    node2.onclick = function () {
+                                        if (div.log) {
+                                            play.init(div.log.link);
+                                        }
+                                        div.remove();
+                                        node2.remove();
+                                        for (const player of game.players) {
+                                            player.classList.remove('Qselectable');
+                                            player.onclick = null;
+                                        }
+                                    };
+                                }
+                                list.push(node1);
+                                div.appendChild(node1);
+                            }
+                        };
+                        div.appendChild(node);
+                    }
+                    document.body.appendChild(div);
+                };
+            }
+        }, true);//换将
         ui.create.system('重启', function () {
             game.reload();
             return true;
@@ -1146,9 +1135,16 @@ export async function precontent(config, pack) {
             ok.addEventListener('click', async function () {
                 div.remove();
                 if (lib.skill[input.value]) {
-                    const { result } = await game.me.chooseTarget('添加技能的目标');
-                    if (result.targets && result.targets[0]) {
-                        result.targets[0].addSkill(input.value);
+                    for (const player of game.players) {
+                        player.classList.add('Qselectable');
+                        player.onclick = function () {
+                            const play = this;
+                            play.addSkill(input.value);
+                            for (const player of game.players) {
+                                player.classList.remove('Qselectable');
+                                player.onclick = null;
+                            }
+                        };
                     }
                 }
                 else {
@@ -1461,68 +1457,6 @@ export async function precontent(config, pack) {
                         if (result2 == 0) QQQ.value0.push(i);
                     }
                 }//报错
-                if (lib.config.extension_温柔一刀_AI选将) {
-                    const players = game.players.filter((q) => q != player).slice();
-                    while (players[0]) {
-                        const { result } = await player.chooseTarget('选择一个其他角色更换武将牌', (c, p, t) => players.includes(t)).set('ai', (t) => -1);
-                        if (result.targets && result.targets[0]) {
-                            players.remove(result.targets[0]);
-                            const div = window.document.createElement('div');
-                            div.id = 'divQ';
-                            const list = [];
-                            const list1 = [];
-                            var log, node2;
-                            for (var i in lib.characterPack) {
-                                const node = window.document.createElement('div');
-                                node.className = 'packQ';
-                                node.innerHTML = get.translation(i + '_character_config');
-                                node.link = i;
-                                node.onclick = function () {
-                                    for (var x of list) {
-                                        x.remove();
-                                    }
-                                    for (var j in lib.characterPack[this.link]) {
-                                        const node1 = window.document.createElement('div');
-                                        node1.style.backgroundImage = `url('${game.src(j)}')`;
-                                        node1.className = 'characterQ';
-                                        node1.innerHTML = get.translation(j);
-                                        node1.link = j;
-                                        node1.onclick = function () {
-                                            for (var u of list1) {
-                                                u.remove();
-                                            }
-                                            if (log) {
-                                                log.classList.remove('selected');
-                                            }
-                                            if (node2) {
-                                                node2.remove();
-                                            }
-                                            this.classList.add('selected');
-                                            log = this;
-                                            node2 = window.document.createElement('div');
-                                            node2.className = 'backQ';
-                                            node2.innerHTML = '确定';
-                                            node2.onclick = function () {
-                                                if (log) {
-                                                    result.targets[0].init(log.link);
-                                                    div.remove();
-                                                    node2.remove();
-                                                }
-                                            }
-                                            list1.push(node2);
-                                            document.body.appendChild(node2);
-                                        }
-                                        list.push(node1);
-                                        div.appendChild(node1);
-                                    }
-                                }
-                                div.appendChild(node);
-                            }
-                            document.body.appendChild(div);
-                        }
-                        else break;
-                    }
-                }
             }
         },
     }//需要很晚的时机的
@@ -2804,19 +2738,17 @@ export async function precontent(config, pack) {
             return result;
         };//选牌AI修改,判定区牌视为负价值
         get.attitude = function (from, to) {
-            if (lib.config.extension_温柔一刀_报错) {
-                if (!from) {
-                    if (lib.config.extension_温柔一刀_报错) {
-                        throw new Error();
-                    }
-                    from = _status.event.player;
+            if (!from) {
+                if (lib.config.extension_温柔一刀_报错) {
+                    throw new Error();
                 }
-                if (!to) {
-                    if (lib.config.extension_温柔一刀_报错) {
-                        throw new Error();
-                    }
-                    return 0;
+                from = _status.event.player;
+            }
+            if (!to) {
+                if (lib.config.extension_温柔一刀_报错) {
+                    throw new Error();
                 }
+                to = _status.event.player;
             }
             arguments[0] = from;
             var att = get.rawAttitude.apply(this, arguments);
@@ -5998,169 +5930,102 @@ export async function precontent(config, pack) {
                     sex: "male",
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: "狂",
                     skills: ['QQQ_王之财宝', 'QQQ_黄金律法', 'QQQ_天之锁', 'QQQ_贯穿永恒之枪'],
                     trashBin: ["ext:温柔一刀/image/QQQ_jinshanshan.jpg"],
-                    dieAudios: ["ext:温柔一刀/QQQ_jinshanshan.mp3"],
                     isBoss: true,
-                    doubleGroup: [],
-                    extraModeData: [],
-                    clans: [],
-                    initFilters: [],
-                    tempname: [],
-                    names: undefined,
-                    groupBorder: undefined,
-                    groupInGuozhan: undefined,
-                    dualSideCharacter: undefined,
-                    img: undefined,
-                    isNull: false,
-                    isZhugong: false,
-                    isUnseen: false,
-                    hasHiddenSkill: false,
-                    isMinskin: false,
-                    isHiddenBoss: false,
-                    isAiForbidden: false,
-                    isFellowInStoneMode: false,
-                    isHiddenInStoneMode: false,
-                    isSpecialInStoneMode: false,
-                    isBossAllowed: false,
-                    isChessBoss: false,
-                    isJiangeBoss: false,
-                    isJiangeMech: false,
-                    hasSkinInGuozhan: false,
                 },
                 QQQ_liaoyuanhuo: {
                     sex: "male",
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: "狂",
                     skills: ['QQQ_xiaozhang'],
                     trashBin: ["ext:温柔一刀/image/QQQ_liaoyuanhuo.jpg"],
-                    dieAudios: ["ext:温柔一刀/QQQ_liaoyuanhuo.mp3"],
                 },
                 QQQ_taotieQ: {
                     sex: "male",
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: "狂",
                     skills: ['QQQ_taotieQ'],
                     trashBin: ["ext:温柔一刀/image/QQQ_taotieQ.jpg"],
-                    dieAudios: ["ext:温柔一刀/QQQ_taotieQ.mp3"],
                 },
                 QQQ_zhoutai: {
                     sex: "male",
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: "狂",
                     skills: ['QQQ_buqu', 'QQQ_fujian', 'QQQ_zhanjie'],
                     trashBin: ["ext:温柔一刀/image/QQQ_zhoutai.jpg"],
-                    dieAudios: ["ext:温柔一刀/QQQ_zhoutai.mp3"],
                 },
                 QQQ_hongwenliu: {
                     sex: "male",
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: "狂",
                     skills: ['QQQ_hongwen', 'QQQ_daye', 'QQQ_huanzhuang'],
                     trashBin: ["ext:温柔一刀/image/QQQ_hongwenliu.jpg"],
-                    dieAudios: ["ext:温柔一刀/QQQ_hongwenliu.mp3"],
                 },
                 QQQ_Melina: {
                     sex: "female",
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: "天",
                     skills: ['QQQ_huozhong'],
                     trashBin: ["ext:温柔一刀/image/Melina.jpg"],
-                    dieAudios: ["ext:温柔一刀/QQQ_Melina.mp3"],
                 },
                 QQQ_mengchen: {
                     sex: "male",
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: "天",
                     skills: ['QQQ_ditu', 'QQQ_qitao', 'QQQ_shuangsheng'],
                     trashBin: ["ext:温柔一刀/image/QQQ_mengchen.jpg"],
-                    dieAudios: ["ext:温柔一刀/QQQ_mengchen.mp3"],
                 },
                 QQQ_jianting: {
                     sex: "female",
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: "天",
                     skills: ['QQQ_jianting'],
                     trashBin: ["ext:温柔一刀/image/QQQ_jianting.jpg"],
-                    dieAudios: ["ext:温柔一刀/QQQ_jianting.mp3"],
                 },
                 QQQ_无极: {
                     sex: 'female',
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: '龙',
                     skills: ['无极', '论道', 'QQQ_guji'],
                     trashBin: ['ext:温柔一刀/image/无极.jpg'],
                     isBoss: true,
                     isBossAllowed: true,
-                    dieAudios: ['ext:温柔一刀/QQQ_无极.mp3'],
                 },
                 QQQ_fuzhua: {
                     sex: 'female',
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: '龙',
                     skills: ['QQQ_fuzhua'],
                     trashBin: ['ext:温柔一刀/image/QQQ_fuzhua.jpg'],
-                    dieAudios: ['ext:温柔一刀/QQQ_fuzhua.mp3'],
                 },
                 QQQ_zoushi: {
                     sex: 'female',
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: '龙',
                     skills: ['QQQ_meiying', 'QQQ_qingwu', 'QQQ_huoshui'],
                     trashBin: ['ext:温柔一刀/image/QQQ_zoushi.jpg'],
-                    dieAudios: ['ext:温柔一刀/QQQ_zoushi.mp3'],
                 },
                 QQQ_guojia: {
                     sex: 'male',
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: '龙',
                     skills: ['QQQ_youyou', 'QQQ_huaiyin', 'QQQ_qingshi'],
                     trashBin: ['ext:温柔一刀/image/QQQ_guojia.jpg'],
-                    dieAudios: ['ext:温柔一刀/QQQ_guojia.mp3'],
                 },
                 QQQ_jianggan: {
                     sex: 'male',
                     hp: 4,
                     maxHp: 4,
-                    hujia: 0,
-                    group: '龙',
                     skills: ['QQQ_daoshu', 'QQQ_daizui'],
                     trashBin: ['ext:温柔一刀/image/QQQ_jianggan.jpg'],
-                    dieAudios: ['ext:温柔一刀/QQQ_jianggan.mp3'],
                 },
                 QQQ_dongzhuo: {
                     sex: 'male',
                     hp: 7,
                     maxHp: 7,
-                    hujia: 0,
-                    group: '龙',
                     skills: ['QQQ_chenshi', 'QQQ_tanbao', 'QQQ_jiaoheng'],
                     trashBin: ['ext:温柔一刀/image/QQQ_dongzhuo.jpg'],
-                    dieAudios: ['ext:温柔一刀/QQQ_dongzhuo.mp3'],
                 },
             },
             characterIntro: {
@@ -7861,8 +7726,35 @@ export async function precontent(config, pack) {
                         },
                     }
                 },
+                //流火:锁定技,当全场失去方块牌后,你将此牌当作火杀对随机敌方角色使用
+                QQQ_liuhuo: {
+                    trigger: {
+                        global: ['loseAfter'],
+                    },
+                    forced: true,
+                    filter: (event, player) => event.cards?.some((q) => q.suit == 'diamond'),
+                    async content(event, trigger, player) {
+                        for (var i of trigger.cards) {
+                            if (i.suit == 'diamond') {
+                                const tar = game.players.filter((q) => !q.isFriendsOf(player)).randomGet();
+                                if (tar) {
+                                    await player.useCard({
+                                        name: 'sha',
+                                        nature: 'fire',
+                                        cards: [i]
+                                    }, tar, [i], false);
+                                }
+                            }
+                        }
+                    },
+                },
+                //冰暴:锁定技,当一张梅花牌被失去时,你将此牌当作火杀对随机敌方角色使用
+                //冰爆：你所有伤害附加冰属性,受到冰属性伤害的目标增加一层冰冻,冰冻累积三层后爆炸并造成溅射伤害
+                //被冰冻的角色回合开始时跳过回合并减少一层冰冻
             },
             translate: {
+                QQQ_liuhuo: '流火',
+                QQQ_liuhuo_info: '锁定技,当全场失去方块牌后,你将此牌当作火杀对随机敌方角色使用',
                 //————————————————————————————————————————————董卓
                 QQQ_dongzhuo: '✫董卓',
                 QQQ_chenshi: '沉势',
@@ -7966,7 +7858,24 @@ export async function precontent(config, pack) {
                 QQQ_xiaozhang_info: '出牌阶段,你可以展示牌堆顶一张牌,然后选择是否获得.若你选择获得,则由随机一名其他角色对你使用牌堆中下两张牌.若你不获得,则由你对随机一名角色使用此牌,然后此技能本回合失效',
             },
         };
+        QQQ.skill2 = yinu.skill;
+        const num = Math.ceil(Object.keys(yinu.character).length / 4);
+        var num1 = 0;
         for (var i in yinu.character) {
+            num1++;
+            if (0 < num1 && num1 <= num) {
+                yinu.character[i].group = '狂';
+            }
+            else if (num < num1 && num1 <= num * 2) {
+                yinu.character[i].group = '龙';
+            }
+            else if (num * 2 < num1 && num1 <= num * 3) {
+                yinu.character[i].group = '啸';
+            }
+            else if (num * 3 < num1 && num1 <= num * 4) {
+                yinu.character[i].group = '天';
+            }
+            yinu.character[i].dieAudios = [`ext:温柔一刀/die/${i}.mp3`];
             lib.translate[`${i}_prefix`] = 'Q';
             yinu.translate[i] = `Q${yinu.translate[i]}`;
         }

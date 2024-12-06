@@ -691,6 +691,147 @@ export async function content(config, pack) {
             },
         };//和零件锻造配合,必须类型是装备不然会报错没有name
         //————————————————————————————————————————————————————————————————————————————————————————————————————浅层检测
+        if (lib.card.yanjiadan_heart) {
+            lib.card.yanjiadan_heart.content = async function () {
+                var choice = null;
+                var targets = game.filterPlayer(function (current) {
+                    return get.attitude(player, current) > 0;
+                });
+                for (var i = 0; i < targets.length; i++) {
+                    if (targets[i].hp == 1) {
+                        if (targets[i].hasSkill("yunvyuanshen_skill")) {
+                            choice = "ziyangdan";
+                        } else {
+                            choice = "yunvyuanshen";
+                            break;
+                        }
+                    }
+                }
+                if (
+                    !choice &&
+                    game.hasPlayer(function (current) {
+                        return (
+                            current.hp == 1 &&
+                            get.attitude(player, current) < 0 &&
+                            get.damageEffect(current, player, player, "fire") > 0
+                        );
+                    })
+                ) {
+                    choice = "shatang";
+                }
+                if (!choice) {
+                    for (var i = 0; i < targets.length; i++) {
+                        if (!targets[i].hasSkill("yunvyuanshen_skill")) {
+                            choice = "yunvyuanshen";
+                            break;
+                        }
+                    }
+                }
+                if (!choice) {
+                    choice = "ziyangdan";
+                }
+                const { result: { links } } = await player
+                    .chooseVCardButton("选择一张牌视为使用之", ["yunvyuanshen", "ziyangdan", "shatang"])
+                    .set("ai", function (button) {
+                        if (button.link[2] == _status.event.choice) return 2;
+                        return Math.random();
+                    })
+                    .set("choice", choice)
+                    .set("filterButton", function (button) {
+                        return _status.event.player.hasUseTarget(button.link[2]);
+                    });
+                if (links && links[0]) {
+                    player.chooseUseTarget(true, links[0][2]);
+                }
+            };
+        }
+        if (lib.card.yanjiadan_diamond) {
+            lib.card.yanjiadan_diamond.content = async function () {
+                var choice = "liufengsan";
+                if (
+                    game.hasPlayer(function (current) {
+                        var eff = get.effect(current, { name: "shenhuofeiya" }, player, player);
+                        if (eff >= 0) return false;
+                        if (current.hp == 1 && eff < 0) return true;
+                        if (
+                            get.attitude(player, current) < 0 &&
+                            get.attitude(player, current.getNext() < 0) &&
+                            get.attitude(player, current.getPrevious()) < 0
+                        ) {
+                            return true;
+                        }
+                        return false;
+                    })
+                ) {
+                    choice = "shenhuofeiya";
+                }
+                const { result: { links } } = await player
+                    .chooseVCardButton("选择一张牌视为使用之", [
+                        "liufengsan",
+                        "shujinsan",
+                        "shenhuofeiya",
+                    ])
+                    .set("ai", function (button) {
+                        if (button.link[2] == _status.event.choice) return 2;
+                        return Math.random();
+                    })
+                    .set("choice", choice)
+                    .set("filterButton", function (button) {
+                        return _status.event.player.hasUseTarget(button.link[2]);
+                    });
+                if (links && links[0]) {
+                    player.chooseUseTarget(true, links[0][2]);
+                }
+            };
+        }
+        if (lib.card.yanjiadan_club) {
+            lib.card.yanjiadan_club.content = async function () {
+                var choice = "liutouge";
+                const { result: { links } } = await player
+                    .chooseVCardButton("选择一张牌视为使用之", [
+                        "bingpotong",
+                        "liutouge",
+                        "mianlijinzhen",
+                    ])
+                    .set("ai", function (button) {
+                        if (button.link[2] == _status.event.choice) return 2;
+                        return Math.random();
+                    })
+                    .set("choice", choice)
+                    .set("filterButton", function (button) {
+                        return _status.event.player.hasUseTarget(button.link[2]);
+                    });
+                if (links && links[0]) {
+                    player.chooseUseTarget(true, links[0][2]);
+                }
+            };
+        }
+        if (lib.card.yanjiadan_spade) {
+            lib.card.yanjiadan_spade.content = async function () {
+                var choice = null;
+                if (player.getUseValue("longxugou") > 0) {
+                    choice = "longxugou";
+                }
+                else if (player.getUseValue("qiankunbiao") > 0) {
+                    choice = "qiankunbiao";
+                }
+                else if (player.getUseValue("feibiao") > 0) {
+                    choice = "qiankunbiao";
+                }
+                const { result: { links } } = await player.chooseVCardButton("选择一张牌视为使用之", ["feibiao", "qiankunbiao", "longxugou"])
+                    .set("ai", function (button) {
+                        if (button.link[2] == _status.event.choice) return 2;
+                        return Math.random();
+                    })
+                    .set("choice", choice)
+                    .set("filterButton", function (button) {
+                        return _status.event.player.hasUseTarget(button.link[2]);
+                    });
+                if (links && links[0]) {
+                    player.chooseUseTarget(true, links[0][2]);
+                }
+            };
+        }
         if (lib.card.fudichouxin) {
             lib.card.fudichouxin.content = function () {
                 'step 0';
@@ -10433,7 +10574,7 @@ export async function content(config, pack) {
                 '全能搜索', '温柔一刀', '综漫季刊肆', '综漫季刊伍', '综漫季刊陆', '综漫季刊柒', '综漫季刊捌', '综漫季刊玖',
             ];
             var Q = [
-                'BGM', '温柔一刀', '众星起源', '星舟扩展', '错乱时空', '群英荟萃乀摧林',
+                'BGM', '温柔一刀', '众星起源', '星舟扩展', '大权在握', '天牢令'
             ];
             game.saveConfig('extensions', Q);//扩展修改
         }

@@ -66,28 +66,6 @@ const skill = {
             },
         },
     },
-    空城: {
-        mod: {
-            targetEnabled: function (card, player, target, now) {
-                if (card.name == 'sha' || get.type(card) == 'trick' || get.type(card) == 'delay') {
-                    return false;
-                }
-            },
-        },
-        group: 'kongcheng1',
-        audio: 'kongcheng1',
-        audioname: ['re_zhugeliang'],
-        ai: {
-            noh: true,
-            skillTagFilter: function (player, tag) {
-                if (tag == 'noh') {
-                    if (player.countCards('h') != 1) {
-                        return false;
-                    }
-                }
-            },
-        },
-    },
     减伤: {
         audio: 'ext:温柔一刀/audio:2',
         trigger: {
@@ -469,7 +447,6 @@ const skill = {
                     name2: 'Q',
                     content: 'mark',
                 },
-                sub: true,
             },
             M: {
                 trigger: {
@@ -479,7 +456,6 @@ const skill = {
                 content: function () {
                     player.removeMark('移荣_Q', 4);
                 },
-                sub: true,
             },
         },
     },
@@ -660,7 +636,6 @@ const skill = {
                 intro: {
                     content: '拥有#层效果',
                 },
-                sub: true,
             },
         },
     },
@@ -713,7 +688,6 @@ const skill = {
                 intro: {
                     content: '下一次受到杀的伤害+#',
                 },
-                sub: true,
             },
             2: {
                 mark: true,
@@ -1377,7 +1351,6 @@ const skill = {
                     player.markSkill('昆仑镜');
                     _status.昆仑镜 = [player.hp, player.countCards('h')];
                 },
-                sub: true,
             },
         },
     },
@@ -2355,7 +2328,6 @@ const skill = {
                     'step 1'
 
                 },
-                sub: true,
             },
             2: {
                 audio: 'nzry_juzhan_1',
@@ -2371,7 +2343,6 @@ const skill = {
                 content: function () {
                     player.gainPlayerCard(trigger.target, 'he', true);
                 },
-                sub: true,
             },
         },
     },
@@ -2544,7 +2515,6 @@ const skill = {
                         },
                     },
                 },
-                sub: true,
             },
             shan: {
                 audio: 'qingzhong',
@@ -2583,7 +2553,6 @@ const skill = {
                         player: 1,
                     },
                 },
-                sub: true,
             },
         },
     },
@@ -2860,7 +2829,6 @@ const skill = {
                 content: function () {
                     trigger.cards.removeArray(player.getCards('e'));
                 },
-                sub: true,
             },
         },
     },
@@ -2963,7 +2931,6 @@ const skill = {
                         trigger.num += 2;
                     }
                 },
-                sub: true,
             },
             2: {
                 audio: 2,
@@ -2974,7 +2941,6 @@ const skill = {
                 content: function () {
                     player.addMark('橘', 2);
                 },
-                sub: true,
             },
         },
     },
@@ -3750,7 +3716,6 @@ const skill = {
                 content: function () {
                     player.changeHujia(1);
                 },
-                sub: true,
             },
             2: {
                 trigger: {
@@ -3760,7 +3725,6 @@ const skill = {
                 content: function () {
                     trigger.num += Math.ceil(Math.sqrt(player.hujia));
                 },
-                sub: true,
             },
         },
     },
@@ -3781,20 +3745,6 @@ const skill = {
             cardMoveable: function () {
                 return false
             },
-        },
-    },
-    先率: {
-        audio: 'ext:温柔一刀/audio:2',
-        trigger: {
-            source: 'damageSource',
-        },
-        forced: true,
-        filter: function (event, player) {
-            return event.getParent(2).name != '先率';
-        },
-        content: function () {
-            trigger.player.loseHp();
-            player.draw();
         },
     },
     慈孝: {
@@ -4226,7 +4176,6 @@ const skill = {
                 content: function () {
                     player.addMark('暝', 1);
                 },
-                sub: true,
             },
         },
     },
@@ -4651,7 +4600,6 @@ const skill = {
                 content: function () {
                     player.addToExpansion(get.cards(5 - player.getExpansions('权').length), 'draw').gaintag.add('权');
                 },
-                sub: true,
             },
             2: {
                 audio: 2,
@@ -4788,7 +4736,6 @@ const skill = {
                         },
                     },
                 },
-                sub: true,
             },
             2: {
                 enable: 'phaseUse',
@@ -4816,7 +4763,6 @@ const skill = {
                         },
                     },
                 },
-                sub: true,
             },
             3: {
                 enable: 'phaseUse',
@@ -4844,7 +4790,6 @@ const skill = {
                         },
                     },
                 },
-                sub: true,
             },
         },
     },
@@ -4922,7 +4867,6 @@ const skill = {
                 content: function () {
                     trigger.cards.removeArray(player.getCards('j'));
                 },
-                sub: true,
             },
         },
     },
@@ -5063,7 +5007,6 @@ const skill = {
                 content: function () {
                     player.draw();
                 },
-                sub: true,
             },
         },
     },
@@ -5143,7 +5086,6 @@ const skill = {
                     game.log(player, '不可响应', trigger.card);
                 },
                 global: 'shencai_weapon_ai',
-                sub: true,
             },
         },
     },
@@ -5378,262 +5320,6 @@ const skill = {
                 player: function (player) {
                     return 1;
                 },
-            },
-        },
-    },
-    天谶: {
-        marktext: '天谶',
-        mark: true,
-        intro: {
-            name: '天谶',
-            name2: '天谶',
-            content: 'mark',
-        },
-        audio: 'ext:温柔一刀:8',
-        enable: 'phaseUse',
-        usable: 1,
-        content: function () {
-            player.draw();
-            player.addTempSkill('olqiangxi');
-            player.addMark('天谶', 1);
-        },
-        ai: {
-            basic: {
-                order: 10,
-            },
-            result: {
-                player: function (player) {
-                    return 1;
-                },
-            },
-        },
-    },
-    屠魔: {
-        skillAnimation: true,
-        animationColor: 'wood',
-        audio: 'ext:温柔一刀/audio:2',
-        juexingji: true,
-        derivation: ['摘星'],
-        forced: true,
-        trigger: {
-            player: 'phaseZhunbeiBegin',
-        },
-        filter: function (event, player) {
-            return player.countMark('天谶') > 2;
-        },
-        content: function () {
-            player.awakenSkill('屠魔');
-            player.loseMaxHp(2);
-            player.draw(2);
-            player.addSkill('摘星');
-            player.removeSkill('天谶');
-            game.log(player, '获得了技能#g【摘星】')
-        },
-        ai: {
-            threaten: function (player, target) {
-                if (target.countMark('天谶') > 2) {
-                    return 2;
-                }
-                return 0.5;
-            },
-        },
-        markimage: 'extension/OLUI/image/player/marks/juexingji.png',
-    },
-    摘星: {
-        group: ['摘星1'],
-        audio: 'ext:温柔一刀/audio:2',
-        mod: {
-            targetEnabled: function (card, player, target) {
-                if (get.type(card) == 'delay') {
-                    return false;
-                }
-            },
-            maxHandcard: function (player, num) {
-                return num += 1;
-            },
-            cardnature: function (card, player) {
-                if (get.name(card) == 'sha') {
-                    return 'fire';
-                }
-            },
-            cardname: function (card, player, name) {
-                if (card.name == 'guohe') {
-                    return 'shunshou';
-                }
-            },
-            targetInRange: function (card) {
-                if (card.name == 'shunshou') {
-                    return true;
-                }
-            },
-            color: function (card) {
-                if (get.name(card) == 'sha') {
-                    return 'red';
-                }
-            },
-        },
-        trigger: {
-            player: 'useCardToPlayered',
-        },
-        forced: true,
-        filter: function (event, player) {
-            return event.card.name == 'sha' && !event.getParent().directHit.includes(event.target);
-        },
-        logTarget: 'target',
-        content: function () {
-            var id = trigger.target.playerid;
-            var map = trigger.getParent().customArgs;
-            if (!map[id]) {
-                map[id] = {};
-            }
-            if (typeof map[id].shanRequired == 'number') {
-                map[id].shanRequired++;
-            }
-            else {
-                map[id].shanRequired = 2;
-            }
-        },
-        ai: {
-            directHit_ai: true,
-            skillTagFilter: function (player, tag, arg) {
-                if (arg && arg.card.name != 'sha' || arg.target.countCards('h', 'shan') > 1) {
-                    return false;
-                }
-            },
-        },
-    },
-    摘星1: {
-        mod: {
-            aiValue: function (player, card, num) {
-                if (get.name(card) != 'tao' && get.type(card) != 'basic') {
-                    return;
-                }
-                var cards = player.getCards('hs', function (card) {
-                    return get.name(card) == 'tao' || get.type(card) != 'basic';
-                });
-                cards.sort(function (a, b) {
-                    return (get.name(a) == 'tao' ? 1 : 2) - (get.name(b) == 'tao' ? 1 : 2);
-                });
-                var geti = function () {
-                    if (cards.includes(card)) {
-                        return cards.indexOf(card);
-                    }
-                    return cards.length;
-                };
-                return Math.max(num, [6.5, 4, 3, 2][Math.min(geti(), 2)]);
-            },
-            aiUseful: function () {
-                return lib.skill.kanpo.mod.aiValue.apply(this, arguments);
-            },
-        },
-        locked: false,
-        audio: 'ext:温柔一刀/audio:2',
-        enable: 'chooseToUse',
-        viewAsFilter: function (player) {
-            return player != _status.currentPhase && player.countCards('hes', { type: 'basic' }) > 0;
-        },
-        filterCard: function (card) {
-            return get.type(card) == 'basic';
-        },
-        position: 'hes',
-        viewAs: {
-            name: 'tao',
-        },
-        prompt: '将一张红色牌当桃使用',
-        check: function (card) {
-            return 15 - get.value(card)
-        },
-        ai: {
-            threaten: 1.5,
-            basic: {
-                order: function (card, player) {
-                    if (player.hasSkillTag('pretao')) {
-                        return 5;
-                    }
-                    return 2;
-                },
-                useful: function (card, i) {
-                    let player = _status.event.player;
-                    if (player.isDamaged() && !game.checkMod(card, player, 'unchanged', 'cardEnabled2', player)) {
-                        return 2 / (1 + i);
-                    }
-                    let fs = game.filterPlayer(function (current) {
-                        return get.attitude(player, current) > 0 && current.hp <= 2;
-                    }),
-                        damaged = 0,
-                        needs = 0;
-                    for (let f of fs) {
-                        if (!lib.filter.cardSavable(card, player, f)) {
-                            continue;
-                        }
-                        if (f.hp > 1) {
-                            damaged++;
-                        }
-                        else {
-                            needs++;
-                        }
-                    }
-                    if (needs && damaged) {
-                        return 5 * needs + 3 * damaged;
-                    }
-                    if (needs + damaged > 1 || player.hasSkillTag('maixie')) {
-                        return 8;
-                    }
-                    if (player.hp / player.maxHp < 0.7) {
-                        return 7 + Math.abs(player.hp / player.maxHp - 0.5);
-                    }
-                    if (needs) {
-                        return 7;
-                    }
-                    if (damaged) {
-                        return Math.max(3, 6.4 - i);
-                    }
-                    return 6.8 - Math.min(5, player.hp);
-                },
-                value: function (card, player, i) {
-                    let fs = game.filterPlayer(function (current) {
-                        return get.attitude(_status.event.player, current) > 0;
-                    }),
-                        damaged = 0,
-                        needs = 0;
-                    for (let i of fs) {
-                        if (!player.canUse('tao', i, true, true)) {
-                            continue;
-                        }
-                        if (i.hp <= 1) {
-                            needs++;
-                        }
-                        else if (i.hp == 2) {
-                            damaged++;
-                        }
-                    }
-                    if (needs > 2) {
-                        return 11;
-                    }
-                    if (needs > 1) {
-                        return 10;
-                    }
-                    if ((needs && damaged) || player.hasSkillTag('maixie')) {
-                        return 9;
-                    }
-                    if (needs || damaged > 1) {
-                        return 8;
-                    }
-                    if (damaged) {
-                        return 7.5;
-                    }
-                    return Math.max(1, 9.2 - player.hp);
-                },
-            },
-            result: {
-                target: 2,
-                target_use: function (player, target) {
-                    return 2;
-                },
-            },
-            tag: {
-                recover: 1,
-                save: 1,
             },
         },
     },
@@ -5936,7 +5622,6 @@ const skill = {
                 content: function () {
                     player.removeMark('狂才', player.countMark('狂才'));
                 },
-                sub: true,
             },
         },
     },
@@ -6020,11 +5705,9 @@ const skill = {
                         }
                     }
                 },
-                sub: true,
             },
             damage: {
                 audio: 'xinfu_xionghuo',
-                sub: true,
                 forced: true,
                 trigger: {
                     source: 'damageBefore',
@@ -6045,7 +5728,6 @@ const skill = {
                 content: function () {
                     player.addMark('凶镬', 1);
                 },
-                sub: true,
             },
         },
         ai: {
@@ -6366,7 +6048,6 @@ const skill = {
                     }
                     player.removeSkill('诓人_draw');
                 },
-                sub: true,
             },
         },
     },
@@ -6535,7 +6216,6 @@ const skill = {
                     }
                     player.draw(2 * num);
                 },
-                sub: true,
             },
         },
     },
@@ -6621,33 +6301,6 @@ const skill = {
             },
         },
     },
-    忘魂: {
-        trigger: {
-            global: ['roundStart'],
-        },
-        skillAnimation: true,
-        animationColor: 'wood',
-        forced: true,
-        charlotte: true,
-        content: function () {
-            var Q = Math.random();
-            if (Q > 1 / 2 / game.players.length) {
-                var target = game.filterPlayer(function (current) {
-                    return current != player && !current.isFriendsOf(player);
-                }).randomGet();
-            }
-            else {
-                var target = game.filterPlayer(function (current) {
-                    return current.isFriendsOf(player);
-                }).randomGet();
-            }
-            player.line(target);
-            var skill = target.getSkills(null, false, false).randomGet()
-            target.removeSkill(skill);
-            game.log(target, '失去了', skill);
-            target.damage(Q * 5);
-        },
-    },
     失一摸一: {
         audio: 'pianchong',
         trigger: {
@@ -6669,49 +6322,6 @@ const skill = {
                 }
             },
             noh: true,
-        },
-    },
-    摸牌: {
-        marktext: '摸牌',
-        mark: true,
-        intro: {
-            name: '摸牌',
-            name2: '摸牌',
-            content: 'mark',
-        },
-        trigger: {
-            global: 'gameDrawBefore',
-        },
-        forced: true,
-        content: function () {
-            'step 0'
-            var num = 20;
-            var map = {};
-            var list = [];
-            for (var i = 1; i <= 20; i++) {
-                var cn = get.cnNumber(i, true);
-                map[cn] = i;
-                list.push(cn);
-            }
-            event.map = map;
-            player.chooseControl(list);
-            'step 1'
-            var num = event.map[result.control];
-            player.addMark('摸牌', num);
-        },
-        group: ['摸牌_1'],
-        subSkill: {
-            1: {
-                trigger: {
-                    player: 'phaseBegin',
-                },
-                forced: true,
-                content: function () {
-                    var num = player.countMark('摸牌');
-                    player.draw(num);
-                },
-                sub: true,
-            },
         },
     },
     QQQ_摸牌: {
@@ -6948,14 +6558,12 @@ const skill = {
                 content: function () {
                     player.gain(player.storage.募集, 'gain2', 'log');
                 },
-                sub: true,
             },
             2: {
                 trigger: {
                     global: ['phaseEnd'],
                 },
                 audio: 'fulin',
-                sub: true,
                 silent: true,
                 forced: true,
                 content: function () {
@@ -7129,7 +6737,6 @@ const skill = {
                     game.log(player, '失去了以下技能:#g' + get.translation(player.additionalSkills.驭衡));
                     player.removeAdditionalSkill('驭衡');
                 },
-                sub: true,
             },
         },
     },
@@ -7389,7 +6996,6 @@ const skill = {
                 content: function () {
                     player.draw();
                 },
-                sub: true,
             },
             2: {
                 trigger: {
@@ -7409,7 +7015,6 @@ const skill = {
                 content: function () {
                     player.draw();
                 },
-                sub: true,
             },
             3: {
                 trigger: {
@@ -7429,7 +7034,6 @@ const skill = {
                 content: function () {
                     player.draw();
                 },
-                sub: true,
             },
             4: {
                 trigger: {
@@ -7449,7 +7053,6 @@ const skill = {
                 content: function () {
                     player.draw();
                 },
-                sub: true,
             },
             5: {
                 trigger: {
@@ -7469,7 +7072,6 @@ const skill = {
                 content: function () {
                     player.draw();
                 },
-                sub: true,
             },
         },
     },
@@ -7491,83 +7093,6 @@ const skill = {
             });
             'step 1'
             player.give(result.cards, trigger.player);
-        },
-    },
-    不给: {
-        trigger: {
-            player: 'loseBefore',
-        },
-        audio: 'fulin',
-        forced: true,
-        filter: function (event, player) {
-            if (player == _status.currentPhase) {
-                return false;
-            }
-            if (['useCard', 'respond'].includes(event.getParent().name)) {
-                return false;
-            }
-            return true;
-        },
-        content: function () {
-            trigger.cards.removeArray(player.getCards('h'));
-        },
-    },
-    腹鳞: {
-        trigger: {
-            global: ['loseAfter'],
-        },
-        filter: function (event, player) {
-            if (player == _status.currentPhase) {
-                return false;
-            }
-            return event.player != player;
-        },
-        forced: true,
-        content: function () {
-            if (!player.storage.腹鳞) {
-                player.storage.腹鳞 = [];
-            }
-            for (var i in trigger.cards) {
-                player.storage.腹鳞.add(trigger.cards[i]);
-            }
-            player.gain(player.storage.腹鳞, 'gain2', 'log');
-        },
-        group: ['腹鳞_1', '腹鳞_2'],
-        subSkill: {
-            1: {
-                trigger: {
-                    global: ['gainAfter', 'addToExpansionAfter', 'cardsGotoSpecialAfter'],
-                },
-                audio: 'fulin',
-                forced: true,
-                filter: function (event, player) {
-                    if (player == event.player) {
-                        return false;
-                    }
-                    if (player == _status.currentPhase) {
-                        return false;
-                    }
-                    return true;
-                },
-                content: function () {
-                    player.gain(player.storage.腹鳞, 'gain2', 'log');
-                },
-                sub: true,
-            },
-            2: {
-                trigger: {
-                    global: ['phaseEnd'],
-                },
-                audio: 'fulin',
-                sub: true,
-                silent: true,
-                forced: true,
-                content: function () {
-                    player.storage.腹鳞 = [];
-                },
-                popup: false,
-                _priority: 1,
-            },
         },
     },
     英才: {
@@ -7604,7 +7129,6 @@ const skill = {
                 intro: {
                     content: '其他角色至你的距离+1',
                 },
-                sub: true,
             },
         },
         mark: true,
@@ -7614,47 +7138,8 @@ const skill = {
         init: (player, skill) => player.storage[skill] = false,
         markimage: 'extension/OLUI/image/player/marks/xiandingji.png',
     },
-    不给2: {
-        trigger: {
-            player: 'loseAfter',
-        },
-        audio: 'fulin',
-        forced: true,
-        filter: function (event, player) {
-            if (player == _status.currentPhase) {
-                return false;
-            }
-            if (['useCard', 'respond'].includes(event.getParent().name)) {
-                return false;
-            }
-            return true;
-        },
-        content: function () {
-            player.gain(trigger.cards, 'gain2', 'log');
-        },
-    },
-    不给3: {
-        trigger: {
-            global: ['gainAfter', 'addToExpansionAfter', 'cardsGotoSpecialAfter'],
-        },
-        audio: 'fulin',
-        forced: true,
-        filter: function (event, player) {
-            if (player == event.player) {
-                return false;
-            }
-            if (player == _status.currentPhase) {
-                return false;
-            }
-            return true;
-        },
-        content: function () {
-            player.gain(trigger.cards, 'gain2', 'log');
-        },
-    },
     徒: {
         charlotte: true,
-        sub: true,
         mark: true,
         onremove: true,
         marktext: '徒',
@@ -7680,7 +7165,6 @@ const skill = {
     },
     流: {
         charlotte: true,
-        sub: true,
         mark: true,
         onremove: true,
         marktext: '流',
@@ -7807,7 +7291,6 @@ const skill = {
                         next.setContent(lib.element.content.die);
                     }
                 },
-                sub: true,
             },
         },
     },
@@ -7930,7 +7413,6 @@ const skill = {
                 intro: {
                     content: '重铸牌数',
                 },
-                sub: true,
             },
             2: {
                 marktext: '2',
@@ -7938,7 +7420,6 @@ const skill = {
                 intro: {
                     content: '已发动技能次数',
                 },
-                sub: true,
             },
         },
     },
@@ -7988,7 +7469,6 @@ const skill = {
                 intro: {
                     content: '下一张牌无距离限制',
                 },
-                sub: true,
             },
             次数: {
                 marktext: '次数',
@@ -7996,7 +7476,6 @@ const skill = {
                 intro: {
                     content: '下一张牌无次数限制',
                 },
-                sub: true,
             },
             响应: {
                 marktext: '响应',
@@ -8021,7 +7500,6 @@ const skill = {
                         return true;
                     },
                 },
-                sub: true,
             },
         },
     },
@@ -8208,7 +7686,6 @@ const skill = {
                         event.goto(1);
                     }
                 },
-                sub: true,
             },
             2: {
                 trigger: {
@@ -8221,7 +7698,6 @@ const skill = {
                 content: function () {
                     trigger.num += player.countMark('隐忍_摸')
                 },
-                sub: true,
             },
             3: {
                 trigger: {
@@ -8249,7 +7725,6 @@ const skill = {
                         player.popup(`<span class='bluetext' style='color:#B3EE3A'>暴击</span>`);
                     }
                 },
-                sub: true,
             },
             杀: {
                 marktext: '杀',
@@ -8258,7 +7733,6 @@ const skill = {
                     name: '杀',
                     content: 'mark',
                 },
-                sub: true,
             },
             摸: {
                 marktext: '摸',
@@ -8267,7 +7741,6 @@ const skill = {
                     name: '摸',
                     content: 'mark',
                 },
-                sub: true,
             },
             减: {
                 marktext: '减',
@@ -8276,7 +7749,6 @@ const skill = {
                     name: '减',
                     content: 'mark',
                 },
-                sub: true,
             },
             基本: {
                 marktext: '基本',
@@ -8285,7 +7757,6 @@ const skill = {
                     name: '基本',
                     content: 'mark',
                 },
-                sub: true,
             },
             锦囊: {
                 marktext: '锦囊',
@@ -8294,7 +7765,6 @@ const skill = {
                     name: '锦囊',
                     content: 'mark',
                 },
-                sub: true,
             },
         },
     },
@@ -8432,7 +7902,6 @@ const skill = {
                 content: function () {
                     player.recover();
                 },
-                sub: true,
             },
         },
     },
@@ -8550,12 +8019,56 @@ const skill = {
                     player.popup(`<span class='bluetext' style='color:#B3EE3A'>免伤</span>`);
                     trigger.cancel();
                 },
-                sub: true,
             },
         },
     },
     天辩: {
-        group: ['天辩_1', '天辩_2', '天辩_3'],
+        trigger: {
+            player: ['chooseToCompareAfter', 'compareMultipleAfter'],
+            target: ['chooseToCompareAfter', 'compareMultipleAfter'],
+        },
+        filter: function (event, player) {
+            if (event.preserve) {
+                return false;
+            }
+            if (player == event.player) {
+                if (event.num1 > event.num2) {
+                    return !get.owner(event.card2);
+                }
+                else {
+                    return !get.owner(event.card1);
+                }
+            }
+            else {
+                if (event.num1 < event.num2) {
+                    return !get.owner(event.card1);
+                }
+                else {
+                    return !get.owner(event.card2);
+                }
+            }
+        },
+        audio: 'hanzhan',
+        forced: true,
+        content: function () {
+            if (player == trigger.player) {
+                if (trigger.num1 > trigger.num2) {
+                    player.gain(trigger.card2, 'gain2', 'log');
+                }
+                else {
+                    player.gain(trigger.card1, 'gain2', 'log');
+                }
+            }
+            else {
+                if (trigger.num1 < trigger.num2) {
+                    player.gain(trigger.card1, 'gain2', 'log');
+                }
+                else {
+                    player.gain(trigger.card2, 'gain2', 'log');
+                }
+            }
+        },//QQQ
+        group: ['天辩_1', '天辩_2'],
         subSkill: {
             1: {
                 audio: 'hanzhan',
@@ -8581,7 +8094,6 @@ const skill = {
                         trigger.num2 = 13;
                     }
                 },
-                sub: true,
             },
             2: {
                 audio: 'hanzhan',
@@ -8622,55 +8134,6 @@ const skill = {
                     }
                     trigger.fixedResult[player.playerid] = get.cards()[0];
                 },
-                sub: true,
-            },
-            3: {
-                trigger: {
-                    player: ['chooseToCompareAfter', 'compareMultipleAfter'],
-                    target: ['chooseToCompareAfter', 'compareMultipleAfter'],
-                },
-                filter: function (event, player) {
-                    if (event.preserve) {
-                        return false;
-                    }
-                    if (player == event.player) {
-                        if (event.num1 > event.num2) {
-                            return !get.owner(event.card2);
-                        }
-                        else {
-                            return !get.owner(event.card1);
-                        }
-                    }
-                    else {
-                        if (event.num1 < event.num2) {
-                            return !get.owner(event.card1);
-                        }
-                        else {
-                            return !get.owner(event.card2);
-                        }
-                    }
-                },
-                audio: 'hanzhan',
-                forced: true,
-                content: function () {
-                    if (player == trigger.player) {
-                        if (trigger.num1 > trigger.num2) {
-                            player.gain(trigger.card2, 'gain2', 'log');
-                        }
-                        else {
-                            player.gain(trigger.card1, 'gain2', 'log');
-                        }
-                    }
-                    else {
-                        if (trigger.num1 < trigger.num2) {
-                            player.gain(trigger.card1, 'gain2', 'log');
-                        }
-                        else {
-                            player.gain(trigger.card2, 'gain2', 'log');
-                        }
-                    }
-                },//QQQ
-                sub: true,
             },
         },
     },
@@ -8916,47 +8379,6 @@ const skill = {
             },
         },
     },
-    命数: {
-        marktext: '命数',
-        mark: true,
-        intro: {
-            name: '命数',
-            content: '此技能发动过#次',
-        },
-        usable: 1,
-        forced: true,
-        trigger: {
-            player: ['useCard', 'respond'],
-        },
-        content: function () {
-            if (!player.storage.命数) {
-                player.storage.命数 = 1;
-            }
-            player.storage.命数++;
-            var Q = get.cards(player.storage.命数)
-            player.showCards(Q);
-            var list = Q.slice(0);
-            while (list.length) {
-                ui.cardPile.insertBefore(list.pop(), ui.cardPile.firstChild);
-            }
-        },
-    },
-    推背: {
-        trigger: {
-            global: 'showCards',
-        },
-        forced: true,
-        content: function () {
-            'step 0'
-            if (!player.storage.命数) {
-                player.storage.命数 = 1;
-            }
-            'step 1'
-            var card1 = Array.from(ui.cardPile.childNodes).at(player.storage.命数);
-            player.gain(card1);
-            player.chooseUseTarget(card1, true, false, 'nodistance');
-        },
-    },
     矢北: {
         marktext: '矢北',
         mark: true,
@@ -8986,7 +8408,6 @@ const skill = {
                     player.storage.矢北++;
                     trigger.num = player.storage.矢北
                 },
-                sub: true,
             },
             2: {
                 forced: true,
@@ -8999,7 +8420,6 @@ const skill = {
                 content: function () {
                     player.gainMaxHp(trigger.num - player.getDamagedHp());
                 },
-                sub: true,
             },
             3: {
                 forced: true,
@@ -9012,7 +8432,6 @@ const skill = {
                 content: function () {
                     player.loseMaxHp(player.maxHp - 3);
                 },
-                sub: true,
             },
             4: {
                 forced: true,
@@ -9022,7 +8441,6 @@ const skill = {
                 content: function () {
                     delete player.storage.矢北;
                 },
-                sub: true,
             },
         },
     },
@@ -9063,7 +8481,6 @@ const skill = {
                 content: function () {
                     player.draw();
                 },
-                sub: true,
             },
         },
     },
@@ -10184,7 +9601,6 @@ const skill = {
                         }
                     },
                 },
-                sub: true,
             },
             2: {
                 mark: true,
@@ -10234,7 +9650,6 @@ const skill = {
                         }
                     },
                 },
-                sub: true,
             },
         },
         mark: true,
@@ -10805,7 +10220,6 @@ const skill = {
         subSkill: {
             1: {
                 charlotte: true,
-                sub: true,
             },
         },
     },
@@ -11069,86 +10483,6 @@ const skill = {
             },
         },
     },
-    冰心: {
-        enable: 'chooseToUse',
-        hiddenCard: function (player, name) {
-            if (get.type(name) == 'basic' && lib.inpile.includes(name) && !player.getStorage('冰心_1').includes(name)) {
-                return true;
-            }
-        },
-        filter: function (event, player) {
-            return game.qcard(player, 'basic').some((q) => !player.storage.冰心_1.includes(q[2]));
-        },
-        init: (player) => player.storage.冰心_1 = [],
-        chooseButton: {
-            dialog: function (event, player) {
-                return ui.create.dialog('冰心', [game.qcard(player, 'basic').filter((q) => !player.storage.冰心_1.includes(q[2])), 'vcard'], 'hidden')
-            },
-            check: function (button) {
-                if (['tao', 'shan'].includes(button.link[2])) {
-                    return 99;
-                }
-                const player = _status.event.player;
-                return (player.getUseValue({
-                    name: button.link[2],
-                    nature: button.link[3]
-                }, null, true) || 0) / 2 + 10;
-            },
-            backup: function (links, player) {
-                return {
-                    selectCard: -1,
-                    filterCard: () => false,
-                    viewAs: {
-                        name: links[0][2],
-                        nature: links[0][3],
-                        suit: links[0][0],
-                        number: links[0][1],
-                    },
-                    precontent: function () {
-                        player.logSkill('冰心');
-                        player.draw();
-                        var name = event.result.card.name;
-                        player.addTempSkill('冰心_1');
-                        player.markAuto('冰心_1', [name]);
-                    },
-                }
-            },
-            prompt: function (links, player) {
-                var name = links[0][2];
-                var nature = links[0][3];
-                return '摸一张并视为使用' + (get.translation(nature) || '') + get.translation(name);
-            },
-        },
-        ai: {
-            order: 10,
-            respondShan: true,
-            respondSha: true,
-            skillTagFilter: function (player, tag) {
-                if (player.getCards('h').length != Math.max(0, player.hp)) {
-                    return false;
-                }
-                var storage = player.storage.冰心_1;
-                if (storage && storage.includes('s' + tag.slice(8))) {
-                    return false;
-                }
-            },
-            result: {
-                player: function (player) {
-                    if (_status.event.dying) {
-                        return get.attitude(player, _status.event.dying);
-                    }
-                    return 1;
-                },
-            },
-        },
-        subSkill: {
-            1: {
-                charlotte: true,
-                onremove: true,
-                sub: true,
-            },
-        },
-    },
     埋祸: {
         audio: 2,
         trigger: {
@@ -11208,7 +10542,6 @@ const skill = {
                         player.loseToDiscardpile(cards);
                     }
                 },
-                sub: true,
             },
             2: {
                 trigger: {
@@ -11221,7 +10554,6 @@ const skill = {
                 content: function () {
                     trigger.target.loseToDiscardpile(trigger.target.getExpansions('埋祸_1')[0])
                 },
-                sub: true,
             },
         },
     },
@@ -12166,13 +11498,10 @@ const skill = {
     },
     比翼: {
         trigger: {
-            global: 'roundStart',
+            global: 'gameStart',
         },
         forced: true,
         audio: 'ext:温柔一刀/audio:1',
-        filter: function (event, player) {
-            return game.phaseNumber == 0;
-        },
         content: function () {
             game.countPlayer(function (Q) {
                 if (Q != player && Q.isFriendsOf(player)) {
@@ -12304,12 +11633,9 @@ const skill = {
     },
     神器传说: {
         trigger: {
-            global: 'roundStart',
+            global: 'gameStart',
         },
         forced: true,
-        filter(event, player) {
-            return game.phaseNumber == 0;
-        },
         content() {
             var cards = [];
             var E = ['崆峒印', '东皇钟', '轩辕剑', '盘古斧', '炼妖壶', '昊天塔', '伏羲琴', '神农鼎', '昆仑镜', '女娲石', '封神榜'];
@@ -16002,7 +15328,7 @@ const skill = {
                 set() { },
             });
             game.bug = [];
-            var Q = 'qyhc_boss';//mode_extension_xxx/
+            var Q = 'dqzw_trashbin';//mode_extension_xxx/
             for (var j in lib.characterPack[Q]) {
                 game.bug.addArray(lib.characterPack[Q][j][3].filter((Q) => Q != 'dualside'));
             }
@@ -16011,8 +15337,8 @@ const skill = {
         },
         _priority: 9,
         async content(event, trigger, player) {//QQQ
-            var Q = game.bug.slice(0, 100).filter((Q) => Q != 'zmjiaozhisizhang' && Q != '苦绝');//(0, 50)改为要测的区间
-            console.log(Q);
+            var Q = game.bug.slice(4, 100).filter((Q) => Q != 'zmjiaozhisizhang' && Q != '苦绝');//(0, 50)改为要测的区间
+            console.log(Q, 'game.bug');
             const { result: { bool } } = await player.chooseBool().set('ai', () => true);//开局点确认加入技能
             if (bool) {
                 //var Q = 'bhzhilin';
@@ -16208,8 +15534,6 @@ const translate1 = {
     门客_info: '<span class="Qmenu">锁定技,</span>你死亡后,令杀死你的角色进入门客秘境(其他角色暂时移出游戏,进入门客秘境的人需要面对三名门客的夹击,直至一方全部阵亡)',
     安国: '安国',
     安国_info: '出牌阶段限2次,你可以选择一名其他角色,你与其各摸一张牌,回复1点体力,随机使用一张装备牌',
-    空城: '空城',
-    空城_info: '<span class="Qmenu">锁定技,</span>你不能成为牌的目标',
     减伤: '减伤',
     减伤_info: '<span class="Qmenu">锁定技,</span>当你受到伤害时,此伤害减去你已损体力值',
     避乱: '避乱',
@@ -16409,8 +15733,6 @@ const translate1 = {
     据守_info: '<span class="Qmenu">锁定技,</span>弃牌阶段开始时,你翻面并弃置所有手牌并获得等量的<护甲>;当你受到伤害后,若你的武将牌背面朝上,你获得1点<护甲>;当你的武将牌从背面翻至正面时,你摸等同于你<护甲>值的牌',
     lose: 'lose',
     lose_info: '<span class="Qmenu">锁定技,</span>你的牌不能被获得、弃置、移动',
-    先率: '先率',
-    先率_info: '<span class="Qmenu">锁定技,</span>你造成伤害后,摸一张牌,目标损失伤害值的体力',
     慈孝: '慈孝',
     慈孝_info: '<span class="Qmenu">锁定技,</span>准备阶段你令一名未拥有义子标记的其他角色获得一个<义子>标记.(拥有<义子>标记的角色视为拥有技能<叛弑>)',
     叛弑: '叛弑',
@@ -16480,14 +15802,6 @@ const translate1 = {
         其他角色出牌阶段,其可以移去一个赌,视为使用任何一张基本牌或普通锦囊牌',
     赌2: '赌2',
     赌2_info: '其他角色出牌阶段,其可以移去一个赌,视为使用任何一张基本牌或普通锦囊牌',
-    天谶: '天谶',
-    天谶_info: '出牌阶段限一次,你可以摸一张牌,并在本回合内获得技能【强袭】',
-    屠魔: '屠魔',
-    屠魔_info: '觉醒技,准备阶段开始时,若你已累计发动【天谶】3次,你减两点体力上限,摸两张牌,失去【天谶】并获得【摘星】',
-    摘星: '摘星',
-    摘星_info: '<span class="Qmenu">锁定技,</span>你的手牌上限+1;当延时类锦囊进入你的判定区时,取消之.在你的回合内,你的杀视为红色火杀,并需要两张闪抵消;你的过河拆桥视为无距离限制的顺手牵羊.你的回合外,你的基本牌均可视为桃',
-    摘星1: '摘星1',
-    摘星1_info: '摘星1',
     恩怨: '恩怨',
     恩怨_info: '当你体力值变化后、准备阶段、造成伤害后,你可以获得一名角色一张牌并令其失去一点体力,然后你摸一张牌',
     突袭: '突袭',
@@ -16543,12 +15857,8 @@ const translate1 = {
     伏诛_info: '一名角色回合结束时,你可以对其使用牌堆里面所有的杀',
     急救: '急救',
     急救_info: '<span class="Qmenu">锁定技,</span>你的红桃牌视为桃',
-    忘魂: '忘魂',
-    忘魂_info: '<span class="Qmenu">锁定技,</span>回合开始时你令一名随机角色失去一个技能并受到0到5点随机伤害',
     失一摸一: '失一摸一',
     失一摸一_info: '<span class="Qmenu">锁定技,</span>失一摸一',
-    摸牌: '摸牌',
-    摸牌_info: '游戏开始时你可以选择本局游戏内多摸牌的数量',
     QQQ_摸牌: '摸牌',
     QQQ_摸牌_info: '你可以在任何时候摸一张牌',
     QQQ_出牌: '出牌',
@@ -16585,16 +15895,8 @@ const translate1 = {
     顧曲_info: '回合开始阶段,你可以将一张手牌置于武将牌,称为<律>或进行更换(<律>至多五张).其他角色于出牌阶段使用牌颜色顺序,若与<律>相符,你摸一张牌',
     雅量: '雅量',
     雅量_info: '<span class="Qmenu">锁定技,</span>当其他角色对你使用唯一目标的非伤害锦囊时,你需给其一张牌,此锦囊不生效(无牌则此技不生效)',
-    不给: '不给',
-    不给_info: '<span class="Qmenu">锁定技,</span>手牌不会以除使用打出以外的方式失去',
-    腹鳞: '腹鳞',
-    腹鳞_info: '<span class="Qmenu">锁定技,</span>本回合获得的牌不能因除使用打出之外的方式失去',
     英才: '英才',
     英才_info: '限定技,回合开始阶段,你可以放弃摸牌,此轮距离+1,随后你可以令一名其他角色补充手牌至手牌上限',
-    不给2: '不给2',
-    不给2_info: '<span class="Qmenu">锁定技,</span>手牌以除使用打出以外的方式失去后,你获得之',
-    不给3: '不给3',
-    不给3_info: '<span class="Qmenu">锁定技,</span>当全场有牌被移出游戏时、获得牌时,你获得之',
     徒: '徒',
     徒_info: '<span class="Qmenu">锁定技,</span>当你失去牌后,你随机弃置等量的牌(不嵌套触发)',
     流: '流',
@@ -16649,10 +15951,6 @@ const translate1 = {
     镶星_info: '<span class="Qmenu">锁定技,</span>当你受到三次伤害后,随机对场上其他角色造成九点雷电伤害',
     血莲: '血莲',
     血莲_info: '<span class="Qmenu">锁定技,</span>你每受到四次伤害后,恢复x/2体 力值,摸两张牌,并视为对场上任意名角 色使用一张无视防具的杀.(x为你已损失的 体力值,向上取整)',
-    命数: '命数',
-    命数_info: '<span class="Qmenu">锁定技,</span>每回合你首次使用或打出牌时,你展示牌堆从顶往下数的x张锦囊牌或从牌堆底往上数的x张基本牌.(x为此技能本局游戏发动过的次数)',
-    推背: '推背',
-    推背_info: '当有牌被展示时,你可以将其中一张牌插入牌堆中任意位置(需在牌堆顶第x张牌后和牌堆底第x张牌之前),然后你可以使用从牌堆顶往下数或从牌堆底往上数的第x张牌,然后你可以令x-1',
     矢北: '矢北',
     矢北_info: '<span class="Qmenu">锁定技,</span>你通过技能恢复的体力值无视体力上限,每轮你首次受到伤害后恢复13点体力,每回合受到的伤害改为x.(x为本回合受伤次数)',
     渐营: '渐营',
@@ -16707,8 +16005,6 @@ const translate1 = {
     破釜_info: '当你成为其他角色牌的目标时,你可以对其使用一张杀令此牌无效.当你造成伤害时,可以失去一点体力令伤害翻倍.你的手牌上限等于已损体力值加上场上死亡人数',
     QQQ_longjing: '龙境',
     QQQ_longjing_info: '你可以将一张牌当成牌名字数相同的牌使用或打出',
-    冰心: '冰心',
-    冰心_info: '若你的体力值等于手牌数,你可以使用一张本回合未以此法使用过的基本牌',
     埋祸: '埋祸',
     埋祸_info: '<span class="Qmenu">锁定技,</span>其他角色对你使用牌时,你可以将此牌置于其武将牌上称为<祸>并令其失效.当你对其他角色使用牌时,移去其武将牌上的一张<祸>.\
         其他角色出牌阶段开始时,随机失去一半的<祸>(向上取整),然后对你使用剩余的<祸>',

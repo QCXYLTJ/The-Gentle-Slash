@@ -29,11 +29,6 @@ export let config = {
         intro: '开启后,会将BOSS加入挑战模式',
         init: false,
     },
-    AI选将: {
-        name: '<span class="Qmenu">AI选将</span>',
-        intro: '开启后,会启用AI选将',
-        init: false,
-    },
     AI禁用: {
         name: '<span class="Qmenu">AI禁用</span>',
         intro: '开启后,AI禁用本扩展角色',
