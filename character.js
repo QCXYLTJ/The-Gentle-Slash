@@ -281,7 +281,7 @@ const character = {
         sex: 'female',
         hp: 4,
         maxHp: 4,
-        skills: ['失一摸一', '删除标记'],
+        skills: ['失一摸一'],
         trashBin: ['ext:温柔一刀/image/菈妮.jpg'],
     },
     QQQ_夫子: {
@@ -550,13 +550,6 @@ const character = {
         skills: ['据守'],
         trashBin: ['ext:温柔一刀/image/曹仁.jpg'],
     },
-    'QQQ_装备2': {
-        sex: 'male',
-        hp: 4,
-        maxHp: 4,
-        skills: ['增加装备区', '内伐', '奇才', '同礼'],
-        trashBin: ['ext:温柔一刀/image/装备2.jpg'],
-    },
     QQQ_文鸯: {
         sex: 'male',
         hp: 8,
@@ -582,7 +575,7 @@ const character = {
         sex: 'female',
         hp: 4,
         maxHp: 4,
-        skills: ['奇械', '战陨', '奇才'],
+        skills: ['奇械', '战陨'],
         trashBin: ['ext:温柔一刀/image/归终.jpg'],
     },
     QQQ_马保国: {
@@ -603,7 +596,7 @@ const character = {
         sex: 'male',
         hp: 4,
         maxHp: 4,
-        skills: ['技能目标', '赌'],
+        skills: ['赌'],
         trashBin: ['ext:温柔一刀/image/赌徒.jpg'],
     },
     QQQ_强夺: {
@@ -619,13 +612,6 @@ const character = {
         maxHp: 4,
         skills: ['QQQ_人皇幡', '赌'],
         trashBin: ['ext:温柔一刀/image/人皇幡.jpg'],
-    },
-    QQQ_天谶: {
-        sex: 'male',
-        hp: 5,
-        maxHp: 5,
-        skills: ['QQQ_liuhuo'],
-        trashBin: ['ext:温柔一刀/image/天谶.jpg'],
     },
     QQQ_郭嘉: {
         sex: 'female',
@@ -745,13 +731,6 @@ const character = {
         maxHp: 4,
         skills: ['制衡'],
         trashBin: ['ext:温柔一刀/image/制衡.jpg'],
-    },
-    'QQQ_沙包3': {
-        sex: 'male',
-        hp: 1,
-        maxHp: 1,
-        skills: ['不屈', '权', '奋激'],
-        trashBin: ['ext:温柔一刀/image/沙包3.jpg'],
     },
     'QQQ_全装备1': {
         sex: 'male',
@@ -981,7 +960,7 @@ const character = {
         sex: 'female',
         hp: 4,
         maxHp: 4,
-        skills: ['化身', '绝世'],
+        skills: ['QQQ_huashen', '绝世'],
         trashBin: ['ext:温柔一刀/image/左慈.jpg'],
     },
     QQQ_杨婉: {
@@ -1002,7 +981,7 @@ const character = {
         sex: 'female',
         hp: 4,
         maxHp: 4,
-        skills: ['埋祸'],
+        skills: ['QQQ_wanyi', '埋祸'],
         trashBin: ['ext:温柔一刀/image/杨芷.jpg'],
     },
     QQQ_马克思: {
@@ -1247,7 +1226,7 @@ const character = {
         sex: 'male',
         hp: 10,
         maxHp: 10,
-        skills: ['bug', '测试', 'dqzw_xingchui'],
+        skills: ['bug', '测试', 'mx_pingyiboduo', 'mx_guangyingjichi'],
         trashBin: ['ext:温柔一刀/image/测试.jpg'],
     },
     QQQ_刘备: {
@@ -1270,21 +1249,22 @@ const character = {
         maxHp: 4,
         skills: ['QQQ_tuntian'],
         trashBin: ['ext:温柔一刀/image/邓艾.jpg'],
-    },//183
+    },
     QQQ_longjing: {
         sex: 'male',
         hp: 4,
         maxHp: 4,
         skills: ['QQQ_longjing'],
         trashBin: ['ext:温柔一刀/image/QQQ_longjing.jpg'],
-    },//184
+    },//173
 };
 const characterSort = {
     温柔一刀: {
-        伤心一箭: ['QQQ_司马懿', 'QQQ_王异', 'QQQ_春华', 'QQQ_孙笨', 'QQQ_孟获', 'QQQ_神赵云', 'QQQ_食尸鬼', 'QQQ_黄盖', 'QQQ_黄盖1', 'QQQ_负面', 'QQQ_于吉', 'QQQ_装备', 'QQQ_拼点', 'QQQ_南蛮', 'QQQ_距离掌控者', 'QQQ_超级乌龟', 'QQQ_岑昏', 'QQQ_诅咒大师', 'QQQ_势力', 'QQQ_冯方女', 'QQQ_董白', 'QQQ_神吕蒙', 'QQQ_钟会', 'QQQ_反面', 'QQQ_曹纯', 'QQQ_族吴苋', 'QQQ_大乔', 'QQQ_孙权', 'QQQ_徐晃', 'QQQ_神吕布', 'QQQ_神周瑜', 'QQQ_关张刘焉', 'QQQ_董卓', 'QQQ_薛综', 'QQQ_司马师', 'QQQ_彭羕', 'QQQ_许贡',],//40
-        惊艳一枪: ['QQQ_祭风', 'QQQ_东苍孤煞', 'QQQ_许劭', 'QQQ_许劭1', 'QQQ_许劭2', 'QQQ_许劭3', 'QQQ_许劭4', 'QQQ_许劭5', 'QQQ_许劭6', 'QQQ_平衡', 'QQQ_亡语', 'QQQ_印牌', 'QQQ_南殷崇岳', 'QQQ_摸六三刀', 'QQQ_体力上限', 'QQQ_严颜', 'QQQ_诸葛亮', 'QQQ_反伤', 'QQQ_橘子', 'QQQ_张角', 'QQQ_体力游戏', 'QQQ_天妒', 'QQQ_周瑜', 'QQQ_甄姬', 'QQQ_钟炎', 'QQQ_袁术', 'QQQ_神张辽', 'QQQ_曹仁', 'QQQ_北绝玄冥', 'QQQ_装备2', 'QQQ_文鸯', 'QQQ_剑宝', 'QQQ_晦暝', 'QQQ_曹宪曹华', 'QQQ_归终', 'QQQ_马保国', 'QQQ_沮授', 'QQQ_许天',],//40
-        温柔一刀: ['QQQ_赌徒', 'QQQ_强夺', 'QQQ_人皇幡', 'QQQ_天谶', 'QQQ_郭嘉', 'QQQ_法正', 'QQQ_曹冲', 'QQQ_李典', 'QQQ_张辽', 'QQQ_无懈', 'QQQ_判定', 'QQQ_徐荣', 'QQQ_高达', 'QQQ_孙寒华', 'QQQ_沙包', 'QQQ_孙登', 'QQQ_滕公主', 'QQQ_藤芳兰', 'QQQ_菈妮', 'QQQ_莫逍遥', 'QQQ_博览', 'QQQ_Q', 'QQQ_驭衡', 'QQQ_顾曲', 'QQQ_神裁', 'QQQ_哦哦', 'QQQ_制衡', 'QQQ_沙包3', 'QQQ_夫子', 'QQQ_全装备1', 'QQQ_全装备2', 'QQQ_西素惊鸿', 'QQQ_复活', 'QQQ_穆穆', 'QQQ_莫莫', 'QQQ_李白', 'QQQ_古木', 'QQQ_宣公主',],//40
-        朝天一棍: ['QQQ_笮融陈宫', 'QQQ_吴懿关张', 'QQQ_张飞陈宫', 'QQQ_不疑曹轶', 'QQQ_灵毓陈宫', 'QQQ_满宠芳兰', 'QQQ_太后朱然', 'QQQ_花鬘张飞', 'QQQ_卢弈辛毗', 'QQQ_摸与杀', 'QQQ_无极', 'QQQ_夏侯渊', 'QQQ_杨艳', 'QQQ_左慈', 'QQQ_杨婉', 'QQQ_普通卖血', 'QQQ_隐伏', 'QQQ_测试', 'QQQ_管宁', 'QQQ_longwei', 'QQQ_杨芷', 'QQQ_神司马', 'QQQ_阎圃', 'QQQ_马克思', 'QQQ_乾明', 'QQQ_污染', 'QQQ_燃灯古佛', 'QQQ_张春华', 'QQQ_王瓘', 'QQQ_廖化张飞', 'QQQ_关羽管宁', 'QQQ_伏诛', 'QQQ_伤害', 'QQQ_沮授陈宫', 'QQQ_兀突骨',],//33
+        技能堆叠: ['QQQ_冯方女', 'QQQ_神吕布', 'QQQ_距离掌控者', 'QQQ_装备', 'QQQ_反面', 'QQQ_体力上限', 'QQQ_体力游戏', 'QQQ_天妒', 'QQQ_黄盖', 'QQQ_黄盖1', 'QQQ_拼点', 'QQQ_南蛮', 'QQQ_岑昏', 'QQQ_神吕蒙', 'QQQ_判定', 'QQQ_吴懿关张', 'QQQ_管宁', 'QQQ_许劭', 'QQQ_孟获', 'QQQ_食尸鬼', 'QQQ_负面', 'QQQ_势力', 'QQQ_董白', 'QQQ_曹纯', 'QQQ_亡语', 'QQQ_诸葛亮', 'QQQ_诅咒大师', 'QQQ_钟炎', 'QQQ_关张刘焉', 'QQQ_博览', 'QQQ_驭衡', 'QQQ_全装备1', 'QQQ_全装备2', 'QQQ_许劭1', 'QQQ_许劭2', 'QQQ_许劭3', 'QQQ_许劭4', 'QQQ_许劭5', 'QQQ_许劭6', 'QQQ_张飞陈宫', 'QQQ_不疑曹轶', 'QQQ_天师马师', 'QQQ_管宁曹轶', 'QQQ_贾诩王凌', 'QQQ_灵毓陈宫', 'QQQ_满宠芳兰', 'QQQ_太后朱然', 'QQQ_花鬘张飞', 'QQQ_廖化张飞', 'QQQ_关羽管宁', 'QQQ_笮融陈宫', 'QQQ_卢弈辛毗', 'QQQ_沮授陈宫', 'QQQ_摸与杀', 'QQQ_左慈', 'QQQ_潜水的火', 'QQQ_qianbian'],
+        惊艳一枪: [],
+        温柔一刀: [],
+        伤心一箭: [],
+        朝天一棍: [],
     },
 };//155
 const characterIntro = {
@@ -1312,7 +1292,6 @@ const characterIntro = {
     QQQ_马保国: '设计者:第二个单主,给钱了<br>编写者:潜在水里的火(1476811518)',
     QQQ_赌徒: '设计者:第二个单主,给钱了<br>编写者:潜在水里的火(1476811518)',
     QQQ_强夺: '设计者:第二个单主,给钱了<br>编写者:潜在水里的火(1476811518)',
-    QQQ_天谶: '设计者:第二个单主,给钱了<br>编写者:潜在水里的火(1476811518)',
     QQQ_莫逍遥: '设计者:第三个单主,给钱了<br>编写者:潜在水里的火(1476811518)',
     QQQ_顾曲: '设计者:第四个单主,给钱了<br>编写者:潜在水里的火(1476811518)',
     QQQ_夫子: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)',
@@ -1359,10 +1338,11 @@ const characterTitle = {
     QQQ_mengwanqing: '婉清挽情挽不住情',
 };//武将绰号
 const translate2 = {
-    伤心一箭: '伤心一箭',
-    惊艳一枪: '惊艳一枪',
-    温柔一刀: `<p class='sort_jx'><span class='sort_jx'>温柔一刀</span></p>`,
-    朝天一棍: '朝天一棍',
+    技能堆叠: '技能堆叠',
+    惊艳一枪: '惊艳一枪(狂)',
+    温柔一刀: `温柔一刀(龙)`,
+    伤心一箭: '伤心一箭(啸)',
+    朝天一棍: '朝天一棍(天)',
     QQQ_longjing: '龙境',
     QQQ_huangzhong: '✫黄忠',
     QQQ_mengwanqing: '梦婉清',
@@ -1453,7 +1433,6 @@ const translate2 = {
     QQQ_袁术: '袁术',
     QQQ_神张辽: '神张辽',
     QQQ_曹仁: '曹仁',
-    QQQ_装备2: '装备2',
     QQQ_文鸯: '文鸯',
     QQQ_剑宝: '剑宝',
     QQQ_晦暝: '晦暝',
@@ -1463,7 +1442,6 @@ const translate2 = {
     QQQ_赌徒: '赌徒',
     QQQ_强夺: '强夺',
     QQQ_人皇幡: '人皇幡',
-    QQQ_天谶: '天谶',
     QQQ_郭嘉: '郭嘉',
     QQQ_法正: '法正',
     QQQ_曹冲: '曹冲',
@@ -1487,7 +1465,6 @@ const translate2 = {
     QQQ_神裁: '神裁',
     QQQ_哦哦: '哦哦',
     QQQ_制衡: '制衡',
-    QQQ_沙包3: '沙包3',
     QQQ_夫子: '夫子',
     QQQ_全装备1: '全装备1',
     QQQ_全装备2: '全装备2',
@@ -1541,23 +1518,36 @@ const translate2 = {
 };
 const num = Math.ceil(Object.keys(character).length / 4);
 var num1 = 0;
+const info = characterSort.温柔一刀;
 for (var i in character) {
     num1++;
     if (0 < num1 && num1 <= num) {
         character[i].group = '狂';
+        if (!info.技能堆叠.includes(i)) {
+            info.惊艳一枪.add(i);
+        }
     }
     else if (num < num1 && num1 <= num * 2) {
         character[i].group = '龙';
+        if (!info.技能堆叠.includes(i)) {
+            info.温柔一刀.add(i);
+        }
     }
     else if (num * 2 < num1 && num1 <= num * 3) {
         character[i].group = '啸';
+        if (!info.技能堆叠.includes(i)) {
+            info.伤心一箭.add(i);
+        }
     }
     else if (num * 3 < num1 && num1 <= num * 4) {
         character[i].group = '天';
+        if (!info.技能堆叠.includes(i)) {
+            info.朝天一棍.add(i);
+        }
     }
+    character[i].isZhugong = true;
     character[i].dieAudios = [`ext:温柔一刀/die/${i}.mp3`];
-    translate2[i] = `Q${translate2[i]}`;
-    lib.translate[`${i}_prefix`] = 'Q';
+    translate2[i] = `<span class="flame">火</span>${translate2[i]}`;
 }
 if (lib.config.extension_温柔一刀_AI禁用) {
     for (var i in character) {

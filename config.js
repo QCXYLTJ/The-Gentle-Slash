@@ -1,8 +1,25 @@
 import { lib, game, ui, get, ai, _status } from '../../noname.js'
-export let config = {
+export { config }
+const config = {
     群聊: {
         name: '<a href="https://qm.qq.com/q/SsTlU9gc24"><span class="Qmenu">【温柔一刀】群聊: 771901025</span></a>',
         clear: true,
+    },
+    全部关闭: {
+        name: '<span class="Qmenu">全部关闭</span>',
+        intro: '开启后,会一键关闭全部按钮',
+        init: false,
+        onclick: function (result) {
+            const cfg = this._link.config;
+            game.saveConfig(cfg._name, result);
+            if (result) {
+                for (const i in lib.extensionMenu.extension_温柔一刀) {
+                    if (config[i].init && i != '全部关闭' && lib.config[`extension_温柔一刀_${i}`]) {
+                        game.saveConfig(`extension_温柔一刀_${i}`, false);
+                    }
+                }
+            }
+        },
     },
     托管: {
         name: '<span class="Qmenu">托管</span>',
@@ -68,6 +85,24 @@ export let config = {
         name: '<span class="Qmenu">禁止延迟</span>',
         intro: '开启后,将置空game.delay',
         init: false,
+        onclick: function (result) {
+            var cfg = this._link.config;
+            game.saveConfig(cfg._name, result);
+            if (result) {
+                Reflect.defineProperty(game, 'delay', {
+                    get: () => () => true,
+                    set() { },
+                    configurable: false,
+                });
+                lib.configMenu.general.config.game_speed.item = 'vvfast';
+                Reflect.defineProperty(lib.config, 'game_speed', {
+                    get: () => 'vvfast',
+                    set() { },
+                    configurable: false,
+                });
+                game.saveConfig('game_speed', 'vvfast');
+            }
+        },
     },
     轮次计数: {
         name: '<span class="Qmenu">轮次计数</span>',
@@ -112,7 +147,7 @@ export let config = {
     抹杀模式: {
         name: '<span class="Qmenu">抹杀模式</span>',
         intro: '开启后,所有武将死后都会移出游戏,且游戏重新排位置',
-        init: true,
+        init: false,
     },
     加倍模式: {
         name: '<span class="Qmenu">加倍模式</span>',
@@ -176,7 +211,7 @@ export let config = {
     },
     癫狂杀戮: {
         name: '<span class="Qmenu">癫狂杀戮</span>',
-        intro: '开启后,所有非玩家角色都会死',
+        intro: '抗性？开了这个按钮,李白将会杀人不留影',
         init: false,
     },
     技能拦截: {
@@ -197,6 +232,11 @@ export let config = {
     联机禁官服将: {
         name: '<span class="Qmenu">联机禁官服将</span>',
         intro: '开启后,联机时候禁用全部官服将',
+        init: true,
+    },
+    还原初始牌堆: {
+        name: '<span class="Qmenu">还原初始牌堆</span>',
+        intro: '开启后,会锁定牌堆为161张的军争牌堆',
         init: true,
     },
     温柔一刀牌堆: {
@@ -234,11 +274,6 @@ export let config = {
         intro: '开启后,禁止所有左脚踩右脚上天的循环触发技能',
         init: true,
     },
-    禁止取消时机: {
-        name: '<span class="Qmenu">禁止取消时机</span>',
-        intro: '开启后,取消所有为xxbefore的触发时机,不能在before中断事件运行',
-        init: false,
-    },
     禁止封禁技能: {
         name: '<span class="Qmenu">禁止封禁技能</span>',
         intro: '开启后,所有封禁技能的效果将会无效(并不阻止移除技能)',
@@ -247,7 +282,7 @@ export let config = {
     禁止封禁出牌: {
         name: '<span class="Qmenu">禁止封禁出牌</span>',
         intro: '开启后,所有封禁出牌的效果将会无效',
-        init: true,
+        init: false,
     },
     全局技能拦截: {
         name: '<span class="Qmenu">全局技能拦截</span>',
@@ -355,4 +390,11 @@ export let config = {
         intro: '开启后,直接修改游戏存储的扩展',
         init: false,
     },
+};
+if (lib.config.extension_温柔一刀_全部关闭) {
+    for (const i in config) {
+        if (config[i].init && i != '全部关闭' && lib.config[`extension_温柔一刀_${i}`]) {
+            game.saveConfig(`extension_温柔一刀_${i}`, false);
+        }
+    }
 }

@@ -1,6 +1,35 @@
 import { lib, game, ui, get, ai, _status } from '../../noname.js'
-export { card, translate3, list }
+export { card, translate3 }
 const card = {
+    QQQ_baota: {
+        fullskin: true,
+        type: 'equip',
+        subtype: 'equip5',
+        skills: ['QQQ_baota'],
+        ai: {
+            equipValue: 90,
+            basic: {
+                equipValue: 90,
+                useful: 0.1,
+                value: 90,
+                order: 50,
+            },
+            result: {
+                target: (player, target, card) => get.equipResult(player, target, card.name),
+            },
+        },
+        enable: true,
+        selectTarget: -1,
+        filterTarget: function (card, player, target) {
+            if (player != target) return false;
+            return target.canEquip(card, true);
+        },
+        modTarget: true,
+        content: function () {
+            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
+        },
+        toself: true,
+    },
     QQQ_灵芝: {
         fullskin: true,
         vanish: true,
@@ -1054,6 +1083,8 @@ for (var i in card) {
     card[i].image = `ext:温柔一刀/card/${i}.jpg`;
 }
 const translate3 = {
+    QQQ_baota: '玲珑宝塔',
+    QQQ_baota_info: '每轮游戏开始时,你可以选择一名角色(不能是上次选择的角色),其被镇压于塔内(镇压效果:造成或受到伤害-1,摸牌数-1,跳过回合然后你令其回复或失去一点体力)',
     QQQ_dubao: '毒爆',
     QQQ_dubao_info: '将全场所有角色随机一半牌变成毒,然后弃置所有毒',
     QQQ_shibao: '尸爆',
@@ -1119,21 +1150,4 @@ const translate3 = {
     伏羲琴: '伏羲琴',
     伏羲琴_info: '限定技:混乱全场敌对角色,直至你下个出牌阶段开始',
 };
-const list = [//牌堆
-    ['heart', 3, '国风玉袍'],
-    ['heart', 3, '奇门八卦'],
-    ['heart', 3, '霹雳投石车'],
-    ['heart', 3, '禅让诏书'],
-    ['diamond', 6, '妆梳_trick'],
-    ['diamond', 6, '金乌落日弓'],
-    ['diamond', 6, '三略'],
-    ['diamond', 6, '妆梳_basic'],
-    ['spade', 9, '玲珑'],
-    ['spade', 9, '修罗炼狱戟'],
-    ['spade', 9, '虚妄之冕'],
-    ['spade', 9, '红棉百花袍'],
-    ['club', 12, '赤焰镇魂琴'],
-    ['club', 12, '束发紫金冠'],
-    ['club', 12, '妆梳_equip'],
-    ['club', 12, '无双方天戟'],
-];
+

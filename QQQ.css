@@ -7,6 +7,7 @@
 	z-index: 99;
 }
 
+/* 修改右键弹窗简介宽度 */
 #arena .player.Qselectable:not(.selectable):not(.selected).glow_phase {
 	box-shadow:
 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
@@ -15,6 +16,7 @@
 	z-index: 99;
 }
 
+/* 修改右键弹窗简介宽度 */
 #arena:not(.chess) .player[data-position="0"].Qselectable:not(.selected):not(.selectedx):not(.selectable):not(.glow) {
 	box-shadow:
 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
@@ -23,6 +25,7 @@
 	z-index: 99;
 }
 
+/* 武将列表 */
 #divQ {
 	display: grid;
 	grid-template-columns: repeat(8, 1fr);
@@ -37,20 +40,7 @@
 	background-image: url('../温柔一刀/image/李白4.jpg');
 }
 
-.divQ {
-	display: grid;
-	grid-template-columns: repeat(1, 1fr);
-	gap: 10px;
-	padding: 20px;
-	z-index: 99;
-	right: 30%;
-	left: 30%;
-	top: 30%;
-	bottom: 30%;
-	overflow-y: auto;
-	background-image: url('../温柔一刀/image/李白4.jpg');
-}
-
+/* 瞬发技按钮 */
 .buttonQ {
 	width: 5%;
 	height: 10%;
@@ -62,11 +52,7 @@
 	cursor: pointer;
 }
 
-.inputQ {
-	height: 80%;
-	width: 90%;
-}
-
+/* 武将包按钮 */
 .packQ {
 	text-align: center;
 	width: 150px;
@@ -79,6 +65,7 @@
 	background-color: rgb(5, 89, 52);
 }
 
+/* 武将图片 */
 .characterQ {
 	background-size: cover;
 	background-position: center;
@@ -92,11 +79,55 @@
 	position: relative;
 }
 
+/* 技能列表 */
+#skilllist {
+	z-index: 99;
+	right: 60px;
+	left: 60px;
+	top: 60px;
+	bottom: 60px;
+	overflow-y: auto;
+	background-image: url('../温柔一刀/image/李白4.jpg');
+}
+
+/* 技能及翻译按钮 */
+.skillQ {
+	position: relative;
+	width: 90%;
+	height: 10%;
+	top: 10%;
+	left: 5%;
+}
+
+
+/* 返回按钮 */
 .backQ {
 	z-index: 9999;
 	position: absolute;
 	top: 10px;
 	right: 10px;
+	color: red;
+	font-size: 25px;
+	padding: 5px 10px;
+	background: rgba(0, 0, 0, 0.3);
+}
+
+/* 输入框 */
+.shuruQ {
+	height: 5%;
+	width: 30%;
+	z-index: 9999;
+	position: absolute;
+	top: 10px;
+	right: 40%;
+}
+
+/* 搜索按钮 */
+.findQ {
+	z-index: 9999;
+	position: absolute;
+	top: 10px;
+	right: 30%;
 	color: red;
 	font-size: 25px;
 	padding: 5px 10px;
@@ -207,67 +238,20 @@
 	font-size: 20px;
 }
 
-/* 作者名动画渐变效果 */
-.Qframe {
-	animation: change 1s linear 0s infinite;
+/* 火焰文字效果 */
+.flame {
+	animation: flame 5s linear 0s infinite;
 	font-family: shousha;
 	font-weight: bold;
-	font-size: 60px;
+	font-size: 25px;
 }
 
 /* 作者名动画渐变效果 */
-@keyframes change {
-	0% {
-		color: #FF0000;
-	}
-
-	10% {
-		color: #FF7F00;
-	}
-
-	20% {
-		color: #FFFF00;
-	}
-
-	30% {
-		color: #00FF00;
-	}
-
-	40% {
-		color: #00FFFF;
-	}
-
-	50% {
-		color: #0000FF;
-	}
-
-	60% {
-		color: #8B00FF;
-	}
-
-	70% {
-		color: #0000FF;
-	}
-
-	75% {
-		color: #00FFFF;
-	}
-
-	80% {
-		color: #00FF00;
-	}
-
-	85% {
-		color: #FFFF00;
-	}
-
-	90% {
-		color: #FF7F00;
-	}
-
-	100% {
-		color: #FF0000;
-	}
+.Qflame {
+	animation: flame 5s linear 0s infinite;
+	font-family: shousha;
+	font-weight: bold;
+	font-size: 50px;
 }
 
 
@@ -280,23 +264,4 @@
 	z-index: 1;
 	overflow-x: scroll;
 	overflow-y: hidden;
-}
-
-/* 极想武将包字体 */
-.sort_jx {
-	margin: 0 auto;
-	padding: 0;
-	text-align: center;
-	text-shadow: 1.5px 1.5px 1px #89feff;
-	color: #89feff;
-	background: -webkit-linear-gradient(left, #ffd1a3, #d1ffa3, #9effce, #9effff, #ffc1ff);
-	-webkit-background-clip: text;
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
-	animation-name: colorGo2;
-	animation-duration: 6s;
-	animation-iteration-count: infinite;
-	-webkit-animation-name: colorGo2;
-	-webkit-animation-duration: 6s;
-	-webkit-animation-iteration-count: infinite;
 }
