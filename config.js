@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
 export { config };
+=======
+import { lib, game, ui, get, ai, _status } from '../../noname.js'
+export { config }
+>>>>>>> Stashed changes
 const config = {
     群聊: {
         name: '<a href="https://qm.qq.com/q/SsTlU9gc24"><span class="Qmenu">【温柔一刀】群聊: 771901025</span></a>',
@@ -134,6 +139,14 @@ const config = {
         intro: '开启后,所有武将喝的酒不会消失直到杀造成伤害',
         init: true,
     },
+<<<<<<< Updated upstream
+=======
+    抹杀模式: {
+        name: '<span class="Qmenu">抹杀模式</span>',
+        intro: '开启后,所有武将死后都会移出游戏,且游戏重新排位置',
+        init: false,
+    },
+>>>>>>> Stashed changes
     加倍模式: {
         name: '<span class="Qmenu">加倍模式</span>',
         intro: '开启后,所有限一次的技能都会变成限两次',
@@ -187,6 +200,14 @@ const config = {
     癫狂杀戮: {
         name: '<span class="Qmenu">癫狂杀戮</span>',
         intro: '抗性？开了这个按钮,李白将会杀人不留影',
+<<<<<<< Updated upstream
+=======
+        init: false,
+    },
+    技能拦截: {
+        name: '<span class="Qmenu">技能拦截</span>',
+        intro: '开启后,置空全部技能',
+>>>>>>> Stashed changes
         init: false,
     },
     取消小游戏: {
@@ -247,6 +268,14 @@ const config = {
     禁止封禁出牌: {
         name: '<span class="Qmenu">禁止封禁出牌</span>',
         intro: '开启后,所有封禁出牌的效果将会无效',
+<<<<<<< Updated upstream
+=======
+        init: false,
+    },
+    全局技能拦截: {
+        name: '<span class="Qmenu">全局技能拦截</span>',
+        intro: '开启后,将会拦截非本体和非本扩展全局技能的添加',
+>>>>>>> Stashed changes
         init: false,
     },
     飞扬跋扈模式: {
@@ -318,4 +347,8 @@ if (lib.config.extension_温柔一刀_全部关闭) {
             game.saveConfig(`extension_温柔一刀_${i}`, false);
         }
     }
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes
