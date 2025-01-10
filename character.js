@@ -18,8 +18,8 @@
                   Q:::::::Q                                           Q:::::::Q                                           Q:::::::Q                         
                    QQQQQQQQQ                                           QQQQQQQQQ                                           QQQQQQQQQ                        
 */
-import { lib, game, ui, get, ai, _status } from '../../noname.js'
-export { character, characterSort, characterIntro, characterTitle, translate2 }
+import { lib, game, ui, get, ai, _status } from '../../noname.js';
+export { character, characterSort, characterIntro, characterTitle, translate2 };
 const character = {
     QQQ_董卓: {
         sex: 'male',
@@ -131,7 +131,7 @@ const character = {
         sex: 'male',
         hp: 4,
         maxHp: 4,
-        skills: ['醉诗'],
+        skills: [],
         trashBin: ['ext:温柔一刀/image/李白.jpg'],
         isBoss: true,
         isBossAllowed: true,
@@ -193,14 +193,14 @@ const character = {
         skills: ['buyi', 'kurou'],
         trashBin: ['ext:温柔一刀/image/黄盖.jpg'],
     },
-    'QQQ_黄盖0': {
+    QQQ_黄盖0: {
         sex: 'male',
         hp: 4,
         maxHp: 4,
         skills: ['QQQ_kurou'],
         trashBin: ['ext:温柔一刀/image/黄盖.jpg'],
     },
-    'QQQ_黄盖1': {
+    QQQ_黄盖1: {
         sex: 'male',
         hp: 4,
         maxHp: 4,
@@ -466,13 +466,6 @@ const character = {
         skills: ['亡语', 'kunfen'],
         trashBin: ['ext:温柔一刀/image/亡语.jpg'],
     },
-    QQQ_印牌: {
-        sex: 'male',
-        hp: 4,
-        maxHp: 4,
-        skills: ['印牌'],
-        trashBin: ['ext:温柔一刀/image/印牌.jpg'],
-    },
     QQQ_南殷崇岳: {
         sex: 'male',
         hp: 4,
@@ -543,7 +536,7 @@ const character = {
         skills: ['夺锐'],
         trashBin: ['ext:温柔一刀/image/神张辽.jpg'],
     },
-    'QQQ_曹仁': {
+    QQQ_曹仁: {
         sex: 'male',
         hp: 4,
         maxHp: 4,
@@ -561,14 +554,14 @@ const character = {
         sex: 'female',
         hp: 4,
         maxHp: 4,
-        skills: ['同化', '寄生', '暝', '寒'],
+        skills: ['QQQ_tonghua', '寄生', '暝', '寒'],
         trashBin: ['ext:温柔一刀/image/剑宝.jpg'],
     },
     QQQ_晦暝: {
         sex: 'male',
         hp: 2,
         maxHp: 2,
-        skills: ['凌2', '晦暝'],
+        skills: ['寒_1'],
         trashBin: ['ext:温柔一刀/image/晦暝.jpg'],
     },
     QQQ_归终: {
@@ -732,14 +725,14 @@ const character = {
         skills: ['制衡'],
         trashBin: ['ext:温柔一刀/image/制衡.jpg'],
     },
-    'QQQ_全装备1': {
+    QQQ_全装备1: {
         sex: 'male',
         hp: 4,
         maxHp: 4,
         skills: ['全装备', 'gzjili', 'olqiangxi', 'qiaoli', 'olsbdulie'],
         trashBin: ['ext:温柔一刀/image/全装备1.jpg'],
     },
-    'QQQ_全装备2': {
+    QQQ_全装备2: {
         sex: 'male',
         hp: 4,
         maxHp: 4,
@@ -809,42 +802,42 @@ const character = {
         skills: ['缓图'],
         trashBin: ['ext:温柔一刀/image/阎圃.jpg'],
     },
-    'QQQ_许劭1': {
+    QQQ_许劭1: {
         sex: 'female',
         hp: 4,
         maxHp: 4,
         skills: ['评鉴伤害'],
         trashBin: ['ext:温柔一刀/image/许劭.jpg'],
     },
-    'QQQ_许劭2': {
+    QQQ_许劭2: {
         sex: 'female',
         hp: 4,
         maxHp: 4,
         skills: ['评鉴使用'],
         trashBin: ['ext:温柔一刀/image/许劭.jpg'],
     },
-    'QQQ_许劭3': {
+    QQQ_许劭3: {
         sex: 'female',
         hp: 4,
         maxHp: 4,
         skills: ['评鉴失去'],
         trashBin: ['ext:温柔一刀/image/许劭.jpg'],
     },
-    'QQQ_许劭4': {
+    QQQ_许劭4: {
         sex: 'female',
         hp: 4,
         maxHp: 4,
         skills: ['评鉴阶段', '自废'],
         trashBin: ['ext:温柔一刀/image/许劭.jpg'],
     },
-    'QQQ_许劭5': {
+    QQQ_许劭5: {
         sex: 'female',
         hp: 4,
         maxHp: 4,
         skills: ['评鉴全场'],
         trashBin: ['ext:温柔一刀/image/许劭.jpg'],
     },
-    'QQQ_许劭6': {
+    QQQ_许劭6: {
         sex: 'female',
         hp: 4,
         maxHp: 4,
@@ -1002,7 +995,7 @@ const character = {
         sex: 'male',
         hp: 4,
         maxHp: 4,
-        skills: ['污染', '掠夺'],
+        skills: ['掠夺'],
         trashBin: ['ext:温柔一刀/image/污染.jpg'],
     },
     QQQ_燃灯古佛: {
@@ -1226,7 +1219,7 @@ const character = {
         sex: 'male',
         hp: 10,
         maxHp: 10,
-        skills: ['bug', '测试', 'mx_pingyiboduo', 'mx_guangyingjichi'],
+        skills: ['bug', '测试'],
         trashBin: ['ext:温柔一刀/image/测试.jpg'],
     },
     QQQ_刘备: {
@@ -1256,7 +1249,7 @@ const character = {
         maxHp: 4,
         skills: ['QQQ_longjing'],
         trashBin: ['ext:温柔一刀/image/QQQ_longjing.jpg'],
-    },//173
+    }, //173
 };
 const characterSort = {
     温柔一刀: {
@@ -1266,7 +1259,7 @@ const characterSort = {
         伤心一箭: [],
         朝天一棍: [],
     },
-};//155
+}; //155
 const characterIntro = {
     QQQ_李白: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)<br>在登临至高的路上,与我相伴的,只有一柄剑,一壶酒.我既是酒神,也是剑仙',
     QQQ_许天: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)<br>许天没有回头,而在他背后混沌与火的狂潮中,那撕裂时间的恶魔对着他狂笑.<br>世界在这一刻步入终结,就像怀表摔碎在石面.<br>聆听,那最后一声回响.<br>三十五亿光年的黑暗将他吞噬,星空,近在咫尺',
@@ -1304,7 +1297,7 @@ const characterIntro = {
     QQQ_longwei: '设计者:风羽/wn(1092917020)<br>编写者:潜在水里的火(1476811518)',
     QQQ_马克思: '设计者:YaTes(601902458)<br>编写者:潜在水里的火(1476811518)',
     QQQ_宣公主: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)',
-};//武将简介
+}; //武将简介
 const characterTitle = {
     QQQ_李白: `<b style='color: #00FFFF; font-size: 25px;'>醉酒狂詩  青蓮劍仙</b>`,
     QQQ_董卓: `<b style='color: #00FFFF; font-size: 25px;'>酒池肉林  唯我獨尊</b>`,
@@ -1336,7 +1329,7 @@ const characterTitle = {
     QQQ_杨婉: `<b style='color: #00FFFF; font-size: 25px;'>前路之行,幽深且阻,此局不可言喻  失卻之物,恒久徘徊,此地靜謐瘋狂</b>`,
     QQQ_兀突骨: `<b style='color: #00FFFF; font-size: 25px;'>火海肉魔</b>`,
     QQQ_mengwanqing: '婉清挽情挽不住情',
-};//武将绰号
+}; //武将绰号
 const translate2 = {
     技能堆叠: '技能堆叠',
     惊艳一枪: '惊艳一枪(狂)',
@@ -1416,7 +1409,6 @@ const translate2 = {
     QQQ_孙权: '孙权',
     QQQ_平衡: '平衡',
     QQQ_亡语: '亡语',
-    QQQ_印牌: '印牌',
     QQQ_南殷崇岳: '南殷崇岳',
     QQQ_摸六三刀: '摸六三刀',
     QQQ_体力上限: '体力上限',
@@ -1518,41 +1510,39 @@ const translate2 = {
 };
 const num = Math.ceil(Object.keys(character).length / 4);
 var num1 = 0;
-const info = characterSort.温柔一刀;
-for (var i in character) {
+const sort = characterSort.温柔一刀;
+for (const i in character) {
+    const info = character[i];
+    if (info.isBoss) {
+        QQQ.boss.push(i);
+    }
     num1++;
     if (0 < num1 && num1 <= num) {
-        character[i].group = '狂';
-        if (!info.技能堆叠.includes(i)) {
-            info.惊艳一枪.add(i);
+        info.group = '狂';
+        if (!sort.技能堆叠.includes(i)) {
+            sort.惊艳一枪.add(i);
+        }
+    } else if (num < num1 && num1 <= num * 2) {
+        info.group = '龙';
+        if (!sort.技能堆叠.includes(i)) {
+            sort.温柔一刀.add(i);
+        }
+    } else if (num * 2 < num1 && num1 <= num * 3) {
+        info.group = '啸';
+        if (!sort.技能堆叠.includes(i)) {
+            sort.伤心一箭.add(i);
+        }
+    } else if (num * 3 < num1 && num1 <= num * 4) {
+        info.group = '天';
+        if (!sort.技能堆叠.includes(i)) {
+            sort.朝天一棍.add(i);
         }
     }
-    else if (num < num1 && num1 <= num * 2) {
-        character[i].group = '龙';
-        if (!info.技能堆叠.includes(i)) {
-            info.温柔一刀.add(i);
-        }
-    }
-    else if (num * 2 < num1 && num1 <= num * 3) {
-        character[i].group = '啸';
-        if (!info.技能堆叠.includes(i)) {
-            info.伤心一箭.add(i);
-        }
-    }
-    else if (num * 3 < num1 && num1 <= num * 4) {
-        character[i].group = '天';
-        if (!info.技能堆叠.includes(i)) {
-            info.朝天一棍.add(i);
-        }
-    }
-    character[i].isZhugong = true;
-    character[i].dieAudios = [`ext:温柔一刀/die/${i}.mp3`];
+    info.isZhugong = true;
+    info.dieAudios = [`ext:温柔一刀/die/${i}.mp3`];
     translate2[i] = `<span class="flame">火</span>${translate2[i]}`;
-}
-if (lib.config.extension_温柔一刀_AI禁用) {
-    for (var i in character) {
-        lib.config.forbidai.add(i);//将包仅点将可用
-        character[i].isAiForbidden = true;//之前的单将Forbidai
+    if (lib.config.extension_温柔一刀_AI禁用) {
+        lib.config.forbidai.add(i); //将包仅点将可用
+        info.isAiForbidden = true; //之前的单将Forbidai
     }
 }
-

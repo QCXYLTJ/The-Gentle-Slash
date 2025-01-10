@@ -1,187 +1,82 @@
-import { lib, game, ui, get, ai, _status } from '../../noname.js'
-export { card, translate3 }
+import { lib, game, ui, get, ai, _status } from '../../noname.js';
+export { card, translate3 };
 const card = {
+    QQQ_EldenRing: {
+        type: 'equip',
+        subtype: 'equip5',
+        skills: ['QQQ_EldenRing'],
+        artifact: true,
+        ai: {
+            equipValue: 90,
+        },
+    },
+    QQQ_Marikashichui: {
+        type: 'equip',
+        subtype: 'equip1',
+        distance: {
+            attackFrom: -2,
+        },
+        skills: ['QQQ_Marikashichui'],
+        artifact: true,
+        ai: {
+            equipValue: 70,
+        },
+    },
+    QQQ_Radagonshichui: {
+        type: 'equip',
+        subtype: 'equip1',
+        distance: {
+            attackFrom: -2,
+        },
+        skills: ['QQQ_Radagonshichui'],
+        artifact: true,
+        ai: {
+            equipValue: 70,
+        },
+    },
     QQQ_baota: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip5',
         skills: ['QQQ_baota'],
+        artifact: true,
         ai: {
             equipValue: 90,
-            basic: {
-                equipValue: 90,
-                useful: 0.1,
-                value: 90,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        enable: true,
-        selectTarget: -1,
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        modTarget: true,
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
-        toself: true,
-    },
-    QQQ_灵芝: {
-        fullskin: true,
-        vanish: true,
-        type: 'basic',
-        enable: true,
-        filterTarget: function (card, player, target) {
-            return true;
-        },
-        content: function () {
-            'step 0'
-            target.gainMaxHp();
-            'step 1'
-            target.recover(player.maxHp - player.hp);
-        },
-        ai: {
-            order: 10,
-            result: {
-                target: 4,
-            },
-        },
-    },
-    火: {
-        audio: true,
-        fullskin: true,
-        type: 'basic',
-        enable: false,
-        destroy: 'discardPile',
-        ai: {
-            basic: {
-                useful: 0,
-                value: 0,
-            },
         },
     },
     国风玉袍: {
         type: 'equip',
-        fullskin: true,
         subtype: 'equip2',
         skills: ['guofengyupao'],
         ai: {
             equipValue: 90,
-            basic: {
-                equipValue: 90,
-                useful: 0.1,
-                value: 90,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
-        enable: true,
-        selectTarget: -1,
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        modTarget: true,
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
-        toself: true,
     },
     奇门八卦: {
         type: 'equip',
-        fullskin: true,
         subtype: 'equip2',
         skills: ['qimenbagua'],
         ai: {
             equipValue: 80,
-            basic: {
-                equipValue: 80,
-                useful: 0.1,
-                value: 80,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
-        enable: true,
-        selectTarget: -1,
-        filterTarget: (card, player, target) => player == target && target.canEquip(card, true),
-        modTarget: true,
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
-        toself: true,
     },
     霹雳投石车: {
-        fullskin: true,
-        derivation: 'dc_liuye',
-        cardimage: 'ly_piliche',
         type: 'equip',
         subtype: 'equip5',
         skills: ['pilitoushiche'],
         ai: {
             equipValue: 90,
-            basic: {
-                equipValue: 90,
-                useful: 0.1,
-                value: 90,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
-        enable: true,
-        selectTarget: -1,
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        modTarget: true,
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
-        toself: true,
     },
     禅让诏书: {
         type: 'equip',
         subtype: 'equip5',
         skills: ['禅让诏书'],
-        fullskin: true,
-        enable: true,
-        selectTarget: -1,
-        modTarget: true,
-        toself: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 0.1,
-                value: 70,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     赤血青锋: {
         type: 'equip',
-        fullskin: true,
         subtype: 'equip1',
         distance: {
             attackFrom: -1,
@@ -189,212 +84,64 @@ const card = {
         skills: ['青锋'],
         ai: {
             equipValue: 80,
-            basic: {
-                equipValue: 80,
-                useful: 0.1,
-                value: 80,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
-        enable: true,
-        selectTarget: -1,
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        modTarget: true,
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
-        toself: true,
     },
     赤焰镇魂琴: {
         type: 'equip',
         subtype: 'equip1',
         skills: ['赤焰镇魂琴'],
-        fullskin: true,
-        enable: true,
-        selectTarget: -1,
-        modTarget: true,
-        toself: true,
         distance: {
             attackFrom: -3,
         },
         ai: {
             equipValue: 60,
-            basic: {
-                equipValue: 60,
-                useful: 0.1,
-                value: 60,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     金乌落日弓: {
         type: 'equip',
         subtype: 'equip1',
         skills: ['金乌落日弓'],
-        fullskin: true,
-        enable: true,
-        selectTarget: -1,
-        modTarget: true,
-        toself: true,
         distance: {
             attackFrom: -8,
         },
         ai: {
             equipValue: 60,
-            basic: {
-                equipValue: 60,
-                useful: 0.1,
-                value: 60,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     三略: {
-        derivation: 'ol_puyuan',
         type: 'equip',
         subtype: 'equip5',
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 0.1,
-                value: 70,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
         skills: ['sanlve_skill'],
-        fullskin: true,
-        enable: true,
-        selectTarget: -1,
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        modTarget: true,
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
-        toself: true,
     },
     束发紫金冠: {
-        derivation: 'ol_puyuan',
         type: 'equip',
         subtype: 'equip5',
         modeimage: 'boss',
         ai: {
             equipValue: 85,
-            basic: {
-                equipValue: 85,
-                useful: 0.1,
-                value: 85,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
         skills: ['shufazijinguan_skill'],
-        fullskin: true,
-        enable: true,
-        selectTarget: -1,
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        modTarget: true,
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
-        toself: true,
     },
     修罗炼狱戟: {
         type: 'equip',
         subtype: 'equip1',
         skills: ['修罗炼狱戟'],
-        fullskin: true,
-        enable: true,
-        selectTarget: -1,
-        modTarget: true,
-        toself: true,
         distance: {
             attackFrom: -3,
         },
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 0.1,
-                value: 70,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     虚妄之冕: {
         type: 'equip',
-        fullskin: true,
         subtype: 'equip5',
-        enable: true,
-        selectTarget: -1,
-        modTarget: true,
-        toself: true,
         skills: ['xuwangzhimian'],
         ai: {
             equipValue: 80,
-            basic: {
-                equipValue: 80,
-                useful: 0.1,
-                value: 80,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     红棉百花袍: {
@@ -402,115 +149,31 @@ const card = {
         subtype: 'equip2',
         ai: {
             equipValue: 60,
-            basic: {
-                equipValue: 60,
-                useful: 0.1,
-                value: 60,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
         skills: ['hongmianbaihuapao_skill'],
-        fullskin: true,
-        enable: true,
-        selectTarget: -1,
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        modTarget: true,
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
-        toself: true,
     },
     妆梳_trick: {
         type: 'equip',
-        fullskin: true,
         subtype: 'equip5',
-        enable: true,
-        selectTarget: -1,
-        modTarget: true,
-        toself: true,
         skills: ['犀梳'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
         ai: {
             equipValue: 80,
-            basic: {
-                equipValue: 80,
-                useful: 0.1,
-                value: 80,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
     },
     妆梳_basic: {
         type: 'equip',
-        fullskin: true,
         subtype: 'equip5',
-        enable: true,
-        selectTarget: -1,
-        modTarget: true,
-        toself: true,
         skills: ['琼梳'],
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 0.1,
-                value: 70,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     妆梳_equip: {
         type: 'equip',
-        fullskin: true,
         subtype: 'equip5',
-        enable: true,
-        selectTarget: -1,
-        modTarget: true,
-        toself: true,
         skills: ['金梳'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 0.1,
-                value: 70,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
     },
     玲珑: {
@@ -518,175 +181,58 @@ const card = {
         subtype: 'equip2',
         ai: {
             equipValue: 80,
-            basic: {
-                equipValue: 80,
-                useful: 0.1,
-                value: 80,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
         },
         skills: ['玲珑'],
-        fullskin: true,
-        enable: true,
-        selectTarget: -1,
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        modTarget: true,
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
-        },
-        toself: true,
     },
     无双方天戟: {
         type: 'equip',
         subtype: 'equip1',
         skills: ['无双方天戟'],
-        fullskin: true,
-        enable: true,
-        selectTarget: -1,
-        modTarget: true,
-        toself: true,
         distance: {
             attackFrom: -2,
         },
         ai: {
             equipValue: 85,
-            basic: {
-                equipValue: 85,
-                useful: 0.1,
-                value: 85,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     崆峒印: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip2',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['崆峒印'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     东皇钟: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip5',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['东皇钟'],
         mode: ['boss'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     封神榜: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip5',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['封神榜'],
         mode: ['boss'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     封神: {
-        fullskin: true,
         type: 'basic',
-        enable: true,
-        selectTarget: -1,
         cardcolor: 'red',
-        toself: true,
         filterTarget: function (card, player, target) {
             return target == player;
         },
-        modTarget: true,
         mode: ['boss'],
-        async content(event, trigger, player) {//QQQ
+        async content(event, trigger, player) {
+            //QQQ
             if (event.cards[0] && event.cards[0].Q) {
                 player.addSkill(event.cards[0].Q);
                 game.cardsGotoSpecial(event.cards[0]);
@@ -704,184 +250,56 @@ const card = {
         },
     },
     昊天塔: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip4',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['昊天塔'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
-        NR: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     炼妖壶: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip3',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['炼妖壶'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     昆仑镜: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip2',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['昆仑镜'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     盘古斧: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip1',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['盘古斧'],
         distance: {
             attackFrom: -2,
         },
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     女娲石: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip3',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['女娲石'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 10,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     轩辕剑: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip1',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['轩辕剑'],
         distance: {
             attackFrom: -1,
@@ -890,106 +308,67 @@ const card = {
                 return 2;
             },
         },
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     神农鼎: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip3',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['神农鼎'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 50,
-            },
-            result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
-            },
-        },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
         },
     },
     伏羲琴: {
-        fullskin: true,
         type: 'equip',
         subtype: 'equip5',
-        enable: true,
-        selectTarget: -1,
-        toself: false,
-        modTarget: true,
-        equipDelay: false,
-        loseDelay: false,
         skills: ['伏羲琴'],
-        filterTarget: function (card, player, target) {
-            if (player != target) return false;
-            return target.canEquip(card, true);
-        },
-        destroy: true,
-        NL: true,
+        artifact: true,
         ai: {
             equipValue: 70,
-            basic: {
-                equipValue: 70,
-                useful: 2,
-                value: 70,
-                order: 10,
-            },
+        },
+    },
+    QQQ_灵芝: {
+        type: 'basic',
+        savable: true,
+        filterTarget: function (card, player, target) {
+            return true;
+        },
+        async content(event, trigger, player) {
+            event.target.maxHp++;
+            event.target.hp = event.target.maxHp;
+        },
+        ai: {
+            order: 10,
             result: {
-                target: (player, target, card) => get.equipResult(player, target, card.name),
+                target: 4,
+            },
+            tag: {
+                recover: 1,
+                save: 1,
             },
         },
-        content: function () {
-            if (cards.length && get.position(cards[0], true) == 'o') target.equip(cards[0]);
+    },
+    火: {
+        type: 'basic',
+        enable: false,
+        ai: {
+            basic: {
+                useful: 0,
+                value: 0,
+            },
         },
     },
     //毒爆:将全场所有角色随机一半牌变成毒,然后弃置所有毒
     QQQ_dubao: {
-        audio: true,
-        fullskin: true,
-        type: "trick",
-        enable: true,
-        selectTarget: -1,
-        defaultYingbianEffect: "remove",
+        type: 'trick',
         filterTarget: function (card, player, target) {
             return true;
         },
-        reverseOrder: true,
+        selectTarget: -1,
         async content(event, trigger, player) {
             const cards = event.target.getCards('hej');
             const cards1 = cards.randomGets(Math.ceil(cards.length / 2));
@@ -1001,11 +380,10 @@ const card = {
         },
         ai: {
             result: {
-                player: function (player, target, card) {//主动技是否发动
-                    var num1 = game.players.filter(q => !q.isFriendsOf(player))
-                        .reduce((acc, curr) => acc + curr.countCards('he'), 0);
-                    var num2 = game.players.filter(q => q.isFriendsOf(player))
-                        .reduce((acc, curr) => acc + curr.countCards('he'), 0);
+                player: function (player, target, card) {
+                    //主动技是否发动
+                    var num1 = game.players.filter((q) => !q.isFriendsOf(player)).reduce((acc, curr) => acc + curr.countCards('he'), 0);
+                    var num2 = game.players.filter((q) => q.isFriendsOf(player)).reduce((acc, curr) => acc + curr.countCards('he'), 0);
                     return num1 - num2;
                 },
             },
@@ -1018,16 +396,16 @@ const card = {
     },
     //尸爆:对一名已死亡的角色使用,将其炸掉（移出游戏）,然后对其相邻角色造成一点伤害
     QQQ_shibao: {
-        audio: true,
-        fullskin: true,
-        type: "trick",
-        enable: true,
-        selectTarget: -1,
+        type: 'trick',
         filterTarget: function (card, player, target) {
-            return player == target && game.dead.length;
+            return true;
         },
+        selectTarget: -1,
         async content(event, trigger, player) {
-            const { result: { targets } } = await player.chooseTarget('对一名已死亡的角色使用,将其炸掉', (c, p, t) => t.isDead())
+            const {
+                result: { targets },
+            } = await player
+                .chooseTarget('对一名已死亡的角色使用,将其炸掉', (c, p, t) => t.isDead())
                 .set('deadTarget', true)
                 .set('ai', (target) => {
                     var num = 0;
@@ -1056,7 +434,8 @@ const card = {
         },
         ai: {
             result: {
-                player: function (player, target, card) {//主动技是否发动
+                player: function (player, target, card) {
+                    //主动技是否发动
                     return game.dead.filter((target) => {
                         var num = 0;
                         const next = target.getNext();
@@ -1078,11 +457,134 @@ const card = {
             },
         },
     },
+    //我就打你: 普通伤害锦囊牌，视为对目标使用随机一张伤害牌
+    QQQ_wodani: {
+        type: 'trick',
+        filterTarget: function (card, player, target) {
+            return target != player;
+        },
+        selectTarget: 1,
+        async content(event, trigger, player) {
+            const list = game.qcard(player, false, false).filter((q) => lib.card[q[2]].ai?.tag?.damage > 0);
+            const card = list.randomGet();
+            player.useCard({ name: card[2], nature: card[3] }, event.target, false);
+        },
+        ai: {
+            order: 10,
+            result: {
+                target: -1,
+            },
+            tag: {
+                damgage: 1,
+            },
+        },
+    },
 };
-for (var i in card) {
-    card[i].image = `ext:温柔一刀/card/${i}.jpg`;
+for (const i in card) {
+    const info = card[i];
+    if (!info.audio) {
+        info.audio = 'ext:温柔一刀/audio:2';
+    }
+    info.modTarget = true;
+    info.equipDelay = false;
+    info.loseDelay = false;
+    info.image = `ext:温柔一刀/card/${i}.jpg`;
+    info.enable = true;
+    if (info.type == 'equip') {
+        info.toself = true;
+        info.filterTarget = function (card, player, target) {
+            return player == target && target.canEquip(card, true);
+        };
+        info.selectTarget = -1;
+        info.ai.basic = {
+            equipValue: info.ai.equipValue,
+            useful: 0.1,
+            value: info.ai.equipValue,
+            order: info.ai.equipValue,
+        };
+        if (info.artifact) {
+            info.content = async function (event, trigger, player) {
+                if (event.cards.length) {
+                    const card = event.cards[0];
+                    if (card) {
+                        const name = card.name;
+                        Reflect.defineProperty(card, 'name', {
+                            get() {
+                                return name;
+                            },
+                            set() { },
+                            configurable: false,
+                        });
+                        card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number} ${get.translation(card.name)}`;
+                        const vcard = new lib.element.VCard(card);
+                        if (!player.artifact) {
+                            player.artifact = [];
+                        }
+                        player.artifact.add(vcard);
+                        let equips = player.vcardsMap.equips || [];
+                        Reflect.defineProperty(player.vcardsMap, 'equips', {
+                            get() {
+                                equips = [...new Set([...equips, ...player.artifact])];
+                                return equips;
+                            },
+                            configurable: false,
+                            set(value) {
+                                equips = value;
+                            },
+                        });
+                        if (player.playerid) {
+                            if (lib.card[card.name].skills) {
+                                const skill = lib.card[card.name].skills.slice();
+                                game.expandSkills(skill);
+                                for (const x of skill) {
+                                    const trigger = lib.skill[x].trigger;
+                                    for (const i in trigger) {
+                                        if (typeof trigger[i] == 'string') {
+                                            trigger[i] = [trigger[i]];
+                                        }
+                                        if (Array.isArray(trigger[i])) {
+                                            for (const j of trigger[i]) {
+                                                const key = `${player.playerid}_${i}_${j}`;
+                                                const hook = lib.hook[key] || [];
+                                                Reflect.defineProperty(lib.hook, key, {
+                                                    get() {
+                                                        hook.add(x);
+                                                        return hook;
+                                                    },
+                                                    set() { },
+                                                    configurable: false,
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        player.node.equips.lock(card);
+                    }
+                }
+            };
+            info.ai.result = {
+                keepAI: true,//防止result被本体替换
+                player: 99,
+                target: 99,
+            };
+        }
+        else {
+            info.content = async function (event, trigger, player) {
+                if (event.cards.length) {
+                    event.target.equip(event.cards[0]);
+                }
+            };
+            info.ai.result = {
+                target: (player, target, card) => get.equipResult(player, target, card),
+            };
+        }
+    }
 }
 const translate3 = {
+    QQQ_wodani: '我就打你',
+    QQQ_wodani_info: '普通伤害锦囊牌，视为对目标使用随机一张伤害牌',
     QQQ_baota: '玲珑宝塔',
     QQQ_baota_info: '每轮游戏开始时,你可以选择一名角色(不能是上次选择的角色),其被镇压于塔内(镇压效果:造成或受到伤害-1,摸牌数-1,跳过回合然后你令其回复或失去一点体力)',
     QQQ_dubao: '毒爆',
@@ -1142,12 +644,11 @@ const translate3 = {
     盘古斧: '盘古斧',
     盘古斧_info: '每回合限三次,你使用牌指定目标后,你可以复制目标角色区域内的一张牌并获得复制牌,复制牌在进入弃牌堆后销毁',
     女娲石: '女娲石',
-    女娲石_info: '出牌阶段或当你死亡时,你可以选择一名已阵亡的角色,将其复活,体力调整至体力上限、摸四张牌,改为由你操控,然后本局永久移除女娲石',
+    女娲石_info: '每五轮增加一次使用次数,出牌阶段或当你死亡时,你可以选择一名已阵亡的角色,将其复活,体力调整至体力上限、摸四张牌,改为由你操控',
     轩辕剑: '轩辕剑',
     轩辕剑_info: '当你使用杀指定目标时,阳:你令其恢复一点体力,令此杀失效,你摸三张牌;阴:你可以额外指定两名目标,对目标之一造成一点伤害',
     神农鼎: '神农鼎',
     神农鼎_info: '改变你桃的作用,改为可以回血超过上限且回复效果两倍且获得两点护甲.当有角色使用桃后,你摸一张牌.每回合限一次,你可以将一张牌当桃使用',
     伏羲琴: '伏羲琴',
-    伏羲琴_info: '限定技:混乱全场敌对角色,直至你下个出牌阶段开始',
+    伏羲琴_info: '每五轮增加一次使用次数,混乱全场敌对角色,直至你下个出牌阶段开始',
 };
-

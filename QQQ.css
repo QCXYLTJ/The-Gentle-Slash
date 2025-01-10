@@ -1,3 +1,14 @@
+/* 卡牌永久标记 */
+.card>.qtag {
+	position: relative;
+	font-size: 25px;
+	bottom: 5px;
+	left: 5px;
+	text-align: left;
+	color: gold;
+	text-shadow: gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 1px;
+}
+
 /* 修改右键弹窗简介宽度 */
 #arena .player.Qselectable {
 	box-shadow:
@@ -32,10 +43,10 @@
 	gap: 10px;
 	padding: 20px;
 	z-index: 99;
-	right: 60px;
-	left: 60px;
-	top: 60px;
-	bottom: 60px;
+	right: 10%;
+	left: 10%;
+	top: 10%;
+	bottom: 10%;
 	overflow-y: auto;
 	background-image: url('../温柔一刀/image/李白4.jpg');
 }
@@ -55,8 +66,9 @@
 /* 武将包按钮 */
 .packQ {
 	text-align: center;
-	width: 150px;
-	height: 25px;
+	width: 60%;
+	height: 20%;
+	min-height: 20px;
 	display: block;
 	overflow: hidden;
 	border-radius: 2px;
@@ -70,8 +82,9 @@
 	background-size: cover;
 	background-position: center;
 	text-align: center;
-	width: 150px;
-	height: 150px;
+	width: 60%;
+	height: 60%;
+	min-height: 90px;
 	display: block;
 	overflow: hidden;
 	border-radius: 2px;
@@ -82,10 +95,10 @@
 /* 技能列表 */
 #skilllist {
 	z-index: 99;
-	right: 60px;
-	left: 60px;
-	top: 60px;
-	bottom: 60px;
+	right: 10%;
+	left: 10%;
+	top: 10%;
+	bottom: 10%;
 	overflow-y: auto;
 	background-image: url('../温柔一刀/image/李白4.jpg');
 }
@@ -97,6 +110,22 @@
 	height: 10%;
 	top: 10%;
 	left: 5%;
+	z-index: 999;
+	font-size: 25px;
+	color: rgb(35, 21, 221);
+}
+
+/* 技能及翻译按钮 */
+.introQ {
+	position: relative;
+	width: 60%;
+	height: 5%;
+	top: 5%;
+	left: 20%;
+	right: 20%;
+	z-index: 999;
+	font-size: 25px;
+	color: rgb(35, 21, 221);
 }
 
 
@@ -104,8 +133,8 @@
 .backQ {
 	z-index: 9999;
 	position: absolute;
-	top: 10px;
-	right: 10px;
+	top: 5%;
+	right: 5%;
 	color: red;
 	font-size: 25px;
 	padding: 5px 10px;
@@ -118,7 +147,7 @@
 	width: 30%;
 	z-index: 9999;
 	position: absolute;
-	top: 10px;
+	top: 5%;
 	right: 40%;
 }
 
@@ -126,7 +155,7 @@
 .findQ {
 	z-index: 9999;
 	position: absolute;
-	top: 10px;
+	top: 5%;
 	right: 30%;
 	color: red;
 	font-size: 25px;
@@ -136,8 +165,9 @@
 
 .configQ.on {
 	text-align: center;
-	width: 150px;
-	height: 25px;
+	width: 60%;
+	height: 20%;
+	min-height: 20px;
 	display: block;
 	overflow: hidden;
 	border-radius: 2px;
@@ -148,8 +178,9 @@
 
 .configQ:not(.on) {
 	text-align: center;
-	width: 150px;
-	height: 25px;
+	width: 60%;
+	height: 20%;
+	min-height: 20px;
 	display: block;
 	overflow: hidden;
 	border-radius: 2px;
@@ -160,8 +191,9 @@
 
 
 .configQ.on>.toggleQ {
-	width: 25px;
-	height: 25px;
+	width: 20%;
+	height: 20%;
+	min-height: 20px;
 	border-radius: 100%;
 	position: absolute;
 	top: 0;
@@ -172,8 +204,9 @@
 }
 
 .configQ:not(.on)>.toggleQ {
-	width: 25px;
-	height: 25px;
+	width: 20%;
+	height: 20%;
+	min-height: 20px;
 	border-radius: 100%;
 	position: absolute;
 	top: 0;
@@ -264,4 +297,51 @@
 	z-index: 1;
 	overflow-x: scroll;
 	overflow-y: hidden;
+}
+
+.poem-container {
+	right: 10%;
+	left: 10%;
+	top: 10%;
+	bottom: 10%;
+	display: flex;
+	flex-direction: row-reverse;
+	/* 使列从右往左排列 */
+	justify-content: flex-end;
+	/* 列靠右对齐 */
+}
+
+.column {
+	right: -60%;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	margin-left: 20px;
+	/* 增大列之间的间距 */
+}
+
+.poem-char {
+	opacity: 0;
+	transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+	margin-bottom: 20px;
+	/* 增大字符之间的间距 */
+	font-size: 24px;
+	color: #8d1d09;
+	text-shadow: 0 0 10px #8d1d09, 0 0 20px #8d1d09, 0 0 30px #8d1d09;
+	filter: url(#fireFilter);
+	/* 应用SVG滤镜 */
+	transform: scale(0);
+	/* 缩放效果 */
+}
+
+.show {
+	opacity: 1;
+	transform: scale(1);
+	/* 恢复缩放 */
+}
+
+/* SVG滤镜定义 */
+svg {
+	position: absolute;
+	top: -1000px;
 }

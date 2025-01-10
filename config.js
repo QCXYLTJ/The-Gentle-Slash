@@ -1,5 +1,5 @@
-import { lib, game, ui, get, ai, _status } from '../../noname.js'
-export { config }
+import { lib, game, ui, get, ai, _status } from '../../noname.js';
+export { config };
 const config = {
     群聊: {
         name: '<a href="https://qm.qq.com/q/SsTlU9gc24"><span class="Qmenu">【温柔一刀】群聊: 771901025</span></a>',
@@ -29,11 +29,6 @@ const config = {
     报错: {
         name: '<span class="Qmenu">报错</span>',
         intro: '开启后,会进入开发者模式,报出很多存在的bug',
-        init: false,
-    },
-    记录: {
-        name: '<span class="Qmenu">记录</span>',
-        intro: '开启后,会记录每个触发的时机名称',
         init: false,
     },
     BGM: {
@@ -75,11 +70,6 @@ const config = {
         name: '<span class="Qmenu">文字闪烁</span>',
         intro: '开启后,部分文字会附加闪烁动画效果',
         init: true,
-    },
-    切入动画: {
-        name: '<span class="Qmenu">切入动画</span>',
-        intro: '开启后,游戏开始时将会切入一段动画',
-        init: false,
     },
     禁止延迟: {
         name: '<span class="Qmenu">禁止延迟</span>',
@@ -144,11 +134,6 @@ const config = {
         intro: '开启后,所有武将喝的酒不会消失直到杀造成伤害',
         init: true,
     },
-    抹杀模式: {
-        name: '<span class="Qmenu">抹杀模式</span>',
-        intro: '开启后,所有武将死后都会移出游戏,且游戏重新排位置',
-        init: false,
-    },
     加倍模式: {
         name: '<span class="Qmenu">加倍模式</span>',
         intro: '开启后,所有限一次的技能都会变成限两次',
@@ -199,35 +184,15 @@ const config = {
         intro: '开启后,会增加右键武将详细信息内容,显示子技能和临时技能和各种buff',
         init: true,
     },
-    透明标记: {
-        name: '<span class="Qmenu">透明标记</span>',
-        intro: '开启后,会将标记背景图透明显示,防止遮挡其他元素',
-        init: false,
-    },
-    技能失效: {
-        name: '<span class="Qmenu">技能失效</span>',
-        intro: '开启后,描述长度超过99的小作文技能将会失效',
-        init: false,
-    },
     癫狂杀戮: {
         name: '<span class="Qmenu">癫狂杀戮</span>',
         intro: '抗性？开了这个按钮,李白将会杀人不留影',
-        init: false,
-    },
-    技能拦截: {
-        name: '<span class="Qmenu">技能拦截</span>',
-        intro: '开启后,置空全部技能',
         init: false,
     },
     取消小游戏: {
         name: '<span class="Qmenu">取消小游戏</span>',
         intro: '开启后,取消小游戏评才、冲虚、御风、整经',
         init: true,
-    },
-    禁止多回合: {
-        name: '<span class="Qmenu">禁止多回合</span>',
-        intro: '开启后,每轮每个人只能进行一个回合',
-        init: false,
     },
     联机禁官服将: {
         name: '<span class="Qmenu">联机禁官服将</span>',
@@ -282,11 +247,6 @@ const config = {
     禁止封禁出牌: {
         name: '<span class="Qmenu">禁止封禁出牌</span>',
         intro: '开启后,所有封禁出牌的效果将会无效',
-        init: false,
-    },
-    全局技能拦截: {
-        name: '<span class="Qmenu">全局技能拦截</span>',
-        intro: '开启后,将会拦截非本体和非本扩展全局技能的添加',
         init: false,
     },
     飞扬跋扈模式: {
@@ -345,45 +305,6 @@ const config = {
             '700px': '<span class="Qmenu">700px</span>',
             '800px': '<span class="Qmenu">800px</span>',
         },
-    },
-    彩蛋: {
-        name: '<span class=/"firetext/" style="font-size: 20px;">彩蛋</span>',
-        clear: true,
-        onclick: function () {
-            if (this.innerHTML != '<span class=/"firetext/" style="font-size: 20px;">确认彩蛋</span>' && this.innerHTML != '<span class=/"firetext/" style="font-size: 20px;">是否开启无双模式</span>') {
-                this.innerHTML = '<span class=/"firetext/" style="font-size: 20px;">确认彩蛋</span>';
-                new Promise(resolve => setTimeout(resolve, 400)).then(() => this.innerHTML = '<span class=/"firetext/" style="font-size: 20px;">彩蛋</span>');
-                return;
-            }
-            if (this.innerHTML != '<span class=/"firetext/" style="font-size: 20px;">是否开启无双模式</span>') {
-                this.innerHTML = '<span class=/"firetext/" style="font-size: 20px;">是否开启无双模式</span>';
-                return;
-            }
-            game.log('<span style="color:#ED0A41;"font-size: 30px;">画戟饮尽神佛血,再乘赤兔踏乾坤</span>');
-            game.players.filter((Q) => { if (Q == game.me) Q.reinit('Q', 'QQQ_神吕布') });
-        },
-    },
-    QQQ: {
-        name: '<span class="Qmenu">QQQ</span>',
-        clear: true,
-        onclick: function () {
-            if (this.previousSibling) {
-                this.parentNode.insertBefore(this, this.previousSibling);
-            }
-            // if (this.parentNode.previousSibling) {
-            //     this.parentNode.parentNode.insertBefore(this.parentNode, this.parentNode.previousSibling);
-            // }
-        },
-    },
-    扩展清空: {
-        name: '<span class="Qmenu">扩展清空</span>',
-        intro: '开启后,直接清空游戏存储的扩展',
-        init: false,
-    },
-    扩展恢复: {
-        name: '<span class="Qmenu">扩展恢复</span>',
-        intro: '开启后,恢复游戏存储的扩展',
-        init: false,
     },
     扩展修改: {
         name: '<span class="Qmenu">扩展修改</span>',
