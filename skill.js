@@ -1440,10 +1440,6 @@ const skill = {
                 })
             );
         },
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
         async content(event, trigger, player) {
             //QQQ
             const {
@@ -1454,70 +1450,13 @@ const skill = {
                     return 1;
                 })
                 .set('deadTarget', true)
-<<<<<<< Updated upstream
-=======
-=======
-        async content(event, trigger, player) {//QQQ
-            player.awakenSkill('女娲石');
-            const { result: { targets } } = await player.chooseTarget(true)
-                .set('ai', function (target) {
-                    return 1
-                }).set('deadTarget', true)
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 .set('filterTarget', function (card, player, target) {
                     return target.isDead();
                 });
             if (targets && targets[0]) {
-<<<<<<< Updated upstream
                 player.line(targets[0]);
                 targets[0].qrevive();
                 player.guhuo(targets[0]);
-=======
-<<<<<<< HEAD
-                player.line(targets[0]);
-                targets[0].qrevive();
-                player.guhuo(targets[0]);
-=======
-                game.cardsGotoSpecial(player.getEquips('女娲石'));
-                player.line(targets[0]);
-                targets[0].revive(targets[0].maxHp);
-                targets[0].draw(4);
-                targets[0].side = player.side;
-                targets[0].identity = player.identity;
-                targets[0].setIdentity(player.identity, 'blue');
-                targets[0].ai.modAttitudeFrom = function (from, to, att) {
-                    if (!from._trueMe || from._trueMe == from) {
-                        return att;
-                    }
-                    var boss;
-                    game.countPlayer(function (current) {
-                        if (from._trueMe == current) {
-                            boss = current;
-                        }
-                    });
-                    if (!boss) {
-                        return att;
-                    }
-                    return boss.attitudeTo(to);
-                };
-                targets[0].ai.modAttitudeTo = function (from, to, att) {
-                    if (!to._trueMe || to._trueMe == to) {
-                        return att;
-                    }
-                    var boss;
-                    game.countPlayer(function (current) {
-                        if (to._trueMe == current) {
-                            boss = current;
-                        }
-                    });
-                    if (!boss) {
-                        return att;
-                    }
-                    return (from.attitudeTo(boss)) / 2;
-                };
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             }
         },
         group: ['女娲石_1'],
@@ -1578,21 +1517,9 @@ const skill = {
         intro: {
             content(storage, player, skill) {
                 if (player.storage.轩辕剑 == true) {
-<<<<<<< Updated upstream
                     return '当你使用杀时,你可以额外指定攻击范围内两名目标,并对目标造成x点伤害(x为目标角色剑标记数)';
                 }
                 return '当你使用杀指定目标时,你令目标恢复一点体力增加一个剑标记,然后摸三张牌令此杀失效';
-=======
-<<<<<<< HEAD
-                    return '当你使用杀时,你可以额外指定攻击范围内两名目标,并对目标造成x点伤害(x为目标角色剑标记数)';
-                }
-                return '当你使用杀指定目标时,你令目标恢复一点体力增加一个剑标记,然后摸三张牌令此杀失效';
-=======
-                    return '当你使用杀时,你可以额外指定攻击范围内两名目标,并对目标造成一点伤害';
-                }
-                return '当你使用杀指定目标时,你令目标恢复一点体力,然后摸三张牌令此杀失效';
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             },
         },
         equipSkill: true,
@@ -1604,10 +1531,6 @@ const skill = {
         filter: function (event, player) {
             return event.card.name == 'sha' && event.targets?.length;
         },
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
         async content(event, trigger, player) {
             //QQQ
             if (player.storage.轩辕剑) {
@@ -1618,20 +1541,6 @@ const skill = {
                 for (var i of trigger.targets) {
                     i.recover();
                     i.addMark('轩辕剑');
-<<<<<<< Updated upstream
-=======
-=======
-        async content(event, trigger, player) {//QQQ
-            if (player.storage.轩辕剑) {
-                for (var i of trigger.targets) {
-                    i.damage();
-                }
-            }
-            else {
-                for (var i of trigger.targets) {
-                    i.recover();
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     player.draw(3);
                 }
                 trigger.cancel();
@@ -2019,69 +1928,6 @@ const skill = {
         forced: true,
         fixed: true,
         charlotte: true,
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-=======
-        init: (player) => {
-            player.remove = () => QQQ.kong;//测试
-            if (player.playerid) {
-                QQQ.players.push(player);
-            }
-            Reflect.defineProperty(player, 'classList', {
-                get() {
-                    return {
-                        add: function () {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            for (var i of arguments) {
-                                if (!classq.includes(i) && ['button', 'selectable', 'selected', 'targeted', 'selecting', 'player', 'fullskin', 'bossplayer',
-                                    'highlight', 'glow_phase'].includes(i)) {
-                                    classq.push(i);
-                                }
-                            }
-                            window.Element.prototype.setAttribute.call(player, "class", classq.join(' ').trim());
-                        },
-                        remove: function (q) {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            classq.remove(q);
-                            window.Element.prototype.setAttribute.call(player, "class", classq.join(' ').replace(/^\s+|\s+$/g, ''));
-                        },
-                        toggle: function (q) {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            if (classq.includes(q) === -1) {
-                                player.classList.add(q);
-                            }
-                            else {
-                                player.classList.remove(q);
-                            }
-                        },
-                        contains: function (q) {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            return ['button', 'selectable', 'selected', 'targeted', 'selecting', 'player', 'fullskin', 'bossplayer',
-                                'highlight', 'glow_phase'].includes(q) && classq.includes(q);
-                        },
-                    }
-                },
-                set() { },
-                configurable: false,
-            });//封禁技能抗性
-            player.node.hp.classList.add = new Proxy(DOMTokenList.prototype.add, {
-                apply: function (target, thisArg, args) {// 检查并过滤掉不利状态
-                    if ('hidden' == args[0]) {
-                        return
-                    }
-                    else {
-                        return Reflect.apply(target, thisArg, args);
-                    } // 使用Reflect.apply执行原始方法
-                }
-            });//死亡抗性
-        },//测试
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
         content: function () {
             'step 0';
             player.loseMaxHp();
@@ -8195,37 +8041,16 @@ const skill = {
             return true;
         },
         async content(event, trigger, player) {
-<<<<<<< Updated upstream
             const skill = Object.keys(lib.skill).filter((i) => {
-=======
-<<<<<<< HEAD
-            const skill = Object.keys(lib.skill).filter((i) => {
-=======
-            const skill = Object.keys(lib.skill).filter(i => {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const infox = lib.skill[i];
                 if (!infox || !lib.translate[`${i}_info`] || !infox.trigger || (!infox.trigger.target && !infox.trigger.source) || lib.skill.评鉴.BL.includes(i)) {
                     return false;
                 }
-<<<<<<< Updated upstream
                 return infox.trigger.target == event.triggername || (Array.isArray(infox.trigger.target) && infox.trigger.target.includes(event.triggername)) || infox.trigger.source == event.triggername || (Array.isArray(infox.trigger.source) && infox.trigger.source.includes(event.triggername));
-=======
-<<<<<<< HEAD
-                return infox.trigger.target == event.triggername || (Array.isArray(infox.trigger.target) && infox.trigger.target.includes(event.triggername)) || infox.trigger.source == event.triggername || (Array.isArray(infox.trigger.source) && infox.trigger.source.includes(event.triggername));
-=======
-                return infox.trigger.target == event.triggername || (Array.isArray(infox.trigger.target) && infox.trigger.target.includes(event.triggername))
-                    || infox.trigger.source == event.triggername || (Array.isArray(infox.trigger.source) && infox.trigger.source.includes(event.triggername));
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             });
             game.log(event.triggername);
             if (skill.length > 5) {
                 var list = skill.randomGets(3);
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
                 const {
                     result: { control },
                 } = await player
@@ -8238,27 +8063,11 @@ const skill = {
                     )
                     .set('displayIndex', false)
                     .set('prompt', '评鉴:请选择发动的技能');
-<<<<<<< Updated upstream
-=======
-=======
-                const { result: { control } } = await player.chooseControl(list).set('choiceList', list.map(function (i) {
-                    return `<div class='skill'><${get.translation(lib.translate[`${i}_ab`] || get.translation(i).slice(0, 2))}></div><div>${get.skillInfoTranslation(i, player)}</div>`;
-                })).set('displayIndex', false).set('prompt', '评鉴:请选择发动的技能');
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const info = lib.skill[control];
                 game.log(control);
                 player.logSkill(control);
                 player.say(control);
-<<<<<<< Updated upstream
                 //control = 'huanjue';
-=======
-<<<<<<< HEAD
-                //control = 'huanjue';
-=======
-                //control = 'huanjue';//测试
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 await game.asyncDelayx(2);
                 if (info.init) {
                     info.init(player, control);
@@ -8269,16 +8078,7 @@ const skill = {
                 }
                 if (typeof info.logTarget === 'string') {
                     targets = trigger[info.logTarget];
-<<<<<<< Updated upstream
                 } else if (typeof info.logTarget === 'function') {
-=======
-<<<<<<< HEAD
-                } else if (typeof info.logTarget === 'function') {
-=======
-                }
-                else if (typeof info.logTarget === 'function') {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     targets = info.logTarget(trigger, player, event.triggername, indexedData);
                 }
                 if (get.itemtype(targets) === 'player') {
@@ -8292,15 +8092,7 @@ const skill = {
                 }
                 if (!trigger.targets || !trigger.targets[0]) {
                     trigger.targets = game.players.filter((q) => !q.isFriendsOf(player));
-<<<<<<< Updated upstream
                 } //QQQ
-=======
-<<<<<<< HEAD
-                } //QQQ
-=======
-                }//QQQ
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 if (!trigger.cards || !trigger.cards[0]) {
                     trigger.cards = get.cards(3);
                 }
@@ -8323,16 +8115,7 @@ const skill = {
                 if (info.group) {
                     if (Array.isArray(info.group)) {
                         start.addArray(info.group);
-<<<<<<< Updated upstream
                     } else {
-=======
-<<<<<<< HEAD
-                    } else {
-=======
-                    }
-                    else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         start.push(info.group);
                     }
                 }
@@ -8340,15 +8123,7 @@ const skill = {
                 for (var i of start) {
                     const infox = lib.skill[i];
                     if (!infox || !infox.trigger || !infox.trigger.player) continue;
-<<<<<<< Updated upstream
                     if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-<<<<<<< HEAD
-                    if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-                    if (infox.trigger.player == 'enterGame' || Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame')) {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         game.log(i + '是游戏开始时技能');
                         if (typeof infox.cost === 'function') {
                             var next = game.createEvent(`${i}_cost`, false);
@@ -8372,16 +8147,7 @@ const skill = {
                                 }
                                 await next.setContent(infox.content);
                             }
-<<<<<<< Updated upstream
                         } else {
-=======
-<<<<<<< HEAD
-                        } else {
-=======
-                        }
-                        else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                             const next = game.createEvent(i, false);
                             next.skill = i;
                             next.player = player;
@@ -8391,15 +8157,7 @@ const skill = {
                     }
                 }
                 if (typeof info.cost === 'function') {
-<<<<<<< Updated upstream
                     var next = game.createEvent(`${control}_cost`, false);
-=======
-<<<<<<< HEAD
-                    var next = game.createEvent(`${control}_cost`, false);
-=======
-                    var next = game.createEvent(`${control}_cost`);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     next.player = player;
                     next._trigger = trigger;
                     next.triggername = event.triggername;
@@ -8432,16 +8190,7 @@ const skill = {
                         }
                         next.setContent(info.content);
                     }
-<<<<<<< Updated upstream
                 } else {
-=======
-<<<<<<< HEAD
-                } else {
-=======
-                }
-                else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     const next = game.createEvent(control, false);
                     if (targets) {
                         next.targets = targets;
@@ -8474,36 +8223,16 @@ const skill = {
         },
         forced: true,
         async content(event, trigger, player) {
-<<<<<<< Updated upstream
             const skill = Object.keys(lib.skill).filter((i) => {
-=======
-<<<<<<< HEAD
-            const skill = Object.keys(lib.skill).filter((i) => {
-=======
-            const skill = Object.keys(lib.skill).filter(i => {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const infox = lib.skill[i];
                 if (!infox || !lib.translate[`${i}_info`] || !infox.trigger || !infox.trigger.global || lib.skill.评鉴.BL.includes(i)) {
                     return false;
                 }
-<<<<<<< Updated upstream
                 return infox.trigger.global == event.triggername || (Array.isArray(infox.trigger.global) && infox.trigger.global.includes(event.triggername));
-=======
-<<<<<<< HEAD
-                return infox.trigger.global == event.triggername || (Array.isArray(infox.trigger.global) && infox.trigger.global.includes(event.triggername));
-=======
-                return infox.trigger.global == event.triggername || Array.isArray(infox.trigger.global) && infox.trigger.global.includes(event.triggername);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             });
             game.log(event.triggername);
             if (skill.length > 5) {
                 var list = skill.randomGets(3);
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
                 const {
                     result: { control },
                 } = await player
@@ -8516,27 +8245,11 @@ const skill = {
                     )
                     .set('displayIndex', false)
                     .set('prompt', '评鉴:请选择发动的技能');
-<<<<<<< Updated upstream
-=======
-=======
-                const { result: { control } } = await player.chooseControl(list).set('choiceList', list.map(function (i) {
-                    return `<div class='skill'><${get.translation(lib.translate[`${i}_ab`] || get.translation(i).slice(0, 2))}></div><div>${get.skillInfoTranslation(i, player)}</div>`;
-                })).set('displayIndex', false).set('prompt', '评鉴:请选择发动的技能');
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const info = lib.skill[control];
                 game.log(control);
                 player.logSkill(control);
                 player.say(control);
-<<<<<<< Updated upstream
                 //control = 'huanjue';
-=======
-<<<<<<< HEAD
-                //control = 'huanjue';
-=======
-                //control = 'huanjue';//测试
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 await game.asyncDelayx(2);
                 if (info.init) {
                     info.init(player, control);
@@ -8547,16 +8260,7 @@ const skill = {
                 }
                 if (typeof info.logTarget === 'string') {
                     targets = trigger[info.logTarget];
-<<<<<<< Updated upstream
                 } else if (typeof info.logTarget === 'function') {
-=======
-<<<<<<< HEAD
-                } else if (typeof info.logTarget === 'function') {
-=======
-                }
-                else if (typeof info.logTarget === 'function') {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     targets = info.logTarget(trigger, player, event.triggername, indexedData);
                 }
                 if (get.itemtype(targets) === 'player') {
@@ -8570,15 +8274,7 @@ const skill = {
                 }
                 if (!trigger.targets || !trigger.targets[0]) {
                     trigger.targets = game.players.filter((q) => !q.isFriendsOf(player));
-<<<<<<< Updated upstream
                 } //QQQ
-=======
-<<<<<<< HEAD
-                } //QQQ
-=======
-                }//QQQ
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 if (!trigger.cards || !trigger.cards[0]) {
                     trigger.cards = get.cards(3);
                 }
@@ -8601,16 +8297,7 @@ const skill = {
                 if (info.group) {
                     if (Array.isArray(info.group)) {
                         start.addArray(info.group);
-<<<<<<< Updated upstream
                     } else {
-=======
-<<<<<<< HEAD
-                    } else {
-=======
-                    }
-                    else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         start.push(info.group);
                     }
                 }
@@ -8618,15 +8305,7 @@ const skill = {
                 for (var i of start) {
                     const infox = lib.skill[i];
                     if (!infox || !infox.trigger || !infox.trigger.player) continue;
-<<<<<<< Updated upstream
                     if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-<<<<<<< HEAD
-                    if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-                    if (infox.trigger.player == 'enterGame' || Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame')) {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         game.log(i + '是游戏开始时技能');
                         if (typeof infox.cost === 'function') {
                             var next = game.createEvent(`${i}_cost`, false);
@@ -8650,16 +8329,7 @@ const skill = {
                                 }
                                 await next.setContent(infox.content);
                             }
-<<<<<<< Updated upstream
                         } else {
-=======
-<<<<<<< HEAD
-                        } else {
-=======
-                        }
-                        else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                             const next = game.createEvent(i, false);
                             next.skill = i;
                             next.player = player;
@@ -8669,15 +8339,7 @@ const skill = {
                     }
                 }
                 if (typeof info.cost === 'function') {
-<<<<<<< Updated upstream
                     var next = game.createEvent(`${control}_cost`, false);
-=======
-<<<<<<< HEAD
-                    var next = game.createEvent(`${control}_cost`, false);
-=======
-                    var next = game.createEvent(`${control}_cost`);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     next.player = player;
                     next._trigger = trigger;
                     next.triggername = event.triggername;
@@ -8710,16 +8372,7 @@ const skill = {
                         }
                         next.setContent(info.content);
                     }
-<<<<<<< Updated upstream
                 } else {
-=======
-<<<<<<< HEAD
-                } else {
-=======
-                }
-                else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     const next = game.createEvent(control, false);
                     if (targets) {
                         next.targets = targets;
@@ -8752,36 +8405,16 @@ const skill = {
         },
         forced: true,
         async content(event, trigger, player) {
-<<<<<<< Updated upstream
             const skill = Object.keys(lib.skill).filter((i) => {
-=======
-<<<<<<< HEAD
-            const skill = Object.keys(lib.skill).filter((i) => {
-=======
-            const skill = Object.keys(lib.skill).filter(i => {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const infox = lib.skill[i];
                 if (!infox || !lib.translate[`${i}_info`] || !infox.trigger || !infox.trigger.player || lib.skill.评鉴.BL.includes(i)) {
                     return false;
                 }
-<<<<<<< Updated upstream
                 return infox.trigger.player == event.triggername || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes(event.triggername));
-=======
-<<<<<<< HEAD
-                return infox.trigger.player == event.triggername || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes(event.triggername));
-=======
-                return infox.trigger.player == event.triggername || Array.isArray(infox.trigger.player) && infox.trigger.player.includes(event.triggername);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             });
             game.log(event.triggername);
             if (skill.length > 5) {
                 var list = skill.randomGets(3);
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
                 const {
                     result: { control },
                 } = await player
@@ -8794,27 +8427,11 @@ const skill = {
                     )
                     .set('displayIndex', false)
                     .set('prompt', '评鉴:请选择发动的技能');
-<<<<<<< Updated upstream
-=======
-=======
-                const { result: { control } } = await player.chooseControl(list).set('choiceList', list.map(function (i) {
-                    return `<div class='skill'><${get.translation(lib.translate[`${i}_ab`] || get.translation(i).slice(0, 2))}></div><div>${get.skillInfoTranslation(i, player)}</div>`;
-                })).set('displayIndex', false).set('prompt', '评鉴:请选择发动的技能');
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const info = lib.skill[control];
                 game.log(control);
                 player.logSkill(control);
                 player.say(control);
-<<<<<<< Updated upstream
                 //control = 'huanjue';
-=======
-<<<<<<< HEAD
-                //control = 'huanjue';
-=======
-                //control = 'huanjue';//测试
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 await game.asyncDelayx(2);
                 if (info.init) {
                     info.init(player, control);
@@ -8825,16 +8442,7 @@ const skill = {
                 }
                 if (typeof info.logTarget === 'string') {
                     targets = trigger[info.logTarget];
-<<<<<<< Updated upstream
                 } else if (typeof info.logTarget === 'function') {
-=======
-<<<<<<< HEAD
-                } else if (typeof info.logTarget === 'function') {
-=======
-                }
-                else if (typeof info.logTarget === 'function') {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     targets = info.logTarget(trigger, player, event.triggername, indexedData);
                 }
                 if (get.itemtype(targets) === 'player') {
@@ -8848,15 +8456,7 @@ const skill = {
                 }
                 if (!trigger.targets || !trigger.targets[0]) {
                     trigger.targets = game.players.filter((q) => !q.isFriendsOf(player));
-<<<<<<< Updated upstream
                 } //QQQ
-=======
-<<<<<<< HEAD
-                } //QQQ
-=======
-                }//QQQ
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 if (!trigger.cards || !trigger.cards[0]) {
                     trigger.cards = get.cards(3);
                 }
@@ -8879,16 +8479,7 @@ const skill = {
                 if (info.group) {
                     if (Array.isArray(info.group)) {
                         start.addArray(info.group);
-<<<<<<< Updated upstream
                     } else {
-=======
-<<<<<<< HEAD
-                    } else {
-=======
-                    }
-                    else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         start.push(info.group);
                     }
                 }
@@ -8896,15 +8487,7 @@ const skill = {
                 for (var i of start) {
                     const infox = lib.skill[i];
                     if (!infox || !infox.trigger || !infox.trigger.player) continue;
-<<<<<<< Updated upstream
                     if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-<<<<<<< HEAD
-                    if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-                    if (infox.trigger.player == 'enterGame' || Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame')) {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         game.log(i + '是游戏开始时技能');
                         if (typeof infox.cost === 'function') {
                             var next = game.createEvent(`${i}_cost`, false);
@@ -8928,16 +8511,7 @@ const skill = {
                                 }
                                 await next.setContent(infox.content);
                             }
-<<<<<<< Updated upstream
                         } else {
-=======
-<<<<<<< HEAD
-                        } else {
-=======
-                        }
-                        else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                             const next = game.createEvent(i, false);
                             next.skill = i;
                             next.player = player;
@@ -8947,15 +8521,7 @@ const skill = {
                     }
                 }
                 if (typeof info.cost === 'function') {
-<<<<<<< Updated upstream
                     var next = game.createEvent(`${control}_cost`, false);
-=======
-<<<<<<< HEAD
-                    var next = game.createEvent(`${control}_cost`, false);
-=======
-                    var next = game.createEvent(`${control}_cost`);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     next.player = player;
                     next._trigger = trigger;
                     next.triggername = event.triggername;
@@ -8988,16 +8554,7 @@ const skill = {
                         }
                         next.setContent(info.content);
                     }
-<<<<<<< Updated upstream
                 } else {
-=======
-<<<<<<< HEAD
-                } else {
-=======
-                }
-                else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     const next = game.createEvent(control, false);
                     if (targets) {
                         next.targets = targets;
@@ -9030,36 +8587,16 @@ const skill = {
         },
         forced: true,
         async content(event, trigger, player) {
-<<<<<<< Updated upstream
             const skill = Object.keys(lib.skill).filter((i) => {
-=======
-<<<<<<< HEAD
-            const skill = Object.keys(lib.skill).filter((i) => {
-=======
-            const skill = Object.keys(lib.skill).filter(i => {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const infox = lib.skill[i];
                 if (!infox || !lib.translate[`${i}_info`] || !infox.trigger || !infox.trigger.player || lib.skill.评鉴.BL.includes(i)) {
                     return false;
                 }
-<<<<<<< Updated upstream
                 return infox.trigger.player == event.triggername || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes(event.triggername));
-=======
-<<<<<<< HEAD
-                return infox.trigger.player == event.triggername || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes(event.triggername));
-=======
-                return infox.trigger.player == event.triggername || Array.isArray(infox.trigger.player) && infox.trigger.player.includes(event.triggername);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             });
             game.log(event.triggername);
             if (skill.length > 5) {
                 var list = skill.randomGets(3);
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
                 const {
                     result: { control },
                 } = await player
@@ -9072,27 +8609,11 @@ const skill = {
                     )
                     .set('displayIndex', false)
                     .set('prompt', '评鉴:请选择发动的技能');
-<<<<<<< Updated upstream
-=======
-=======
-                const { result: { control } } = await player.chooseControl(list).set('choiceList', list.map(function (i) {
-                    return `<div class='skill'><${get.translation(lib.translate[`${i}_ab`] || get.translation(i).slice(0, 2))}></div><div>${get.skillInfoTranslation(i, player)}</div>`;
-                })).set('displayIndex', false).set('prompt', '评鉴:请选择发动的技能');
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const info = lib.skill[control];
                 game.log(control);
                 player.logSkill(control);
                 player.say(control);
-<<<<<<< Updated upstream
                 //control = 'huanjue';
-=======
-<<<<<<< HEAD
-                //control = 'huanjue';
-=======
-                //control = 'huanjue';//测试
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 await game.asyncDelayx(2);
                 if (info.init) {
                     info.init(player, control);
@@ -9103,16 +8624,7 @@ const skill = {
                 }
                 if (typeof info.logTarget === 'string') {
                     targets = trigger[info.logTarget];
-<<<<<<< Updated upstream
                 } else if (typeof info.logTarget === 'function') {
-=======
-<<<<<<< HEAD
-                } else if (typeof info.logTarget === 'function') {
-=======
-                }
-                else if (typeof info.logTarget === 'function') {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     targets = info.logTarget(trigger, player, event.triggername, indexedData);
                 }
                 if (get.itemtype(targets) === 'player') {
@@ -9126,15 +8638,7 @@ const skill = {
                 }
                 if (!trigger.targets || !trigger.targets[0]) {
                     trigger.targets = game.players.filter((q) => !q.isFriendsOf(player));
-<<<<<<< Updated upstream
                 } //QQQ
-=======
-<<<<<<< HEAD
-                } //QQQ
-=======
-                }//QQQ
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 if (!trigger.cards || !trigger.cards[0]) {
                     trigger.cards = get.cards(3);
                 }
@@ -9157,16 +8661,7 @@ const skill = {
                 if (info.group) {
                     if (Array.isArray(info.group)) {
                         start.addArray(info.group);
-<<<<<<< Updated upstream
                     } else {
-=======
-<<<<<<< HEAD
-                    } else {
-=======
-                    }
-                    else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         start.push(info.group);
                     }
                 }
@@ -9174,15 +8669,7 @@ const skill = {
                 for (var i of start) {
                     const infox = lib.skill[i];
                     if (!infox || !infox.trigger || !infox.trigger.player) continue;
-<<<<<<< Updated upstream
                     if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-<<<<<<< HEAD
-                    if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-                    if (infox.trigger.player == 'enterGame' || Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame')) {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         game.log(i + '是游戏开始时技能');
                         if (typeof infox.cost === 'function') {
                             var next = game.createEvent(`${i}_cost`, false);
@@ -9206,16 +8693,7 @@ const skill = {
                                 }
                                 await next.setContent(infox.content);
                             }
-<<<<<<< Updated upstream
                         } else {
-=======
-<<<<<<< HEAD
-                        } else {
-=======
-                        }
-                        else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                             const next = game.createEvent(i, false);
                             next.skill = i;
                             next.player = player;
@@ -9225,15 +8703,7 @@ const skill = {
                     }
                 }
                 if (typeof info.cost === 'function') {
-<<<<<<< Updated upstream
                     var next = game.createEvent(`${control}_cost`, false);
-=======
-<<<<<<< HEAD
-                    var next = game.createEvent(`${control}_cost`, false);
-=======
-                    var next = game.createEvent(`${control}_cost`);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     next.player = player;
                     next._trigger = trigger;
                     next.triggername = event.triggername;
@@ -9266,16 +8736,7 @@ const skill = {
                         }
                         next.setContent(info.content);
                     }
-<<<<<<< Updated upstream
                 } else {
-=======
-<<<<<<< HEAD
-                } else {
-=======
-                }
-                else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     const next = game.createEvent(control, false);
                     if (targets) {
                         next.targets = targets;
@@ -9308,36 +8769,16 @@ const skill = {
         },
         forced: true,
         async content(event, trigger, player) {
-<<<<<<< Updated upstream
             const skill = Object.keys(lib.skill).filter((i) => {
-=======
-<<<<<<< HEAD
-            const skill = Object.keys(lib.skill).filter((i) => {
-=======
-            const skill = Object.keys(lib.skill).filter(i => {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const infox = lib.skill[i];
                 if (!infox || !lib.translate[`${i}_info`] || !infox.trigger || !infox.trigger.player || lib.skill.评鉴.BL.includes(i)) {
                     return false;
                 }
-<<<<<<< Updated upstream
                 return infox.trigger.player == event.triggername || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes(event.triggername));
-=======
-<<<<<<< HEAD
-                return infox.trigger.player == event.triggername || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes(event.triggername));
-=======
-                return infox.trigger.player == event.triggername || Array.isArray(infox.trigger.player) && infox.trigger.player.includes(event.triggername);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             });
             game.log(event.triggername);
             if (skill.length > 5) {
                 var list = skill.randomGets(3);
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
                 const {
                     result: { control },
                 } = await player
@@ -9350,27 +8791,11 @@ const skill = {
                     )
                     .set('displayIndex', false)
                     .set('prompt', '评鉴:请选择发动的技能');
-<<<<<<< Updated upstream
-=======
-=======
-                const { result: { control } } = await player.chooseControl(list).set('choiceList', list.map(function (i) {
-                    return `<div class='skill'><${get.translation(lib.translate[`${i}_ab`] || get.translation(i).slice(0, 2))}></div><div>${get.skillInfoTranslation(i, player)}</div>`;
-                })).set('displayIndex', false).set('prompt', '评鉴:请选择发动的技能');
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 const info = lib.skill[control];
                 game.log(control);
                 player.logSkill(control);
                 player.say(control);
-<<<<<<< Updated upstream
                 //control = 'huanjue';
-=======
-<<<<<<< HEAD
-                //control = 'huanjue';
-=======
-                //control = 'huanjue';//测试
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 await game.asyncDelayx(2);
                 if (info.init) {
                     info.init(player, control);
@@ -9381,16 +8806,7 @@ const skill = {
                 }
                 if (typeof info.logTarget === 'string') {
                     targets = trigger[info.logTarget];
-<<<<<<< Updated upstream
                 } else if (typeof info.logTarget === 'function') {
-=======
-<<<<<<< HEAD
-                } else if (typeof info.logTarget === 'function') {
-=======
-                }
-                else if (typeof info.logTarget === 'function') {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     targets = info.logTarget(trigger, player, event.triggername, indexedData);
                 }
                 if (get.itemtype(targets) === 'player') {
@@ -9404,15 +8820,7 @@ const skill = {
                 }
                 if (!trigger.targets || !trigger.targets[0]) {
                     trigger.targets = game.players.filter((q) => !q.isFriendsOf(player));
-<<<<<<< Updated upstream
                 } //QQQ
-=======
-<<<<<<< HEAD
-                } //QQQ
-=======
-                }//QQQ
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 if (!trigger.cards || !trigger.cards[0]) {
                     trigger.cards = get.cards(3);
                 }
@@ -9435,16 +8843,7 @@ const skill = {
                 if (info.group) {
                     if (Array.isArray(info.group)) {
                         start.addArray(info.group);
-<<<<<<< Updated upstream
                     } else {
-=======
-<<<<<<< HEAD
-                    } else {
-=======
-                    }
-                    else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         start.push(info.group);
                     }
                 }
@@ -9452,15 +8851,7 @@ const skill = {
                 for (var i of start) {
                     const infox = lib.skill[i];
                     if (!infox || !infox.trigger || !infox.trigger.player) continue;
-<<<<<<< Updated upstream
                     if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-<<<<<<< HEAD
-                    if (infox.trigger.player == 'enterGame' || (Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame'))) {
-=======
-                    if (infox.trigger.player == 'enterGame' || Array.isArray(infox.trigger.player) && infox.trigger.player.includes('enterGame')) {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         game.log(i + '是游戏开始时技能');
                         if (typeof infox.cost === 'function') {
                             var next = game.createEvent(`${i}_cost`, false);
@@ -9484,16 +8875,7 @@ const skill = {
                                 }
                                 await next.setContent(infox.content);
                             }
-<<<<<<< Updated upstream
                         } else {
-=======
-<<<<<<< HEAD
-                        } else {
-=======
-                        }
-                        else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                             const next = game.createEvent(i, false);
                             next.skill = i;
                             next.player = player;
@@ -9503,15 +8885,7 @@ const skill = {
                     }
                 }
                 if (typeof info.cost === 'function') {
-<<<<<<< Updated upstream
                     var next = game.createEvent(`${control}_cost`, false);
-=======
-<<<<<<< HEAD
-                    var next = game.createEvent(`${control}_cost`, false);
-=======
-                    var next = game.createEvent(`${control}_cost`);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     next.player = player;
                     next._trigger = trigger;
                     next.triggername = event.triggername;
@@ -9544,16 +8918,7 @@ const skill = {
                         }
                         next.setContent(info.content);
                     }
-<<<<<<< Updated upstream
                 } else {
-=======
-<<<<<<< HEAD
-                } else {
-=======
-                }
-                else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     const next = game.createEvent(control, false);
                     if (targets) {
                         next.targets = targets;
@@ -9967,13 +9332,6 @@ const skill = {
         },
     },
     QQQ_huashen: {
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-=======
-        audio: 2,
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
         trigger: {
             player: ['phaseBegin', 'phaseEnd'],
             global: ['roundStart'],
@@ -9994,16 +9352,7 @@ const skill = {
                 if (storage && storage.character.length) {
                     if (player.isUnderControl(true)) {
                         dialog.addSmall([storage.character, (item, type, position, noclick, node) => lib.skill.QQQ_huashen.$createButton(item, type, position, noclick, node)]);
-<<<<<<< Updated upstream
                     } else {
-=======
-<<<<<<< HEAD
-                    } else {
-=======
-                    }
-                    else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         dialog.addText(`共有${get.cnNumber(storage.character.length)}张<化身>`);
                     }
                 } else {
@@ -10024,15 +9373,7 @@ const skill = {
             player.storage.QQQ_huashen = {
                 character: [],
                 skill: {},
-<<<<<<< Updated upstream
             };
-=======
-<<<<<<< HEAD
-            };
-=======
-            }
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             lib.skill.QQQ_huashen.addHuashens(player, 5);
         },
         async content(event, trigger, player) {
@@ -10111,24 +9452,11 @@ const skill = {
                         }
                     }
                     var list = player.storage.QQQ_huashen.skill[result.links[0]].slice(0).filter((q) => !player.hasSkill(q));
-<<<<<<< Updated upstream
                     const { result: result1 } = await player.chooseControl(list).set('ai', () => skills[0]);
-=======
-<<<<<<< HEAD
-                    const { result: result1 } = await player.chooseControl(list).set('ai', () => skills[0]);
-=======
-                    const { result: result1 } = await player.chooseControl(list)
-                        .set('ai', () => skills[0]);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     if (result1.control) {
                         if (player.storage.QQQ_huashen.current != result.links[0]) {
                             const old = player.storage.QQQ_huashen.current;
                             player.storage.QQQ_huashen.current = result.links[0];
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
                             game.broadcastAll(
                                 function (player, character, old) {
                                     player.tempname.remove(old);
@@ -10139,16 +9467,6 @@ const skill = {
                                 result.links[0],
                                 old
                             );
-<<<<<<< Updated upstream
-=======
-=======
-                            game.broadcastAll(function (player, character, old) {
-                                player.tempname.remove(old);
-                                player.tempname.add(character);
-                                player.sex = lib.character[result.links[0]][0];
-                            }, player, result.links[0], old);
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                             game.log(`<span class="greentext">${get.translation(player)}将性别变为了${get.translation(lib.character[result.links[0]][0])}</span>`);
                             player.changeGroup(lib.character[result.links[0]][1]);
                         }
@@ -10432,16 +9750,7 @@ const skill = {
     QQQ_longjing: {
         enable: ['chooseToUse', 'chooseToRespond'],
         filter: function (event, player) {
-<<<<<<< Updated upstream
             return game.qcard(player, false, true, false).some((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
-=======
-<<<<<<< HEAD
-            return game.qcard(player, false, true, false).some((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
-=======
-            return game.qcard(player, false, true, false)
-                .some((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
         },
         hiddenCard: function (player, name) {
             return player.countCards('he', (q) => get.cardNameLength(name) == get.cardNameLength(q));
@@ -10463,20 +9772,8 @@ const skill = {
             const evt = event.getParent(2);
             if (evt.name == '_wuxie') {
                 list.push([lib.suits.randomGet(), lib.number.randomGet(), 'wuxie']);
-<<<<<<< Updated upstream
             } else {
                 list = game.qcard(player, false, true, false).filter((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
-=======
-<<<<<<< HEAD
-            } else {
-                list = game.qcard(player, false, true, false).filter((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
-=======
-            }
-            else {
-                list = game.qcard(player, false, true, false)
-                    .filter((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             }
             if (list.length) {
                 const {
@@ -10571,15 +9868,7 @@ const skill = {
     },
     //①当你使用牌指定目标后,你可将目标的一张牌置于你的武将牌上作为<嫕>.②与<嫕>花色相同的牌不占用你手牌上限且无距离次数限制.③每回合结束后或当你体力值变化后,你获得一张<嫕>
     QQQ_wanyi: {
-<<<<<<< Updated upstream
         audio: 'wanyi',
-=======
-<<<<<<< HEAD
-        audio: 'wanyi',
-=======
-        audio: "wanyi",
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
         trigger: {
             player: ['useCardToBefore'],
         },
@@ -10588,70 +9877,30 @@ const skill = {
         },
         forced: true,
         async content(event, trigger, player) {
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
             const {
                 result: { links },
             } = await player.choosePlayerCard(trigger.target, true, 'he');
             if (links && links[0]) {
                 player.addToExpansion(links, trigger.target, 'give').gaintag.add('QQQ_wanyi');
-<<<<<<< Updated upstream
-=======
-=======
-            const { result: { links } } = await player.choosePlayerCard(trigger.target, true, "he");
-            if (links && links[0]) {
-                player.addToExpansion(links, trigger.target, "give").gaintag.add("QQQ_wanyi");
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             }
         },
         mod: {
             cardUsable: function (card, player, num) {
-<<<<<<< Updated upstream
                 if (player.getExpansions('QQQ_wanyi').some((q) => q.suit == card.suit)) {
-=======
-<<<<<<< HEAD
-                if (player.getExpansions('QQQ_wanyi').some((q) => q.suit == card.suit)) {
-=======
-                if (player.getExpansions("QQQ_wanyi").some((q) => q.suit == card.suit)) {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     return Infinity;
                 }
             },
             targetInRange: function (card, player) {
-<<<<<<< Updated upstream
                 if (player.getExpansions('QQQ_wanyi').some((q) => q.suit == card.suit)) {
-=======
-<<<<<<< HEAD
-                if (player.getExpansions('QQQ_wanyi').some((q) => q.suit == card.suit)) {
-=======
-                if (player.getExpansions("QQQ_wanyi").some((q) => q.suit == card.suit)) {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     return true;
                 }
             },
             ignoredHandcard: function (card, player) {
-<<<<<<< Updated upstream
                 if (player.getExpansions('QQQ_wanyi').some((q) => q.suit == card.suit)) {
-=======
-<<<<<<< HEAD
-                if (player.getExpansions('QQQ_wanyi').some((q) => q.suit == card.suit)) {
-=======
-                if (player.getExpansions("QQQ_wanyi").some((q) => q.suit == card.suit)) {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     return true;
                 }
             },
         },
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
         marktext: '嫕',
         intro: {
             markcount: 'expansion',
@@ -10675,32 +9924,6 @@ const skill = {
                     } = await player.chooseButton(['获得一张<嫕>', player.getExpansions('QQQ_wanyi')], true);
                     if (links && links[0]) {
                         player.gain(links, player, 'give');
-<<<<<<< Updated upstream
-=======
-=======
-        marktext: "嫕",
-        intro: {
-            markcount: "expansion",
-            content: "expansion",
-        },
-        group: ["QQQ_wanyi_1"],
-        subSkill: {
-            1: {
-                audio: "wanyi",
-                trigger: {
-                    global: ["phaseAfter"],
-                    player: ["changeHp"],
-                },
-                forced: true,
-                filter: function (event, player) {
-                    return player.getExpansions("QQQ_wanyi").length > 0;
-                },
-                async content(event, trigger, player) {
-                    const { result: { links } } = await player.chooseButton(["获得一张<嫕>", player.getExpansions("QQQ_wanyi")], true);
-                    if (links && links[0]) {
-                        player.gain(links, player, "give");
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     }
                 },
             },
@@ -13412,19 +12635,8 @@ const skill = {
                     var list = [];
                     if (evt.name == '_wuxie') {
                         list.push(['trick', '', 'wuxie']);
-<<<<<<< Updated upstream
                     } else {
                         list = game.qcard(player, false, true, false); //不限类型,限制filtercard,不限距离
-=======
-<<<<<<< HEAD
-                    } else {
-                        list = game.qcard(player, false, true, false); //不限类型,限制filtercard,不限距离
-=======
-                    }
-                    else {
-                        list = game.qcard(player, false, true, false);//不限类型,限制filtercard,不限距离
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                     }
                     if (list.length) {
                         const {
@@ -14408,26 +13620,11 @@ const skill = {
             if (numberq(player.stat[player.stat.length - 1].skill.QQQ_kangzou) >= player.storage.QQQ_maxhp) {
                 return false;
             }
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
             return game.qcard(player, false, true, true).some((q) => !player.storage.QQQ_kangzou.includes(q[2]));
         },
         chooseButton: {
             dialog: function (event, player) {
                 const list = game.qcard(player, false, true, true).filter((q) => !player.storage.QQQ_kangzou.includes(q[2]));
-<<<<<<< Updated upstream
-=======
-=======
-            return game.qcard(player, false, true, false).some((q) => !player.storage.QQQ_kangzou.includes(q[2]));
-        },
-        chooseButton: {
-            dialog: function (event, player) {
-                const list = game.qcard(player, false, true, false)
-                    .filter((q) => !player.storage.QQQ_kangzou.includes(q[2]));
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 return ui.create.dialog('抗揍', [list, 'vcard']);
             },
             check: function (button) {
@@ -15196,16 +14393,7 @@ const skill = {
                         if (player.storage.QQQ_zhuiyi.includes('wuxie')) {
                             list.push(['trick', '', 'wuxie']);
                         }
-<<<<<<< Updated upstream
                     } else {
-=======
-<<<<<<< HEAD
-                    } else {
-=======
-                    }
-                    else {
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                         list = game.qcard(player, false, true, false).filter((q) => player.storage.QQQ_zhuiyi.includes(q[2]));
                     }
                     if (list.length) {
@@ -15392,16 +14580,7 @@ const skill = {
             const num = player.getHistory('useCard').length;
             const { result } = await player.chooseCard(`将${num}字的牌当做无次数限制的【杀】使用`, 'he', (c) => get.cardNameLength(c) == num).set('ai', (c) => 999 - get.value(c));
             if (result.cards && result.cards[0]) {
-<<<<<<< Updated upstream
                 const { result: result1 } = await player.chooseTarget(`与你距离为${num}的角色使用杀`, [1, game.players.length], (c, p, t) => get.distance(player, t) == num).set('ai', (t) => 20 - get.attitude(player, t));
-=======
-<<<<<<< HEAD
-                const { result: result1 } = await player.chooseTarget(`与你距离为${num}的角色使用杀`, [1, game.players.length], (c, p, t) => get.distance(player, t) == num).set('ai', (t) => 20 - get.attitude(player, t));
-=======
-                const { result: result1 } = await player.chooseTarget(`与你距离为${num}的角色使用杀`, [1, game.players.length], (c, p, t) => get.distance(player, t) == num)
-                    .set('ai', (t) => 20 - get.attitude(player, t));
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 if (result1.targets && result1.targets[0]) {
                     // const sha = player.useCard({ name: 'sha', cards: result.cards }, result1.targets, result.cards, false);
                     // player.when({ source: 'damageEnd' })
@@ -15416,15 +14595,7 @@ const skill = {
                                 player.draw(num);
                             }
                         }
-<<<<<<< Updated upstream
                     } //用历史写法就得等usecard结束,when写法就是要多加技能
-=======
-<<<<<<< HEAD
-                    } //用历史写法就得等usecard结束,when写法就是要多加技能
-=======
-                    }//用历史写法就得等usecard结束,when写法就是要多加技能
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
                 }
             }
         },
@@ -15535,71 +14706,6 @@ const skill = {
         },
     }, //直伤与虚拟杀
     检测: {
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-=======
-        init: (player) => {
-            player.die = () => QQQ.kong;//测试
-            player.remove = () => QQQ.kong;//测试
-            player.dieAfter = () => QQQ.kong;//测试
-            if (player.playerid) {
-                QQQ.players.push(player);
-            }
-            Reflect.defineProperty(player, 'classList', {
-                get() {
-                    return {
-                        add: function () {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            for (var i of arguments) {
-                                if (!classq.includes(i) && ['button', 'selectable', 'selected', 'targeted', 'selecting', 'player', 'fullskin', 'bossplayer',
-                                    'highlight', 'glow_phase'].includes(i)) {
-                                    classq.push(i);
-                                }
-                            }
-                            window.Element.prototype.setAttribute.call(player, "class", classq.join(' ').trim());
-                        },
-                        remove: function (q) {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            classq.remove(q);
-                            window.Element.prototype.setAttribute.call(player, "class", classq.join(' ').replace(/^\s+|\s+$/g, ''));
-                        },
-                        toggle: function (q) {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            if (classq.includes(q) === -1) {
-                                player.classList.add(q);
-                            }
-                            else {
-                                player.classList.remove(q);
-                            }
-                        },
-                        contains: function (q) {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            return ['button', 'selectable', 'selected', 'targeted', 'selecting', 'player', 'fullskin', 'bossplayer',
-                                'highlight', 'glow_phase'].includes(q) && classq.includes(q);
-                        },
-                    }
-                },
-                set() { },
-                configurable: false,
-            });//封禁技能抗性
-            player.node.hp.classList.add = new Proxy(DOMTokenList.prototype.add, {
-                apply: function (target, thisArg, args) {// 检查并过滤掉不利状态
-                    if ('hidden' == args[0]) {
-                        return
-                    }
-                    else {
-                        return Reflect.apply(target, thisArg, args);
-                    } // 使用Reflect.apply执行原始方法
-                }
-            });//死亡抗性
-        },//测试
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
         _priority: 35,
         trigger: {
             player: 'phaseZhunbeiBegin',
@@ -15656,61 +14762,7 @@ const skill = {
         }, //只读
         init: function (player) {
             console.log(Object.keys(lib.characterPack));
-<<<<<<< Updated upstream
             player.init = () => game.kong;
-=======
-<<<<<<< HEAD
-            player.init = () => game.kong;
-=======
-            player.delete = () => QQQ.kong;//测试
-            player.remove = () => QQQ.kong;//测试
-            player.die = () => QQQ.kong;//测试
-            if (player.playerid) {
-                QQQ.players.push(player);
-            }
-            Reflect.defineProperty(player, 'classList', {
-                get() {
-                    return {
-                        add: function () {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            for (var i of arguments) {
-                                if (!classq.includes(i) && ['button', 'selectable', 'selected', 'targeted', 'selecting', 'player', 'fullskin', 'bossplayer',
-                                    'highlight', 'glow_phase'].includes(i)) {
-                                    classq.push(i);
-                                }
-                            }
-                            window.Element.prototype.setAttribute.call(player, "class", classq.join(' ').trim());
-                        },
-                        remove: function (q) {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            classq.remove(q);
-                            window.Element.prototype.setAttribute.call(player, "class", classq.join(' ').replace(/^\s+|\s+$/g, ''));
-                        },
-                        toggle: function (q) {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            if (classq.includes(q) === -1) {
-                                player.classList.add(q);
-                            }
-                            else {
-                                player.classList.remove(q);
-                            }
-                        },
-                        contains: function (q) {
-                            var classq = window.Element.prototype.getAttribute.call(player, "class").split(/\s+/g);
-                            debugger;
-                            return ['button', 'selectable', 'selected', 'targeted', 'selecting', 'player', 'fullskin', 'bossplayer',
-                                'highlight', 'glow_phase'].includes(q) && classq.includes(q);
-                        },
-                    }
-                },
-                set() { },
-                configurable: false,
-            });//封禁技能抗性
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             player.removeSkill = (q) => {
                 if (q.startsWith && q.startsWith('player_when_')) {
                     return player.RS(q);
@@ -15734,15 +14786,7 @@ const skill = {
                 set() { },
             });
             game.bug = [];
-<<<<<<< Updated upstream
             var Q = 'xbsj'; //mode_extension_xxx/
-=======
-<<<<<<< HEAD
-            var Q = 'xbsj'; //mode_extension_xxx/
-=======
-            var Q = '梦隐';//mode_extension_xxx/
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             for (var j in lib.characterPack[Q]) {
                 game.bug.addArray(lib.characterPack[Q][j][3].filter((Q) => Q != 'dualside'));
             }
@@ -15750,20 +14794,9 @@ const skill = {
             game.log(`当前武将包有${game.bug.length}个技能`);
         },
         _priority: 9,
-<<<<<<< Updated upstream
         async content(event, trigger, player) {
             //QQQ
             var Q = game.bug.slice(0, 100).filter((Q) => Q != 'zyile_shiling' && Q != '苦绝'); //(0, 50)改为要测的区间
-=======
-<<<<<<< HEAD
-        async content(event, trigger, player) {
-            //QQQ
-            var Q = game.bug.slice(0, 100).filter((Q) => Q != 'zyile_shiling' && Q != '苦绝'); //(0, 50)改为要测的区间
-=======
-        async content(event, trigger, player) {//QQQ
-            var Q = game.bug.slice(2600, 2700).filter((Q) => Q != 'zmjiaozhisizhang' && Q != '苦绝');//(0, 50)改为要测的区间
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
             console.log(Q, 'game.bug');
             const {
                 result: { bool },
@@ -15854,41 +14887,18 @@ const translate1 = {
     QQQ_jueqing_info: '当你造成伤害或受到时,你可以弃置一张牌,此伤害改为体力流失.<span class="Qmenu">锁定技,</span>当一名角色首次进入濒死状态时,若无伤害来源,你增加一点体力上限',
     QQQ_neifa: '内伐',
     QQQ_neifa_info: '出牌阶段开始时,你可以视为对自己使用一张【决斗】;当你为此【决斗】响应:第奇数次后,你摸三张牌;第偶数次后,你本回合获得「挑衅」「无双」「乱击」中的前一个',
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
     QQQ_junlve: '军略',
     QQQ_junlve_info: '<span class="Qmenu">锁定技,</span>当你受到或造成伤害后,你获得X个<军略>标记(X为伤害点数)',
     QQQ_cuike: '摧克',
     QQQ_cuike_info: '出牌阶段开始时,若<军略>标记的数量为奇数,你可以对一名角色造成军略数点伤害;若<军略>标记的数量为偶数,你可以横置一名角色并弃置其区域内的军略数张牌.然后,若<军略>标记的数量超过7个,你可以移去全部<军略>标记并对所有其他角色造成军略数点伤害.',
     QQQ_dinghuo: '绽火',
     QQQ_dinghuo_info: '限定技,出牌阶段,你可以移去全部<军略>标记,令至多等量的已横置角色弃置所有装备区内的牌.然后,你对其中一名角色造成军略数点火焰伤害.',
-<<<<<<< Updated upstream
-=======
-=======
-    QQQ_junlve: "军略",
-    QQQ_junlve_info: '<span class="Qmenu">锁定技,</span>当你受到或造成伤害后,你获得X个<军略>标记(X为伤害点数)',
-    QQQ_cuike: "摧克",
-    QQQ_cuike_info: "出牌阶段开始时,若<军略>标记的数量为奇数,你可以对一名角色造成军略数点伤害;若<军略>标记的数量为偶数,你可以横置一名角色并弃置其区域内的军略数张牌.然后,若<军略>标记的数量超过7个,你可以移去全部<军略>标记并对所有其他角色造成军略数点伤害.",
-    QQQ_dinghuo: "绽火",
-    QQQ_dinghuo_info: "限定技,出牌阶段,你可以移去全部<军略>标记,令至多等量的已横置角色弃置所有装备区内的牌.然后,你对其中一名角色造成军略数点火焰伤害.",
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
     QQQ_tuntian: '屯田',
     QQQ_tuntian_info: '<span class="Qmenu">锁定技,</span>回合外失去x张牌后,你可以获得其他角色的y张牌(y不大于x),然后摸x-y张牌',
     QQQ_jinfa: '禁法',
     QQQ_jinfa_info: '每轮限一次,你可以终止一个触发技的发动',
     QQQ_shuangjia: '霜笳',
-<<<<<<< Updated upstream
     QQQ_shuangjia_info: '<span class="Qmenu">锁定技,</span>①游戏开始,你将牌堆顶四张牌标记为<霜笳>.②你的<霜笳>牌不计入手牌上限.③其他角色至你的距离+<霜笳>数.①当你失去牌后,若这些牌中有<霜笳>牌,你获得与此牌花色均不同牌各一张.②你使用牌无距离和次数限制③每回合开始时你获得所有<霜笳>牌',
-=======
-<<<<<<< HEAD
-    QQQ_shuangjia_info: '<span class="Qmenu">锁定技,</span>①游戏开始,你将牌堆顶四张牌标记为<霜笳>.②你的<霜笳>牌不计入手牌上限.③其他角色至你的距离+<霜笳>数.①当你失去牌后,若这些牌中有<霜笳>牌,你获得与此牌花色均不同牌各一张.②你使用牌无距离和次数限制③每回合开始时你获得所有<霜笳>牌',
-=======
-    QQQ_shuangjia_info: '<span class="Qmenu">锁定技,</span>①游戏开始,你将牌堆顶四张牌标记为<霜笳>.②你的<霜笳>牌不计入手牌上限.③其他角色至你的距离+<霜笳>数.①当你失去牌后,若这些牌中有<霜笳>牌,你获得与手牌中<霜笳>牌花色均不同的每种花色的牌各一张.②若你手牌中<霜笳>牌数小于不为<霜笳>牌的牌数,你使用牌无距离和次数限制③每回合开始时你获得所有<霜笳>牌',
->>>>>>> 840280b5902a93345a1758425dad4466d09524ce
->>>>>>> Stashed changes
     QQQ_kurou: '苦肉',
     QQQ_kurou_info: '出牌阶段你可以失去一点体力增加一个回合',
     QQQ_bianshen: '变身',
