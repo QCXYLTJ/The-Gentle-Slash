@@ -8,7 +8,6 @@
 	color: gold;
 	text-shadow: gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 1px;
 }
-
 /* 修改右键弹窗简介宽度 */
 #arena .player.Qselectable {
 	box-shadow:
@@ -17,7 +16,6 @@
 		rgb(16, 33, 217) 0 0 20px 10px !important;
 	z-index: 99;
 }
-
 /* 修改右键弹窗简介宽度 */
 #arena .player.Qselectable:not(.selectable):not(.selected).glow_phase {
 	box-shadow:
@@ -26,7 +24,6 @@
 		rgb(16, 33, 217) 0 0 20px 10px !important;
 	z-index: 99;
 }
-
 /* 修改右键弹窗简介宽度 */
 #arena:not(.chess) .player[data-position="0"].Qselectable:not(.selected):not(.selectedx):not(.selectable):not(.glow) {
 	box-shadow:
@@ -35,7 +32,6 @@
 		rgb(16, 33, 217) 0 0 20px 10px !important;
 	z-index: 99;
 }
-
 /* 武将列表 */
 #divQ {
 	display: grid;
@@ -50,7 +46,6 @@
 	overflow-y: auto;
 	background-image: url('../温柔一刀/image/李白4.jpg');
 }
-
 /* 瞬发技按钮 */
 .buttonQ {
 	width: 5%;
@@ -62,7 +57,6 @@
 	top: 60%;
 	cursor: pointer;
 }
-
 /* 武将包按钮 */
 .packQ {
 	text-align: center;
@@ -76,7 +70,6 @@
 	position: relative;
 	background-color: rgb(5, 89, 52);
 }
-
 /* 武将图片 */
 .characterQ {
 	background-size: cover;
@@ -91,7 +84,6 @@
 	line-height: 25px;
 	position: relative;
 }
-
 /* 技能列表 */
 #skilllist {
 	z-index: 99;
@@ -102,7 +94,6 @@
 	overflow-y: auto;
 	background-image: url('../温柔一刀/image/李白4.jpg');
 }
-
 /* 技能及翻译按钮 */
 .skillQ {
 	position: relative;
@@ -114,7 +105,6 @@
 	font-size: 25px;
 	color: rgb(35, 21, 221);
 }
-
 /* 技能及翻译按钮 */
 .introQ {
 	position: relative;
@@ -127,8 +117,6 @@
 	font-size: 25px;
 	color: rgb(35, 21, 221);
 }
-
-
 /* 返回按钮 */
 .backQ {
 	z-index: 9999;
@@ -140,7 +128,6 @@
 	padding: 5px 10px;
 	background: rgba(0, 0, 0, 0.3);
 }
-
 /* 输入框 */
 .shuruQ {
 	height: 5%;
@@ -150,7 +137,6 @@
 	top: 5%;
 	right: 40%;
 }
-
 /* 搜索按钮 */
 .findQ {
 	z-index: 9999;
@@ -162,7 +148,6 @@
 	padding: 5px 10px;
 	background: rgba(0, 0, 0, 0.3);
 }
-
 .configQ.on {
 	text-align: center;
 	width: 60%;
@@ -175,7 +160,6 @@
 	position: relative;
 	background-color: rgba(47, 101, 150, 1);
 }
-
 .configQ:not(.on) {
 	text-align: center;
 	width: 60%;
@@ -188,8 +172,6 @@
 	position: relative;
 	background-color: rgb(220, 17, 17);
 }
-
-
 .configQ.on>.toggleQ {
 	width: 20%;
 	height: 20%;
@@ -202,7 +184,6 @@
 	border: 1px solid white;
 	box-shadow: black 0 0 2px;
 }
-
 .configQ:not(.on)>.toggleQ {
 	width: 20%;
 	height: 20%;
@@ -215,12 +196,10 @@
 	border: 1px solid white;
 	box-shadow: black 0 0 2px;
 }
-
 /* 修改右键弹窗简介宽度 */
 #window>.dialog.popped {
 	width: 600px;
 }
-
 /* 限定技动画从右往左切图 */
 .movimage {
 	top: 40%;
@@ -229,7 +208,6 @@
 	overflow: hidden;
 	z-index: 99;
 }
-
 /* 限定技动画从右往左切图 */
 .movimage img {
 	animation: movimage 2s linear infinite;
@@ -243,26 +221,21 @@
 	object-fit: fill;
 	margin: auto;
 }
-
 /* 限定技动画从右往左切图 */
 @keyframes movimage {
 	0% {
 		transform: translateX(100%);
 	}
-
 	25% {
 		transform: translateX(0);
 	}
-
 	75% {
 		transform: translateX(0);
 	}
-
 	100% {
 		transform: translateX(-100%);
 	}
 }
-
 /* 菜单动画渐变效果 */
 .Qmenu {
 	animation: QQQ 5s linear 0s infinite;
@@ -270,7 +243,6 @@
 	font-weight: bold;
 	font-size: 20px;
 }
-
 /* 火焰文字效果 */
 .flame {
 	animation: flame 5s linear 0s infinite;
@@ -278,16 +250,13 @@
 	font-weight: bold;
 	font-size: 25px;
 }
-
 /* 作者名动画渐变效果 */
 .Qflame {
 	animation: flame 5s linear 0s infinite;
 	font-family: shousha;
 	font-weight: bold;
-	font-size: 50px;
+	font-size: 60px;
 }
-
-
 /* 挑战模式BOSS滚动条 */
 #bosslist {
 	width: 100%;
@@ -298,7 +267,6 @@
 	overflow-x: scroll;
 	overflow-y: hidden;
 }
-
 .poem-container {
 	right: 10%;
 	left: 10%;
@@ -310,7 +278,6 @@
 	justify-content: flex-end;
 	/* 列靠右对齐 */
 }
-
 .column {
 	right: -60%;
 	position: relative;
@@ -319,7 +286,6 @@
 	margin-left: 20px;
 	/* 增大列之间的间距 */
 }
-
 .poem-char {
 	opacity: 0;
 	transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
@@ -333,13 +299,11 @@
 	transform: scale(0);
 	/* 缩放效果 */
 }
-
 .show {
 	opacity: 1;
 	transform: scale(1);
 	/* 恢复缩放 */
 }
-
 /* SVG滤镜定义 */
 svg {
 	position: absolute;

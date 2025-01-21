@@ -9,21 +9,18 @@
 	width: 150px !important;
 	height: 250px !important;
 }
-
 /* 角色头像图片拉长 */
 .player:not(.minskin):not(*[data-position="0"]):not(.fakeme) .avatar {
 	width: calc(100% - 10px) !important;
 	height: calc(100% - 10px) !important;
 	background-position: 50% !important;
 }
-
 /* 玩家头像图片拉长 */
 #arena:not(.chess) .player[data-position="0"]:not(.minskin)>.avatar {
 	width: 135px !important;
 	height: 250px !important;
 	top: calc(100% - 250px) !important;
 }
-
 /* 角色手牌数右移 */
 .player:not([data-position="0"]) .count {
 	line-height: 10px !important;

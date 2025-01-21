@@ -1,6 +1,17 @@
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
 export { card, translate3 };
 const card = {
+    QQQ_人皇幡: {
+        type: 'equip',
+        subtype: 'equip1',
+        distance: {
+            attackFrom: -2,
+        },
+        skills: ['QQQ_人皇幡'],
+        ai: {
+            equipValue: 70,
+        },
+    },
     QQQ_EldenRing: {
         type: 'equip',
         subtype: 'equip5',
@@ -394,7 +405,7 @@ const card = {
             },
         },
     },
-    //尸爆:对一名已死亡的角色使用,将其炸掉（移出游戏）,然后对其相邻角色造成一点伤害
+    //尸爆:对一名已死亡的角色使用,将其炸掉(移出游戏),然后对其相邻角色造成一点伤害
     QQQ_shibao: {
         type: 'trick',
         filterTarget: function (card, player, target) {
@@ -457,7 +468,7 @@ const card = {
             },
         },
     },
-    //我就打你: 普通伤害锦囊牌，视为对目标使用随机一张伤害牌
+    //我就打你: 普通伤害锦囊牌,视为对目标使用随机一张伤害牌
     QQQ_wodani: {
         type: 'trick',
         filterTarget: function (card, player, target) {
@@ -583,8 +594,10 @@ for (const i in card) {
     }
 }
 const translate3 = {
+    QQQ_人皇幡: '人皇幡',
+    QQQ_人皇幡_info: '<span class="Qmenu">锁定技,</span>使用有目标的牌时,若此牌是装备牌或延时锦囊则你摸一张牌.否则此牌无距离次数限制,且可以增加或减少一个目标',
     QQQ_wodani: '我就打你',
-    QQQ_wodani_info: '普通伤害锦囊牌，视为对目标使用随机一张伤害牌',
+    QQQ_wodani_info: '普通伤害锦囊牌,视为对目标使用随机一张伤害牌',
     QQQ_baota: '玲珑宝塔',
     QQQ_baota_info: '每轮游戏开始时,你可以选择一名角色(不能是上次选择的角色),其被镇压于塔内(镇压效果:造成或受到伤害-1,摸牌数-1,跳过回合然后你令其回复或失去一点体力)',
     QQQ_dubao: '毒爆',
