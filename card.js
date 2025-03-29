@@ -1,5 +1,4 @@
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
-export { card, translate3 };
 const card = {
     QQQ_人皇幡: {
         type: 'equip',
@@ -54,30 +53,6 @@ const card = {
             equipValue: 90,
         },
     },
-    国风玉袍: {
-        type: 'equip',
-        subtype: 'equip2',
-        skills: ['guofengyupao'],
-        ai: {
-            equipValue: 90,
-        },
-    },
-    奇门八卦: {
-        type: 'equip',
-        subtype: 'equip2',
-        skills: ['qimenbagua'],
-        ai: {
-            equipValue: 80,
-        },
-    },
-    霹雳投石车: {
-        type: 'equip',
-        subtype: 'equip5',
-        skills: ['pilitoushiche'],
-        ai: {
-            equipValue: 90,
-        },
-    },
     禅让诏书: {
         type: 'equip',
         subtype: 'equip5',
@@ -119,23 +94,6 @@ const card = {
             equipValue: 60,
         },
     },
-    三略: {
-        type: 'equip',
-        subtype: 'equip5',
-        ai: {
-            equipValue: 70,
-        },
-        skills: ['sanlve_skill'],
-    },
-    束发紫金冠: {
-        type: 'equip',
-        subtype: 'equip5',
-        modeimage: 'boss',
-        ai: {
-            equipValue: 85,
-        },
-        skills: ['shufazijinguan_skill'],
-    },
     修罗炼狱戟: {
         type: 'equip',
         subtype: 'equip1',
@@ -146,22 +104,6 @@ const card = {
         ai: {
             equipValue: 70,
         },
-    },
-    虚妄之冕: {
-        type: 'equip',
-        subtype: 'equip5',
-        skills: ['xuwangzhimian'],
-        ai: {
-            equipValue: 80,
-        },
-    },
-    红棉百花袍: {
-        type: 'equip',
-        subtype: 'equip2',
-        ai: {
-            equipValue: 60,
-        },
-        skills: ['hongmianbaihuapao_skill'],
     },
     妆梳_trick: {
         type: 'equip',
@@ -238,7 +180,7 @@ const card = {
     封神: {
         type: 'basic',
         cardcolor: 'red',
-        filterTarget: function (card, player, target) {
+        filterTarget(card, player, target) {
             return target == player;
         },
         mode: ['boss'],
@@ -314,7 +256,7 @@ const card = {
         skills: ['轩辕剑'],
         distance: {
             attackFrom: -1,
-            attackRange: (card, player) => {
+            attackRange(card, player) {
                 if (player.storage.轩辕剑) return 4;
                 return 2;
             },
@@ -345,7 +287,7 @@ const card = {
     QQQ_灵芝: {
         type: 'basic',
         savable: true,
-        filterTarget: function (card, player, target) {
+        filterTarget(card, player, target) {
             return true;
         },
         async content(event, trigger, player) {
@@ -360,6 +302,10 @@ const card = {
             tag: {
                 recover: 1,
                 save: 1,
+            },
+            basic: {
+                useful: 9,
+                value: 9,
             },
         },
     },
@@ -376,7 +322,7 @@ const card = {
     //毒爆:将全场所有角色随机一半牌变成毒,然后弃置所有毒
     QQQ_dubao: {
         type: 'trick',
-        filterTarget: function (card, player, target) {
+        filterTarget(card, player, target) {
             return true;
         },
         selectTarget: -1,
@@ -391,9 +337,9 @@ const card = {
         },
         ai: {
             result: {
-                player: function (player, target, card) {
+                player(player, target, card) {
                     //主动技是否发动
-                    var num1 = game.players.filter((q) => !q.isFriendsOf(player)).reduce((acc, curr) => acc + curr.countCards('he'), 0);
+                    var num1 = game.players.filter((q) => q.isEnemiesOf(player)).reduce((acc, curr) => acc + curr.countCards('he'), 0);
                     var num2 = game.players.filter((q) => q.isFriendsOf(player)).reduce((acc, curr) => acc + curr.countCards('he'), 0);
                     return num1 - num2;
                 },
@@ -408,7 +354,7 @@ const card = {
     //尸爆:对一名已死亡的角色使用,将其炸掉(移出游戏),然后对其相邻角色造成一点伤害
     QQQ_shibao: {
         type: 'trick',
-        filterTarget: function (card, player, target) {
+        filterTarget(card, player, target) {
             return true;
         },
         selectTarget: -1,
@@ -420,8 +366,8 @@ const card = {
                 .set('deadTarget', true)
                 .set('ai', (target) => {
                     var num = 0;
-                    const next = target.getNext();
-                    const previous = target.getPrevious();
+                    const next = target.next;
+                    const previous = target.previous;
                     if (next) {
                         num -= get.attitude(player, next);
                     }
@@ -431,8 +377,8 @@ const card = {
                     return get.attitude(player, target) * num;
                 });
             if (targets && targets[0]) {
-                const next = targets[0].getNext();
-                const previous = targets[0].getPrevious();
+                const next = targets[0].next;
+                const previous = targets[0].previous;
                 game.log(`<span class="Qmenu">${get.translation(targets[0])}尸体被炸掉</span>`);
                 game.removePlayer(targets[0]);
                 if (next) {
@@ -445,12 +391,12 @@ const card = {
         },
         ai: {
             result: {
-                player: function (player, target, card) {
+                player(player, target, card) {
                     //主动技是否发动
                     return game.dead.filter((target) => {
                         var num = 0;
-                        const next = target.getNext();
-                        const previous = target.getPrevious();
+                        const next = target.next;
+                        const previous = target.previous;
                         if (next) {
                             num -= get.attitude(player, next);
                         }
@@ -471,7 +417,7 @@ const card = {
     //我就打你: 普通伤害锦囊牌,视为对目标使用随机一张伤害牌
     QQQ_wodani: {
         type: 'trick',
-        filterTarget: function (card, player, target) {
+        filterTarget(card, player, target) {
             return target != player;
         },
         selectTarget: 1,
@@ -488,6 +434,10 @@ const card = {
             tag: {
                 damgage: 1,
             },
+            basic: {
+                useful: 1,
+                value: 5,
+            },
         },
     },
 };
@@ -500,7 +450,9 @@ for (const i in card) {
     info.equipDelay = false;
     info.loseDelay = false;
     info.image = `ext:温柔一刀/card/${i}.jpg`;
-    info.enable = true;
+    if (info.enable == undefined) {
+        info.enable = true;
+    }
     if (info.type == 'equip') {
         info.toself = true;
         info.filterTarget = function (card, player, target) {
@@ -606,12 +558,6 @@ const translate3 = {
     QQQ_shibao_info: '对一名已死亡的角色使用,将其炸掉,然后对其相邻角色造成一点伤害',
     QQQ_灵芝: '灵芝',
     QQQ_灵芝_info: '出牌阶段对一名角色使用,其增加一点体力上限回复全部体力',
-    国风玉袍: '国风玉袍',
-    国风玉袍_info: '<span class="Qmenu">锁定技,</span>你不是其他角色使用普通锦囊牌的合法目标',
-    奇门八卦: '奇门八卦',
-    奇门八卦_info: '<span class="Qmenu">锁定技,</span>【杀】对你无效',
-    霹雳投石车: '霹雳投石车',
-    霹雳投石车_info: '<span class="Qmenu">锁定技,</span>①你于回合内使用基本牌无距离限制,且当你于回合内使用基本牌时你令此牌的牌面数值t1.@当你于回合外使用或打出基本牌时,你摸一张牌',
     禅让诏书: '禅让诏书',
     禅让诏书_info: '其他角色于其回合外获得牌时,你可以选择一项:1.交给其一张牌;2.令其交给你一张牌',
     赤血青锋: '赤血青锋',
@@ -620,16 +566,8 @@ const translate3 = {
     赤焰镇魂琴_info: '你的伤害视为火属性且无来源',
     金乌落日弓: '金乌落日弓',
     金乌落日弓_info: '你一次性失去2张及以上手牌时,你可以选择一名其他角色,并弃置其X张牌,X为你本次失去的牌的数量',
-    三略: '三略',
-    三略_info: '出杀加1,攻击范围加1,手牌上限加1',
-    束发紫金冠: '束发紫金冠',
-    束发紫金冠_info: '准备阶段,你可以对一名其他角色造成1点伤害',
     修罗炼狱戟: '修罗炼狱戟',
     修罗炼狱戟_info: '你使用牌可以额外指定任意名其他角色为目标(除酒、桃、无中、装备、延时锦囊);你对可以斩杀的角色造成的伤害+1,然后令受到伤害的角色回复1点体力.你对不能斩杀的角色造成伤害时,先令其回复一点体力,然后令伤害加一',
-    虚妄之冕: '虚妄之冕',
-    虚妄之冕_info: '摸牌阶段摸牌数+2;手牌上限-1',
-    红棉百花袍: '红棉百花袍',
-    红棉百花袍_info: '防止属性伤害',
     妆梳_trick: '犀梳',
     妆梳_trick_info: '跳过判定和弃牌阶段',
     妆梳_basic: '琼梳',
@@ -665,3 +603,23 @@ const translate3 = {
     伏羲琴: '伏羲琴',
     伏羲琴_info: '每五轮增加一次使用次数,混乱全场敌对角色,直至你下个出牌阶段开始',
 };
+Object.assign(lib.card, card);
+if (QQQ.config.温柔一刀牌堆) {
+    for (var i in card) {
+        lib.inpile.add(i);
+        const info = card[i];
+        if (!QQQ.config.神器牌堆 && info.artifact) continue;
+        if (info.mode && !info.mode.includes(lib.config.mode)) continue;
+        if (!info.content) continue;
+        lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
+    }
+    lib.cardPack.温柔一刀 = Object.keys(card);
+    lib.translate.温柔一刀_card_config = `<img src="${lib.assetURL}extension/温柔一刀/other/The-Gentle-Slash.png"width="120"height="30">`;
+    lib.config.all.cards.add('温柔一刀');
+    lib.config.cards.add('温柔一刀');
+    game.saveConfig(`extension_温柔一刀_cards_enable`, true); //扩展卡牌全部打开
+    game.saveConfig('cards', lib.config.cards);
+    game.saveConfig('defaultcards', lib.config.cards);
+}
+Object.assign(lib.translate, translate3);
+_status.gentle.translate3 = translate3;

@@ -9,7 +9,7 @@ const config = {
         name: '<span class="Qmenu">全部关闭</span>',
         intro: '开启后,会一键关闭全部按钮',
         init: false,
-        onclick: function (result) {
+        onclick(result) {
             const cfg = this._link.config;
             game.saveConfig(cfg._name, result);
             if (result) {
@@ -31,11 +31,6 @@ const config = {
         intro: '开启后,会进入开发者模式,报出很多存在的bug',
         init: false,
     },
-    BGM: {
-        name: '<span class="Qmenu">BGM</span>',
-        intro: '开启后,会启用温柔一刀专属BGM',
-        init: false,
-    },
     BOSS: {
         name: '<span class="Qmenu">BOSS</span>',
         intro: '开启后,会将BOSS加入挑战模式',
@@ -44,11 +39,6 @@ const config = {
     AI禁用: {
         name: '<span class="Qmenu">AI禁用</span>',
         intro: '开启后,AI禁用本扩展角色',
-        init: false,
-    },
-    全时机: {
-        name: '<span class="Qmenu">全时机</span>',
-        intro: '开启后,会启用全时机,用来查询都触发了哪些时机',
         init: false,
     },
     属性杀: {
@@ -75,7 +65,7 @@ const config = {
         name: '<span class="Qmenu">禁止延迟</span>',
         intro: '开启后,将置空game.delay',
         init: false,
-        onclick: function (result) {
+        onclick(result) {
             var cfg = this._link.config;
             game.saveConfig(cfg._name, result);
             if (result) {
@@ -184,11 +174,6 @@ const config = {
         intro: '开启后,会增加右键武将详细信息内容,显示子技能和临时技能和各种buff',
         init: true,
     },
-    癫狂杀戮: {
-        name: '<span class="Qmenu">癫狂杀戮</span>',
-        intro: '抗性？开了这个按钮,李白将会杀人不留影',
-        init: false,
-    },
     取消小游戏: {
         name: '<span class="Qmenu">取消小游戏</span>',
         intro: '开启后,取消小游戏评才、冲虚、御风、整经',
@@ -296,14 +281,12 @@ const config = {
     },
     右键宽度修改: {
         name: '<span class="Qmenu">右键宽度修改</span>',
-        init: '600px',
-        intro: '开启后,会增加右键武将详细信息的宽度,一般适合电脑端使用',
+        init: '40%',
+        intro: '开启后,会增加右键武将详细信息的宽度',
         item: {
-            '400px': '<span class="Qmenu">400px</span>',
-            '500px': '<span class="Qmenu">500px</span>',
-            '600px': '<span class="Qmenu">600px</span>',
-            '700px': '<span class="Qmenu">700px</span>',
-            '800px': '<span class="Qmenu">800px</span>',
+            '30%': '<span class="Qmenu">30%</span>',
+            '40%': '<span class="Qmenu">40%</span>',
+            '50%': '<span class="Qmenu">50%</span>',
         },
     },
     扩展修改: {
@@ -312,7 +295,7 @@ const config = {
         init: false,
     },
 };
-if (lib.config.extension_温柔一刀_全部关闭) {
+if (QQQ.config.全部关闭) {
     for (const i in config) {
         if (config[i].init && i != '全部关闭' && lib.config[`extension_温柔一刀_${i}`]) {
             game.saveConfig(`extension_温柔一刀_${i}`, false);
