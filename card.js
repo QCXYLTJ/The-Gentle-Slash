@@ -94,49 +94,6 @@ const card = {
             equipValue: 60,
         },
     },
-    修罗炼狱戟: {
-        type: 'equip',
-        subtype: 'equip1',
-        skills: ['修罗炼狱戟'],
-        distance: {
-            attackFrom: -3,
-        },
-        ai: {
-            equipValue: 70,
-        },
-    },
-    妆梳_trick: {
-        type: 'equip',
-        subtype: 'equip5',
-        skills: ['犀梳'],
-        ai: {
-            equipValue: 80,
-        },
-    },
-    妆梳_basic: {
-        type: 'equip',
-        subtype: 'equip5',
-        skills: ['琼梳'],
-        ai: {
-            equipValue: 70,
-        },
-    },
-    妆梳_equip: {
-        type: 'equip',
-        subtype: 'equip5',
-        skills: ['金梳'],
-        ai: {
-            equipValue: 70,
-        },
-    },
-    玲珑: {
-        type: 'equip',
-        subtype: 'equip2',
-        ai: {
-            equipValue: 80,
-        },
-        skills: ['玲珑'],
-    },
     无双方天戟: {
         type: 'equip',
         subtype: 'equip1',
@@ -566,16 +523,6 @@ const translate3 = {
     赤焰镇魂琴_info: '你的伤害视为火属性且无来源',
     金乌落日弓: '金乌落日弓',
     金乌落日弓_info: '你一次性失去2张及以上手牌时,你可以选择一名其他角色,并弃置其X张牌,X为你本次失去的牌的数量',
-    修罗炼狱戟: '修罗炼狱戟',
-    修罗炼狱戟_info: '你使用牌可以额外指定任意名其他角色为目标(除酒、桃、无中、装备、延时锦囊);你对可以斩杀的角色造成的伤害+1,然后令受到伤害的角色回复1点体力.你对不能斩杀的角色造成伤害时,先令其回复一点体力,然后令伤害加一',
-    妆梳_trick: '犀梳',
-    妆梳_trick_info: '跳过判定和弃牌阶段',
-    妆梳_basic: '琼梳',
-    妆梳_basic_info: '当你受到伤害时,你弃置X张牌并防止此伤害(X为伤害值)',
-    妆梳_equip: '金梳',
-    妆梳_equip_info: '出牌阶段结束时,你将手牌摸至体力上限',
-    玲珑: '玲珑',
-    玲珑_info: '别人对你用牌时,你可以判定,若不为红色.此牌无效',
     无双方天戟: '无双方天戟',
     无双方天戟_info: '当你使用牌指定目标后,你可以选择一项:1、你摸一张牌; 2、弃置其一张牌',
     崆峒印: '崆峒印',

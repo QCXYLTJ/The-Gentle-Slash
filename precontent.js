@@ -4540,7 +4540,7 @@ const precontent = async function () {
                     forced: true,
                     filter(event, player) {
                         for (const i of player.getCards('x')) {
-                            if (event.filterCard(i, player, event)) {
+                            if (player.filterCard(i)) {
                                 return true;
                             }
                         }
@@ -4556,7 +4556,7 @@ const precontent = async function () {
                         } else {
                             for (const i of player.getCards('x')) {
                                 if (!lib.card[i.name].content) continue;
-                                if (evt.filterCard(i, player, evt) && player.hasUseTarget(i, false, false)) {
+                                if (player.filterCard(i)) {
                                     list.push(i);
                                 }
                             }
@@ -5466,7 +5466,7 @@ const precontent = async function () {
                                     cards.addArray(i.getCards('x'));
                                 }
                                 for (const i of cards) {
-                                    if (event.filterCard(i, player, event)) {
+                                    if (player.filterCard(i)) {
                                         return true;
                                     }
                                 }
@@ -5487,7 +5487,7 @@ const precontent = async function () {
                                 } else {
                                     for (const i of cards) {
                                         if (!lib.card[i.name].content) continue;
-                                        if (evt.filterCard(i, player, evt) && player.hasUseTarget(i, false, false)) {
+                                        if (player.filterCard(i)) {
                                             list.push(i);
                                         }
                                     }
@@ -6676,7 +6676,7 @@ const precontent = async function () {
                                 _status.QQQ_ronglu.add(_status._QQQ_ronglu);
                                 for (const name of ['sha', 'shan', 'jiu', 'tao', 'wuxie']) {
                                     const info = lib.card[name];
-                                    if (!event.filterCard({ name: name }, player, event)) {
+                                    if (!player.filterCard(name, true)) {
                                         continue;
                                     }
                                     if (!info.notarget && info.filterTarget && info.enable && !player.hasUseTarget({ name: name }, false, false)) {
@@ -6702,7 +6702,7 @@ const precontent = async function () {
                                     _status.QQQ_ronglu.add(_status._QQQ_ronglu);
                                     for (const name of ['sha', 'shan', 'jiu', 'tao', 'wuxie']) {
                                         const info = lib.card[name];
-                                        if (!event.filterCard({ name: name }, player, event)) {
+                                        if (!player.filterCard(name, true)) {
                                             continue;
                                         }
                                         if (!info.notarget && info.filterTarget && info.enable && !player.hasUseTarget({ name: name }, false, false)) {
