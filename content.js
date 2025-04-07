@@ -1474,13 +1474,17 @@ const content = async function () {
         }; //变身
         lib.element.player.quseCard = async function (card, targets, cards) {
             const player = this;
-            const info = lib.card[card.name];
+            if (typeof card == 'string') {
+                card = { name: card };
+            }
+            const name = card.name;
+            const info = lib.card[name];
             if (!cards) {
                 cards = [card];
             }
             const skill = _status.event.skill;
             if (info.contentBefore) {
-                const next = game.createEvent(card.name + 'ContentBefore', false);
+                const next = game.createEvent(name + 'ContentBefore', false);
                 next.parent.stocktargets = targets;
                 next.targets = targets;
                 next.card = card;
@@ -1495,14 +1499,14 @@ const content = async function () {
                 for (const target of targets) {
                     if (target && target.isDead()) return;
                     if (info.notarget) return;
-                    const next = game.createEvent(card.name, false);
+                    const next = game.createEvent(name, false);
                     next.parent.directHit = [];
                     next.targets = targets;
                     next.target = target;
                     next.card = card;
                     if (info.type == 'delay') {
                         next.card = {
-                            name: card.name,
+                            name: name,
                             cards: cards,
                         };
                     }
@@ -1510,21 +1514,21 @@ const content = async function () {
                     next.player = player;
                     next.type = 'card';
                     next.skill = skill;
-                    next.baseDamage = numberq1(info.baseDamage);
+                    next.baseDamage = Math.max(numberq1(info.baseDamage));
                     next.forceDie = true;
                     next.directHit = true;
                     await next.setContent(info.content);
                 }
             } else {
                 if (info.notarget) return;
-                const next = game.createEvent(card.name, false);
+                const next = game.createEvent(name, false);
                 next.parent.directHit = [];
                 next.targets = targets;
                 next.target = targets[0];
                 next.card = card;
                 if (info.type == 'delay') {
                     next.card = {
-                        name: card.name,
+                        name: name,
                         cards: cards,
                     };
                 }
@@ -1532,13 +1536,13 @@ const content = async function () {
                 next.player = player;
                 next.type = 'card';
                 next.skill = skill;
-                next.baseDamage = numberq1(info.baseDamage);
+                next.baseDamage = Math.max(numberq1(info.baseDamage));
                 next.forceDie = true;
                 next.directHit = true;
                 await next.setContent(info.content);
             }
             if (info.contentAfter) {
-                const next = game.createEvent(card.name + 'ContentAfter', false);
+                const next = game.createEvent(name + 'ContentAfter', false);
                 next.targets = targets;
                 next.card = card;
                 next.cards = cards;
@@ -1548,7 +1552,7 @@ const content = async function () {
                 next.forceDie = true;
                 await next.setContent(info.contentAfter);
             }
-        }; //真实用牌
+        }; //解构用牌
         lib.element.player.qrevive = function () {
             if (this.parentNode != ui.arena) {
                 ui.arena.appendChild(this);
@@ -7010,17 +7014,23 @@ const content = async function () {
         } //优化判定
         if (QQQ.config.禁止延迟) {
             Reflect.defineProperty(lib.config, 'sync_speed', {
-                get: () => false,
+                get() {
+                    return false;
+                },
                 set() { },
             }); //取消限制结算速度
             Reflect.defineProperty(game, 'delay', {
-                get: () => () => true,
+                get() {
+                    return () => true;
+                },
                 set() { },
                 configurable: false,
             });
             lib.configMenu.general.config.game_speed.item = 'vvfast';
             Reflect.defineProperty(lib.config, 'game_speed', {
-                get: () => 'vvfast',
+                get() {
+                    return 'vvfast';
+                },
                 set() { },
                 configurable: false,
             });
@@ -8712,32 +8722,42 @@ const content = async function () {
             ]; //收藏武将修改
             game.saveConfig('favouriteCharacter', lib.config.favouriteCharacter);
             Reflect.defineProperty(lib.config, 'image_background', {
-                get: () => 'ol_bg',
+                get() {
+                    return 'ol_bg';
+                },
                 set() { },
                 configurable: false,
             });
             game.saveConfig('image_background', 'ol_bg');
             Reflect.defineProperty(lib.config, 'theme', {
-                get: () => 'simple',
+                get() {
+                    return 'simple';
+                },
                 set() { },
                 configurable: false,
             });
             game.saveConfig('theme', 'simple');
             Reflect.defineProperty(lib.config, 'recent_character_number', {
-                get: () => '30',
+                get() {
+                    return '30';
+                },
                 set() { },
                 configurable: false,
             });
             game.saveConfig('recent_character_number', '30');
             game.saveConfig('connect_avatar', 'QQQ_jiananfeng');
             Reflect.defineProperty(lib.config, 'show_log', {
-                get: () => 'left',
+                get() {
+                    return 'left';
+                },
                 set() { },
                 configurable: false,
             });
             game.saveConfig('show_log', 'left');
             Reflect.defineProperty(lib.config, 'layout', {
-                get: () => 'mobile',
+                get() {
+                    return 'mobile';
+                },
                 set() { },
                 configurable: false,
             });

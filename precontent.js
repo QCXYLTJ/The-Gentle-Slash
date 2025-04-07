@@ -62,13 +62,14 @@ setInterval常量计算会被删掉
 */
 /*
 //------------------------------------------------脚本替换
+\),\n\s*\(====;\n
 forced: true,\n\s*forced: true,
 .i
 for (var i =
 [,//, ,//,]//,)
 cards.splice//i.discard()
 //-------------------------------------------------------正则替换
-'[^)']+logSkill[^']*'//'[^)']*logSkill[^']+'//'[^)']+logSkill[^']+'
+'[^)']+logSkill[^']*'//'[^)']*logSkill[^']+'//'[^)']+logSkill[^']+'//popup: false,
 \.filterCard\(\{([^),]*)\)
 .filterCard({$1,player)
 get.autoViewAs\(\{([^()]*)\}[^()]*\)//{$1}
@@ -92,7 +93,7 @@ lib\.element\.Player.+= fun//   get\..+= fun//game\..+= fun
 \s\s\splayer\.logSkill\(.*\);
 \n\s*\n
 .$1   //(?<![\s:,[(=])\[["']([^·\.'" --+\d]*)["']\]
-content\((?!storage\b).+\)//precontent\((?!storage\b).+\)
+\s\scontent\((?!storage\b).+\)//precontent\((?!storage\b).+\)
 \starget\((?!card|player\b).+\)
 \splayer\((?!card|player\b).+\)
 \sorder\((?!card|item|skill|name\b).+\)
@@ -126,9 +127,8 @@ countDiscardableCards('//countgainableCards('
 lib.filter.characterDisabled =
 game.notMe//game.swapcontrol//ui.click.auto();
 lib.character[i][4].indexOf(//lib.character[i][4].push
-audio: "ext:耀武将:false",//audio: false
+audio: "ext:耀武将:false",//audio: false//audio: '',//audio: 2,
 if (evt)//phaseLoop//_status.event =
-audio: '',
 .hasCard('h
 .set('ai', function (target,//.set('ai', function (card,//.set('ai', function (player,
 .ai = function (target,//.ai = function (card,//.ai = function (player,
@@ -243,7 +243,7 @@ const precontent = async function () {
                 }
                 */
                 /*
-                game.me.gain(game.createCard('SG_bazhen'), 'gain2');
+                game.me.gain(game.createCard('wuxie'), 'gain2');
                 var num = 20;
                 var evt = _status.event;
                 while (num-- > 0) {
@@ -283,392 +283,6 @@ const precontent = async function () {
         };
     }
     ceshi();
-    //—————————————————————————————————————————————————————————————————————————————lib.arenaReady
-    lib.arenaReady.push(function () {
-        console.log(Object.keys(lib.skill).length, 'lib.arenaReady', 'skill');
-        console.log(Object.keys(lib.card).length, 'card');
-        console.log(Object.keys(lib.character).length, 'character');
-        game.finishCards();
-        if (QQQ.config.卖血模式) {
-            lib.skill.yuqi.ai = { maixie: true };
-            lib.skill.luochong.ai = { maixie: true };
-            lib.skill.xinyaoming.ai = { maixie: true };
-            lib.skill.xinfu_andong.ai = { maixie: true };
-            lib.skill.yachai.ai = { maixie: true };
-            lib.skill.yaoming.ai.maixie = true;
-            lib.skill.clanxieshu.ai.maixie = true;
-        }
-        if (!_status.characterlist) {
-            _status.characterlist = Object.keys(lib.character);
-        }
-        if (!lib.type) {
-            lib.type = [];
-        }
-        for (const i in lib.card) {
-            const info = lib.card[i];
-            if (typeof info != 'object') {
-                if (QQQ.config.报错) {
-                    alert(i + 'info不是对象');
-                }
-                continue;
-            }
-            if (!lib.type.includes(info.type)) {
-                lib.type.push(info.type);
-            }
-            if (info.destroy) {
-                delete info.destroy;
-            } //禁止销毁
-            if (!info.content) continue;
-            if (QQQ.config.报错) {
-                if (info.enable == 'phaseUse') {
-                    alert(i + 'enable有问题');
-                }
-                if (!info.type) {
-                    alert(i + 'type有问题');
-                }
-                if (info.type == 'equip') {
-                    if (!info.subtype) {
-                        console.log(i + '没有subtype');
-                    }
-                    if (['equip2', 'equip1', 'equip5'].includes(info.subtype) && !info.skills) {
-                        console.log(i + '没有装备技能');
-                    }
-                    if (!info.ai.equipValue && !info.ai.basic.equipValue) {
-                        alert(i + '没有装备AI');
-                    }
-                }
-                if (info.type == 'delay') {
-                    if (!info.ai || !info.ai.result || !info.ai.result.target) {
-                        alert(i + 'delay没有result');
-                    }
-                }
-            }
-            if (QQQ.config.卡牌加入牌堆) {
-                if (lib.cardPack.温柔一刀?.includes(i)) continue;//不重复添加温柔一刀牌堆
-                if (info.mode && !info.mode.includes(lib.config.mode)) continue;
-                if (!lib.translate[`${i}_info`]) continue;
-                lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
-            }
-        } //卡牌加入牌堆
-        lib.config.all.characters.add('温柔一刀');
-        lib.connectCardPack.add('温柔一刀');
-        lib.connectCharacterPack.add('温柔一刀');
-        for (const i in lib.character) {
-            const info = lib.character[i];
-            if (typeof info != 'object') {
-                if (QQQ.config.报错) {
-                    alert(i + 'info不是对象');
-                }
-                continue;
-            }
-            if (!QQQ.config.BOSS) {
-                info.isBoss = false;
-            } //BOSS
-            if (QQQ.config.武将全开) {
-                info.isAiForbidden = false; //AI禁用
-                info.isUnseen = false; //隐藏
-            }
-            if (QQQ.config.报错) {
-                for (const j of info[4]) {
-                    if (!j) {
-                        alert(i + '角色没有info');
-                    }
-                }
-                if (!info.hp && info.hp != 0) {
-                    alert(i + '角色没有hp');
-                }
-                for (const j of info.skills) {
-                    if (!lib.skill[j] && !_status.auto) {
-                        console.log(j, '是一个不存在的技能名info', i);
-                        alert(j + '是一个不存在的技能名info' + i);
-                    }
-                }
-            }
-        }
-        lib.card.list = lib.card.list.filter((i) => {
-            const name = i[2];
-            const info = lib.card[name];
-            if (!name || !info) {
-                if (QQQ.config.报错) {
-                    alert(i + '是没有info的卡牌');
-                }
-                return false;
-            }
-            if (info.mode && !info.mode.includes(lib.config.mode)) {
-                console.log(name, 'mode不符合');
-                return false;
-            }
-            return true;
-        });//最晚lib.arenaReady里面
-        if (QQQ.config.武将全开) {
-            for (const i of lib.config.extensions) {
-                game.saveConfig(`extension_${i}_characters_enable`, true); //扩展武将全部打开
-            }
-            for (var i in lib.characterPack) {
-                if (!lib.config.characters.includes(i)) {
-                    lib.config.characters.push(i);
-                } //扩展武将全部添加
-                lib.connectCharacterPack.add(i); //扩展武将联机
-            } //全开武将包
-            // lib.config.all.characters = lib.config.characters;
-            // game.saveConfig('all', lib.config.all);
-            game.saveConfig('banned', []); //禁将
-            game.saveConfig('forbidai_user', []); //仅点将可用
-            game.saveConfig('forbidai', []);
-            for (const i of lib.config.all.mode) {
-                game.saveConfig(`${i}_banned`, []); //模式禁将
-                game.saveConfig(`connect_${i}_banned`, []); //联机模式禁将
-            }
-            //game.saveConfig('connect_characters', []);//联机禁将包,放进去的才是要禁的
-            game.saveConfig('characters', lib.config.characters);
-            game.saveConfig('defaultcharacters', lib.config.characters);
-        } //扩展武将全部打开
-        if (QQQ.config.卡牌全开) {
-            game.saveConfig('bannedcards', []);
-            for (const i of lib.config.all.mode) {
-                game.saveConfig(`${i}_bannedcards`, []);
-            }
-            for (const i of lib.config.extensions) {
-                game.saveConfig(`extension_${i}_cards_enable`, true); //扩展卡牌全部打开
-            }
-            for (var i in lib.cardPack) {
-                if (!lib.config.cards.includes(i)) {
-                    lib.config.cards.push(i);
-                } //扩展卡牌全部添加
-                lib.connectCardPack.add(i); //扩展卡牌联机
-                if (lib.cardPackInfo[i]) {
-                    lib.cardPackInfo[i].closeable = true;
-                } //添加关闭卡牌按钮
-            }
-            game.saveConfig('cards', lib.config.cards);
-            game.saveConfig('connect_cards', []); //联机禁将,放进去的才是要禁的
-            game.saveConfig('defaultcards', lib.config.cards);
-        } //扩展卡牌全部打开
-        if (QQQ.config.联机禁官服将) {
-            game.saveConfig('connect_characters', ['standard', 'refresh', 'shenhua', 'yijiang', 'sp', 'onlyOL', 'yingbian', 'clan', 'xinghuoliaoyuan', 'huicui', 'xianding', 'sp2', 'extra', 'mobile', 'shiji', 'sb', 'tw', 'collab', 'jsrg', 'offline', 'old', 'diy', 'ddd', 'key', 'yxs', 'hearth', 'gwent', 'mtg', 'ow', 'swd', 'gujian', 'xianjian', 'sixiang', 'newjiang']);
-        }
-        ui.create.system(
-            '换将',
-            function () {
-                for (const player of game.players) {
-                    player.classList.add('Qselectable');
-                    player.onclick = function () {
-                        const play = this;
-                        const div = window.document.createElement('div');
-                        div.id = 'divQ';
-                        const JUESELIST = [];
-                        //————————————————————————————————————————————————————————确定
-                        const OK = window.document.createElement('div');
-                        OK.className = 'backQ';
-                        OK.innerHTML = '确定';
-                        OK.onclick = function () {
-                            if (div.log) {
-                                play.init(div.log.link);
-                            }
-                            input.remove();
-                            FIND.remove();
-                            div.remove();
-                            OK.remove();
-                            for (const player of game.players) {
-                                player.classList.remove('Qselectable');
-                                player.onclick = null;
-                            }
-                        };
-                        document.body.appendChild(OK);
-                        //————————————————————————————————————————————————————————搜索
-                        const input = document.createElement('input');
-                        input.className = 'shuruQ';
-                        const FIND = window.document.createElement('div');
-                        FIND.className = 'findQ';
-                        FIND.innerHTML = '搜索';
-                        FIND.onclick = function () {
-                            for (const x of JUESELIST) {
-                                x.remove();
-                            }
-                            for (const j in lib.character) {
-                                if (lib.translate[j] && lib.translate[j].includes(input.value) || j.includes(input.value)) {
-                                    const JUESE = window.document.createElement('div');
-                                    JUESE.style.backgroundImage = `url('${game.src(j)}')`;
-                                    JUESE.className = 'characterQ';
-                                    JUESE.innerHTML = get.translation(j);
-                                    JUESE.link = j;
-                                    JUESE.onclick = function () {
-                                        if (div.log) {
-                                            div.log.classList.remove('selected');
-                                        }
-                                        div.log = this;
-                                        this.classList.add('selected');
-                                    };
-                                    JUESELIST.push(JUESE);
-                                    div.appendChild(JUESE);
-                                }
-                            }
-                        };
-                        document.body.appendChild(FIND);
-                        document.body.appendChild(input);
-                        //————————————————————————————————————————————————————————武将列表
-                        for (const i in lib.characterPack) {
-                            const PACK = window.document.createElement('div');
-                            PACK.className = 'packQ';
-                            PACK.innerHTML = get.translation(i + '_character_config');
-                            PACK.link = i;
-                            PACK.onclick = function () {
-                                for (const x of JUESELIST) {
-                                    x.remove();
-                                }
-                                for (const j in lib.characterPack[this.link]) {
-                                    const JUESE = window.document.createElement('div');
-                                    JUESE.style.backgroundImage = `url('${game.src(j)}')`;
-                                    JUESE.className = 'characterQ';
-                                    JUESE.innerHTML = get.translation(j);
-                                    JUESE.link = j;
-                                    JUESE.onclick = function () {
-                                        if (div.log) {
-                                            div.log.classList.remove('selected');
-                                        }
-                                        div.log = this;
-                                        this.classList.add('selected');
-                                    };
-                                    JUESELIST.push(JUESE);
-                                    div.appendChild(JUESE);
-                                }
-                            };
-                            div.appendChild(PACK);
-                        }
-                        document.body.appendChild(div);
-                    };
-                }
-            },
-            true
-        ); //换将
-        ui.create.system(
-            '重启',
-            function () {
-                game.reload();
-                return true;
-            },
-            true
-        ); //重启按钮
-        ui.create.system(
-            '添加技能',
-            async function () {
-                const div = document.createElement('div');
-                div.id = 'skilllist';
-                const input = document.createElement('input');
-                input.className = 'shuruQ';
-                input.placeholder = '输入技能代码名(不是技能名的翻译,如破军是pojun)';
-                const FIND = window.document.createElement('div');
-                FIND.className = 'findQ';
-                FIND.innerHTML = '搜索';
-                const skilllist = [];
-                FIND.onclick = function () {
-                    for (var x of skilllist) {
-                        x.remove();
-                    }
-                    for (const j in lib.skill) {
-                        if (lib.translate[j]?.includes(input.value) || j.includes(input.value)) {
-                            const skill = window.document.createElement('div');
-                            skill.className = 'skillQ';
-                            skill.innerHTML = `${lib.translate[j]}(${j}):${lib.translate[`${j}_info`]}`;
-                            skill.link = j;
-                            skill.onclick = function () {
-                                if (div.log) {
-                                    div.log.classList.remove('selected');
-                                }
-                                div.log = this;
-                                this.classList.add('selected');
-                            };
-                            skilllist.push(skill);
-                            div.appendChild(skill);
-                        }
-                    }
-                };
-                const ok = document.createElement('button');
-                ok.className = 'backQ';
-                ok.textContent = '确认';
-                ok.addEventListener('click', async function () {
-                    div.remove();
-                    if (div.log && lib.skill[div.log.link]) {
-                        for (const player of game.players) {
-                            player.classList.add('Qselectable');
-                            player.onclick = function () {
-                                const play = this;
-                                play.addSkill(div.log.link);
-                                for (const player of game.players) {
-                                    player.classList.remove('Qselectable');
-                                    player.onclick = null;
-                                }
-                            };
-                        }
-                    }
-                });
-                div.appendChild(FIND);
-                div.appendChild(input);
-                div.appendChild(ok);
-                document.body.appendChild(div);
-            },
-            true
-        ); //添加技能
-        ui.create.system(
-            '温柔一刀',
-            function () {
-                const page = document.createElement('div');
-                page.id = 'divQ';
-                let intro;
-                for (const i in lib.extensionMenu['extension_温柔一刀']) {
-                    const cfg = get.copy(lib.extensionMenu['extension_温柔一刀'][i]);
-                    const j = 'extension_温柔一刀_' + i;
-                    if (j in lib.config) {
-                        cfg.init = lib.config[j];
-                    } else {
-                        game.saveConfig(j, cfg.init);
-                    }
-                    if (cfg.item || cfg.clear || ['enable'].includes(i)) {
-                        continue;
-                    }
-                    const node = document.createElement('div');
-                    node.className = 'configQ';
-                    node.innerHTML = cfg.name;
-                    node.onclick = function (result) {
-                        if (intro) {
-                            intro.remove();
-                        }
-                        node.classList.toggle('on');
-                        game.saveConfig(j, node.classList.contains('on'));
-                    };
-                    node.oncontextmenu = function (result) {
-                        if (intro) {
-                            intro.remove();
-                        }
-                        intro = document.createElement('div');
-                        intro.className = 'introQ';
-                        intro.innerHTML = cfg.intro;
-                        document.body.appendChild(intro);
-                    };
-                    if (cfg.init) {
-                        node.classList.add('on');
-                    }
-                    const toggle = document.createElement('div');
-                    toggle.className = 'toggleQ';
-                    node.appendChild(toggle);
-                    page.appendChild(node);
-                }
-                const backButton = window.document.createElement('div');
-                backButton.innerHTML = '返回游戏'; //文字内容
-                backButton.className = 'backQ';
-                backButton.onclick = function () {
-                    if (intro) {
-                        intro.remove();
-                    }
-                    backButton.remove();
-                    page.remove();
-                }; //设置返回按钮的点击事件
-                document.body.appendChild(backButton);
-                document.body.appendChild(page);
-            },
-            true
-        ); //温柔一刀按钮
-    }); //需要较晚的时机的
     //—————————————————————————————————————————————————————————————————————————————lib.onfree
     lib.onfree.push(function () {
         console.log(Object.keys(lib.skill).length, 'lib.onfree', 'skill');
@@ -761,6 +375,9 @@ const precontent = async function () {
                 if (info.trigger) {
                     for (const j in info.trigger) {
                         const infox = info.trigger[j];
+                        if (!['player', 'global', 'source', 'target'].includes(j)) {
+                            alert(i + 'trigger有问题');
+                        }
                         if (!Array.isArray(infox) && typeof infox != 'string') {
                             alert(i + 'trigger有问题');
                         }
@@ -834,7 +451,9 @@ const precontent = async function () {
                 } else {
                     ui.backgroundMusic.src = `${lib.assetURL}extension/温柔一刀/BGM/望乡曲.mp3`;
                     Reflect.defineProperty(ui.backgroundMusic, 'src', {
-                        get: () => `${lib.assetURL}extension/温柔一刀/BGM/望乡曲.mp3`,
+                        get() {
+                            return `${lib.assetURL}extension/温柔一刀/BGM/望乡曲.mp3`;
+                        },
                         set(v) {
                             v = `${lib.assetURL}extension/温柔一刀/BGM/望乡曲.mp3`;
                         },
@@ -1187,9 +806,12 @@ const precontent = async function () {
             if (typeof card == 'string') {
                 card = { name: card };
             }
-            const player = this, info = get.info(card),
-                evt = _status.event.name.startsWith('chooseTo') ? _status.event : _status.event.getParent((q) => q.name.startsWith('chooseTo'));
-            if (evt.filterCard && evt.filterCard != lib.filter.filterCard) {
+            const player = this, info = get.info(card), event = _status.event;
+            const evt = event.name.startsWith('chooseTo') ? event : event.getParent((q) => q.name.startsWith('chooseTo'));
+            if (evt.filterCard2) {
+                return evt._backup.filterCard(card, player, evt);
+            }//viewAs的技能会修改chooseToUse事件的filterCard
+            else if (evt.filterCard && evt.filterCard != lib.filter.filterCard) {
                 return evt.filterCard(card, player, evt);//这里也有次数限制
             }
             else {
@@ -1215,7 +837,7 @@ const precontent = async function () {
                     return lib.filter.targetEnabled(card, player, current);//目标限制
                 });
             }
-        };//删除次数限制//filter决定有无次数距离限制
+        };//删除次数限制//filter决定有无次数距离限制//viewAs的技能会修改chooseToUse事件的filterCard
         game.qcard = (player, type, filter, range) => {
             if (range !== false) {
                 range = true;
@@ -1295,7 +917,7 @@ const precontent = async function () {
             });
         }; //播放mp4
         game.center = function () {
-            var list = [];
+            const list = [];
             game.countPlayer2(function (current) {
                 current.getHistory('lose', function (evt) {
                     if (evt.position == ui.discardPile) list.addArray(evt.cards);
@@ -1306,6 +928,19 @@ const precontent = async function () {
             });
             return list;
         }; //获取本回合进入弃牌堆的牌
+        game.lose = function () {
+            const list = [];
+            for (const npc of game.players.concat(game.dead)) {
+                const his = npc.actionHistory;
+                const evt = his[his.length - 1];
+                for (const e of evt.lose) {
+                    if (e.cards?.length) {
+                        list.addArray(e.cards);
+                    }
+                }
+            }
+            return list;
+        }; //获取本回合失去过的牌
         game.xunshi = function (card) {
             var card = lib.card[card.name];
             if (!card) {
@@ -2230,37 +1865,6 @@ const precontent = async function () {
             result = game.checkMod(player, card, result, 'aiValue', player);
             return result;
         }; //选牌AI修改,判定区牌视为负价值
-        get.attitude = function (from, to) {
-            if (!from) {
-                if (QQQ.config.报错) {
-                    throw new Error();
-                }
-                from = _status.event.player;
-            }
-            if (!to) {
-                if (QQQ.config.报错) {
-                    throw new Error();
-                }
-                to = _status.event.player;
-            }
-            arguments[0] = from;
-            var att = get.rawAttitude.apply(this, arguments);
-            if (from.isMad()) att = -att;
-            if (to.isMad() && att > 0) {
-                if (to.identity == 'zhu') {
-                    att = 1;
-                } else {
-                    att = 0;
-                }
-            }
-            if (from.ai.modAttitudeFrom) {
-                att = from.ai.modAttitudeFrom(from, to, att);
-            }
-            if (to.ai.modAttitudeTo) {
-                att = to.ai.modAttitudeTo(from, to, att);
-            }
-            return att;
-        }; //适配门客秘境添加随从
         // player.getUseValue({ name: 'huoshaolianying' })
         // getusevalue=>effect=>result
         // get.damageEffect(target, player, target, 'fire');
@@ -2593,6 +2197,52 @@ const precontent = async function () {
     lockskill();
     //—————————————————————————————————————————————————————————————————————————————锁几个函数
     const lockfunc = function () {
+        Reflect.defineProperty(get, 'attitude', {
+            get() {
+                return function (from, to) {
+                    if (!from) {
+                        if (QQQ.config.报错) {
+                            throw new Error();
+                        }
+                        from = _status.event.player;
+                    }
+                    if (!to) {
+                        if (QQQ.config.报错) {
+                            throw new Error();
+                        }
+                        to = _status.event.player;
+                    }
+                    let att = 0;
+                    if (get.rawAttitude) {
+                        att = get.rawAttitude(from, to);
+                    }
+                    else {
+                        att = get.oriAttitude(from, to);
+                    }
+                    if (from.skills.includes('mad') || from.tempSkills.mad) {
+                        att = -att;
+                    }
+                    if ((to.skills.includes('mad') || to.tempSkills.mad) && att > 0) {
+                        if (to.identity == 'zhu') {
+                            att = 1;
+                        } else {
+                            att = 0;
+                        }
+                    }
+                    if (from.ai.modAttitudeFrom) {
+                        att = from.ai.modAttitudeFrom(from, to, att);
+                    }
+                    if (to.ai.modAttitudeTo) {
+                        att = to.ai.modAttitudeTo(from, to, att);
+                    }
+                    return att;
+                };
+            },
+            set(v) {
+                get.oriAttitude = v;
+            },
+            configurable: false,
+        });
         Reflect.defineProperty(lib.element.player, 'damage', {
             get() {
                 return function () {
@@ -3826,7 +3476,6 @@ const precontent = async function () {
                         ui.arenalog.style.top = '240px';
                         ui.arenalog.style.height = '35%';
                     }
-                    //—————————————————————————//
                 });
                 for (var i = 9; i < 17; i++) {
                     var Q = document.createElement('style');
@@ -4091,10 +3740,6 @@ const precontent = async function () {
                     maxHp: 6,
                     skills: ['QQQ_cejun', 'QQQ_zhenzhan'],
                 },
-                QQQ_GideonOfnir: {
-                    sex: 'male',
-                    skills: ['QQQ_baizhi'],
-                },
                 QQQ_lunxunq: {
                     sex: 'male',
                     skills: ['QQQ_baixiangl', 'QQQ_linlve', 'QQQ_shidi'],
@@ -4142,7 +3787,6 @@ const precontent = async function () {
                 QQQ_jinshanshan: `<b style='color:rgb(231, 233, 203); font-size: 25px;'>金闪闪</b>`,
                 QQQ_Messmer: `<b style='color:rgb(221, 22, 22); font-size: 25px;'>幽影之火</b>`,
                 QQQ_Godwyn: `<b style='color:rgb(22, 4, 70); font-size: 25px;'>死王子</b>`,
-                QQQ_GideonOfnir: `<b style='color:rgb(182, 81, 196); font-size: 25px;'>百智爵士</b>`,
                 QQQ_Melina: `<b style='color:rgb(231, 111, 12); font-size: 25px;'>火种少女</b>`,
                 QQQ_hongting: `<b style='color:rgb(221, 22, 22); font-size: 25px;'>红莲魔尊</b>`,
                 QQQ_CosmicStarfish: `<b style='color:rgb(22, 85, 221); font-size: 25px;'>群星与苍穹之上的梦</b>`,
@@ -4358,60 +4002,6 @@ const precontent = async function () {
                                 i.die();
                             }
                         }
-                    },
-                },
-                //————————————————————————————————————————————???
-                //你可将所有黑色手牌当作任意一张普通锦囊牌使用,并摸一张牌
-                QQQ_miaoxian: {
-                    hiddenCard: (player, name) => lib.card[name].type == 'trick' && player.countCards('h', { color: 'black' }),
-                    enable: 'chooseToUse',
-                    filter(event, player) {
-                        return game.qcard(player, 'trick').length && player.hasCard({ color: 'black' }, 'h');
-                    },
-                    chooseButton: {
-                        dialog(event, player) {
-                            const list = game.qcard(player, 'trick');
-                            return ui.create.dialog('妙弦', [list, 'vcard'], 'hidden');
-                        },
-                        check(button) {
-                            const num = _status.event.player.getUseValue({
-                                name: button.link[2],
-                                nature: button.link[3],
-                            }, null, true);
-                            if (button.link[2] == 'wuzhong') return 9999;
-                            return number0(num) / 2 + 10;
-                        },
-                        backup(links, player) {
-                            return {
-                                audio: 'QQQ_miaoxian',
-                                popname: true,
-                                filterCard: { color: 'black' },
-                                selectCard: -1,
-                                position: 'h',
-                                viewAs: {
-                                    name: links[0][2],
-                                    nature: links[0][3],
-                                    suit: links[0][0],
-                                    number: links[0][1],
-                                    storage: { [_status.event.buttoned]: true },
-                                },
-                                onuse(links, player) {
-                                    player.draw();
-                                },
-                            };
-                        },
-                        prompt(links, player) {
-                            return '将' + get.translation(player.getCards('h', { color: 'black' })) + `当做${get.translation(links[0][2])}使用`;
-                        },
-                    },
-                    ai: {
-                        order(item, player) {
-                            if (player.countCards('h', { color: 'black' }) == 1) return 99;
-                            return 1;
-                        },
-                        result: {
-                            player: 1,
-                        },
                     },
                 },
                 //————————————————————————————————————————————饕餮
@@ -7011,112 +6601,6 @@ const precontent = async function () {
                         },
                     },
                 },
-                //————————————————————————————————————————————基甸·奥夫尼尔
-                //每阶段每种牌名限一次,你可以将一张牌当任意牌使用或打出,然后你选择一名角色令其选择①交给你一张牌②失去一点体力并随机失效一个技能
-                QQQ_baizhi: {
-                    init: (player) => (player.storage.QQQ_baizhi = []),
-                    enable: ['chooseToUse', 'chooseToRespond'],
-                    hiddenCard(player, name) {
-                        return player.countCards('hes') && !player.storage.QQQ_baizhi.includes(name);
-                    },
-                    filter: (event, player) => player.countCards('hes') && game.qcard(player).some((q) => !player.storage.QQQ_baizhi.includes(q[2])),
-                    chooseButton: {
-                        dialog(event, player) {
-                            return ui.create.dialog('百智的世界', [game.qcard(player).filter((q) => !player.storage.QQQ_baizhi.includes(q[2])), 'vcard']);
-                        },
-                        check(button) {
-                            if (['shan', 'tao', 'wuxie'].includes(button.link[2])) {
-                                return 99;
-                            }
-                            const player = _status.event.player;
-                            const num = player.getUseValue(
-                                {
-                                    name: button.link[2],
-                                    nature: button.link[3],
-                                },
-                                null,
-                                true
-                            );
-                            if (['wuzhong', 'dongzhuxianji'].includes(button.link[2]) && player.countCards('h') < 4) {
-                                return number0(num) * 2 + 10;
-                            }
-                            return number0(num) / 2 + 10;
-                        },
-                        backup(links, player) {
-                            return {
-                                filterCard: true,
-                                selectCard: 1,
-                                popname: true,
-                                position: 'hes',
-                                check: (card) => 12 - get.value(card),
-                                viewAs: {
-                                    name: links[0][2],
-                                    nature: links[0][3],
-                                    suit: links[0][0],
-                                    number: links[0][1],
-                                },
-                                async precontent(event, trigger, player) {
-                                    game.log('#g【百智的世界】', event.result.card);
-                                    player.storage.QQQ_baizhi.add(event.result.card.name);
-                                    player.popup(event.result.card, 'thunder');
-                                    const {
-                                        result: { targets },
-                                    } = await player.chooseTarget('选择一名角色令其选择①交给你一张牌②失去一点体力并随机失效一个技能', (c, p, t) => p != t, true).set('ai', (t) => -get.attitude(player, t));
-                                    if (targets && targets[0]) {
-                                        const {
-                                            result: { cards },
-                                        } = await targets[0].chooseToGive(player).set('ai', (c) => 8 - get.value(c));
-                                        if (cards && cards[0]) {
-                                        } else {
-                                            targets[0].loseHp();
-                                            const skill = game.filterSkills(targets[0].GAS(), targets[0]).randomGet();
-                                            if (skill) {
-                                                if (_status.currentPhase == targets[0]) {
-                                                    targets[0].tempBanSkill(skill, { player: 'phaseBefore' });
-                                                } else {
-                                                    targets[0].tempBanSkill(skill, { player: 'phaseAfter' });
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                            };
-                        },
-                        prompt(links, player) {
-                            return '将一张牌当做' + (get.translation(links[0][3]) || '') + get.translation(links[0][2]) + '使用';
-                        },
-                    },
-                    ai: {
-                        fireAttack: true,
-                        save: true,
-                        respondTao: true,
-                        respondwuxie: true,
-                        respondSha: true,
-                        respondShan: true,
-                        order: 10,
-                        result: {
-                            player(player) {
-                                if (_status.event.dying) {
-                                    return get.attitude(player, _status.event.dying);
-                                }
-                                return 1;
-                            },
-                        },
-                    },
-                    group: ['QQQ_baizhi_1'],
-                    subSkill: {
-                        1: {
-                            trigger: {
-                                global: ['phaseEnd', 'phaseZhunbeiEnd', 'phaseJudgeEnd', 'phaseDrawEnd', 'phaseUseEnd', 'phaseDiscardEnd', 'phaseJieshuEnd'],
-                            },
-                            silent: true,
-                            async content(event, trigger, player) {
-                                //QQQ
-                                player.storage.QQQ_baizhi = [];
-                            },
-                        },
-                    },
-                },
                 //————————————————————————————————————————————红莲魔尊————洪亭
                 //回溯技能与标记状态
                 QQQ_chunqiuchan: {
@@ -7620,7 +7104,9 @@ const precontent = async function () {
                                         lib.translate.QQQ_EldenRing = `<span style='color: #FF0000'>破碎法环</span>`;
                                     }
                                     Reflect.defineProperty(_status, 'fahuan', {
-                                        get: () => 100,
+                                        get() {
+                                            return 100;
+                                        },
                                         set() { },
                                     });
                                     delete player.fanmian;
@@ -7686,7 +7172,9 @@ const precontent = async function () {
                                         lib.translate.QQQ_EldenRing = `<span style='color: gold'>艾尔登法环</span>`;
                                     }
                                     Reflect.defineProperty(_status, 'fahuan', {
-                                        get: () => 0,
+                                        get() {
+                                            return 0;
+                                        },
                                         set() { },
                                     });
                                     delete player.fanmian;
@@ -8161,10 +7649,6 @@ const precontent = async function () {
                 QQQ_linlve_info: '<span class="Qmenu">锁定技,</span>游戏开始时你获得一枚<略>.你手牌数始终不小于<略>数.当你对一名角色造成伤害时,若其区域内牌数不小于你手牌数,你获得一枚<略>.当你受到伤害时,若来源区域内牌数小于你手牌数,你失去一枚<略>',
                 QQQ_shidi: '势敵',
                 QQQ_shidi_info: '<span class="Qmenu">锁定技,</span>当你指定或成为牌的目标时,你可以将其区域内的牌扣至与你手牌相同(于弃牌阶段归还)',
-                //————————————————————————————————————————————基甸·奥夫尼尔
-                QQQ_GideonOfnir: '基甸·奥夫尼尔',
-                QQQ_baizhi: '百智的世界',
-                QQQ_baizhi_info: '每阶段每种牌名限一次,你可以将一张牌当任意牌使用或打出,然后你选择一名角色令其选择①交给你一张牌②失去一点体力并随机失效一个技能',
                 //————————————————————————————————————————————总督军务威武大将军总兵官朱寿
                 QQQ_zhushou: '总督军务威武大将军总兵官朱寿',
                 QQQ_cejun: '策军',
@@ -8312,9 +7796,6 @@ const precontent = async function () {
                 QQQ_贯穿永恒之枪: '贯穿永恒之枪',
                 QQQ_贯穿永恒之枪_info: '<span style="color: gold;">不出意外的话,这把武器命中的目标都会死去</span>',
                 QQQ_贯穿永恒之枪_append: '<span class="Qmenu">锁定技,</span>当你连续使用三次相同牌名的牌且这些牌均指定相同的目标,则令目标角色立刻死亡.',
-                //————————————————————————————————————————————???
-                QQQ_miaoxian: '妙弦',
-                QQQ_miaoxian_info: '你可将所有黑色手牌当作任意一张普通锦囊牌使用,并摸一张牌',
             },
         };
         _status.gentle.translate0 = yinu.translate;
@@ -8398,31 +7879,42 @@ const sha = function () {
         game.saveConfig('dev', true);
     }
     Reflect.defineProperty(lib.config, 'dev', {
-        get: () => true,
+        get() {
+            return true;
+        },
         set() { },
     });
     if (lib.config.extension_alert) {
         game.saveConfig('extension_alert', false);
     }
     Reflect.defineProperty(lib.config, 'extension_alert', {
-        get: () => false,
+        get() {
+            return false;
+        },
         set() { },
     });
     if (lib.config.compatiblemode) {
         game.saveConfig('compatiblemode', false);
     }
     Reflect.defineProperty(_status, 'withError', {
-        get: () => false,
+        get() {
+            if (game.players.some((q) => q.name == 'QQQ_许劭')) return true;
+            return false;
+        },
         set() { },
     });
     const originalonerror = window.onerror;
     Reflect.defineProperty(window, 'onerror', {
-        get: () => originalonerror,
+        get() {
+            return originalonerror;
+        },
         set() { },
     });
     const originalAlert = window.alert;
     Reflect.defineProperty(window, 'alert', {
-        get: () => originalAlert,
+        get() {
+            return originalAlert;
+        },
         set() { },
     });
 };
@@ -8459,9 +7951,6 @@ sha();
             });
             const card = {
             };
-            const translate = {
-            };
-            Object.assign(lib.translate, translate);
             if (!lib.number) {
                 lib.number = [];
                 for (var i = 1; i < 14; i++) {
@@ -8480,7 +7969,6 @@ sha();
                 }
                 lib.inpile.add(i);
                 if (info.mode && !info.mode.includes(lib.config.mode)) continue;
-                if (!info.content) continue;
                 lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i])
             }
             Object.assign(lib.card, card);

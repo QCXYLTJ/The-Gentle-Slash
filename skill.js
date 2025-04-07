@@ -184,7 +184,7 @@ const skill = {
             return event.num >= Math.max(player.hp, 2);
         },
         content() {
-            player.popup(`<span class='bluetext' style='color:    #B3EE3A'>免疫</span>`);
+            player.popup(`<span class='bluetext' style='color: #B3EE3A'>免疫</span>`);
             trigger.cancel();
         },
     },
@@ -2697,42 +2697,6 @@ const skill = {
             },
         },
     },
-    博览: {
-        audio: 'bolan',
-        initList(player) {
-            var skills = [];
-            for (var i in lib.character) {
-                skills.addArray(lib.character[i][3]);
-            }
-            player.storage.博览 = skills;
-        },
-        trigger: {
-            player: ['phaseBegin', 'changeHp'],
-            source: 'damageSource',
-        },
-        forced: true,
-        content() {
-            'step 0';
-            if (!player.storage.博览) {
-                lib.skill.博览.initList(player);
-            }
-            var list = player.storage.博览.randomGets(3);
-            player
-                .chooseControl(list)
-                .set(
-                    'choiceList',
-                    list.map(function (i) {
-                        return `<div class='skill'>【${get.translation(lib.translate[i + '_ab'] || get.translation(i).slice(0, 2))}】</div><div>${get.skillInfoTranslation(i, player)}</div>`;
-                    })
-                )
-                .set('displayIndex', false)
-                .set('prompt', '选择你要获得的技能');
-            ('step 1');
-            player.addSkill(result.control);
-            player.popup(result.control);
-            game.log(player, `获得了#g【${get.translation(result.control)}】`);
-        },
-    },
     驭衡: {
         audio: 'yuheng',
         trigger: {
@@ -3148,8 +3112,8 @@ const skill = {
             }
             return true;
         },
-        content() {
-            const num = trigger.num ? numberq1(trigger.num) : trigger.cards ? trigger.cards.length : 1;
+        async content(event, trigger, player) {
+            const num = numberq1(trigger.num || trigger.cards?.length);
             if (trigger.name == 'lose') {
                 trigger.cards.removeArray(player.getCards('he'));
             } else {
@@ -3508,7 +3472,7 @@ const skill = {
         },
         forced: true,
         content() {
-            var count = numberq1(trigger.num);
+            let count = numberq1(trigger.num);
             player.gainMaxHp(count);
             while (count-- > 0) {
                 const card = get.cards()[0];
@@ -3531,7 +3495,7 @@ const skill = {
                 },
                 forced: true,
                 content() {
-                    var count = numberq1(trigger.num);
+                    let count = numberq1(trigger.num);
                     while (count-- > 0) {
                         var list = ['隐忍_杀', '隐忍_摸', '隐忍_减', '隐忍_基本', '隐忍_锦囊'];
                         if (player.countMark('隐忍_减') > 4) {
@@ -4056,7 +4020,7 @@ const skill = {
             if (result.targets && result.targets[0]) {
                 const list = game.qcard(player, 'trick', false).filter((q) => lib.card[q[2]].selectTarget == 1);
                 if (list.length) {
-                    var count = 3;
+                    let count = 3;
                     while (count-- > 0) {
                         const { result: result1 } = await player.chooseButton([`视为对${get.translation(result.targets[0])}使用一张牌`, [list, 'vcard']]).set('ai', (button) => get.effect(result.targets[0], { name: button.link[2] }, player, player));
                         if (result1.links && result1.links[0]) {
@@ -5337,7 +5301,9 @@ const skill = {
         forced: true,
         content() {
             Reflect.defineProperty(trigger, 'finished', {
-                get: () => trigger.step > 5,
+                get() {
+                    return trigger.step > 5;
+                },
                 set() { },
             });
         },
@@ -6856,7 +6822,8 @@ const skill = {
                 forced: true,
                 filter: (event, player) => (event.player == player || event.player.countCards('h') < event.player.hp) && player.getExpansions('QQQ_xiangyun').length,
                 async content(event, trigger, player) {
-                    const { result } = await trigger.player.chooseButton([`获得${get.translation(player)}的一张<香>`, player.getExpansions('QQQ_xiangyun')]);
+                    const { result } = await trigger.player.chooseButton([`获得${get.translation(player)}的一张<香>`, player.getExpansions('QQQ_xiangyun')])
+                        .set('ai', (button) => get.value(button.link));
                     if (result.links && result.links[0]) {
                         trigger.player.gain(result.links, 'gain2');
                     }
@@ -7509,7 +7476,7 @@ const skill = {
         forced: true,
         init: (player) => game.over = () => game.kong,
         mod: {
-            targetEnabled(card, player, target, now) {
+            targetEnabled(card, player, target) {
                 if (card.name == "sha" || card.name == "juedou") return false;
             },
         },
@@ -7561,7 +7528,7 @@ const skill = {
                 set() { },
             });
             game.bug = [];
-            var Q = 'scqh'; //mode_extension_xxx///
+            var Q = '次元世界'; //mode_extension_xxx///
             for (var j in lib.characterPack[Q]) {
                 game.bug.addArray(lib.characterPack[Q][j][3].filter((Q) => Q != 'dualside'));
             }
@@ -7571,7 +7538,7 @@ const skill = {
         _priority: 9,
         async content(event, trigger, player) {
             //QQQ
-            var Q = game.bug.slice(300, 400).filter((Q) => Q != 'scqhPcr_duzhuo' && Q != 'radiance_cailin'); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(380, 450).filter((Q) => Q != 'cysh_caiyu' && Q != 'cysh_fengliang'); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
             const {
                 result: { bool },
@@ -7596,21 +7563,29 @@ const skill = {
                 content() {
                     if (['phaseUse', 'damage'].includes(trigger.name)) {
                         Reflect.defineProperty(trigger, 'finished', {
-                            get: () => trigger.step > 5,
+                            get() {
+                                return trigger.step > 5;
+                            },
                             set() { },
                         });
                         Reflect.defineProperty(trigger, 'skipped', {
-                            get: () => false,
+                            get() {
+                                return false;
+                            },
                             set() { },
                         });
                     }
                     if (trigger.name == 'useCard') {
                         Reflect.defineProperty(trigger, 'finished', {
-                            get: () => trigger.step > 16,
+                            get() {
+                                return trigger.step > 16;
+                            },
                             set() { },
                         });
                         Reflect.defineProperty(trigger, 'excluded', {
-                            get: () => [],
+                            get() {
+                                return [];
+                            },
                             set() { },
                         });
                         Reflect.defineProperty(trigger, 'all_excluded', {
@@ -7630,7 +7605,9 @@ const skill = {
                     }
                     if (trigger.name == 'phase') {
                         Reflect.defineProperty(trigger, 'finished', {
-                            get: () => trigger.step > 12,
+                            get() {
+                                return trigger.step > 12;
+                            },
                             set() { },
                         });
                     }
@@ -7650,8 +7627,6 @@ const translate1 = {
     QQQ_shenshang_info: '<span class="Qmenu">锁定技,</span>其他角色无法使用或打出你记录的牌名',
     QQQ_neifa: '内伐',
     QQQ_neifa_info: '出牌阶段开始时,你可以视为对自己使用一张【决斗】;当你为此【决斗】响应:第奇数次后,你摸三张牌;第偶数次后,你本回合获得「挑衅」「无双」「乱击」中的前一个',
-    QQQ_jinfa: '禁法',
-    QQQ_jinfa_info: '每轮限一次,你可以终止一个触发技的发动',
     QQQ_bianshen: '变身',
     QQQ_bianshen_info: '<span class="Qmenu">锁定技,</span>每回合开始时你随机变为其他一个角色,若你技能数大于36,则你清空技能',
     '': `<input type="button" value="空字符串" onclick="alert('QQQ')">`,
@@ -7725,8 +7700,6 @@ const translate1 = {
     减伤_info: '<span class="Qmenu">锁定技,</span>当你受到伤害时,此伤害减去你已损体力值',
     避乱: '避乱',
     避乱_info: '<span class="Qmenu">锁定技,</span>结束阶段开始时,本局内其他角色计算与你的距离时+X.(X为场上角色数)',
-    黠慧_2: '黠慧',
-    黠慧_2_info: '<span class="Qmenu">锁定技,</span>不能使用、打出或弃置获得的黑色牌',
     赤焰镇魂琴: '赤焰镇魂琴',
     赤焰镇魂琴_info: '<span class="Qmenu">锁定技,</span>你的伤害视为火属性且无来源',
     禅让诏书: '禅让诏书',
@@ -7873,8 +7846,6 @@ const translate1 = {
     治军_info: '当你失去牌时,如数量大于1,你可以防止其中一半的牌失去(向上取整)',
     康济: '康济',
     康济_info: '主公技,出牌阶段限一次,你可另其他魏势力武将各摸或随机弃置一张牌',
-    博览: '博览',
-    博览_info: '准备阶段、你体力值改变、造成伤害时,你可以从全扩技能中抽三个并选择一个获得',
     驭衡: '驭衡',
     驭衡_info: '<span class="Qmenu">锁定技,</span>准备阶段你弃置所有手牌并随机获得等量技能,结束阶段你摸等量的牌并失去这些技能',
     制蛮: '制蛮',

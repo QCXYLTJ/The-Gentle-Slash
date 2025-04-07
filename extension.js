@@ -31,7 +31,7 @@ if (QQQ.config.扩展全关) {
 if (QQQ.config.扩展修改) {
     var Q = [
         'BGM', '温柔一刀', '红莲灿世', '火灵月影', 'EX技能', '缺德扩展', '梦水何婉', '神通世界',
-        '三国全系列', '云将', '贴吧精品', '梦隐', '众星起源', '五行天师', '胜负统计', '萌将坛',
+        '三国全系列', '云将', '贴吧精品', '梦隐', '众星起源', '小镜子', '次元世界', '太虚幻境',
     ];
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -80,14 +80,18 @@ const sha = function () {
         game.saveConfig('dev', true);
     }
     Reflect.defineProperty(lib.config, 'dev', {
-        get: () => true,
+        get() {
+            return true;
+        },
         set() { },
     });
     if (lib.config.extension_alert) {
         game.saveConfig('extension_alert', false);
     }
     Reflect.defineProperty(lib.config, 'extension_alert', {
-        get: () => false,
+        get() {
+            return false;
+        },
         set() { },
     });
     if (lib.config.compatiblemode) {
@@ -95,19 +99,23 @@ const sha = function () {
     }
     Reflect.defineProperty(_status, 'withError', {
         get() {
-            if (game.players.some((q) => q.name == 'QQQ_许劭')) return true;
+            if (game.players.some((q) => q.name == 'HL_许劭')) return true;
             return false;
         },
         set() { },
     });
     const originalonerror = window.onerror;
     Reflect.defineProperty(window, 'onerror', {
-        get: () => originalonerror,
+        get() {
+            return originalonerror;
+        },
         set() { },
     });
     const originalAlert = window.alert;
     Reflect.defineProperty(window, 'alert', {
-        get: () => originalAlert,
+        get() {
+            return originalAlert;
+        },
         set() { },
     });
 };
@@ -349,6 +357,391 @@ const extensionInfo = await lib.init.promises.json(`extension/温柔一刀/info.
 game.import('extension', function (lib, game, ui, get, ai, _status) {
     const QQQ = {
         name: '温柔一刀',
+        arenaReady() {
+            console.log(Object.keys(lib.skill).length, 'lib.arenaReady', 'skill');
+            console.log(Object.keys(lib.card).length, 'card');
+            console.log(Object.keys(lib.character).length, 'character');
+            game.finishCards();
+            if (QQQ.config.卖血模式) {
+                lib.skill.yuqi.ai = { maixie: true };
+                lib.skill.luochong.ai = { maixie: true };
+                lib.skill.xinyaoming.ai = { maixie: true };
+                lib.skill.xinfu_andong.ai = { maixie: true };
+                lib.skill.yachai.ai = { maixie: true };
+                lib.skill.yaoming.ai.maixie = true;
+                lib.skill.clanxieshu.ai.maixie = true;
+            }
+            if (!_status.characterlist) {
+                _status.characterlist = Object.keys(lib.character);
+            }
+            if (!lib.type) {
+                lib.type = [];
+            }
+            for (const i in lib.card) {
+                const info = lib.card[i];
+                if (typeof info != 'object') {
+                    if (QQQ.config.报错) {
+                        alert(i + 'info不是对象');
+                    }
+                    continue;
+                }
+                if (!lib.type.includes(info.type)) {
+                    lib.type.push(info.type);
+                }
+                if (info.destroy) {
+                    delete info.destroy;
+                } //禁止销毁
+                if (!info.content) continue;
+                if (QQQ.config.报错) {
+                    if (info.enable == 'phaseUse') {
+                        alert(i + 'enable有问题');
+                    }
+                    if (!info.type) {
+                        alert(i + 'type有问题');
+                    }
+                    if (info.type == 'equip') {
+                        if (!info.subtype) {
+                            console.log(i + '没有subtype');
+                        }
+                        if (['equip2', 'equip1', 'equip5'].includes(info.subtype) && !info.skills) {
+                            console.log(i + '没有装备技能');
+                        }
+                        if (!info.ai.equipValue && !info.ai.basic.equipValue) {
+                            alert(i + '没有装备AI');
+                        }
+                    }
+                    if (info.type == 'delay') {
+                        if (!info.ai || !info.ai.result || !info.ai.result.target) {
+                            alert(i + 'delay没有result');
+                        }
+                    }
+                }
+                if (QQQ.config.卡牌加入牌堆) {
+                    if (lib.cardPack.温柔一刀?.includes(i)) continue;//不重复添加温柔一刀牌堆
+                    if (info.mode && !info.mode.includes(lib.config.mode)) continue;
+                    if (!lib.translate[`${i}_info`]) continue;
+                    lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
+                }
+            } //卡牌加入牌堆
+            lib.config.all.characters.add('温柔一刀');
+            lib.connectCardPack.add('温柔一刀');
+            lib.connectCharacterPack.add('温柔一刀');
+            for (const i in lib.character) {
+                const info = lib.character[i];
+                if (typeof info != 'object') {
+                    if (QQQ.config.报错) {
+                        alert(i + 'info不是对象');
+                    }
+                    continue;
+                }
+                if (!QQQ.config.BOSS) {
+                    info.isBoss = false;
+                } //BOSS
+                if (QQQ.config.武将全开) {
+                    info.isAiForbidden = false; //AI禁用
+                    info.isUnseen = false; //隐藏
+                }
+                if (QQQ.config.报错) {
+                    for (const j of info[4]) {
+                        if (!j) {
+                            alert(i + '角色没有info');
+                        }
+                    }
+                    if (!info.hp && info.hp != 0) {
+                        alert(i + '角色没有hp');
+                    }
+                    for (const j of info.skills) {
+                        if (!lib.skill[j] && !_status.auto) {
+                            console.log(j, '是一个不存在的技能名info', i);
+                            alert(j + '是一个不存在的技能名info' + i);
+                        }
+                    }
+                }
+            }
+            lib.card.list = lib.card.list.filter((i) => {
+                const name = i[2];
+                const info = lib.card[name];
+                if (!name || !info) {
+                    if (QQQ.config.报错) {
+                        alert(i + '是没有info的卡牌');
+                    }
+                    return false;
+                }
+                if (info.mode && !info.mode.includes(lib.config.mode)) {
+                    console.log(name, 'mode不符合');
+                    return false;
+                }
+                return true;
+            });//最晚lib.arenaReady里面
+            if (QQQ.config.武将全开) {
+                for (const i of lib.config.extensions) {
+                    game.saveConfig(`extension_${i}_characters_enable`, true); //扩展武将全部打开
+                }
+                for (var i in lib.characterPack) {
+                    if (!lib.config.characters.includes(i)) {
+                        lib.config.characters.push(i);
+                    } //扩展武将全部添加
+                    lib.connectCharacterPack.add(i); //扩展武将联机
+                } //全开武将包
+                // lib.config.all.characters = lib.config.characters;
+                // game.saveConfig('all', lib.config.all);
+                game.saveConfig('banned', []); //禁将
+                game.saveConfig('forbidai_user', []); //仅点将可用
+                game.saveConfig('forbidai', []);
+                for (const i of lib.config.all.mode) {
+                    game.saveConfig(`${i}_banned`, []); //模式禁将
+                    game.saveConfig(`connect_${i}_banned`, []); //联机模式禁将
+                }
+                //game.saveConfig('connect_characters', []);//联机禁将包,放进去的才是要禁的
+                game.saveConfig('characters', lib.config.characters);
+                game.saveConfig('defaultcharacters', lib.config.characters);
+            } //扩展武将全部打开
+            if (QQQ.config.卡牌全开) {
+                game.saveConfig('bannedcards', []);
+                for (const i of lib.config.all.mode) {
+                    game.saveConfig(`${i}_bannedcards`, []);
+                }
+                for (const i of lib.config.extensions) {
+                    game.saveConfig(`extension_${i}_cards_enable`, true); //扩展卡牌全部打开
+                }
+                for (var i in lib.cardPack) {
+                    if (!lib.config.cards.includes(i)) {
+                        lib.config.cards.push(i);
+                    } //扩展卡牌全部添加
+                    lib.connectCardPack.add(i); //扩展卡牌联机
+                    if (lib.cardPackInfo[i]) {
+                        lib.cardPackInfo[i].closeable = true;
+                    } //添加关闭卡牌按钮
+                }
+                game.saveConfig('cards', lib.config.cards);
+                game.saveConfig('connect_cards', []); //联机禁将,放进去的才是要禁的
+                game.saveConfig('defaultcards', lib.config.cards);
+            } //扩展卡牌全部打开
+            if (QQQ.config.联机禁官服将) {
+                game.saveConfig('connect_characters', ['standard', 'refresh', 'shenhua', 'yijiang', 'sp', 'onlyOL', 'yingbian', 'clan', 'xinghuoliaoyuan', 'huicui', 'xianding', 'sp2', 'extra', 'mobile', 'shiji', 'sb', 'tw', 'collab', 'jsrg', 'offline', 'old', 'diy', 'ddd', 'key', 'yxs', 'hearth', 'gwent', 'mtg', 'ow', 'swd', 'gujian', 'xianjian', 'sixiang', 'newjiang']);
+            }
+            ui.create.system(
+                '换将',
+                function () {
+                    for (const player of game.players) {
+                        player.classList.add('Qselectable');
+                        player.onclick = function () {
+                            const play = this;
+                            const div = window.document.createElement('div');
+                            div.id = 'divQ';
+                            const JUESELIST = [];
+                            //————————————————————————————————————————————————————————确定
+                            const OK = window.document.createElement('div');
+                            OK.className = 'backQ';
+                            OK.innerHTML = '确定';
+                            OK.onclick = function () {
+                                if (div.log) {
+                                    play.init(div.log.link);
+                                }
+                                input.remove();
+                                FIND.remove();
+                                div.remove();
+                                OK.remove();
+                                for (const player of game.players) {
+                                    player.classList.remove('Qselectable');
+                                    player.onclick = null;
+                                }
+                            };
+                            document.body.appendChild(OK);
+                            //————————————————————————————————————————————————————————搜索
+                            const input = document.createElement('input');
+                            input.className = 'shuruQ';
+                            const FIND = window.document.createElement('div');
+                            FIND.className = 'findQ';
+                            FIND.innerHTML = '搜索';
+                            FIND.onclick = function () {
+                                for (const x of JUESELIST) {
+                                    x.remove();
+                                }
+                                for (const j in lib.character) {
+                                    if (lib.translate[j] && lib.translate[j].includes(input.value) || j.includes(input.value)) {
+                                        const JUESE = window.document.createElement('div');
+                                        JUESE.style.backgroundImage = `url('${game.src(j)}')`;
+                                        JUESE.className = 'characterQ';
+                                        JUESE.innerHTML = get.translation(j);
+                                        JUESE.link = j;
+                                        JUESE.onclick = function () {
+                                            if (div.log) {
+                                                div.log.classList.remove('selected');
+                                            }
+                                            div.log = this;
+                                            this.classList.add('selected');
+                                        };
+                                        JUESELIST.push(JUESE);
+                                        div.appendChild(JUESE);
+                                    }
+                                }
+                            };
+                            document.body.appendChild(FIND);
+                            document.body.appendChild(input);
+                            //————————————————————————————————————————————————————————武将列表
+                            for (const i in lib.characterPack) {
+                                const PACK = window.document.createElement('div');
+                                PACK.className = 'packQ';
+                                PACK.innerHTML = get.translation(i + '_character_config');
+                                PACK.link = i;
+                                PACK.onclick = function () {
+                                    for (const x of JUESELIST) {
+                                        x.remove();
+                                    }
+                                    for (const j in lib.characterPack[this.link]) {
+                                        const JUESE = window.document.createElement('div');
+                                        JUESE.style.backgroundImage = `url('${game.src(j)}')`;
+                                        JUESE.className = 'characterQ';
+                                        JUESE.innerHTML = get.translation(j);
+                                        JUESE.link = j;
+                                        JUESE.onclick = function () {
+                                            if (div.log) {
+                                                div.log.classList.remove('selected');
+                                            }
+                                            div.log = this;
+                                            this.classList.add('selected');
+                                        };
+                                        JUESELIST.push(JUESE);
+                                        div.appendChild(JUESE);
+                                    }
+                                };
+                                div.appendChild(PACK);
+                            }
+                            document.body.appendChild(div);
+                        };
+                    }
+                },
+                true
+            ); //换将
+            ui.create.system(
+                '重启',
+                function () {
+                    game.reload();
+                    return true;
+                },
+                true
+            ); //重启按钮
+            ui.create.system(
+                '添加技能',
+                async function () {
+                    const div = document.createElement('div');
+                    div.id = 'skilllist';
+                    const input = document.createElement('input');
+                    input.className = 'shuruQ';
+                    input.placeholder = '输入技能代码名(不是技能名的翻译,如破军是pojun)';
+                    const FIND = window.document.createElement('div');
+                    FIND.className = 'findQ';
+                    FIND.innerHTML = '搜索';
+                    const skilllist = [];
+                    FIND.onclick = function () {
+                        for (var x of skilllist) {
+                            x.remove();
+                        }
+                        for (const j in lib.skill) {
+                            if (lib.translate[j]?.includes(input.value) || j.includes(input.value)) {
+                                const skill = window.document.createElement('div');
+                                skill.className = 'skillQ';
+                                skill.innerHTML = `${lib.translate[j]}(${j}):${lib.translate[`${j}_info`]}`;
+                                skill.link = j;
+                                skill.onclick = function () {
+                                    if (div.log) {
+                                        div.log.classList.remove('selected');
+                                    }
+                                    div.log = this;
+                                    this.classList.add('selected');
+                                };
+                                skilllist.push(skill);
+                                div.appendChild(skill);
+                            }
+                        }
+                    };
+                    const ok = document.createElement('button');
+                    ok.className = 'backQ';
+                    ok.textContent = '确认';
+                    ok.addEventListener('click', async function () {
+                        div.remove();
+                        if (div.log && lib.skill[div.log.link]) {
+                            for (const player of game.players) {
+                                player.classList.add('Qselectable');
+                                player.onclick = function () {
+                                    const play = this;
+                                    play.addSkill(div.log.link);
+                                    for (const player of game.players) {
+                                        player.classList.remove('Qselectable');
+                                        player.onclick = null;
+                                    }
+                                };
+                            }
+                        }
+                    });
+                    div.appendChild(FIND);
+                    div.appendChild(input);
+                    div.appendChild(ok);
+                    document.body.appendChild(div);
+                },
+                true
+            ); //添加技能
+            ui.create.system(
+                '温柔一刀',
+                function () {
+                    const page = document.createElement('div');
+                    page.id = 'divQ';
+                    let intro;
+                    for (const i in lib.extensionMenu['extension_温柔一刀']) {
+                        const cfg = get.copy(lib.extensionMenu['extension_温柔一刀'][i]);
+                        const j = 'extension_温柔一刀_' + i;
+                        if (j in lib.config) {
+                            cfg.init = lib.config[j];
+                        } else {
+                            game.saveConfig(j, cfg.init);
+                        }
+                        if (cfg.item || cfg.clear || ['enable'].includes(i)) {
+                            continue;
+                        }
+                        const node = document.createElement('div');
+                        node.className = 'configQ';
+                        node.innerHTML = cfg.name;
+                        node.onclick = function (result) {
+                            if (intro) {
+                                intro.remove();
+                            }
+                            node.classList.toggle('on');
+                            game.saveConfig(j, node.classList.contains('on'));
+                        };
+                        node.oncontextmenu = function (result) {
+                            if (intro) {
+                                intro.remove();
+                            }
+                            intro = document.createElement('div');
+                            intro.className = 'introQ';
+                            intro.innerHTML = cfg.intro;
+                            document.body.appendChild(intro);
+                        };
+                        if (cfg.init) {
+                            node.classList.add('on');
+                        }
+                        const toggle = document.createElement('div');
+                        toggle.className = 'toggleQ';
+                        node.appendChild(toggle);
+                        page.appendChild(node);
+                    }
+                    const backButton = window.document.createElement('div');
+                    backButton.innerHTML = '返回游戏'; //文字内容
+                    backButton.className = 'backQ';
+                    backButton.onclick = function () {
+                        if (intro) {
+                            intro.remove();
+                        }
+                        backButton.remove();
+                        page.remove();
+                    }; //设置返回按钮的点击事件
+                    document.body.appendChild(backButton);
+                    document.body.appendChild(page);
+                },
+                true
+            ); //温柔一刀按钮
+        },
         content: content,
         precontent: precontent,
         config: config,
@@ -431,7 +824,7 @@ game.addMode(
             },
         },
         get: {
-            attitude(from, to) {
+            rawAttitude(from, to) {
                 if (!from) throw new Error();
                 if (!to) throw new Error();
                 if (from.identity == to.identity) return 10;
