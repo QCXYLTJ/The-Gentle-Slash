@@ -5,35 +5,14 @@ const config = {
         name: '<a href="https://qm.qq.com/q/SsTlU9gc24"><span class="Qmenu">【温柔一刀】群聊: 771901025</span></a>',
         clear: true,
     },
-    全部关闭: {
-        name: '<span class="Qmenu">全部关闭</span>',
-        intro: '开启后,会一键关闭全部按钮',
-        init: false,
-        onclick(result) {
-            const cfg = this._link.config;
-            game.saveConfig(cfg._name, result);
-            if (result) {
-                for (const i in lib.extensionMenu.extension_温柔一刀) {
-                    if (config[i].init && i != '全部关闭' && lib.config[`extension_温柔一刀_${i}`]) {
-                        game.saveConfig(`extension_温柔一刀_${i}`, false);
-                    }
-                }
-            }
-        },
-    },
-    托管: {
-        name: '<span class="Qmenu">托管</span>',
-        intro: '开启后,会进入托管模式',
-        init: false,
-    },
     报错: {
         name: '<span class="Qmenu">报错</span>',
-        intro: '开启后,会进入开发者模式,报出很多存在的bug',
+        intro: '开启后,会报出很多存在的bug(测试用,勿开)',
         init: false,
     },
-    BOSS: {
-        name: '<span class="Qmenu">BOSS</span>',
-        intro: '开启后,会将BOSS加入挑战模式',
+    扩展修改: {
+        name: '<span class="Qmenu">扩展修改</span>',
+        intro: '开启后,直接修改游戏存储的扩展(测试用,勿开)',
         init: false,
     },
     AI禁用: {
@@ -83,11 +62,6 @@ const config = {
                 game.saveConfig('game_speed', 'vvfast');
             }
         },
-    },
-    轮次计数: {
-        name: '<span class="Qmenu">轮次计数</span>',
-        intro: '开启后,将统计并显示玩家的轮次数以及出牌阶段次数',
-        init: false,
     },
     神武再世: {
         name: '<span class="Qmenu">神武再世</span>',
@@ -144,21 +118,6 @@ const config = {
         intro: '开启后,回血可以超过上限',
         init: true,
     },
-    火攻加强: {
-        name: '<span class="Qmenu">火攻加强</span>',
-        intro: '开启后,火攻改为:目标展示一张牌之后,亮出牌堆顶四张牌,并对目标造成亮出牌与其展示牌花色相同数的伤害',
-        init: true,
-    },
-    卡牌加强: {
-        name: '<span class="Qmenu">卡牌加强</span>',
-        intro: '开启后,加强青龙刀、麒麟弓、五行鹤翎扇、诸葛连弩、乌铁锁链',
-        init: true,
-    },
-    武将加强: {
-        name: '<span class="Qmenu">武将加强</span>',
-        intro: '开启后,加强武诸葛、武陆逊、朱桓等',
-        init: true,
-    },
     优化判定: {
         name: '<span class="Qmenu">优化判定</span>',
         intro: '开启后,判定区中若有多个同名牌,在每个判定阶段只判定其中一个',
@@ -177,6 +136,11 @@ const config = {
     取消小游戏: {
         name: '<span class="Qmenu">取消小游戏</span>',
         intro: '开启后,取消小游戏评才、冲虚、御风、整经',
+        init: true,
+    },
+    武将卡牌加强: {
+        name: '<span class="Qmenu">武将卡牌加强</span>',
+        intro: '开启后,加强部分武将与部分卡牌',
         init: true,
     },
     联机禁官服将: {
@@ -289,16 +253,4 @@ const config = {
             '50%': '<span class="Qmenu">50%</span>',
         },
     },
-    扩展修改: {
-        name: '<span class="Qmenu">扩展修改</span>',
-        intro: '开启后,直接修改游戏存储的扩展',
-        init: false,
-    },
 };
-if (QQQ.config.全部关闭) {
-    for (const i in config) {
-        if (config[i].init && i != '全部关闭' && lib.config[`extension_温柔一刀_${i}`]) {
-            game.saveConfig(`extension_温柔一刀_${i}`, false);
-        }
-    }
-}

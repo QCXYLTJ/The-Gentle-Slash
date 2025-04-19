@@ -48,7 +48,6 @@
 	top: 10%;
 	bottom: 10%;
 	overflow-y: auto;
-	background-image: url('../温柔一刀/image/李白4.jpg');
 }
 
 /* 瞬发技按钮 */
@@ -100,7 +99,6 @@
 	top: 10%;
 	bottom: 10%;
 	overflow-y: auto;
-	background-image: url('../温柔一刀/image/李白4.jpg');
 }
 
 /* 技能及翻译按钮 */
@@ -175,55 +173,41 @@
 }
 
 .configQ.on {
+	white-space: nowrap;
 	text-align: center;
-	width: 60%;
+	width: 90%;
 	height: 20%;
-	min-height: 20px;
-	display: block;
-	overflow: hidden;
-	border-radius: 2px;
-	line-height: 25px;
+	border-radius: 20%;
 	position: relative;
 	background-color: rgba(47, 101, 150, 1);
 }
 
 .configQ:not(.on) {
+	white-space: nowrap;
 	text-align: center;
-	width: 60%;
+	width: 90%;
 	height: 20%;
-	min-height: 20px;
-	display: block;
-	overflow: hidden;
-	border-radius: 2px;
-	line-height: 25px;
+	border-radius: 20%;
 	position: relative;
 	background-color: rgb(220, 17, 17);
 }
 
 .configQ.on>.toggleQ {
-	width: 20%;
-	height: 20%;
-	min-height: 20px;
+	width: 30%;
+	height: 100%;
+	right: -15%;
 	border-radius: 100%;
 	position: absolute;
-	top: 0;
-	left: 90%;
 	background: white;
-	border: 1px solid white;
-	box-shadow: black 0 0 2px;
 }
 
 .configQ:not(.on)>.toggleQ {
-	width: 20%;
-	height: 20%;
-	min-height: 20px;
+	width: 30%;
+	height: 100%;
+	left: -15%;
 	border-radius: 100%;
 	position: absolute;
-	top: 0;
-	left: -5%;
 	background: white;
-	border: 1px solid white;
-	box-shadow: black 0 0 2px;
 }
 
 /* 修改右键弹窗简介宽度 */

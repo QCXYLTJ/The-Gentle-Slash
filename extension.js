@@ -30,8 +30,8 @@ if (QQQ.config.扩展全关) {
 } //扩展全部关闭
 if (QQQ.config.扩展修改) {
     var Q = [
-        'BGM', '温柔一刀', '红莲灿世', '火灵月影', 'EX技能', '缺德扩展', '梦水何婉', '神通世界',
-        '三国全系列', '云将', '贴吧精品', '梦隐', '众星起源', '小镜子', '次元世界', '太虚幻境',
+        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列',
+        '云将', '贴吧精品', '梦隐', '太虚幻境', '天牢令', '玄武江湖', '大权在握', '极略',
     ];
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -155,19 +155,10 @@ const yuanxing = function () {
         //this是父元素,son子元素
         const parent = this;
         parent.appendChild(son);
-        new MutationObserver(function (mutationsList) {
-            for (let mutation of mutationsList) {
-                if (mutation.type === 'childList') {
-                    mutation.removedNodes.forEach((node) => {
-                        if (node === son) {
-                            console.log('神器不可失去');
-                            node.classList.remove('removing');
-                            node.style.transform = 'scale(1)';
-                            parent.appendChild(node);
-                        }
-                    });
-                }
-            }
+        new MutationObserver(function () {
+            if (parent.contains(son)) return;
+            console.log('神器不可失去');
+            parent.appendChild(son);
         }).observe(parent, { childList: true });
     }; //DOM将子元素锁定于父元素上
     HTMLElement.prototype.BG = function (name) {
@@ -231,11 +222,13 @@ const boss = function () {
             game.nosort = false;
         }//后面复活也要排序
         players.forEach((player, index, array) => {
-            if (index == 0 && ui.handcards1Container && ui.handcards1Container.firstChild != player.node.handcards1) {
-                while (ui.handcards1Container.firstChild) {
-                    ui.handcards1Container.firstChild.remove();
+            if (index == 0) {
+                if (ui.handcards1Container && ui.handcards1Container.firstChild != player.node.handcards1) {
+                    while (ui.handcards1Container.firstChild) {
+                        ui.handcards1Container.firstChild.remove();
+                    }
+                    ui.handcards1Container.appendChild(player.node.handcards1.addTempClass('start').fix());
                 }
-                ui.handcards1Container.appendChild(player.node.handcards1.addTempClass('start').fix());
                 if (game.me != player) {
                     ui.updatehl();
                 }
@@ -355,7 +348,7 @@ boss();
 //—————————————————————————————————————————————————————————————————————————————加载扩展
 const extensionInfo = await lib.init.promises.json(`extension/温柔一刀/info.json`);
 game.import('extension', function (lib, game, ui, get, ai, _status) {
-    const QQQ = {
+    const gentle = {
         name: '温柔一刀',
         arenaReady() {
             console.log(Object.keys(lib.skill).length, 'lib.arenaReady', 'skill');
@@ -434,9 +427,6 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     }
                     continue;
                 }
-                if (!QQQ.config.BOSS) {
-                    info.isBoss = false;
-                } //BOSS
                 if (QQQ.config.武将全开) {
                     info.isAiForbidden = false; //AI禁用
                     info.isUnseen = false; //隐藏
@@ -467,6 +457,9 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     }
                     return false;
                 }
+                if (['gw_tunshi', 'gw_xinsheng'].includes(name)) {
+                    return false;
+                }//移除巫师逆天卡牌
                 if (info.mode && !info.mode.includes(lib.config.mode)) {
                     console.log(name, 'mode不符合');
                     return false;
@@ -747,8 +740,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
         config: config,
         package: {},
     };
-    Object.assign(QQQ.package, extensionInfo);
-    return QQQ;
+    Object.assign(gentle.package, extensionInfo);
+    return gentle;
 });
 //—————————————————————————————————————————————————————————————————————————————测试模式
 game.addMode(

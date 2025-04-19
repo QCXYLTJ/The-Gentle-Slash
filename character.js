@@ -383,7 +383,7 @@ const character = {
         sex: 'female',
         hp: 10,
         maxHp: 10,
-        skills: ['while'],
+        skills: ['普通卖血'],
     },
     QQQ_摸六三刀: {
         sex: 'male',

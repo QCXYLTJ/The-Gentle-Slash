@@ -38,6 +38,14 @@ disableSkill/unmarkSkill/removeSkill/
 */
 //-------------------------------------------------------备忘录1
 /*
+info.json\license
+花色
+sdk.js报错是error或者err或者catch的原因
+拼点AI
+if (info.onEquip && 
+   video(player
+   equipx(
+   $usedtag:
 targets[0].addTempSkill('QQQ_baixiangl_1', { global: 'roundStart' });在某时机添加同时机失去的临时技能会卡死
 skillblocker内部检测hasskill会卡死,无限自循环
 disableskill删掉onremove里面的storage,某些技能通过init来添加标记就因为有技能而不能添加,然后没标记报错
@@ -91,6 +99,10 @@ lib\.element\.Player.+= fun//   get\..+= fun//game\..+= fun
 \s\s\sgame\.delay\(.*\);
 \s\s\sgame\.delayx\(.*\);
 \s\s\splayer\.logSkill\(.*\);
+\sskillAnimation:.+,
+\sanimationColor:.+,
+\sanimationType:.+,
+\sanimationStr:.+,
 \n\s*\n
 .$1   //(?<![\s:,[(=])\[["']([^·\.'" --+\d]*)["']\]
 \s\scontent\((?!storage\b).+\)//precontent\((?!storage\b).+\)
@@ -100,10 +112,6 @@ lib\.element\.Player.+= fun//   get\..+= fun//game\..+= fun
 \s\sevent.name = //getdefaulthandertype函数报错eventname[0].touppercase没有eventname[0],是因为技能修改了event.name
 PlayerCard\(.+set\('ai', function \(card\)//PlayerCard\(.+\n\s*\.set\('ai', function \(card\)
 lib.nature.add\('(.+)'\)//lib.nature.set('$1',90)
-\sskillAnimation:.+,\n
-\sanimationColor:.+,\n
-\sanimationType:.+,\n
-\sanimationStr:.+,\n
 card.fix\(\);\n\s*card.remove\(\);
 countCards\(['"](?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)['"])[^'"]*['"]\)
 .hasCard\(['"]([^'"]*)['"]\)
@@ -113,6 +121,7 @@ countCards\(['"](?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)['"])[^'"]*['"]\)
 card.selfDestroy====>cards?.forEach(q => q.selfDestroy(event));
 lib.nature.//Array.from(lib.nature.keys())
 event.result.cards = []//delete event.result.skill
+$equip
 directequip
 storage.disableEquip//disabledSlots
 storage.disableEquip.includes//hasDisabledSlot
@@ -322,10 +331,10 @@ const precontent = async function () {
                     console.log(`修改${i}的result.player为1`);
                 }
             }//防止主动技ai不发动
-            if (info.trigger && !info.forced && !info.silent && !info.cost && !info.direct && !info.frequent && !info.check) {
-                info.forced = true;
-                //console.log(`修改${i}的forced为true`);
-            }//这个问题不大,没有forced也会发动
+            // if (info.trigger && !info.forced && !info.silent && !info.cost && !info.direct && !info.frequent && !info.check) {
+            //     info.forced = true;
+            //     //console.log(`修改${i}的forced为true`);
+            // }//这个问题不大,没有forced也会发动
             if (!info._priority && !info.priority && !info.lastDo && !info.firstDo) {
                 info._priority = Math.random();
             }
@@ -646,9 +655,13 @@ const precontent = async function () {
             let unchanged = Q[Q.length - 3]; //无mod返回值
             const name = Q[Q.length - 2]; //mod名字
             let player2 = Q[Q.length - 1];
-            if (name == 'cardUsable' && player2.hasSkill('评鉴_1')) return true; //让许劭可以无次数限制使用牌
-            if (typeof player2 === 'object' && player2.hasSkill && player2.hasSkill('评鉴_1')) return unchanged; //让许劭可以无视自身mod使用牌
-            if (typeof player1 === 'object' && player1.hasSkill && player1.hasSkill('评鉴_1')) return unchanged; //让许劭可以无视对方mod使用牌
+            if (player2.name == 'HL_许劭') {
+                if (name == 'cardUsable') return true;
+                return unchanged;
+            }//让许劭可以无视自身mod使用牌
+            if (player1.name == 'HL_许劭') {
+                return unchanged;
+            }//让许劭可以无视对方mod使用牌
             //game.checkMod(card, player, 0, 'aiEV', player);
             if (!card && QQQ.config.报错) {
                 alert('checkMod了不存在的牌');
@@ -802,75 +815,96 @@ const precontent = async function () {
     gameq();
     //—————————————————————————————————————————————————————————————————————————————game相关自创函数
     const gamex = function () {
-        lib.element.player.filterCard = function (card, filter) {
-            if (typeof card == 'string') {
-                card = { name: card };
-            }
-            const player = this, info = get.info(card), event = _status.event;
-            const evt = event.name.startsWith('chooseTo') ? event : event.getParent((q) => q.name.startsWith('chooseTo'));
-            if (evt.filterCard2) {
-                return evt._backup.filterCard(card, player, evt);
-            }//viewAs的技能会修改chooseToUse事件的filterCard
-            else if (evt.filterCard && evt.filterCard != lib.filter.filterCard) {
-                return evt.filterCard(card, player, evt);//这里也有次数限制
-            }
-            else {
-                if (!lib.filter.cardEnabled(card, player)) return false;//卡牌使用限制
+        const shiwei = function () {
+            lib.element.player.filterCardx = function (card, filter) {
+                if (typeof card == 'string') {
+                    card = { name: card };
+                }
+                const player = this, info = get.info(card);
+                if (!lib.filter.cardEnabled(card, player)) return false; //卡牌使用限制
                 if (info.notarget) return true;
                 if (!info.filterTarget) return true;
                 if (!info.enable) return true;
-                if (evt.name == 'chooseToRespond') return true;//chooseToRespond无次数距离目标限制
-                if (filter) {
-                    if (!lib.filter.cardUsable(card, player, evt)) return false;//次数限制
-                }
-                if (evt.filterTarget && evt.filterTarget != lib.filter.filterTarget) {
-                    return game.hasPlayer(function (current) {
-                        return evt.filterTarget(card, player, current);
-                    });
-                }
                 return game.hasPlayer(function (current) {
                     if (info.multicheck && !info.multicheck(card, player)) return false;
                     if (filter) {
-                        if (!lib.filter.targetInRange(card, player, current)) return false;//距离限制
+                        if (!lib.filter.targetInRange(card, player, current)) return false; //距离限制
                         return lib.filter.targetEnabledx(card, player, current);
                     }
-                    return lib.filter.targetEnabled(card, player, current);//目标限制
+                    return lib.filter.targetEnabled(card, player, current); //目标限制
                 });
-            }
-        };//删除次数限制//filter决定有无次数距离限制//viewAs的技能会修改chooseToUse事件的filterCard
-        game.qcard = (player, type, filter, range) => {
-            if (range !== false) {
-                range = true;
-            }
-            const list = [];
-            for (const i in lib.card) {
-                const info = lib.card[i];
-                if (info.mode && !info.mode.includes(lib.config.mode)) {
-                    continue;
+            }; //适用于choosetouse的filtercard
+            lib.element.player.filterCard = function (card, filter) {
+                if (typeof card == 'string') {
+                    card = { name: card };
                 }
-                if (!info.content) {
-                    continue;
+                const player = this, info = get.info(card), event = _status.event;
+                const evt = event.name.startsWith('chooseTo') ? event : event.getParent((q) => q.name.startsWith('chooseTo'));
+                if (evt.filterCard2) {
+                    return evt._backup.filterCard(card, player, evt);
+                }//viewAs的技能会修改chooseToUse事件的filterCard
+                else if (evt.filterCard && evt.filterCard != lib.filter.filterCard) {
+                    return evt.filterCard(card, player, evt);//这里也有次数限制
                 }
-                if (['delay', 'equip'].includes(info.type)) {
-                    continue;
+                else {
+                    if (!lib.filter.cardEnabled(card, player)) return false;//卡牌使用限制
+                    if (info.notarget) return true;
+                    if (!info.filterTarget) return true;
+                    if (!info.enable) return true;
+                    if (evt.name == 'chooseToRespond') return true;//chooseToRespond无次数距离目标限制
+                    if (filter) {
+                        if (!lib.filter.cardUsable(card, player, evt)) return false;//次数限制
+                    }
+                    if (evt.filterTarget && evt.filterTarget != lib.filter.filterTarget) {
+                        return game.hasPlayer(function (current) {
+                            return evt.filterTarget(card, player, current);
+                        });
+                    }
+                    return game.hasPlayer(function (current) {
+                        if (info.multicheck && !info.multicheck(card, player)) return false;
+                        if (filter) {
+                            if (!lib.filter.targetInRange(card, player, current)) return false;//距离限制
+                            return lib.filter.targetEnabledx(card, player, current);
+                        }
+                        return lib.filter.targetEnabled(card, player, current);//目标限制
+                    });
                 }
-                if (type && info.type != type) {
-                    continue;
+            };//删除次数限制//filter决定有无次数距离限制//viewAs的技能会修改chooseToUse事件的filterCard
+            game.qcard = (player, type, filter, range) => {
+                if (range !== false) {
+                    range = true;
                 }
-                if (filter !== false) {
-                    if (!player.filterCard(i, range)) {
+                const list = [];
+                for (const i in lib.card) {
+                    const info = lib.card[i];
+                    if (info.mode && !info.mode.includes(lib.config.mode)) {
                         continue;
                     }
-                }
-                list.push([lib.suits.randomGet(), lib.number.randomGet(), i]); //花色/点数/牌名/属性/应变
-                if (i == 'sha') {
-                    for (const j of Array.from(lib.nature.keys())) {
-                        list.push([lib.suits.randomGet(), lib.number.randomGet(), 'sha', j]);
+                    if (!info.content) {
+                        continue;
+                    }
+                    if (['delay', 'equip'].includes(info.type)) {
+                        continue;
+                    }
+                    if (type && info.type != type) {
+                        continue;
+                    }
+                    if (filter !== false) {
+                        if (!player.filterCard(i, range)) {
+                            continue;
+                        }
+                    }
+                    list.push([lib.suits.randomGet(), lib.number.randomGet(), i]); //花色/点数/牌名/属性/应变
+                    if (i == 'sha') {
+                        for (const j of Array.from(lib.nature.keys())) {
+                            list.push([lib.suits.randomGet(), lib.number.randomGet(), 'sha', j]);
+                        }
                     }
                 }
-            }
-            return list;
-        }; //可以转化为的牌//filter控制player.filterCard//range控制是否计算次数与距离限制
+                return list;
+            }; //可以转化为的牌//filter控制player.filterCard//range控制是否计算次数与距离限制
+        };
+        shiwei();
         game.VIDEO = async function (name) {
             return new Promise((resolve) => {
                 const url = lib.assetURL + `extension/温柔一刀/mp4/${name}.mp4`;
@@ -1429,7 +1463,7 @@ const precontent = async function () {
                                 this.firstChild.innerHTML = '卡牌包将在重启后隐藏';
                                 lib.config.hiddenCardPack.add(mode);
                                 if (!lib.config.prompt_hidepack) {
-                                    alert('隐藏的扩展包可通过选项-其它-重置隐藏内容恢复');
+                                    alert('隐藏的扩展包可通过选项-其他-重置隐藏内容恢复');
                                     game.saveConfig('prompt_hidepack', true);
                                 }
                             } else {
@@ -1509,10 +1543,10 @@ const precontent = async function () {
                         cardpileaddname.style.marginLeft = '-1px';
                         var cardpileaddsuit = ui.create.selectlist(
                             [
-                                ['heart', '红桃'],
-                                ['diamond', '方片'],
-                                ['club', '梅花'],
-                                ['spade', '黑桃'],
+                                ['heart', '♥️'],
+                                ['diamond', '♦️'],
+                                ['club', '♣️'],
+                                ['spade', '♠️'],
                             ],
                             null,
                             cardpileadd
@@ -2477,9 +2511,9 @@ const precontent = async function () {
                         break;
                     case 'thunder':
                         {
-                            var E = ui.cardPile.firstChild;
-                            player.showCards(E, '闪电');
-                            if (E.suit == 'spade' && E.number > 1 && E.number < 10) {
+                            const card = get.cards()[0];
+                            player.showCards(card, '闪电');
+                            if (card.suit == 'spade' && card.number > 1 && card.number < 10) {
                                 if (Math.random() > 0.5) {
                                     game.playAudio('../extension/温柔一刀/audio/_thundersha1.mp3');
                                 } else {
@@ -2487,7 +2521,6 @@ const precontent = async function () {
                                 }
                                 player.damage(3).source = source;
                             }
-                            ui.discardPile.appendChild(E);
                         }
                         break;
                     case 'snow':
@@ -2583,14 +2616,6 @@ const precontent = async function () {
     lockfunc();
     //—————————————————————————————————————————————————————————————————————————————按钮控制技能添加与修改
     const config = function () {
-        if (QQQ.config.托管) {
-            Reflect.defineProperty(_status, 'auto', {
-                get() {
-                    return true;
-                },
-                set() { },
-            });
-        } //托管
         if (QQQ.config.禁止封禁出牌) {
             Reflect.defineProperty(game, 'checkMod', {
                 get() {
@@ -3873,6 +3898,7 @@ const precontent = async function () {
                     get usable() {
                         return undefined;
                     }, //只读//如果限制每回合发动次数那么第三次就不能复活,但是游戏仍然不能结束
+                    set usable(v) { },
                     forced: true,
                     forceDie: true,
                     mark: true,
@@ -5234,7 +5260,7 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————蒋干
-                //盗书:出牌阶段限一次,你可与一名其他角色进行两次谋弈,你选择真盗、伪盗,其选择真睡、假睡,你选择真降、伪降,其选择真醉、假醉,谋弈成功你获得其3张牌对其造成1点刺属性伤害
+                //盗书:回合限一次,你可与一名其他角色进行两次谋弈,你选择真盗、伪盗,其选择真睡、假睡,你选择真降、伪降,其选择真醉、假醉,谋弈成功你获得其3张牌对其造成1点刺属性伤害
                 QQQ_daoshu: {
                     enable: 'phaseUse',
                     usable: 1,
@@ -5392,7 +5418,7 @@ const precontent = async function () {
                         },
                     },
                 },
-                //骄横:出牌阶段限一次,你可以与一名其他角色各摸三张牌,然后与其连续进行三次拼点,每次拼点结束后,赢的角色视为对输家使用一张杀
+                //骄横:回合限一次,你可以与一名其他角色各摸三张牌,然后与其连续进行三次拼点,每次拼点结束后,赢的角色视为对输家使用一张杀
                 QQQ_jiaoheng: {
                     enable: 'phaseUse',
                     usable: 1,
@@ -5572,7 +5598,7 @@ const precontent = async function () {
                         }
                     },
                 },
-                //幽影流火:锁定技,当全场失去方块牌后,你将此牌当作火杀对随机敌方角色使用
+                //幽影流火:锁定技,当全场失去♦️牌后,你将此牌当作火杀对随机敌方角色使用
                 QQQ_liuhuo: {
                     trigger: {
                         global: ['loseAfter'],
@@ -5681,11 +5707,11 @@ const precontent = async function () {
                                     if (boss) {
                                         const {
                                             result: { control },
-                                        } = await boss.chooseControl('失去体力', '恢复体力').set('ai', (e, p) => {
-                                            if (get.attitude(boss, player) > 0) return '恢复体力';
+                                        } = await boss.chooseControl('失去体力', '回复体力').set('ai', (e, p) => {
+                                            if (get.attitude(boss, player) > 0) return '回复体力';
                                             return '失去体力';
                                         });
-                                        if (control == '恢复体力') {
+                                        if (control == '回复体力') {
                                             player.recover();
                                         } else {
                                             player.loseHp();
@@ -5748,7 +5774,7 @@ const precontent = async function () {
                         for (const i of trigger.cards) {
                             const {
                                 result: { targets },
-                            } = await player.chooseTarget('观看一名角色的手牌并弃置其区域内一张牌', (c, p, t) => t != p && t.countDiscardableCards(player, 'he')).set('ai', (t) => -get.attitude(player, t));
+                            } = await player.chooseTarget('观看一名其他角色的手牌并弃置其区域内一张牌', (c, p, t) => t != p && t.countDiscardableCards(player, 'he')).set('ai', (t) => -get.attitude(player, t));
                             if (targets && targets[0]) {
                                 const {
                                     result: { links },
@@ -5817,7 +5843,7 @@ const precontent = async function () {
                         }
                     },
                 },
-                //北定:出牌阶段限一次,你可以交换自己的体力值和以损体力值,若你以此法失去了体力,你可以摸三张牌,若你此次发回复了体力,你需弃所有手牌
+                //北定:回合限一次,你可以交换自己的体力值和以损体力值,若你以此法失去了体力,你可以摸三张牌,若你此次发回复了体力,你需弃所有手牌
                 QQQ_beiding: {
                     enable: 'phaseUse',
                     usable: 1,
@@ -6037,10 +6063,11 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————托莉娜
-                //迷幻:每回合限一次,当你需要使用基本牌或普通锦囊牌时,你可以观看牌堆顶四张牌,然后将其中的【1】黑色牌以任意顺序置于牌堆顶,然后获得剩余【2】红色牌,若你以此法放置于牌堆顶的牌有与你需要打出的牌牌名相同的牌,你视为使用了此牌且你交换【1】和【2】,然后本回合视为此技能未发动过
+                // 迷幻
+                // 阶段限一次,当你需要使用基本牌或普通锦囊牌时,你可以观看牌堆顶四张牌,然后将其中的【1】黑色牌以任意顺序置于牌堆顶,然后获得剩余【2】红色牌
+                // 若你以此法放置于牌堆顶的牌有与你需要打出的牌牌名相同的牌,你视为使用了此牌且交换【1】和【2】,然后视为此技能未发动过
                 QQQ_mihuan: {
                     enable: ['chooseToUse', 'chooseToRespond'],
-                    usable: 1,
                     init(player) {
                         player.storage.QQQ_mihuan = {
                             red: 'red',
@@ -6058,8 +6085,11 @@ const precontent = async function () {
                             if (card.storage && card.storage.QQQ_mihuan) return true;
                         },
                     },
+                    filter(event, player) {
+                        return !_status.jieduan.QQQ_mihuan;
+                    },
                     async content(event, trigger, player) {
-                        //QQQ
+                        _status.jieduan.QQQ_mihuan = true;
                         const cards = get.cards(4);
                         const red = cards.filter((q) => get.color(q) == player.storage.QQQ_mihuan.red);
                         player.gain(red, 'gain2');
@@ -6150,11 +6180,11 @@ const precontent = async function () {
                                         evt.redo();
                                     }
                                 }
-                                delete player.stat[player.stat.length - 1].skill['QQQ_mihuan'];
+                                _status.jieduan.QQQ_mihuan = false;
                                 const temp = player.storage.QQQ_mihuan.red;
                                 player.storage.QQQ_mihuan.red = player.storage.QQQ_mihuan.black;
                                 player.storage.QQQ_mihuan.black = temp;
-                                lib.translate.QQQ_mihuan_info = `每回合限一次,当你需要使用基本牌或普通锦囊牌时,你可以观看牌堆顶四张牌,然后将其中的【1】${get.translation(player.storage.QQQ_mihuan.black)}牌以任意顺序置于牌堆顶,然后获得剩余【2】${get.translation(player.storage.QQQ_mihuan.red)}牌,若你以此法放置于牌堆顶的牌有与你需要打出的牌牌名相同的牌,你视为使用了此牌且你交换【1】和【2】,然后本回合视为此技能未发动过`;
+                                lib.translate.QQQ_mihuan_info = `阶段限一次,当你需要使用基本牌或普通锦囊牌时,你可以观看牌堆顶四张牌,然后将其中的【1】${get.translation(player.storage.QQQ_mihuan.black)}牌以任意顺序置于牌堆顶,然后获得剩余【2】${get.translation(player.storage.QQQ_mihuan.red)}牌,若你以此法放置于牌堆顶的牌有与你需要打出的牌牌名相同的牌,你视为使用了此牌,交换【1】和【2】,视为此技能未发动过`;
                             }
                         }
                     },
@@ -6217,7 +6247,7 @@ const precontent = async function () {
                     },
                     global: ['QQQ_baixiang', 'QQQ_baixiang_1', 'QQQ_baixiang_2'],
                 },
-                //熔炉百相:<生命熔炉>内角色出牌阶段限一次,可以将一张牌置于<生命熔炉>内.<生命熔炉>内角色不因使用而失去牌后,将此牌置于<生命熔炉>内.<生命熔炉>内角色可以将<生命熔炉>内的基本牌当做【杀】/【闪】,锦囊牌当做【酒】/【桃】,装备牌当做【无懈可击】使用
+                //熔炉百相:<生命熔炉>内角色回合限一次,可以将一张牌置于<生命熔炉>内.<生命熔炉>内角色不因使用而失去牌后,将此牌置于<生命熔炉>内.<生命熔炉>内角色可以将<生命熔炉>内的基本牌当做【杀】/【闪】,锦囊牌当做【酒】/【桃】,装备牌当做【无懈可击】使用
                 QQQ_baixiang: {
                     enable: 'phaseUse',
                     filterCard: true,
@@ -7290,7 +7320,7 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————星宿仙尊————明皓、毓秀、丰雅
-                //钟灵毓秀:锁定技,你将全场失去的红桃牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌
+                //钟灵毓秀:锁定技,你将全场失去的♥️牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌
                 QQQ_yuxiu: {
                     //他既然夸我钟灵毓秀,那我就给你起名毓秀。若有来生,就请你替我好好活着,不要管什么人族未来,不要想什么苍生安危,就为自己活一次,为自己自私一次,痛快地去爱,淋漓地去哭！
                     trigger: {
@@ -7457,6 +7487,7 @@ const precontent = async function () {
                                 if (card) {
                                     player.vcardsMap?.equips.push(new lib.element.VCard(card));
                                     player.node.equips.appendChild(card);
+                                    card.style.transform = '';
                                     card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number} ${get.translation(card.name)}`;
                                 }
                                 const info = get.info(card, false);
@@ -7579,7 +7610,7 @@ const precontent = async function () {
                 七星:锁定技,游戏开始时,你获得七颗星.当你仅剩一颗星时,你获得九耀.
                 九耀:锁定技,当你仅剩一颗耀时,你获得二十八宿
                 天宿:锁定技,当你仅剩一颗宿时,你获得一百零八天罡地煞
-                当你体力值减少至0以下时,你失去一颗星/耀/宿/天并将体力值恢复至体力上限(优先失去靠后的标记),在你拥有这四种标记时,你拒绝失败
+                当你体力值减少至0以下时,你失去一颗星/耀/宿/天并将体力值回复至体力上限(优先失去靠后的标记),在你拥有这四种标记时,你拒绝失败
                 送友风:好友,分别在即,甚是不舍,且让我送你一送.再见?不,再也不见!
                 一名角色结束阶段,你可以交给其一任意张牌令其进行一个额外的出牌阶段,此阶段结束时,你对其造成x次伤害,初始伤害为1,接下来每次伤害比前一次翻倍.x为你交给其的牌仍在其区域内的数量.
                 米凯拉//女武神玛莲妮娅//恶兆//碎星//葛弗雷//菈妮//黑剑//霄色眼眸的女王//
@@ -7596,7 +7627,7 @@ const precontent = async function () {
                 //————————————————————————————————————————————星宿仙尊————明皓、毓秀、丰雅
                 QQQ_xingxiu: '星宿仙尊',
                 QQQ_yuxiu: '钟灵毓秀',
-                QQQ_yuxiu_info: '<span class="Qmenu">锁定技,</span>你将全场失去的红桃牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌',
+                QQQ_yuxiu_info: '<span class="Qmenu">锁定技,</span>你将全场失去的♥️牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌',
                 QQQ_fengrufeitun: '丰乳肥臀',
                 QQQ_fengrufeitun_info: '锁定技,每阶段结束时,若此阶段内场上有其他角色累计获得或失去至少两张牌,你令其将这些牌当作顺手牵羊对你使用',
                 //————————————————————————————————————————————玛莉卡&拉达冈————我的半身,击碎彼此吧!
@@ -7629,11 +7660,11 @@ const precontent = async function () {
                 //————————————————————————————————————————————EX钟会
                 EX_zhonghui: 'EX钟会',
                 EX_duji: '毒计',
-                EX_duji_info: '<span class="Qmenu">锁定技,</span>当其他角色令你的体力值变化后,或你对其他角色造成伤害后,你令对方获得等量毒标记,一名角色累计满三枚毒标记引发爆炸受到两点毒属性伤害',
+                EX_duji_info: '<span class="Qmenu">锁定技,</span>当其他角色令你的体力值变化后,或你对其他角色造成伤害后,你令对方获得等量毒标记,任意角色累计满三枚毒标记,引发爆炸,受到两点毒属性伤害',
                 //————————————————————————————————————————————秦百胜
                 QQQ_qinbaisheng: '秦百胜',
                 QQQ_datongfeng: '大同风幕',
-                QQQ_datongfeng_info: '限定技,出牌阶段你可以失去全部体力值并将失去体力值数十倍的杀加入牌堆,与全部其他角色进入大同风中,直到牌堆洗牌.在此期间:①你每次死亡前, 以移除剩余十分之一牌堆为代价豁免.②全场角色每累计失去三张牌时, 随机一名角色受到一点无来源伤害.③每死亡一名角色, 将五分之一的弃牌堆加入牌堆.④所有锦囊牌均失效',
+                QQQ_datongfeng_info: '限定技,出牌阶段你可以失去全部体力值并将失去体力值数十倍的杀加入牌堆,与全部其他角色进入大同风中,直到牌堆洗牌.在此期间:①你每次死亡前, 以移除剩余十分之一牌堆为代价豁免.②全场角色每累计失去三张牌时, 随机一名角色受到一点无来源伤害.③任意角色死亡后, 将五分之一的弃牌堆加入牌堆.④所有锦囊牌均失效',
                 QQQ_wuzhiquanxinjian: '五指拳心剑',
                 QQQ_wuzhiquanxinjian_info: '<span class="Qmenu">锁定技,</span>每当你不因使用而失去牌时,可以将其当作无距离次数限制无视闪避无视防具的杀使用,且每次以此法使用的杀基础伤害值翻倍',
                 QQQ_wuzhiquanxinjian_append: '起手不是再见,五指拳心剑!',
@@ -7646,7 +7677,7 @@ const precontent = async function () {
                 QQQ_baixiangl: '拜相',
                 QQQ_baixiangl_info: '<span class="Qmenu">锁定技,</span>每轮开始时你可将当前区域内任意牌交给任意名角色.本轮中,这些角色的回合内你移除游戏,你的回合内这些角色失去所有技能,且无法使用或打出手牌',
                 QQQ_linlve: '凛略',
-                QQQ_linlve_info: '<span class="Qmenu">锁定技,</span>游戏开始时你获得一枚<略>.你手牌数始终不小于<略>数.当你对一名角色造成伤害时,若其区域内牌数不小于你手牌数,你获得一枚<略>.当你受到伤害时,若来源区域内牌数小于你手牌数,你失去一枚<略>',
+                QQQ_linlve_info: '<span class="Qmenu">锁定技,</span>游戏开始时你获得一枚<略>.你手牌数始终不小于<略>数.当你对任意角色造成伤害时,若其区域内牌数不小于你手牌数,你获得一枚<略>.当你受到伤害时,若来源区域内牌数小于你手牌数,你失去一枚<略>',
                 QQQ_shidi: '势敵',
                 QQQ_shidi_info: '<span class="Qmenu">锁定技,</span>当你指定或成为牌的目标时,你可以将其区域内的牌扣至与你手牌相同(于弃牌阶段归还)',
                 //————————————————————————————————————————————总督军务威武大将军总兵官朱寿
@@ -7659,25 +7690,25 @@ const precontent = async function () {
                 QQQ_SmelterKnights: '熔炉骑士',
                 QQQ_ronglu: '生命熔炉',
                 QQQ_ronglu_info: '<span class="Qmenu">锁定技,</span>游戏开始时你开辟一片新区域,称为<生命熔炉>,然后摸四张牌并将四张牌置于<生命熔炉>内.准备阶段你可以选择至多两名其他角色,令这些角色参与<生命熔炉>直到下一次发动此技能',
-                QQQ_ronglu_append: '熔炉百相:<生命熔炉>内角色出牌阶段限一次,可以将一张牌置于<生命熔炉>内.<生命熔炉>内角色不因使用而失去牌后,将此牌置于<生命熔炉>内.<生命熔炉>内角色可以将<生命熔炉>内的基本牌当做【杀】/【闪】,锦囊牌当做【酒】/【桃】,装备牌当做【无懈可击】使用',
+                QQQ_ronglu_append: '熔炉百相:<生命熔炉>内角色回合限一次,可以将一张牌置于<生命熔炉>内.<生命熔炉>内角色不因使用而失去牌后,将此牌置于<生命熔炉>内.<生命熔炉>内角色可以将<生命熔炉>内的基本牌当做【杀】/【闪】,锦囊牌当做【酒】/【桃】,装备牌当做【无懈可击】使用',
                 QQQ_baixiang: '熔炉百相',
-                QQQ_baixiang_info: '<生命熔炉>内角色出牌阶段限一次,可以将一张牌置于<生命熔炉>内.<生命熔炉>内角色不因使用而失去牌后,将此牌置于<生命熔炉>内.<生命熔炉>内角色可以将<生命熔炉>内的基本牌当做【杀】/【闪】,锦囊牌当做【酒】/【桃】,装备牌当做【无懈可击】使用',
+                QQQ_baixiang_info: '<生命熔炉>内角色回合限一次,可以将一张牌置于<生命熔炉>内.<生命熔炉>内角色不因使用而失去牌后,将此牌置于<生命熔炉>内.<生命熔炉>内角色可以将<生命熔炉>内的基本牌当做【杀】/【闪】,锦囊牌当做【酒】/【桃】,装备牌当做【无懈可击】使用',
                 //————————————————————————————————————————————托莉娜
                 QQQ_Trina: '托莉娜',
                 QQQ_mihuan: '迷幻',
-                QQQ_mihuan_info: '每回合限一次,当你需要使用基本牌或普通锦囊牌时,你可以观看牌堆顶四张牌,然后将其中的【1】黑色牌以任意顺序置于牌堆顶,然后获得剩余【2】红色牌,若你以此法放置于牌堆顶的牌有与你需要打出的牌牌名相同的牌,你视为使用了此牌且你交换【1】和【2】,然后本回合视为此技能未发动过',
+                QQQ_mihuan_info: '阶段限一次,当你需要使用基本牌或普通锦囊牌时,你可以观看牌堆顶四张牌,然后将其中的【1】黑色牌以任意顺序置于牌堆顶,然后获得剩余【2】红色牌,若你以此法放置于牌堆顶的牌有与你需要打出的牌牌名相同的牌,你视为使用了此牌且交换【1】和【2】,然后视为此技能未发动过',
                 //————————————————————————————————————————————葛德文
                 QQQ_Godwyn: '葛德文',
                 QQQ_sidan: '死诞',
                 QQQ_sidan_info: '<span class="Qmenu">锁定技,</span>在你受到伤害前,你摸一张牌并防止此伤害,然后将牌堆顶一张牌置于你的武将牌上称为<死>,若你的<死>包含四种花色,你获得全部<死>然后减一点体力上限',
                 QQQ_siwangshanyan: '死亡闪焰',
-                QQQ_siwangshanyan_info: '<span class="Qmenu">锁定技,</span>当你使用牌指定其他角色为目标后,为目标角色添加一层<咒死>.当你使用相同牌名的牌再次指定其为目标后,引爆其<咒死>形成一次范围伤害(伤害范围为y,伤害值为y/x且至少为1.y为其<咒死>层数,x为其体力值.每距离伤害中心远一距离,伤害减一),受到此伤害的角色添加伤害值的<咒死>层数.若一名角色<咒死>层数大于其体力上限,则其立即死亡',
+                QQQ_siwangshanyan_info: '<span class="Qmenu">锁定技,</span>当你使用牌指定其他角色为目标后,为目标角色添加一层<咒死>.当你使用相同牌名的牌再次指定其为目标后,引爆其<咒死>形成一次范围伤害(伤害范围为y,伤害值为y/x且至少为1.y为其<咒死>层数,x为其体力值.每距离伤害中心远一距离,伤害减一),受到此伤害的角色添加伤害值的<咒死>层数.任意角色<咒死>层数大于其体力上限时,立即死亡',
                 //————————————————————————————————————————————梦诸葛亮
                 QQQ_mengzhuge: '梦诸葛亮',
                 QQQ_jieming: '借命',
                 QQQ_jieming_info: '<span class="Qmenu">锁定技,</span>准备阶段,记录你此刻的状态.结束阶段开始时,你亮出牌堆顶x张牌,若你准备阶段记录的手牌与其中存在牌名相同的牌,你将体力值和手牌调整为准备阶段的状态并弃置牌名相同的牌,然后进行一个额外回合(x为你已损失体力值)',
                 QQQ_beiding: '北定',
-                QQQ_beiding_info: '出牌阶段限一次,你可以交换自己的体力值和以损体力值,若你以此法失去了体力,你可以摸三张牌,若你此次发回复了体力,你需弃所有手牌',
+                QQQ_beiding_info: '回合限一次,你可以交换自己的体力值和以损体力值,若你以此法失去了体力,你可以摸三张牌,若你此次发回复了体力,你需弃所有手牌',
                 QQQ_chuancheng: '傳承',
                 QQQ_chuancheng_info: '<span class="Qmenu">锁定技,</span>当有角色进行额外回合时,你减少一点体力上限,并且选择一名角色获得<八阵>,若选择的角色为自己,则获得<界观星>(若目标已有对应技能,则改为摸三张牌)',
                 //————————————————————————————————————————————燎原火
@@ -7685,7 +7716,7 @@ const precontent = async function () {
                 QQQ_xiaozhang: '嚣张',
                 QQQ_xiaozhang_info: '出牌阶段,你可以展示牌堆顶一张牌,然后选择是否获得.若你选择获得,则由随机一名其他角色对你使用牌堆中下两张牌.若你不获得,则由你对随机一名角色使用此牌,然后此技能本回合失效',
                 QQQ_canbing: '残兵',
-                QQQ_canbing_info: '当你使用或打出牌时,你可以观看一名角色的手牌并弃置其区域内一张牌,然后你摸一张牌并交给其一张牌',
+                QQQ_canbing_info: '当你使用或打出牌时,你可以观看一名其他角色的手牌并弃置其区域内一张牌,然后你摸一张牌并交给其一张牌',
                 //————————————————————————————————————————————李靖
                 QQQ_lijing: '李靖',
                 QQQ_tuota: '托塔',
@@ -7700,7 +7731,7 @@ const precontent = async function () {
                 QQQ_ezhishe: '恶之蛇',
                 QQQ_ezhishe_info: '<span class="Qmenu">锁定技,</span>当你受到伤害后,你获得一个觉醒技或限定技并隐匿(登场后,强制发动该技能)',
                 QQQ_liuhuo: '幽影流火',
-                QQQ_liuhuo_info: '<span class="Qmenu">锁定技,</span>当全场失去方块牌后,你将此牌当作火杀对随机敌方角色使用',
+                QQQ_liuhuo_info: '<span class="Qmenu">锁定技,</span>当全场失去♦️牌后,你将此牌当作火杀对随机敌方角色使用',
                 QQQ_chuanci: '穿刺者之矛',
                 QQQ_chuanci_info: '<span class="Qmenu">锁定技,</span>其他角色出牌阶段开始时须将一张牌置于你的武将牌上,称为<刺>.若你的<刺>包含三种类型/四种花色/五种牌名,你获得所有<刺>,对其造成等量伤害',
                 //————————————————————————————————————————————董卓
@@ -7710,11 +7741,11 @@ const precontent = async function () {
                 QQQ_tanbao: '贪暴',
                 QQQ_tanbao_info: '其他角色准备阶段,你可以弃置x%的牌堆(x为你体力值),并将其中的非基本牌移出游戏.若这些牌中<杀>的数量w大于本局游戏其他角色累计使用杀的次数y,则对其使用其中w-y张杀.否则其对你使用其中y-w张杀,且将y归零',
                 QQQ_jiaoheng: '骄横',
-                QQQ_jiaoheng_info: '出牌阶段限一次,你可以与一名其他角色各摸三张牌,然后与其连续进行三次拼点,每次拼点结束后,赢的角色视为对输家使用一张杀',
+                QQQ_jiaoheng_info: '回合限一次,你可以与一名其他角色各摸三张牌,然后与其连续进行三次拼点,每次拼点结束后,赢的角色视为对输家使用一张杀',
                 //————————————————————————————————————————————蒋干
                 QQQ_jianggan: '蒋干',
                 QQQ_daoshu: '盗书',
-                QQQ_daoshu_info: '出牌阶段限一次,你可与一名其他角色进行两次谋弈,你选择真盗、伪盗,其选择真睡、假睡,你选择真降、伪降,其选择真醉、假醉,谋弈成功你获得其3张牌对其造成1点刺属性伤害',
+                QQQ_daoshu_info: '回合限一次,你可与一名其他角色进行两次谋弈,你选择真盗、伪盗,其选择真睡、假睡,你选择真降、伪降,其选择真醉、假醉,谋弈成功你获得其3张牌对其造成1点刺属性伤害',
                 QQQ_daizui: '戴罪',
                 QQQ_daizui_info: '<span class="Qmenu">锁定技,</span>你进入濒死时,0.3概率回复一点体力,所有友方角色获得随机一张食物牌',
                 //————————————————————————————————————————————郭嘉
@@ -7724,7 +7755,7 @@ const precontent = async function () {
                 QQQ_huaiyin: '怀隐',
                 QQQ_huaiyin_info: '<span class="Qmenu">锁定技,</span>每当你受到一点伤害后,你展示牌堆顶两张牌并置于你的的武将牌上,称为<怀隐>.若你以此法展示的两张牌颜色相同,你将血量回复至体力上限,否则,你摸两张牌.然后你可将任意张牌分别交给任意名角色',
                 QQQ_qingshi: '清识',
-                QQQ_qingshi_info: '出牌阶段,你可弃置一张未以此法弃置过的花色牌并发动一次判定,若判定为黑色/ 红色,你获得〖先辅〗并可发动之/ 你可选择一名角色,你与其依次视为使用一张【树上开花】,然后该角色获得〖优游〗直到你下个出牌阶段开始',
+                QQQ_qingshi_info: '出牌阶段,你可弃置一张未以此法弃置过的花色牌并发动一次判定,若判定为黑色/ 红色,你获得〖先辅〗并可发动之/ 你可选择一名其他角色,你与其依次视为使用一张【树上开花】,然后该角色获得〖优游〗直到你下个出牌阶段开始',
                 //————————————————————————————————————————————邹氏
                 QQQ_zoushi: '邹氏',
                 QQQ_meiying: '魅影',
@@ -7752,9 +7783,9 @@ const precontent = async function () {
                 QQQ_ditu: '帝圖',
                 QQQ_ditu_info: '当有角色成为牌唯一目标时,你可以让所有角色成为此牌目标;当一张牌指定多个目标时,你可以取消之,将所有目标角色各一张牌置于牌堆顶,视为对目标角色使用一张五谷丰登',
                 QQQ_qitao: '乞討',
-                QQQ_qitao_info: '<span class="Qmenu">锁定技,</span>一名角色摸牌阶段结束后,若手牌数为全场最多,其须选择一项①交给你x张牌②视为你对其使用x张杀,每造成一次伤害执行一次①选项(x为其手牌数减手牌上限)',
+                QQQ_qitao_info: '<span class="Qmenu">锁定技,</span>任意角色摸牌阶段结束后,若手牌数为全场最多,其须选择一项①交给你x张牌②视为你对其使用x张杀,每造成一次伤害执行一次①选项(x为其手牌数减手牌上限)',
                 QQQ_shuangsheng: '雙生',
-                QQQ_shuangsheng_info: '<span class="Qmenu">锁定技,</span>一名角色回合结束时,若你本回合受到过伤害,你摸八张不同牌名的牌,将体力调整至上限,更换武将牌为梦婉清,执行一个出牌阶段',
+                QQQ_shuangsheng_info: '<span class="Qmenu">锁定技,</span>任意角色回合结束时,若你本回合受到过伤害,你摸八张不同牌名的牌,将体力调整至上限,更换武将牌为梦婉清,执行一个出牌阶段',
                 //————————————————————————————————————————————梅琳娜
                 QQQ_Melina: '梅琳娜',
                 QQQ_huozhong: '火种使命,卢恩女巫',
@@ -7762,7 +7793,7 @@ const precontent = async function () {
                 QQQ_fenjin: '雪山诀别,与树同焚',
                 QQQ_fenjin_info: '限定技,你令所有累计受到伤害大于等于其原始体力的角色死亡,然后你死亡',
                 QQQ_mingsi: '猎杀癫火,命定之死',
-                QQQ_mingsi_info: '<span class="Qmenu">锁定技,</span>当一名角色在其濒死结算后未死亡,你获得一个<命定之死>.<br>当一名角色回复体力时,你可以移去一枚<命定之死>并改为对其使用一张<神杀>.当一名角色获得牌时,你可以移去一枚<命定之死>并改为对其使用一张<冰杀><br>当你死亡前,若你的<命定之死>数小于你的体力上限,你豁免',
+                QQQ_mingsi_info: '<span class="Qmenu">锁定技,</span>任意角色在其濒死结算后未死亡,你获得一个<命定之死>.<br>任意角色回复体力时,你可以移去一枚<命定之死>并改为对其使用一张<神杀>.任意角色获得牌时,你可以移去一枚<命定之死>并改为对其使用一张<冰杀><br>当你死亡前,若你的<命定之死>数小于你的体力上限,你豁免',
                 //————————————————————————————————————————————红温流打野
                 QQQ_hongwenliu: '红温流打野',
                 QQQ_hongwen: '红温',
@@ -7776,7 +7807,7 @@ const precontent = async function () {
                 QQQ_buqu: '不屈',
                 QQQ_buqu_info: '<span class="Qmenu">锁定技,</span>当你受到伤害后:你将对你造成伤害的牌和牌堆顶的一张牌置于你的武将牌上.若如此做,且你的武将牌上有牌名相同的牌,弃置这些牌,回复等量体力',
                 QQQ_fujian: '负箭',
-                QQQ_fujian_info: '当一名角色使用牌造成伤害后,你将此牌置于你武将牌上,然后你可令其选择使用你武将牌上与此牌名不同的一张牌',
+                QQQ_fujian_info: '任意角色使用牌造成伤害后,你将此牌置于你武将牌上,然后你可令其选择使用你武将牌上与此牌名不同的一张牌',
                 QQQ_zhanjie: '战竭',
                 QQQ_zhanjie_info: '若你本阶段未造成伤害,你可以使用或打出武将牌上的牌',
                 //————————————————————————————————————————————饕餮
@@ -7898,7 +7929,7 @@ const sha = function () {
     }
     Reflect.defineProperty(_status, 'withError', {
         get() {
-            if (game.players.some((q) => q.name == 'QQQ_许劭')) return true;
+            if (game.players.some((q) => q.name == 'HL_许劭')) return true;
             return false;
         },
         set() { },
@@ -7999,14 +8030,14 @@ extension/([^/,]*)/([^/,]*).png
 extension/$1/image/$2.png
 'ext:([^/,]*)/([^/,]*).png
 'ext:$1/image/$2.png
-game.playAudio('..', 'extension', '秦时明月', 
+game.playAudio('../extension/秦时明月', 
 'ext:([^/,]*):
 'ext:$1/audio:
 audio: 2,
 /audio/audio==>/audio
 /image/image
 audio: 'ext:好名的世界/audio:2',
-game.playAudio('..', 'extension', 
+game.playAudio('../extension', 
 .playAudio('.'
 批量过遍报错
 //有些卡牌没写image但是默认走路径可以看到,如果把jpg移动到image里面就需要写上image//有fullskin是png,fullimage是jpg
