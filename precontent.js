@@ -38,6 +38,7 @@ disableSkill/unmarkSkill/removeSkill/
 */
 //-------------------------------------------------------备忘录1
 /*
+markcount(里面unmark就会报错
 info.json\license
 花色
 sdk.js报错是error或者err或者catch的原因
@@ -116,6 +117,7 @@ card.fix\(\);\n\s*card.remove\(\);
 countCards\(['"](?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)['"])[^'"]*['"]\)
 .hasCard\(['"]([^'"]*)['"]\)
 //-------------------------------------------------------普通替换
+timeout:
 (result.links[0][2])
 ({ name: result.links[0] })
 card.selfDestroy====>cards?.forEach(q => q.selfDestroy(event));
@@ -213,7 +215,13 @@ const precontent = async function () {
     const ceshi = function () {
         lib.skill._测试4 = {
             trigger: {
-                //global: ['chooseToUseBefore', 'gameStart', 'chooseButtonBefore', 'chooseControlBefore'],//QQQ
+                global: [
+                    // 'chooseToUseBefore',
+                    // 'gameStart',
+                    // 'chooseButtonBefore',
+                    // 'chooseControlBefore'
+                    // 'chooseCharacterBefore'
+                ],//QQQ
                 player: [
                     //'useCardToBegin'
                     //'useCardAfter'
@@ -229,8 +237,7 @@ const precontent = async function () {
                 return QQQ.config.报错;
             },
             async content(event, trigger, player) {
-                const card2 = game.createCard('diaobingqianjiang', 'spade');
-                player.gain(card2, 'gain2');
+                debugger;
                 //QQQ
                 /*
                 lib.card.list.some((q)=>q[2]=='火链')
@@ -659,7 +666,7 @@ const precontent = async function () {
                 if (name == 'cardUsable') return true;
                 return unchanged;
             }//让许劭可以无视自身mod使用牌
-            if (player1.name == 'HL_许劭') {
+            if (player1?.name == 'HL_许劭') {
                 return unchanged;
             }//让许劭可以无视对方mod使用牌
             //game.checkMod(card, player, 0, 'aiEV', player);
@@ -3472,97 +3479,14 @@ const precontent = async function () {
         } //还原初始牌堆
         if (QQQ.config.界面修改) {
             lib.init.css(lib.assetURL + 'extension/温柔一刀/QQ.css');
-            {
-                if (!(_status.maximumNumberOfPlayers > 16)) _status.maximumNumberOfPlayers = 16;
-                lib.translate.unknown8 = '九号位';
-                lib.translate.unknown9 = '十号位';
-                lib.translate.unknown10 = '十一号位';
-                lib.translate.unknown11 = '十二号位';
-                lib.translate.unknown12 = '十三号位';
-                lib.translate.unknown13 = '十四号位';
-                lib.translate.unknown14 = '十五号位';
-                lib.translate.unknown15 = '十六号位';
-                lib.arenaReady.push(function () {
-                    if (get.mode() == 'identity' || get.mode() == 'guozhan') {
-                        if (lib.device && get.config('player_number') > 8) {
-                            var zoom = function (num) {
-                                var zoom = num;
-                                game.documentZoom = game.deviceZoom * zoom;
-                                document.documentElement.style.zoom = game.documentZoom;
-                            };
-                            if (config.upgrade_Appearence != 'default') {
-                                var dx = config.upgrade_Appearence * 0.05 + 0.45;
-                                zoom(dx);
-                            } else {
-                                zoom(0.97);
-                            }
-                            ui.updatez();
-                        }
-                        ui.arenalog.style.top = '240px';
-                        ui.arenalog.style.height = '35%';
-                    }
-                });
-                for (var i = 9; i < 17; i++) {
-                    var Q = document.createElement('style');
-                    Q.innerHTML = ``;
-                    for (var j = 1; j < i; j++) {
-                        if (j < i / 4) {
-                            Q.innerHTML += `#arena[data-number='${i}']>.player[data-position='${j}']{
-                                    top:calc(${(85 - (200 / i) * j + (24 * j) / i - 6) * 0.9}%)!important;
-                                    left:calc(${45 + (200 / i) * j}%)!important;
-                                    transform: scale(${Math.max(0.55, 1 - i / 70)})!important;
-                                    }`;
-                        }
-                        if (j == i / 4) {
-                            Q.innerHTML += `#arena[data-number='${i}']>.player[data-position='${j}']{
-                                    top:calc(${(85 - (200 / i) * j) * 0.9}%)!important;
-                                    left:calc(${42 + (200 / i) * j}%)!important;
-                                    transform: scale(${Math.max(0.55, 1 - i / 70)})!important;
-                                    }`;
-                        }
-                        if (i / 4 < j && j < i / 2) {
-                            Q.innerHTML += `#arena[data-number='${i}']>.player[data-position='${j}']{
-                                        top:calc(${(85 - (200 / i) * j) * 0.9}%)!important;
-                                        left:calc(${145 - (200 / i) * j}%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - i / 70)})!important;
-                                        }`;
-                        }
-                        if (j == i / 2) {
-                            Q.innerHTML += `#arena[data-number='${i}']>.player[data-position='${j}']{
-                                        top:calc(${((200 / i) * j - 105) * 0.9}%)!important;
-                                        left:calc(${145 - (200 / i) * j}%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - i / 70)})!important;
-                                        }`;
-                        }
-                        if (i / 2 < j && j < (3 * i) / 4) {
-                            Q.innerHTML += `#arena[data-number='${i}']>.player[data-position='${j}']{
-                                        top:calc(${((200 / i) * j - 115) * 0.9}%)!important;
-                                        left:calc(${145 - (200 / i) * j}%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - i / 70)})!important;
-                                        }`;
-                        }
-                        if (j == (3 * i) / 4) {
-                            Q.innerHTML += `#arena[data-number='${i}']>.player[data-position='${j}']{
-                                        top:calc(${((200 / i) * j - 115) * 0.9}%)!important;
-                                        left:calc(${146 - (200 / i) * j}%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - i / 70)})!important;
-                                        }`;
-                        }
-                        if ((3 * i) / 4 < j) {
-                            Q.innerHTML += `#arena[data-number='${i}']>.player[data-position='${j}']{
-                                    top:calc(${((200 / i) * j - 115 - (24 * j) / i + 18) * 0.9}%)!important;
-                                    left:calc(${-155 + (200 / i) * j}%)!important;
-                                    transform: scale(${Math.max(0.55, 1 - i / 70)})!important;
-                                    }`;
-                        }
-                    }
-                    document.head.appendChild(Q);
-                }
-                var list = [];
-                var num = get.config('player_number');
-                var fan = Math.floor(num / 2);
-                var nei = [1, 2, 3].randomGet();
-                var zhong = num - 1 - fan - nei;
+            if (!(_status.maximumNumberOfPlayers > 32)) {
+                _status.maximumNumberOfPlayers = 32;
+            }
+            for (let num = 9; num < 33; num++) {
+                const list = [];
+                const fan = Math.floor(num / 2);
+                const nei = [1, 2, 3].randomGet();
+                const zhong = num - 1 - fan - nei;
                 list.push('zhu');
                 for (var i = 0; i < zhong; i++) {
                     list.push('zhong');
@@ -3573,8 +3497,62 @@ const precontent = async function () {
                 for (var i = 0; i < fan; i++) {
                     list.push('fan');
                 }
-                lib.config.mode_config.identity.identity.push(list);
-            } //多人场适配
+                lib.config.mode_config.identity.identity[num - 2] = list;
+                const style = document.createElement('style');
+                style.innerHTML = ``;
+                for (let pos = 1; pos < num; pos++) {
+                    if (pos < num / 4) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                    top:calc(${60 - (40 / num) * pos}%)!important;
+                                    left:calc(${45 + (200 / num) * pos}%)!important;
+                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                    }`;
+                    }
+                    else if (pos == num / 4) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                    top:calc(25%)!important;
+                                    left:calc(92%)!important;
+                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                    }`;
+                    }
+                    else if (pos < num / 2) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(${15 - (40 / num) * pos}%)!important;
+                                        left:calc(${145 - (200 / num) * pos}%)!important;
+                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        }`;
+                    }
+                    else if (pos == num / 2) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(-5%)!important;
+                                        left:calc(45%)!important;
+                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        }`;
+                    }
+                    else if (pos < (3 * num) / 4) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(${(40 / num) * pos - 25}%)!important;
+                                        left:calc(${145 - (200 / num) * pos}%)!important;
+                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        }`;
+                    }
+                    else if (pos == (3 * num) / 4) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(25%)!important;
+                                        left:calc(-4%)!important;
+                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        }`;
+                    }
+                    else {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                    top:calc(${20 + (40 / num) * pos}%)!important;
+                                    left:calc(${-155 + (200 / num) * pos}%)!important;
+                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                    }`;
+                    }
+                }
+                document.head.appendChild(style);
+            }
         } //多人场适配//拉长立绘//移动标记
         if (QQQ.config.神武再世) {
             game.loadModeAsync('boss', function (mode) {

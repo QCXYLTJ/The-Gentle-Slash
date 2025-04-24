@@ -3092,12 +3092,6 @@ const skill = {
                 },
             },
         },
-        mark: true,
-        intro: {
-            content: 'limited',
-        },
-        init: (player, skill) => (player.storage[skill] = false),
-        markimage: 'extension/OLUI/image/player/marks/xiandingji.png',
     },
     徒: {
         charlotte: true,
@@ -4933,13 +4927,13 @@ const skill = {
             player: 'loseAfter',
         },
         forced: true,
-        content() {
+        async content(event, trigger, player) {
             if (!player.storage.静气) {
                 player.storage.静气 = [];
             }
             player.storage.静气.addArray(trigger.cards);
-            for (const i of trigger.cards) {
-                I.AQ('静气');
+            for (const card of trigger.cards) {
+                card.AQ('静气');
             }
         },
         ai: {
@@ -5134,81 +5128,52 @@ const skill = {
     },
     漫卷: {
         trigger: {
-            global: ['gainEnd'],
+            global: ['gainEnd', 'loseEnd'],
         },
         forced: true,
         firstDo: true,
-        silent: true,
-        content() {
-            if (!_status.漫卷) {
-                _status.漫卷 = [];
-            }
-            game.countPlayer(function (Q) {
-                if (Q == player) {
-                    return;
-                }
-                var cardsx = Q.getCards('h')
-                    .filter((card) => !_status.漫卷.includes(card))
-                    .map((card) => {
-                        var cardx = ui.create.card();
-                        cardx.init(get.cardInfo(card));
-                        cardx._cardid = card.cardid;
-                        return cardx;
-                    });
-                player.directgains(cardsx, null, get.translation(Q));
-                _status.漫卷.addArray(Q.getCards('h'));
-            });
+        popup: false,
+        filter(event, player) {
+            return event.player != player && event.cards?.length;
         },
-        group: ['漫卷_1', '漫卷_2'],
+        async content(event, trigger, player) {
+            if (trigger.name == 'gain') {
+                const cardsx = trigger.cards.map((card) => {
+                    const cardx = game.createCard(card);
+                    cardx.owner = trigger.player;
+                    cardx._cardid = card.cardid;
+                    return cardx;
+                });
+                player.directgains(cardsx, null, get.translation(trigger.player));
+            }
+            else {
+                for (const card of trigger.cards) {
+                    const cardx = player.getCards('s').find((q) => q._cardid == card.cardid);
+                    if (cardx) {
+                        cardx.delete();
+                    }
+                }
+            }
+        },
+        group: ['漫卷_1'],
         subSkill: {
             1: {
                 trigger: {
                     player: ['useCardBefore', 'respondBefore'],
                 },
                 forced: true,
+                popup: false,
                 firstDo: true,
                 filter(event, player) {
-                    return (
-                        event.cards &&
-                        event.cards.some((card) => {
-                            return player.getCards('s').includes(card);
-                        })
-                    );
+                    return event.cards?.some((card) => card._cardid);
                 },
-                content() {
-                    game.countPlayer(function (Q) {
-                        if (Q == player) {
-                            return;
+                async content(event, trigger, player) {
+                    for (const card of trigger.cards) {
+                        const cardx = card.owner.getCards('h').find((q) => q.cardid == card._cardid);
+                        if (cardx) {
+                            cardx.delete();
                         }
-                        Q.countCards('h', function (E) {
-                            for (const i of trigger.cards) {
-                                if (E.cardid == i._cardid) {
-                                    E.delete();
-                                    _status.漫卷.remove(E);
-                                }
-                            }
-                        });
-                    });
-                },
-            },
-            2: {
-                trigger: {
-                    global: ['loseBefore'],
-                },
-                forced: true,
-                firstDo: true,
-                filter(event, player) {
-                    return event.player != player;
-                },
-                content() {
-                    player.countCards('s', function (E) {
-                        for (const i of trigger.cards) {
-                            if (i.cardid == E._cardid) {
-                                E.delete();
-                                _status.漫卷.remove(i);
-                            }
-                        }
-                    });
+                    }
                 },
             },
         },
@@ -7606,7 +7571,7 @@ const skill = {
                 set() { },
             });
             game.bug = [];
-            var Q = 'REGod'; //mode_extension_xxx//////
+            var Q = 'sbzz'; //mode_extension_xxx//////
             for (var j in lib.characterPack[Q]) {
                 game.bug.addArray(lib.characterPack[Q][j][3].filter((Q) => Q != 'dualside'));
             }
@@ -7616,7 +7581,7 @@ const skill = {
         _priority: 9,
         async content(event, trigger, player) {
             //QQQ
-            var Q = game.bug.slice(0, 60).filter((Q) => Q != 'wjfagvyix' && Q != 'cysh_fengliang'); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(300, 400).filter((Q) => Q != 'hokzhiling' && Q != 'hokzhujing'); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
             const {
                 result: { bool },

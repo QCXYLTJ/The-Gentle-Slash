@@ -490,8 +490,23 @@ for (const i in card) {
             };
         }
     }
+    if (QQQ.config.温柔一刀牌堆) {
+        lib.inpile.add(i);
+        if (!QQQ.config.神器牌堆 && info.artifact) continue;
+        if (info.mode && !info.mode.includes(lib.config.mode)) continue;
+        lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
+    }
 }
+lib.cardPack.温柔一刀 = Object.keys(card);
+lib.translate.温柔一刀_card_config = `<img src="${lib.assetURL}extension/温柔一刀/other/The-Gentle-Slash.png"width="120"height="30">`;
+lib.config.all.cards.add('温柔一刀');
+lib.config.cards.add('温柔一刀');
+game.saveConfig(`extension_温柔一刀_cards_enable`, true); //扩展卡牌全部打开
+game.saveConfig('cards', lib.config.cards);
+game.saveConfig('defaultcards', lib.config.cards);
 const translate3 = {
+    火: '火',
+    火_info: '当此牌被获得或失去时,当前角色受到一点火属性伤害',
     QQQ_人皇幡: '人皇幡',
     QQQ_人皇幡_info: '<span class="Qmenu">锁定技,</span>使用有目标的牌时,若此牌是装备牌或延时锦囊则你摸一张牌.否则此牌无距离次数限制,且可以增加或减少一个目标',
     QQQ_wodani: '我就打你',
@@ -538,22 +553,5 @@ const translate3 = {
     伏羲琴_info: '每五轮增加一次使用次数,混乱全场敌对角色,直至你下个出牌阶段开始',
 };
 Object.assign(lib.card, card);
-if (QQQ.config.温柔一刀牌堆) {
-    for (var i in card) {
-        lib.inpile.add(i);
-        const info = card[i];
-        if (!QQQ.config.神器牌堆 && info.artifact) continue;
-        if (info.mode && !info.mode.includes(lib.config.mode)) continue;
-        if (!info.content) continue;
-        lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
-    }
-    lib.cardPack.温柔一刀 = Object.keys(card);
-    lib.translate.温柔一刀_card_config = `<img src="${lib.assetURL}extension/温柔一刀/other/The-Gentle-Slash.png"width="120"height="30">`;
-    lib.config.all.cards.add('温柔一刀');
-    lib.config.cards.add('温柔一刀');
-    game.saveConfig(`extension_温柔一刀_cards_enable`, true); //扩展卡牌全部打开
-    game.saveConfig('cards', lib.config.cards);
-    game.saveConfig('defaultcards', lib.config.cards);
-}
 Object.assign(lib.translate, translate3);
 _status.gentle.translate3 = translate3;

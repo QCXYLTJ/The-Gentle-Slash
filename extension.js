@@ -31,7 +31,8 @@ if (QQQ.config.扩展全关) {
 if (QQQ.config.扩展修改) {
     var Q = [
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列',
-        '云将', '贴吧精品', '梦隐', '太虚幻境', '天牢令', '玄武江湖', '大权在握', '极略',
+        //'云将', '贴吧精品', '梦隐', '太虚幻境', '天牢令', '玄武江湖', '大权在握', '极略',
+        '王者荣耀', '圣杯战争',
     ];
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -466,30 +467,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 }
                 return true;
             });//最晚lib.arenaReady里面
-            if (QQQ.config.武将全开) {
-                for (const i of lib.config.extensions) {
-                    game.saveConfig(`extension_${i}_characters_enable`, true); //扩展武将全部打开
-                }
-                for (var i in lib.characterPack) {
-                    if (!lib.config.characters.includes(i)) {
-                        lib.config.characters.push(i);
-                    } //扩展武将全部添加
-                    lib.connectCharacterPack.add(i); //扩展武将联机
-                } //全开武将包
-                // lib.config.all.characters = lib.config.characters;
-                // game.saveConfig('all', lib.config.all);
-                game.saveConfig('banned', []); //禁将
-                game.saveConfig('forbidai_user', []); //仅点将可用
-                game.saveConfig('forbidai', []);
-                for (const i of lib.config.all.mode) {
-                    game.saveConfig(`${i}_banned`, []); //模式禁将
-                    game.saveConfig(`connect_${i}_banned`, []); //联机模式禁将
-                }
-                //game.saveConfig('connect_characters', []);//联机禁将包,放进去的才是要禁的
-                game.saveConfig('characters', lib.config.characters);
-                game.saveConfig('defaultcharacters', lib.config.characters);
-            } //扩展武将全部打开
             if (QQQ.config.卡牌全开) {
+                game.saveConfig('connect_cards', []);
                 game.saveConfig('bannedcards', []);
                 for (const i of lib.config.all.mode) {
                     game.saveConfig(`${i}_bannedcards`, []);
@@ -497,21 +476,40 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 for (const i of lib.config.extensions) {
                     game.saveConfig(`extension_${i}_cards_enable`, true); //扩展卡牌全部打开
                 }
-                for (var i in lib.cardPack) {
-                    if (!lib.config.cards.includes(i)) {
-                        lib.config.cards.push(i);
-                    } //扩展卡牌全部添加
-                    lib.connectCardPack.add(i); //扩展卡牌联机
-                    if (lib.cardPackInfo[i]) {
-                        lib.cardPackInfo[i].closeable = true;
-                    } //添加关闭卡牌按钮
-                }
-                game.saveConfig('cards', lib.config.cards);
-                game.saveConfig('connect_cards', []); //联机禁将,放进去的才是要禁的
-                game.saveConfig('defaultcards', lib.config.cards);
+                const cards = Object.keys(lib.cardPack);
+                lib.connectCardPack = cards;
+                game.saveConfig('cards', cards);
+                game.saveConfig('defaultcards', cards);
             } //扩展卡牌全部打开
+            if (QQQ.config.武将全开) {
+                for (const i of lib.config.extensions) {
+                    game.saveConfig(`extension_${i}_characters_enable`, true); //扩展武将全部打开
+                }
+                game.saveConfig('banned', []); //禁将
+                game.saveConfig('forbidai_user', []); //仅点将可用
+                game.saveConfig('forbidai', []);
+                for (const i of lib.config.all.mode) {
+                    game.saveConfig(`${i}_banned`, []); //模式禁将
+                    game.saveConfig(`connect_${i}_banned`, []); //联机模式禁将
+                }
+                const characters = Object.keys(lib.characterPack);
+                lib.connectCharacterPack = characters;
+                lib.config.all.characters = characters;
+                game.saveConfig('all', lib.config.all);
+                game.saveConfig('characters', characters);
+                game.saveConfig('defaultcharacters', characters);
+            } //扩展武将全部打开
+            const guanfang = ['jiange', 'boss', 'mtg', 'yxs', 'ow', 'xianjian', 'gwent', 'gujian', 'hearth', 'swd', 'standard', 'shenhua', 'yijiang', 'extra', 'refresh', 'sp2', 'newjiang', 'clan', 'ddd', 'sb', 'sixiang', 'yingbian', 'key', 'collab', 'old', 'sp', 'tw', 'huicui', 'shiji', 'onlyOL', 'mobile', 'offline', 'diy', 'jsrg', 'xianding'];
             if (QQQ.config.联机禁官服将) {
-                game.saveConfig('connect_characters', ['standard', 'refresh', 'shenhua', 'yijiang', 'sp', 'onlyOL', 'yingbian', 'clan', 'xinghuoliaoyuan', 'huicui', 'xianding', 'sp2', 'extra', 'mobile', 'shiji', 'sb', 'tw', 'collab', 'jsrg', 'offline', 'old', 'diy', 'ddd', 'key', 'yxs', 'hearth', 'gwent', 'mtg', 'ow', 'swd', 'gujian', 'xianjian', 'sixiang', 'newjiang']);
+                game.saveConfig('connect_characters', guanfang);
+            }
+            if (QQQ.config.单机禁官服将) {
+                const characters = Object.keys(lib.characterPack).filter((q) => !guanfang.includes(q));
+                lib.connectCharacterPack = characters;
+                lib.config.all.characters = characters;
+                game.saveConfig('all', lib.config.all);
+                game.saveConfig('characters', characters);
+                game.saveConfig('defaultcharacters', characters);
             }
             ui.create.system(
                 '换将',
@@ -758,7 +756,6 @@ game.addMode(
             game.saveConfig('extension_温柔一刀_禁止多次触发', true);
             game.saveConfig('extension_温柔一刀_禁止循环触发', true);
             lib.config.mode = 'QQQ';
-            lib.config.mode_config.QQQ.QQQ_mode = 'QQQ';
             _status.mode = 'QQQ';
             game.prepareArena(2);
             for (const i of game.players) {

@@ -15,15 +15,20 @@ const config = {
         intro: '开启后,直接修改游戏存储的扩展(测试用,勿开)',
         init: false,
     },
+    属性杀: {
+        name: '<span class="Qmenu">属性杀</span>',
+        intro: '开启后,会启用本扩展火/雷/神/冰/血/金/毒/雪属性,并对这些属性进行加强',
+        init: true,
+    },
     AI禁用: {
         name: '<span class="Qmenu">AI禁用</span>',
         intro: '开启后,AI禁用本扩展角色',
         init: false,
     },
-    属性杀: {
-        name: '<span class="Qmenu">属性杀</span>',
-        intro: '开启后,会启用本扩展火/雷/神/冰/血/金/毒/雪属性,并对这些属性进行加强',
-        init: true,
+    一主多反: {
+        name: '<span class="Qmenu">一主多反</span>',
+        intro: '我要打三十个!!!',
+        init: false,
     },
     动态背景: {
         name: '<span class="Qmenu">动态背景</span>',
@@ -141,6 +146,11 @@ const config = {
     武将卡牌加强: {
         name: '<span class="Qmenu">武将卡牌加强</span>',
         intro: '开启后,加强部分武将与部分卡牌',
+        init: true,
+    },
+    单机禁官服将: {
+        name: '<span class="Qmenu">单机禁官服将</span>',
+        intro: '开启后,单机时候禁用全部官服将',
         init: true,
     },
     联机禁官服将: {

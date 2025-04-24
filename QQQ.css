@@ -9,7 +9,7 @@
 	text-shadow: gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 1px;
 }
 
-/* 修改右键弹窗简介宽度 */
+/* 选中变色 */
 #arena .player.Qselectable {
 	box-shadow:
 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
@@ -18,7 +18,7 @@
 	z-index: 99;
 }
 
-/* 修改右键弹窗简介宽度 */
+/* 选中变色 */
 #arena .player.Qselectable:not(.selectable):not(.selected).glow_phase {
 	box-shadow:
 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
@@ -27,13 +27,18 @@
 	z-index: 99;
 }
 
-/* 修改右键弹窗简介宽度 */
+/* 选中变色 */
 #arena:not(.chess) .player[data-position="0"].Qselectable:not(.selected):not(.selectedx):not(.selectable):not(.glow) {
 	box-shadow:
 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
 		rgb(16, 33, 217) 0 0 10px 5px,
 		rgb(16, 33, 217) 0 0 20px 10px !important;
 	z-index: 99;
+}
+
+/* 黑白样式 */
+#arena .player.deadx {
+	filter: grayscale(1);
 }
 
 /* 武将列表 */

@@ -1606,6 +1606,42 @@ const content = async function () {
     zawu();
     //—————————————————————————————————————————————————————————————————————————————一些全局技能
     const quanju = function () {
+        lib.skill._qunou = {
+            trigger: {
+                global: ['gameStart'],
+            },
+            firstDo: true,
+            forced: true,
+            mode: ['identity'],
+            filter(event, player, card) {
+                return player == game.me && QQQ.config.一主多反;
+            },
+            async content(event, trigger, player) {
+                for (const i of game.players) {
+                    if (i == player) {
+                        game.zhu = i;
+                        i.identity = 'zhu';
+                        i.setIdentity('zhu');
+                    }
+                    else {
+                        i.identity = 'fan';
+                        i.setIdentity('fan');
+                    }
+                }
+            },
+        };
+        lib.skill._huocard = {
+            trigger: {
+                player: ['gainEnd', 'loseEnd'],
+            },
+            forced: true,
+            filter(event, player, card) {
+                return event.cards?.some((q) => q.name == '火');
+            },
+            async content(event, trigger, player) {
+                player.damage();
+            },
+        };
         lib.skill._主公 = {
             trigger: {
                 global: ['reviveEnd', 'dieEnd'],
@@ -2144,7 +2180,7 @@ const content = async function () {
                             var eff = get.effect(current, { name: 'shenhuofeiya' }, player, player);
                             if (eff >= 0) return false;
                             if (current.hp == 1 && eff < 0) return true;
-                            if (get.attitude(player, current) < 0 && get.attitude(player, current.next < 0) && get.attitude(player, current.previous) < 0) {
+                            if (get.attitude(player, current) < 0 && get.attitude(player, current.next) < 0 && get.attitude(player, current.previous) < 0) {
                                 return true;
                             }
                             return false;
@@ -3244,7 +3280,9 @@ const content = async function () {
                 trigger: {
                     global: ['gainAfter', 'loseAfter', 'damageEnd'],
                 },
-                filter: (event, player) => _status.currentPhase && event.player && event.player != _status.currentPhase,
+                filter(event, player) {
+                    return _status.currentPhase && event.player && event.player != _status.currentPhase && !event.getParent('nagisa_fuxin', true);
+                },
                 check: (event, player) => get.attitude(player, event.player) - get.attitude(player, _status.currentPhase),
                 async content(event, trigger, player) {
                     const { result } = await trigger.player.judge();
