@@ -30,6 +30,11 @@ const config = {
         intro: '我要打三十个!!!',
         init: false,
     },
+    死亡移除: {
+        name: '<span class="Qmenu">死亡移除</span>',
+        intro: '死亡后移出游戏',
+        init: true,
+    },
     动态背景: {
         name: '<span class="Qmenu">动态背景</span>',
         intro: '开启后,会启用温柔一刀专属动态背景',

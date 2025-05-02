@@ -20,6 +20,7 @@
 */
 //-------------------------------------------------------备忘录0
 /*
+MaxHp
 武将改名图片也要改,技能改名语音也要改
 mod里面的card是vcard
 silent发动的触发技不会logskill所以就没有round限制
@@ -38,6 +39,7 @@ disableSkill/unmarkSkill/removeSkill/
 */
 //-------------------------------------------------------备忘录1
 /*
+//result的target和player里面,参数直接用player即可,用status.event.player,会因为filter调用get.effect时,当前事件为arrangetrigger,没有player,报错
 markcount(里面unmark就会报错
 info.json\license
 花色
@@ -116,6 +118,8 @@ lib.nature.add\('(.+)'\)//lib.nature.set('$1',90)
 card.fix\(\);\n\s*card.remove\(\);
 countCards\(['"](?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)['"])[^'"]*['"]\)
 .hasCard\(['"]([^'"]*)['"]\)
+.set\('ai', function \(.+,
+.ai = function \(.+,
 //-------------------------------------------------------普通替换
 timeout:
 (result.links[0][2])
@@ -141,8 +145,6 @@ lib.character[i][4].indexOf(//lib.character[i][4].push
 audio: "ext:耀武将:false",//audio: false//audio: '',//audio: 2,
 if (evt)//phaseLoop//_status.event =
 .hasCard('h
-.set('ai', function (target,//.set('ai', function (card,//.set('ai', function (player,
-.ai = function (target,//.ai = function (card,//.ai = function (player,
 Object.setPrototypeOf(next, lib.element.Button.prototype);//QQQ
 Object.setPrototypeOf(layer, lib.element.Dialog.prototype); //QQQ
 lib.extensionMenu
@@ -426,6 +428,20 @@ const precontent = async function () {
                 if (info.ai) {
                     if (info.ai.player || info.ai.target) {
                         alert(i + 'ai有问题');
+                    }
+                    if (info.ai.result) {
+                        const pla = info.ai.result.player;
+                        const tar = info.ai.result.target;
+                        if (typeof pla == 'function') {
+                            if (pla.toString().includes('_status.event.player')) {
+                                alert(i + 'ai有问题');
+                            }
+                        }
+                        if (typeof tar == 'function') {
+                            if (tar.toString().includes('_status.event.player')) {
+                                alert(i + 'ai有问题');
+                            }
+                        }
                     }
                 }
             }
@@ -3529,14 +3545,14 @@ const precontent = async function () {
                                         transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
                                         }`;
                     }
-                    else if (pos < (3 * num) / 4) {
+                    else if (pos < 0.75 * num) {
                         style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                         top:calc(${(40 / num) * pos - 25}%)!important;
                                         left:calc(${145 - (200 / num) * pos}%)!important;
                                         transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
                                         }`;
                     }
-                    else if (pos == (3 * num) / 4) {
+                    else if (pos == 0.75 * num) {
                         style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                         top:calc(25%)!important;
                                         left:calc(-4%)!important;
@@ -3763,19 +3779,17 @@ const precontent = async function () {
                     sex: 'female',
                     skills: ['QQQ_xingluan', 'QQQ_kuangzheng'],
                 },
-                'Marika&&Radagon': {
-                    sex: 'female',
-                    skills: ['QQQ_shuangmian'],
-                    isBoss: true,
-                    isBossAllowed: true,
-                },
                 QQQ_Marika: {
                     sex: 'female',
                     skills: ['QQQ_shuangmian', 'QQQ_shichui'],
+                    isBoss: true,
+                    isBossAllowed: true,
                 },
                 QQQ_Radagon: {
                     sex: 'male',
                     skills: ['QQQ_shuangmian', 'QQQ_shichui'],
+                    isBoss: true,
+                    isBossAllowed: true,
                 },
                 QQQ_xingxiu: {
                     sex: 'female',
@@ -3785,6 +3799,10 @@ const precontent = async function () {
                     sex: 'male',
                     skills: ['QQQ_diwuweidu'],
                 },
+                QQQ_Malenia: {
+                    sex: 'female',
+                    skills: ['QQQ_shuiniao', 'QQQ_yishoudao', 'QQQ_xinghongfubai'],
+                },
             },
             characterTitle: {
                 QQQ_jinshanshan: `<b style='color:rgb(231, 233, 203); font-size: 25px;'>金闪闪</b>`,
@@ -3793,6 +3811,7 @@ const precontent = async function () {
                 QQQ_Melina: `<b style='color:rgb(231, 111, 12); font-size: 25px;'>火种少女</b>`,
                 QQQ_hongting: `<b style='color:rgb(221, 22, 22); font-size: 25px;'>红莲魔尊</b>`,
                 QQQ_CosmicStarfish: `<b style='color:rgb(22, 85, 221); font-size: 25px;'>群星与苍穹之上的梦</b>`,
+                QQQ_Malenia: `<b style='color:rgb(165, 15, 224); font-size: 25px;'>女武神</b>`,
             },
             characterIntro: {
                 QQQ_jinshanshan: '最初古代诸神为了抑制人类过度繁衍之后力量的壮大,将人间王族与女神相结合,创造出众神制约人类的<楔子>——吉尔伽美什.是诞生于神与人之间的英雄,拥有<三分之二为神,三分之一为人>的极高神格(拥有神的智慧及力量,但没有神的寿命)以及神明与人类的双方视点.',
@@ -4393,7 +4412,8 @@ const precontent = async function () {
                         } else {
                             var num1 = num;
                             while (num1-- > 0) {
-                                const sha = await player.useCard({ name: 'sha' }, trigger.player);
+                                const sha = player.useCard({ name: 'sha' }, trigger.player);
+                                await sha;
                                 if (trigger.player.getHistory('damage', (q) => q.getParent((x) => x == sha)).length > 0) {
                                     await trigger.player.chooseToGive(player, 'he', num, true);
                                 }
@@ -6119,7 +6139,7 @@ const precontent = async function () {
                                         name: button.link[2],
                                         nature: button.link[3],
                                     }, null, true);
-                                    return number0(num) / 2 + 10;
+                                    return number0(num) + 10;
                                 });
                                 if (links && links[0]) {
                                     if (links[0][2] == 'caochuan') {
@@ -6335,7 +6355,7 @@ const precontent = async function () {
                                             name: button.link[2],
                                             nature: button.link[3],
                                         }, null, true);
-                                        return number0(num) / 2 + 10;
+                                        return number0(num) + 10;
                                     }
                                     return 1;
                                 },
@@ -6980,22 +7000,8 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————玛莉卡&拉达冈————我的半身,击碎彼此吧!
-                //可以召唤随从
-                //游戏开始你以玛莉卡的形态登场,而后每回合结束或受到伤害后你切换一次形态,双形态彼此独立
+                //游戏开始时召唤你的半身,而后每回合结束或受到伤害后你切换一次形态,双形态彼此独立
                 QQQ_shuangmian: {
-                    init(player) {
-                        _status.fahuan = 50;//破碎度
-                        if (player.name == 'Marika&&Radagon' && player.playerid) {
-                            const boss = ui.create.player(ui.arena).addTempClass('start');
-                            boss.playerid = player.playerid;
-                            player.guhuo(boss);
-                            boss.init('QQQ_Radagon');
-                            boss.remove();
-                            boss.fanmian = player;
-                            player.fanmian = boss;
-                            player.when({ global: 'gameStart' }).then(() => player.init('QQQ_Marika'));
-                        }
-                    },
                     trigger: {
                         global: ['phaseEnd'],
                         player: ['dieBefore'],
@@ -7005,7 +7011,7 @@ const precontent = async function () {
                     intro: {
                         name: '法环破碎度',
                         content(storage, player) {
-                            return `法环破碎度${_status.fahuan}`;
+                            return `法环破碎度${_status.fahuan.num}`;
                         },
                     },
                     filter: (event, player) => player.fanmian?.isAlive(),
@@ -7048,6 +7054,65 @@ const precontent = async function () {
                             }
                         }
                     },
+                    group: ['QQQ_shuangmian_1'],
+                    subSkill: {
+                        1: {
+                            trigger: {
+                                global: ['gameStart'],
+                            },
+                            forced: true,
+                            async content(event, trigger, player) {
+                                const boss = ui.create.player(ui.arena).addTempClass('start');
+                                boss.playerid = player.playerid;
+                                player.guhuo(boss);
+                                if (player.name == 'QQQ_Marika') {
+                                    boss.init('QQQ_Radagon');
+                                }
+                                else {
+                                    boss.init('QQQ_Marika');
+                                }
+                                boss.remove();
+                                boss.fanmian = player;
+                                player.fanmian = boss;
+                                if (!_status.fahuan) {
+                                    _status.fahuan = {};
+                                }
+                                if (!_status.fahuan.map) {
+                                    _status.fahuan.map = new Map();
+                                }
+                                const jindutiao1 = player.nengliangtiao();
+                                _status.fahuan.map.set(player, jindutiao1);
+                                const jindutiao2 = boss.nengliangtiao();
+                                _status.fahuan.map.set(boss, jindutiao2);
+                                let fahuan = 50;
+                                Reflect.defineProperty(_status.fahuan, 'num', {
+                                    get() {
+                                        if (_status.fahuan.wanzheng) {
+                                            return 100;
+                                        }
+                                        if (_status.fahuan.posui) {
+                                            return 0;
+                                        }
+                                        return fahuan;
+                                    },
+                                    set(v) {
+                                        for (const [npc, jindutiaox] of _status.fahuan.map) {
+                                            if (npc.dataset.position == 0) {
+                                                jindutiaox.style.width = `${v}%`;
+                                                jindutiaox.style.height = `100%`;
+                                            }
+                                            else {
+                                                jindutiaox.style.width = `100%`;
+                                                jindutiaox.style.height = `${v}%`;
+                                            }
+                                            jindutiaox.innerHTML = v;
+                                        }
+                                        fahuan = v;
+                                    },
+                                });
+                            },
+                        },
+                    },
                 },
                 //根据你当前的形态,你始终装备对应的神器石槌
                 QQQ_shichui: {
@@ -7071,10 +7136,13 @@ const precontent = async function () {
                     },
                     forced: true,
                     filter(event, player) {
-                        return event.cards?.length && get.tag(event.card, 'damage');
+                        if (!_status.fahuan) {
+                            _status.fahuan = {};
+                        }
+                        return event.cards?.length && get.tag(event.card, 'damage') && _status.fahuan.num < 100;
                     },
                     async content(event, trigger, player) {
-                        let num = 100 - _status.fahuan;//修复度
+                        let num = 100 - _status.fahuan.num;//修复度
                         const list = [];
                         for (const i in lib.card) {
                             const info = lib.card[i];
@@ -7100,23 +7168,18 @@ const precontent = async function () {
                             },
                             async content(event, trigger, player) {
                                 if (trigger.name == 'changeHp') {
-                                    _status.fahuan += numberq1(trigger.num);
+                                    _status.fahuan.num += numberq1(trigger.num);
                                 }
                                 else {
-                                    _status.fahuan += numberq1(trigger.cards.length);
+                                    _status.fahuan.num += numberq1(trigger.cards.length);
                                 }
-                                if (_status.fahuan > 99 && player.fanmian) {
+                                if (_status.fahuan.num > 99 && player.fanmian) {
                                     const card = player.getEquip('QQQ_EldenRing');
                                     if (card) {
                                         card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number}<span style='color: #FF0000'>破碎法环</span>`;
                                         lib.translate.QQQ_EldenRing = `<span style='color: #FF0000'>破碎法环</span>`;
                                     }
-                                    Reflect.defineProperty(_status, 'fahuan', {
-                                        get() {
-                                            return 100;
-                                        },
-                                        set() { },
-                                    });
+                                    _status.fahuan.wanzheng = true;
                                     delete player.fanmian;
                                     game.addGlobalSkill('QQQ_posuizhanzheng');
                                     game.addGlobalSkill('QQQ_posuizhanzheng_1');
@@ -7137,10 +7200,13 @@ const precontent = async function () {
                     },
                     forced: true,
                     filter(event, player) {
-                        return event.cards?.length && !get.tag(event.card, 'damage');
+                        if (!_status.fahuan) {
+                            _status.fahuan = {};
+                        }
+                        return event.cards?.length && !get.tag(event.card, 'damage') && _status.fahuan.num > 0;
                     },
                     async content(event, trigger, player) {
-                        const num = Math.ceil(_status.fahuan / 10);
+                        const num = Math.ceil(_status.fahuan.num / 10);
                         const boss = player.fanmian;
                         for (const i of player.getFriends(true, true).filter((q) => q != boss)) {
                             if (i.isDead()) {
@@ -7168,23 +7234,18 @@ const precontent = async function () {
                             },
                             async content(event, trigger, player) {
                                 if (trigger.name == 'changeHp') {
-                                    _status.fahuan -= numberq1(trigger.num);
+                                    _status.fahuan.num -= numberq1(trigger.num);
                                 }
                                 else {
-                                    _status.fahuan -= numberq1(trigger.cards.length);
+                                    _status.fahuan.num -= numberq1(trigger.cards.length);
                                 }
-                                if (_status.fahuan < 1 && player.fanmian) {
+                                if (_status.fahuan.num < 1 && player.fanmian) {
                                     const card = player.getEquip('QQQ_EldenRing');
                                     if (card) {
                                         card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number}<span style='color: gold'>艾尔登法环</span>`;
                                         lib.translate.QQQ_EldenRing = `<span style='color: gold'>艾尔登法环</span>`;
                                     }
-                                    Reflect.defineProperty(_status, 'fahuan', {
-                                        get() {
-                                            return 0;
-                                        },
-                                        set() { },
-                                    });
+                                    _status.fahuan.posui = true;
                                     delete player.fanmian;
                                 }
                             },
@@ -7196,19 +7257,26 @@ const precontent = async function () {
                             forced: true,
                             filter: (event, player) => player.fanmian,
                             async content(event, trigger, player) {
-                                _status.fahuan += 10;
+                                _status.fahuan.num += 10;
                                 trigger.cancel();
                             },
                         },
                     },
                 },
-                //世界秩序化身,每一次破碎或修复都会带来秩序的剧变.当其完全破碎后,玛莉卡将完全取代拉达冈,并踏上登神之路开启破碎战争;当其完全修复后,拉达冈将完全取代玛莉卡,然后装备完整的法环统御天地众生
+                // 世界秩序化身,每一次破碎或修复都会带来秩序的剧变
+                // 当其完全破碎后,玛莉卡将完全取代拉达冈,并踏上登神之路开启破碎战争
+                // 当其完全修复后,拉达冈将完全取代玛莉卡,然后装备完整的法环统御天地众生
                 QQQ_EldenRing: {
                     trigger: {
                         global: ['changeHp'],
                     },
                     silent: true,
-                    filter: (event, player) => _status.fahuan < 1 && !event.getParent('QQQ_EldenRing').name,
+                    filter(event, player) {
+                        if (!_status.fahuan) {
+                            _status.fahuan = {};
+                        }
+                        return _status.fahuan.num < 1 && !event.getParent('QQQ_EldenRing').name;
+                    },
                     async content(event, trigger, player) {
                         let maxCount = -Infinity;
                         let maxplayer = null;
@@ -7241,7 +7309,12 @@ const precontent = async function () {
                                 global: ['gainEnd', 'loseEnd'],
                             },
                             silent: true,
-                            filter: (event, player) => _status.fahuan < 1 && !event.getParent('QQQ_EldenRing_1').name,
+                            filter(event, player) {
+                                if (!_status.fahuan) {
+                                    _status.fahuan = {};
+                                }
+                                return _status.fahuan.num < 1 && !event.getParent('QQQ_EldenRing').name;
+                            },
                             async content(event, trigger, player) {
                                 let maxCount = -Infinity;
                                 let maxplayer = null;
@@ -7270,7 +7343,9 @@ const precontent = async function () {
                         },
                     },
                 },
-                //完整的法环会制裁手牌与体力值最多的角色,补偿体力值与手牌最少的角色.破碎战争期间,每一个玛莉卡子嗣的死亡,都会推进玛莉卡登神的进度.注意!不要让其登神成功!
+                // 完整的法环会制裁手牌与体力值最多的角色,补偿体力值与手牌最少的角色
+                // 破碎战争期间,每一个玛莉卡子嗣的死亡,都会推进玛莉卡登神的进度
+                // 注意!不要让其登神成功!
                 QQQ_posuizhanzheng: {
                     trigger: {
                         global: ['dieAfter'],
@@ -7278,6 +7353,7 @@ const precontent = async function () {
                     forced: true,
                     filter: (event, player) => player.offspring?.includes(event.player),
                     async content(event, trigger, player) {
+                        player.offspring.remove(event.player);
                         player.Godhood = numberq0(player.Godhood) + 1;
                         player.maxHp *= 2;
                         player.hp = player.maxHp;
@@ -7289,8 +7365,8 @@ const precontent = async function () {
                 },
                 QQQ_posuizhanzheng_1: {
                     trigger: {
-                        global: ['dieBefore'],
-                    },
+                        player: ['dieBefore'],
+                    },//QQQ
                     forced: true,
                     filter: (event, player) => player.offspring?.length,
                     async content(event, trigger, player) {
@@ -7568,17 +7644,248 @@ const precontent = async function () {
                         }
                     },
                 },
+                //————————————————————————————————————————————玛莲妮娅/Malenia
+                // 水鸟乱舞
+                // 当你使用杀指定目标时,你连续在场上变换三次位置,并对经过的角色造成一点出血伤害
+                // 此过程中,每有角色进入过濒死,你额外变换一次位置
+                QQQ_shuiniao: {
+                    trigger: {
+                        player: ['shaBegin'],
+                    },
+                    forced: true,
+                    async content(event, trigger, player) {
+                        const his = [];
+                        for (const i of _status.globalHistory) {
+                            for (const evt of i.everything) {
+                                if (evt.name == 'dying') {
+                                    his.push(evt);
+                                }
+                            }
+                        }
+                        let count = 3;
+                        while (count-- > 0) {
+                            const num = Math.floor(game.players.length * Math.random());
+                            const target = game.players.find((q) => q.dataset.position == num);
+                            target.dataset.position = player.dataset.position;
+                            player.dataset.position = num;
+                            game.log(player, target, '交换位置');
+                            game.sort();
+                            let left = [], right = [];
+                            let left2 = player.previous, right2 = player.next;
+                            while (left2 && ![target, player].includes(left2) && right2 && ![target, player].includes(right2)) {
+                                left.push(left2);
+                                right.push(right2);
+                                left2 = left2.previous;
+                                right2 = right2.next;
+                            }
+                            if (target == left2) {
+                                for (const i of left) {
+                                    await i.damage('ScarletRot');
+                                }
+                            }
+                            if (target == right2) {
+                                for (const i of right) {
+                                    await i.damage('ScarletRot');
+                                }
+                            }
+                            for (const i of _status.globalHistory) {
+                                for (const evt of i.everything) {
+                                    if (evt.name == 'dying' && !his.includes(evt)) {
+                                        his.push(evt)
+                                        count++;
+                                    }
+                                }
+                            } //用历史写法就得等usecard结束,when写法就是要多加技能
+                        }
+                    },
+                },
+                // 女武神的义手刀
+                // 在你使用牌的结算过程中,你处于无敌状态
+                QQQ_yishoudao: {
+                    init(player) {
+                        player.storage.QQQ_yishoudao = [];
+                    },
+                    trigger: {
+                        player: ['useCardBefore'],
+                    },
+                    firstDo: true,
+                    forced: true,
+                    popup: false,
+                    mark: true,
+                    intro: {
+                        content(storage) {
+                            if (storage.length) {
+                                return '当前处于无敌状态';
+                            }
+                            return '未处于无敌状态';
+                        },
+                    },
+                    async content(event, trigger, player) {
+                        player.storage.QQQ_yishoudao.push(trigger.card);
+                    },
+                    group: ['QQQ_yishoudao_1', 'QQQ_yishoudao_2'],
+                    subSkill: {
+                        1: {
+                            trigger: {
+                                player: ['changeHpBefore', 'loseBefore'],
+                            },
+                            forced: true,
+                            filter(event, player, name) {
+                                if (name == 'loseBefore' && event.parent.name == 'useCard') {
+                                    return false;
+                                }
+                                return player.storage.QQQ_yishoudao.length;
+                            },
+                            async content(event, trigger, player) {
+                                trigger.cancel();
+                            },
+                        },
+                        2: {
+                            trigger: {
+                                player: ['useCardAfter'],
+                            },
+                            lastDo: true,
+                            forced: true,
+                            popup: false,
+                            async content(event, trigger, player) {
+                                player.storage.QQQ_yishoudao.remove(trigger.card);
+                            },
+                        }
+                    },
+                },
+                // 猩红腐败绽放
+                // 当你进入濒死时,视为对攻击范围内的全部其他角色使用一张腐败属性的杀;然后恢复此杀结算过程中,场上角色受到伤害值的体力
+                QQQ_xinghongfubai: {
+                    trigger: {
+                        player: ['dying'],
+                    },
+                    forced: true,
+                    async content(event, trigger, player) {
+                        const his = [];
+                        for (const i of _status.globalHistory) {
+                            for (const evt of i.everything) {
+                                if (evt.name == 'damage') {
+                                    his.push(evt);
+                                }
+                            }
+                        }
+                        const targets = game.players.filter((q) => q != player && get.distance(player, q, 'attack') < 2);
+                        const sha = player.useCard({
+                            name: 'sha',
+                            nature: 'ScarletRot',
+                        }, targets).set('addCount', false);
+                        await sha;
+                        let num = 0;
+                        for (const i of _status.globalHistory) {
+                            for (const evt of i.everything) {
+                                if (evt.name == 'damage' && !his.includes(evt)) {
+                                    num += numberq1(evt.num);
+                                }
+                            }
+                        }
+                        player.recover(num);
+                    },
+                },
+                // 猩红腐败
+                // 任意回合结束后流失1点体力并减少一层状态
+                _ScarletRot: {
+                    trigger: {
+                        global: ['phaseEnd'],
+                    },
+                    forced: true,
+                    filter(event, player) {
+                        return player.storage._ScarletRot > 0;
+                    },
+                    intro: {
+                        name: '猩红腐败',
+                        content: 'mark',
+                    },
+                    async content(event, trigger, player) {
+                        player.storage._ScarletRot--;
+                        player, loseHp();
+                    },
+                },
+                _ScarletRot1: {
+                    trigger: {
+                        player: ['damageEnd'],
+                    },
+                    forced: true,
+                    filter(event, player) {
+                        return event.nature == 'ScarletRot';
+                    },
+                    async content(event, trigger, player) {
+                        player.addMark('_ScarletRot', numberq1(trigger.num));
+                    },
+                },
+                //————————————————————————————————————————————葛弗雷 5/5
+                // 繁文缛节
+                // 锁定技,游戏开始时,你随机使用两张装备牌;你每轮至多可使用X张牌(X为你的空置装备栏数+1);摸牌阶段,你额外摸装备区内的牌数张牌
+
+                // 王征
+                // 出牌阶段,你可以消耗所有本轮剩余可使用牌次数,视为使用等量次【南蛮入侵】
+
+                // 当你濒死时,你将武将牌替换为荷莱·露
+
+                //————————————————————————————————————————————荷莱·露 4/4
+                // 王之战吼
+                // 出牌阶段限已损体力值次,可以令你本阶段攻击范围+1,对攻击范围内的其他角色使用一张杀
+                // 蛮荒
+                // 连招技(<王之战吼>+伤害牌),你与此牌目标翻面并拼点,胜者翻面且可视为抵消了此牌;未胜利者无法响应此牌且可使用一张拼点牌
+
+                // 浴血狂战
+                // 当你进入濒死时,
+
+
+                //————————————————————————————————————————————蒙葛特 4/4
+                // 咒剑
+                // 当你使用伤害牌指定唯一目标时,可重铸你与其区域内各一张牌,若三者类别:均相同,此牌不计入次数;均不同,你获得对方此次因重铸失去的牌;否则此技能本阶段失效.
+                // 铸影
+                // 出牌阶段限一次,你可以检索一张武器牌(至多亮出14张),并蓄谋此流程中亮出的一种花色的所有牌.
+
+
+                //————————————————————————————————————————————蒙格 4/4
+                // 授血
+                // 出牌阶段限一次,你可以请一名其他角色交给你两张牌并获得<纯血>;然后你可以失去1点体力对所有拒绝过你和响应过你的角色各造成1点伤害.
+                // 仪式
+                // 觉醒技,你参与伤害结算次数超过场上人数次的回合结束时,你将体力值恢复至体力上限,然后修改场上所有<纯血>;此后你溢出的体力回复改为摸等量牌.
+                // 纯血
+                // 宗族技,每回合限一次,同族角色造成伤害后,你可以弃置一张牌,令其也对你造成等量伤害,然后你回复等量体力(修改后:同族角色造成伤害后,蒙格可以弃置一张牌,令你也对受伤角色造成等量伤害,然后其与蒙格回复等量体力).
+
+                //————————————————————————————————————————————拉塔恩 6/8
+                // 碎星双剑
+                // 每回合限一次,当有牌因展示、亮出或判定而对所有角色可见时,你可以将任意张花色与这些牌相同且彼此不同的牌当做一张【杀】对其所属者或当前回合角色使用,此【杀】伤害基值改为以此法转化牌数且造成伤害后你减少等量体力上限.
+                // 战斗祭典
+                // 锁定技,回合开始时,所有体力值不大于你的角色须同时选择一项:
+                // 1.重铸至少两张非伤害牌并令你摸一张牌;
+                // 2.展示至多两张伤害牌并摸一张牌;
+                // 3.受到你对其造成的1点伤害.
+                // 然后所有角色可依次对你使用其展示的牌.
+                // 重力魔法
+                // 大荒星陨
+
+                //————————————————————————————————————————————安帕赫 3/3
+                // 王朝镰技
+                // 本局游戏限0次,你可以用【杀】抵消其他角色对你使用的牌,且结算后你可以再对使用者使用此【杀】,此【杀】无视防具.
+                // 荣耀记忆
+                // 锁定技,你每轮首次参与伤害结算后,令<王朝镰技>本局可发动次数+1;每轮第三次参与伤害结算后,摸你本局受伤次数张牌.
+                // 纯血
+                // 宗族技,同族角色造成伤害后,你可以弃置一张牌,令其也对你造成等量伤害,然后你回复等量体力.
+
+                //————————————————————————————————————————————老翁 3/3
+                // 切腹
+                // 锁定技,你是你使用伤害牌的合法目标,且此牌不计入次数;当你受到致命伤害时,你改为对自己造成1点伤害.
+                // 尸山血海
+                // 锁定技,转换技,
+                // 阳:当你受到伤害后,你摸你本回合受伤次数张牌且本回合攻击范围+1;
+                // 阴:当你造成伤害后,你本回合下次使用牌可额外指定一个目标.
+                // 纯血
+                // 宗族技,同族角色造成伤害后,你可以弃置一张牌,令其也对你造成等量伤害,然后你回复等量体力.
+
                 /*
                 仙尊悔而我不悔
                 未来身                         
                 魂压
                 永眠之莲
-
-
-
-
-
-
                 我其实不想当仙尊,可是宿命是不能更改的。大家又对我这样的好,我也要为他们着想呢,也想让我们整个人族都幸福呢。如果有来生,你就好好的玩耍吧,弥补我此生的遗憾！既然师父常常夸我明眸皓齿,聪明伶俐,那就叫你明皓罢
                 熔炉百相修复\活动萌扩\阿米娅语音\
                 明眸皓齿/丰神雅量
@@ -7596,6 +7903,15 @@ const precontent = async function () {
                 */
             },
             translate: {
+                //————————————————————————————————————————————玛莲妮娅/Malenia
+                QQQ_Malenia: '玛莲妮娅',
+                QQQ_shuiniao: '水鸟乱舞',
+                QQQ_shuiniao_info: '当你使用杀指定目标时,你连续在场上变换三次位置,并对经过的角色造成一点出血伤害<br>此过程中,每有角色进入过濒死,你额外变换一次位置',
+                QQQ_yishoudao: '女武神的义手刀',
+                QQQ_yishoudao_info: '在你使用牌的结算过程中,你处于无敌状态',
+                QQQ_xinghongfubai: '猩红腐败绽放',
+                QQQ_xinghongfubai_info: '当你进入濒死时,视为对攻击范围内的全部其他角色使用一张腐败属性的杀;然后恢复此杀结算过程中,场上角色受到伤害值的体力',
+                //————————————————————————————————————————————张郃
                 QQQ_qiaobian: '巧变',
                 QQQ_qiaobian_info: '出牌阶段开始时，你摸四张牌，然后将一张牌当所有花色均失效的【乐不思蜀】使用并弃置任意张牌作为此牌的生效花色',
                 //————————————————————————————————————————————宇宙海星
@@ -7609,11 +7925,10 @@ const precontent = async function () {
                 QQQ_fengrufeitun: '丰乳肥臀',
                 QQQ_fengrufeitun_info: '锁定技,每阶段结束时,若此阶段内场上有其他角色累计获得或失去至少两张牌,你令其将这些牌当作顺手牵羊对你使用',
                 //————————————————————————————————————————————玛莉卡&拉达冈————我的半身,击碎彼此吧!
-                'Marika&&Radagon': '玛莉卡&拉达冈',
                 QQQ_Marika: '玛莉卡',
                 QQQ_Radagon: '拉达冈',
                 QQQ_shuangmian: '神之双面',
-                QQQ_shuangmian_info: '<span class="Qmenu">锁定技,</span>游戏开始你以玛莉卡的形态登场,且装备半损的法环.而后每回合结束后你切换一次形态,双形态彼此独立',
+                QQQ_shuangmian_info: '<span class="Qmenu">锁定技,</span>游戏开始时召唤你的半身,且装备半损的法环.而后每回合结束后你切换一次形态,双形态彼此独立',
                 QQQ_shuangmian_append: '我的半身,击碎彼此吧!',
                 QQQ_shichui: '神之石槌',
                 QQQ_shichui_info: '<span class="Qmenu">锁定技,</span>根据你当前的形态,你始终装备对应的神器石槌',
@@ -7751,7 +8066,7 @@ const precontent = async function () {
                 论道: '论道',
                 论道_info: '<span class="Qmenu">锁定技,</span>每名角色出牌阶段开始时,所有角色都对随机目标使用手牌中的一张牌,若有人以此法指定自身为目标,则你摸一张牌',
                 QQQ_guji: '孤寂',
-                QQQ_guji_info: '<span class="Qmenu">锁定技,</span>每轮结束时,若存在角色在此轮中为成为过其他角色牌的目标,你令其死亡',
+                QQQ_guji_info: '<span class="Qmenu">锁定技,</span>每轮结束时,若存在角色在此轮中未成为过其他角色牌的目标,你令其死亡',
                 QQQ_guji_append: '有一种寂寞足以杀人,不是吗?',
                 //————————————————————————————————————————————监听
                 QQQ_jianting: '监听',
@@ -7929,6 +8244,7 @@ const sha = function () {
 };
 sha();
 <br><br><span style="color: gold">潜水的火修复版<br>温柔一刀扩展群771901025</span><br><br>
+const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.json`);
         package: {
                 for (const i in QQQ.character) {
                     const info = QQQ.character[i];

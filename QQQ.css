@@ -1,3 +1,49 @@
+/* 能量条 */
+.player[data-position="0"]>.nengliangtiao {
+	width: 50%;
+	height: 10%;
+	left: 25%;
+	top: -20%;
+	background-size: cover;
+	background-image: url('../温柔一刀/image/nengliangtiao.jpg');
+	border-radius: 9px;
+	z-index: 10;
+}
+
+/* 能量条 */
+.player[data-position="0"]>.nengliangtiao>.jindutiao {
+	font-size: 10px;
+	text-align: center;
+	border-radius: 9px;
+	height: 100%;
+	width: 50%;
+	z-index: 20;
+	background-color: rgb(199 18 92);
+}
+
+/* 能量条 */
+.player:not([data-position="0"])>.nengliangtiao {
+	width: 10%;
+	height: 100%;
+	left: 100%;
+	background-size: contain;
+	background-image: url('../温柔一刀/image/nengliangtiao1.jpg');
+	border-radius: 9px;
+	z-index: 10;
+}
+
+/* 能量条 */
+.player:not([data-position="0"])>.nengliangtiao>.jindutiao {
+	font-size: 10px;
+	text-align: center;
+	border-radius: 9px;
+	height: 50%;
+	width: 100%;
+	bottom: 0;
+	z-index: 20;
+	background-color: rgb(199 18 92);
+}
+
 /* 卡牌永久标记 */
 .card>.qtag {
 	position: relative;

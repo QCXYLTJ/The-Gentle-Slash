@@ -284,87 +284,87 @@ const content = async function () {
                     }
                 }
                 if (this.playerid) {
-                    this.addSkillTrigger(skill); //bosslist时候就不必init和加全局了
-                } //加入钩子时候才init,要在这之后运行entergame的content
-                if (this.awakenedSkills.includes(skill)) {
-                    this.awakenSkill(skill);
-                    return;
-                }
-                if (info.init2 && !_status.video) {
-                    info.init2(this, skill);
-                } //加入钩子时候才init,要在这之后运行entergame的content
-                if (info.mark) {
-                    if (info.mark == 'card' && get.itemtype(this.storage[skill]) == 'card') {
-                        this.markSkill(skill, null, this.storage[skill], nobroadcast);
-                    } else if (info.mark == 'card' && get.itemtype(this.storage[skill]) == 'cards') {
-                        this.markSkill(skill, null, this.storage[skill][0], nobroadcast);
-                    } else if (info.mark == 'image') {
-                        this.markSkill(skill, null, ui.create.card(null, 'noclick').init([null, null, skill]), nobroadcast);
-                    } else if (info.mark == 'character') {
-                        var intro = info.intro.content;
-                        if (typeof intro == 'function') {
-                            intro = intro(this.storage[skill], this);
-                        } else if (typeof intro == 'string') {
-                            intro = intro.replace(/#/g, this.storage[skill]);
-                            intro = intro.replace(/&/g, get.cnNumber(this.storage[skill]));
-                            intro = intro.replace(/\$/g, get.translation(this.storage[skill]));
-                        }
-                        var caption;
-                        if (typeof info.intro.name == 'function') {
-                            caption = info.intro.name(this.storage[skill], this);
-                        } else if (typeof info.intro.name == 'string') {
-                            caption = info.name;
+                    this.addSkillTrigger(skill); //加入钩子时候才init,要在这之后运行entergame的content //bosslist时候就不必init和加全局了
+                    if (this.awakenedSkills.includes(skill)) {
+                        this.awakenSkill(skill);
+                        return;
+                    }
+                    if (info.init2 && !_status.video) {
+                        info.init2(this, skill);
+                    } //加入钩子时候才init,要在这之后运行entergame的content
+                    if (info.mark) {
+                        if (info.mark == 'card' && get.itemtype(this.storage[skill]) == 'card') {
+                            this.markSkill(skill, null, this.storage[skill], nobroadcast);
+                        } else if (info.mark == 'card' && get.itemtype(this.storage[skill]) == 'cards') {
+                            this.markSkill(skill, null, this.storage[skill][0], nobroadcast);
+                        } else if (info.mark == 'image') {
+                            this.markSkill(skill, null, ui.create.card(null, 'noclick').init([null, null, skill]), nobroadcast);
+                        } else if (info.mark == 'character') {
+                            var intro = info.intro.content;
+                            if (typeof intro == 'function') {
+                                intro = intro(this.storage[skill], this);
+                            } else if (typeof intro == 'string') {
+                                intro = intro.replace(/#/g, this.storage[skill]);
+                                intro = intro.replace(/&/g, get.cnNumber(this.storage[skill]));
+                                intro = intro.replace(/\$/g, get.translation(this.storage[skill]));
+                            }
+                            var caption;
+                            if (typeof info.intro.name == 'function') {
+                                caption = info.intro.name(this.storage[skill], this);
+                            } else if (typeof info.intro.name == 'string') {
+                                caption = info.name;
+                            } else {
+                                caption = get.translation(skill);
+                            }
+                            if (!this.storage[skill]) {
+                            }
+                            this.markSkillCharacter(skill, this.storage[skill], caption, intro, nobroadcast);
                         } else {
-                            caption = get.translation(skill);
+                            this.markSkill(skill, null, null, nobroadcast);
                         }
-                        if (!this.storage[skill]) {
+                    } //bosslist时候就不必加标记
+                    if (_status.roundStart && _status.currentPhase) {
+                        var Q = [];
+                        if (lib.skill[skill].group) {
+                            if (Array.isArray(lib.skill[skill].group)) Q = lib.skill[skill].group.slice();
+                            else Q.push(lib.skill[skill].group);
                         }
-                        this.markSkillCharacter(skill, this.storage[skill], caption, intro, nobroadcast);
-                    } else {
-                        this.markSkill(skill, null, null, nobroadcast);
-                    }
-                }
-                if (_status.roundStart && _status.currentPhase) {
-                    var Q = [];
-                    if (lib.skill[skill].group) {
-                        if (Array.isArray(lib.skill[skill].group)) Q = lib.skill[skill].group.slice();
-                        else Q.push(lib.skill[skill].group);
-                    }
-                    Q.push(skill);
-                    for (const i of Q) {
-                        if (!lib.skill[i] || !lib.skill[i].trigger || !lib.skill[i].trigger.player) continue;
-                        if (lib.skill[i].trigger.player == 'enterGame' || (Array.isArray(lib.skill[i].trigger.player) && lib.skill[i].trigger.player.includes('enterGame'))) {
-                            if (!this.游戏开始技能) this.游戏开始技能 = [];
-                            if (!this.游戏开始技能.includes(i)) {
-                                this.游戏开始技能.push(i);
-                                game.log(i + '是游戏开始时技能');
-                                if (typeof lib.skill[i].cost === 'function') {
-                                    const next = game.createEvent(`${i}_cost`, false);
-                                    next.player = this;
-                                    next._trigger = _status.event;
-                                    next.skill = i;
-                                    const result1 = await next.setContent(lib.skill[i].cost).forResult();
-                                    if (result1.bool) {
-                                        var next1 = game.createEvent(i, false);
-                                        next1.skill = i;
-                                        next1.player = this;
-                                        next1._trigger = _status.event;
-                                        if (result1.targets) next1.targets = result1.targets;
-                                        if (result1.cards) next1.cards = result1.cards;
-                                        if (result1.cost_data) next1.cost_data = result1.cost_data;
-                                        await next1.setContent(lib.skill[i].content);
+                        Q.push(skill);
+                        for (const i of Q) {
+                            if (!lib.skill[i] || !lib.skill[i].trigger || !lib.skill[i].trigger.player) continue;
+                            if (lib.skill[i].trigger.player == 'enterGame' || (Array.isArray(lib.skill[i].trigger.player) && lib.skill[i].trigger.player.includes('enterGame'))) {
+                                if (!this.游戏开始技能) this.游戏开始技能 = [];
+                                if (!this.游戏开始技能.includes(i)) {
+                                    this.游戏开始技能.push(i);
+                                    game.log(i + '是游戏开始时技能');
+                                    if (typeof lib.skill[i].cost === 'function') {
+                                        const next = game.createEvent(`${i}_cost`, false);
+                                        next.player = this;
+                                        next._trigger = _status.event;
+                                        next.skill = i;
+                                        const result1 = await next.setContent(lib.skill[i].cost).forResult();
+                                        if (result1.bool) {
+                                            var next1 = game.createEvent(i, false);
+                                            next1.skill = i;
+                                            next1.player = this;
+                                            next1._trigger = _status.event;
+                                            if (result1.targets) next1.targets = result1.targets;
+                                            if (result1.cards) next1.cards = result1.cards;
+                                            if (result1.cost_data) next1.cost_data = result1.cost_data;
+                                            await next1.setContent(lib.skill[i].content);
+                                        }
+                                    } else {
+                                        var next = game.createEvent(i, false);
+                                        next.skill = i;
+                                        next.player = this;
+                                        next._trigger = _status.event;
+                                        await next.setContent(lib.skill[i].content);
                                     }
-                                } else {
-                                    var next = game.createEvent(i, false);
-                                    next.skill = i;
-                                    next.player = this;
-                                    next._trigger = _status.event;
-                                    await next.setContent(lib.skill[i].content);
                                 }
                             }
                         }
-                    }
-                } //运行进入游戏时机的content
+                    } //运行进入游戏时机的content
+                }
             }
             if (checkConflict) this.checkConflict();
             return skill;
@@ -1393,23 +1393,25 @@ const content = async function () {
             this.storage.rawMaxHp = this.maxHp;
             if (name && lib.character[name]) {
                 const skill = lib.character[name][3];
-                if (!this.hiddenSkills) this.hiddenSkills = [];
+                if (!this.hiddenSkills) {
+                    this.hiddenSkills = [];
+                }
                 if (skill[0]) {
                     for (const i of skill) {
                         this.removeSkill(i);
                     }
                     this.hiddenSkills.addArray(skill);
                 }
-                this.classList.add('unseen');
-                this.name = 'unknown';
-                this.sex = 'male';
-                this.storage.nohp = true;
-                this.node.hp.hide();
-                this.addSkill('g_hidden_ai');
-                this.hp = 1;
-                this.maxHp = 1;
-                this.update();
             }
+            this.classList.add('unseen');
+            this.name = 'unknown';
+            this.sex = 'male';
+            this.storage.nohp = true;
+            this.node.hp.hide();
+            this.addSkill('g_hidden_ai');
+            this.hp = 1;
+            this.maxHp = 1;
+            this.update();
         }; //隐匿函数
         lib.element.player.fanwei = function (num) {
             const players = [];
@@ -1463,7 +1465,9 @@ const content = async function () {
             const skill = _status.event.skill;
             if (info.contentBefore) {
                 const next = game.createEvent(name + 'ContentBefore', false);
-                next.parent.stocktargets = targets;
+                if (next.parent) {
+                    next.parent.stocktargets = targets;
+                }
                 next.targets = targets;
                 next.card = card;
                 next.cards = cards;
@@ -1478,7 +1482,9 @@ const content = async function () {
                     if (target && target.isDead()) return;
                     if (info.notarget) return;
                     const next = game.createEvent(name, false);
-                    next.parent.directHit = [];
+                    if (next.parent) {
+                        next.parent.directHit = [];
+                    }
                     next.targets = targets;
                     next.target = target;
                     next.card = card;
@@ -1500,7 +1506,9 @@ const content = async function () {
             } else {
                 if (info.notarget) return;
                 const next = game.createEvent(name, false);
-                next.parent.directHit = [];
+                if (next.parent) {
+                    next.parent.directHit = [];
+                }
                 next.targets = targets;
                 next.target = targets[0];
                 next.card = card;
@@ -1599,9 +1607,15 @@ const content = async function () {
             var numx = player.hasSkillTag('nohujia') ? num : Math.max(0, num - player.hujia);
             player.$damagepop(-numx, natures[0]);
             if (player.hp <= 0 && player.isAlive()) {
-                player.dying();
+                player.dying({ source: source });
             }
         }; //真实伤害
+        lib.element.player.nengliangtiao = function () {
+            const player = this;
+            const nengliangtiao = ui.create.div('.nengliangtiao', player);
+            const jindutiao = ui.create.div('.jindutiao', nengliangtiao);
+            return jindutiao;
+        };
     };
     zawu();
     //—————————————————————————————————————————————————————————————————————————————一些全局技能
@@ -8133,7 +8147,11 @@ const content = async function () {
                 linked: true,
                 order: 1000,
             }); //添加杀的属性
-            for (const i of ['gold', 'poison', 'blood', 'snow', 'kami', 'ice']) {
+            game.addNature('ScarletRot', '猩红腐败', {
+                linked: true,
+                order: 1000,
+            }); //添加杀的属性
+            for (const i of ['gold', 'poison', 'blood', 'snow', 'kami', 'ice', 'ScarletRot']) {
                 lib.card.sha.ai.tag[i + 'Damage'] = eval(` (card, nature) => {
                     if (game.hasNature(card, '${i}')) return 1;
                 }`);

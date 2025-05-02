@@ -301,8 +301,8 @@ const card = {
     QQQ_shibao: {
         type: 'trick',
         filterTarget(card, player, target) {
-            return true;
-        },
+            return target == player;
+        },//QQQ
         selectTarget: -1,
         async content(event, trigger, player) {
             const {

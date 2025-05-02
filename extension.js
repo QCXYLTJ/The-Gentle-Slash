@@ -30,9 +30,9 @@ if (QQQ.config.扩展全关) {
 } //扩展全部关闭
 if (QQQ.config.扩展修改) {
     var Q = [
-        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列',
-        //'云将', '贴吧精品', '梦隐', '太虚幻境', '天牢令', '玄武江湖', '大权在握', '极略',
-        '王者荣耀', '圣杯战争',
+        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花',
+        //'云将', '贴吧精品', '梦隐', '天牢令', '玄武江湖', '大权在握',
+        '王者荣耀', '圣杯战争', '极略', '蒸蒸日上', '贴吧精品', '通灵师', '太虚幻境', '真火无敌', '心之境界',
     ];
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -160,6 +160,7 @@ const yuanxing = function () {
             if (parent.contains(son)) return;
             console.log('神器不可失去');
             parent.appendChild(son);
+            son.style.transform = '';
         }).observe(parent, { childList: true });
     }; //DOM将子元素锁定于父元素上
     HTMLElement.prototype.BG = function (name) {
@@ -195,33 +196,48 @@ const boss = function () {
         },
         set(v) {
             _me = v;
-            if (game.players.includes(v) && game.players[0] != v) {//这样挑战模式不管选什么挑战李白都会变成game.me是李白,因为李白最先进入players
-                game.nosort = true;
-                while (game.players[0] != v) {
-                    const start = game.players.shift();
-                    game.players.push(start);
-                }
-                game.nosort = false;
-                game.sort();
-            }//如果数组target[meIndex]是李白,那么替换掉的一瞬间,接下来调用就会再添加一个李白,导致数组两个李白
-        },//更换game.me之后第一时间排序
+            if (game.players.includes(v) && game.players[0] != v) {
+                game.sort();//因为李白最先进入players,挑战模式不管选什么挑战李白,都会变成game.me是李白
+            } //如果数组target[meIndex]是李白,那么替换掉的一瞬间,接下来调用就会再添加一个李白,导致数组两个李白
+        }, //更换game.me之后第一时间排序
     });
-    game.sort = function (players) {
-        if (game.nosort) return false;
-        if (!players) players = game.players;
-        ui.arena.setNumber(players.length);
-        game.dead.forEach((player) => {
-            player.classList.add('removing');
-            player.classList.add('hidden');
-        });
-        if (players.includes(game.me) && players[0] != game.me) {
-            game.nosort = true;
-            while (players[0] != game.me) {
-                const start = players.shift();
-                players.push(start);
+    game.sort = function () {
+        const players = game.players.filter(Boolean);
+        const deads = game.dead.filter(Boolean);
+        const bool = lib.config.extension_温柔一刀_死亡移除;
+        const allPlayers = bool ? players : players.concat(deads);
+        ui.arena.setNumber(allPlayers.length);
+        if (bool) {
+            deads.forEach((player) => {
+                player.classList.add('removing', 'hidden');
+            });
+        }
+        allPlayers.sort((a, b) => a.dataset.position - b.dataset.position);
+        if (allPlayers.includes(game.me) && allPlayers[0] != game.me) {
+            while (allPlayers[0] != game.me) {
+                const start = allPlayers.shift();
+                allPlayers.push(start);
             }
-            game.nosort = false;
-        }//后面复活也要排序
+        }
+        allPlayers.forEach((player, index, array) => {
+            if (bool) {
+                player.classList.remove('removing', 'hidden');
+            }
+            player.dataset.position = index;
+            const zhu = _status.roundStart || game.zhu || game.boss || array.find((p) => p.seatNum == 1) || array[0];
+            const zhuPos = zhu.dataset?.position;
+            if (typeof zhuPos == 'number') {
+                const num = index - zhuPos + 1;
+                if (index < zhuPos) {
+                    player.seatNum = players.length - num;
+                } else {
+                    player.seatNum = num;
+                }
+            }
+            player.previousSeat = array[index === 0 ? array.length - 1 : index - 1];
+            player.nextSeat = array[index === array.length - 1 ? 0 : index + 1];
+        });
+        players.sort((a, b) => a.dataset.position - b.dataset.position);
         players.forEach((player, index, array) => {
             if (index == 0) {
                 if (ui.handcards1Container && ui.handcards1Container.firstChild != player.node.handcards1) {
@@ -234,24 +250,10 @@ const boss = function () {
                     ui.updatehl();
                 }
             }
-            player.classList.remove('removing');
-            player.classList.remove('hidden');
-            player.dataset.position = index;
-            const zhu = _status.roundStart || game.zhu || array.find((p) => p.seatNum == 1) || game.boss || array[0];
-            if (zhu) {
-                if (index < (zhu.dataset && zhu.dataset.position) || 0) {
-                    player.seatNum = players.length - (zhu.dataset && zhu.dataset.position) + index + 1;
-                } else {
-                    player.seatNum = index - (zhu.dataset && zhu.dataset.position) + 1;
-                }
-            }
             player.previous = array[index === 0 ? array.length - 1 : index - 1];
             player.next = array[index === array.length - 1 ? 0 : index + 1];
         });
-        players.concat(game.dead).forEach((player, index, array) => {
-            player.previousSeat = array[index === 0 ? array.length - 1 : index - 1];
-            player.nextSeat = array[index === array.length - 1 ? 0 : index + 1];
-        });
+        game.players.sort((a, b) => a.dataset.position - b.dataset.position);
         return true;
     };
     game.players = new Proxy([], {

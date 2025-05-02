@@ -489,7 +489,7 @@ const skill = {
                 if (get.type(button.link) == 'equip') {
                     return 0;
                 }
-                return number0(num) / 2 + 10;
+                return number0(num) + 10;
             });
             ('step 1');
             if (result.links && result.links[0]) {
@@ -2457,7 +2457,7 @@ const skill = {
                     name: button.link[2],
                     nature: button.link[3],
                 }, null, true);
-                return number0(num) / 2 + 10;
+                return number0(num) + 10;
             },
             filter(button, player) {
                 return player.filterCard(button.link[2], true);
@@ -3311,7 +3311,7 @@ const skill = {
                 if (card.name == 'sha') {
                     return player.countCards('he', 'zhuge') ? 10 : 0;
                 }
-                return number0(num) / 2 + 10;
+                return number0(num) + 10;
             });
             ('step 2');
             if (result.bool) {
@@ -4568,9 +4568,9 @@ const skill = {
                             null,
                             true
                         );
-                        if (['wuzhong', 'dongzhuxianji'].includes(button.link[2])) return number0(num) * 2 + 10;
-                        if (['blood', 'kami'].includes(button.link[3])) return number0(num) + 10;
-                        return number0(num) / 2 + 10;
+                        if (['wuzhong', 'dongzhuxianji'].includes(button.link[2])) return number0(num) * 4 + 10;
+                        if (['blood', 'kami'].includes(button.link[3])) return number0(num) * 2 + 10;
+                        return number0(num) + 10;
                     });
                     if (links && links[0]) {
                         if (links[0][2] == 'caochuan') {
@@ -4656,7 +4656,7 @@ const skill = {
                     name: button.link[2],
                     nature: button.link[3],
                 }, null, true);
-                return number0(num) / 2 + 10;
+                return number0(num) + 10;
             },
             backup(links, player) {
                 return {
@@ -4738,7 +4738,7 @@ const skill = {
                             true
                         );
                         if (['wuzhong', 'dongzhuxianji'].includes(button.link[2])) return number0(num) * 2 + 10;
-                        return number0(num) / 2 + 10;
+                        return number0(num) + 10;
                     },
                     backup(links, player) {
                         return {
@@ -5723,7 +5723,7 @@ const skill = {
                     name: button.link[2],
                     nature: button.link[3],
                 }, null, true);
-                return number0(num) / 2 + 10;
+                return number0(num) + 10;
             },
             backup(links, player) {
                 return {
@@ -6227,7 +6227,7 @@ const skill = {
                             if (button.link[2] == 'jiu') {
                                 return 999 * (99 + num);
                             }
-                            return number0(num) / 2 + 10;
+                            return number0(num) + 10;
                         });
                         if (links && links[0]) {
                             if (links[0][2] == 'caochuan') {
@@ -6425,7 +6425,7 @@ const skill = {
                     const { result } = await player.chooseToUse((c) => player.filterCardx(c))
                         .set('ai1', (card, arg) => {
                             if (lib.card[card.name]) {
-                                return number0(player.getUseValue(card, null, true)) / 2 + 10;
+                                return number0(player.getUseValue(card, null, true)) + 10;
                             }
                         })//card是可选牌和技能名//arg是所有可选牌和技能名的数组且可能不存在
                     // .set('ai2', function (target, arg) {
@@ -6962,7 +6962,7 @@ const skill = {
                     name: button.link[2],
                     nature: button.link[3],
                 }, null, true);
-                return number0(num) / 2 + 10;
+                return number0(num) + 10;
             },
             backup(links, player) {
                 return {
@@ -7280,7 +7280,7 @@ const skill = {
                                 if (evt.name == '_wuxie') {
                                     return -get.attitude(player, evt.getParent('useCard').player);
                                 }
-                                return number0(num) / 2 + 10;
+                                return number0(num) + 10;
                             });
                         if (links && links[0]) {
                             if (links[0][2] == 'caochuan') {
@@ -7473,41 +7473,30 @@ const skill = {
         },
     },
     检测: {
-        enable: "phaseUse",
-        usable: 1,
+        trigger: {
+            player: ['shaBefore'],
+        },
+        forced: true,
         filter(event, player) {
-            return Array.from(ui.cardPile.childNodes).slice(0, 6).filter((q) => player.filterCard(q, true)).length;
+            return event.target;
         },
-        chooseButton: {
-            dialog(event, player) {
-                const list = get.cards(6).filter((q) => player.filterCard(q, true));
-                return ui.create.dialog("选择一张牌使用", list);
-            },
-            check(button) {
-                return get.value(button.link);
-            },
-            backup(links, player) {
-                return {
-                    filterCard() {
-                        return false;
-                    },
-                    selectCard: -1,
-                    viewAs: links[0],
-                    async precontent(event, trigger, player) {
-                        ui.discardPile.appendChild(links[0]);//QQQ
-                    },
-                };
-            },
-            prompt(links, player) {
-                return "选择" + get.translation(links) + "的目标";
-            },
+        async content(event, trigger, player) {
+            trigger.shanRequired = trigger.target.hp;
         },
-        ai: {
-            order: 12,
-            result: {
-                player: 1,
+        group: ['检测_1'],
+        subSkill: {
+            1: {
+                trigger: {
+                    player: ['shaHit'],
+                },
+                forced: true,
+                filter(event, player) {
+                    return event.shanRequired > 1;
+                },
+                async content(event, trigger, player) {
+                    trigger.baseDamage = trigger.shanRequired;
+                },
             },
-            threaten: 1.5,
         },
     },
     测试: {
@@ -7571,17 +7560,17 @@ const skill = {
                 set() { },
             });
             game.bug = [];
-            var Q = 'sbzz'; //mode_extension_xxx//////
+            var Q = '心之境界'; //mode_extension_xxx//////
             for (var j in lib.characterPack[Q]) {
                 game.bug.addArray(lib.characterPack[Q][j][3].filter((Q) => Q != 'dualside'));
             }
-            game.bug.unique();
+            game.bug = game.bug.unique().filter((Q) => Q != 'xzjj_huanxiangshikong' && Q != '变幻莫测');
             game.log(`当前武将包有${game.bug.length}个技能`);
         },
         _priority: 9,
         async content(event, trigger, player) {
             //QQQ
-            var Q = game.bug.slice(300, 400).filter((Q) => Q != 'hokzhiling' && Q != 'hokzhujing'); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(8, 150); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
             const {
                 result: { bool },
@@ -7604,7 +7593,10 @@ const skill = {
                     return 99;
                 }, //只读
                 set usable(v) { },
-                content() {
+                init(player) {
+                    player.storage.phase = 0;
+                },
+                async content(event, trigger, player) {
                     if (['phaseUse', 'damage'].includes(trigger.name)) {
                         Reflect.defineProperty(trigger, 'finished', {
                             get() {
@@ -7648,12 +7640,18 @@ const skill = {
                         } //用牌击穿
                     }
                     if (trigger.name == 'phase') {
-                        Reflect.defineProperty(trigger, 'finished', {
-                            get() {
-                                return trigger.step > 12;
-                            },
-                            set() { },
-                        });
+                        if (player.storage.phase > game.roundNumber) {
+                            trigger.cancel();
+                        }
+                        else {
+                            player.storage.phase++;
+                            Reflect.defineProperty(trigger, 'finished', {
+                                get() {
+                                    return trigger.step > 12;
+                                },
+                                set() { },
+                            });
+                        }
                     }
                 },
             },
