@@ -204,25 +204,23 @@ const boss = function () {
     game.sort = function () {
         const players = game.players.filter(Boolean);
         const deads = game.dead.filter(Boolean);
+        const allPlayers = players.concat(deads);
         const bool = lib.config.extension_温柔一刀_死亡移除;
-        const allPlayers = bool ? players : players.concat(deads);
-        ui.arena.setNumber(allPlayers.length);
+        const playerx = bool ? players : allPlayers;
+        ui.arena.setNumber(playerx.length);
         if (bool) {
             deads.forEach((player) => {
                 player.classList.add('removing', 'hidden');
             });
-        }
-        allPlayers.sort((a, b) => a.dataset.position - b.dataset.position);
-        if (allPlayers.includes(game.me) && allPlayers[0] != game.me) {
-            while (allPlayers[0] != game.me) {
-                const start = allPlayers.shift();
-                allPlayers.push(start);
+        }//隐藏死亡角色
+        playerx.sort((a, b) => a.dataset.position - b.dataset.position);
+        if (playerx.includes(game.me) && playerx[0] != game.me) {
+            while (playerx[0] != game.me) {
+                const start = playerx.shift();
+                playerx.push(start);
             }
-        }
-        allPlayers.forEach((player, index, array) => {
-            if (bool) {
-                player.classList.remove('removing', 'hidden');
-            }
+        }//将玩家排至数组首位
+        playerx.forEach((player, index, array) => {
             player.dataset.position = index;
             const zhu = _status.roundStart || game.zhu || game.boss || array.find((p) => p.seatNum == 1) || array[0];
             const zhuPos = zhu.dataset?.position;
@@ -234,11 +232,12 @@ const boss = function () {
                     player.seatNum = num;
                 }
             }
-            player.previousSeat = array[index === 0 ? array.length - 1 : index - 1];
-            player.nextSeat = array[index === array.length - 1 ? 0 : index + 1];
-        });
+        });//修改dataset.position与seatNum
         players.sort((a, b) => a.dataset.position - b.dataset.position);
         players.forEach((player, index, array) => {
+            if (bool) {
+                player.classList.remove('removing', 'hidden');
+            }
             if (index == 0) {
                 if (ui.handcards1Container && ui.handcards1Container.firstChild != player.node.handcards1) {
                     while (ui.handcards1Container.firstChild) {
@@ -252,7 +251,12 @@ const boss = function () {
             }
             player.previous = array[index === 0 ? array.length - 1 : index - 1];
             player.next = array[index === array.length - 1 ? 0 : index + 1];
-        });
+        });//展示零号位手牌/修改previous/显示元素
+        allPlayers.sort((a, b) => a.dataset.position - b.dataset.position);
+        allPlayers.forEach((player, index, array) => {
+            player.previousSeat = array[index === 0 ? array.length - 1 : index - 1];
+            player.nextSeat = array[index === array.length - 1 ? 0 : index + 1];
+        });//修改previousSeat
         game.players.sort((a, b) => a.dataset.position - b.dataset.position);
         return true;
     };
@@ -836,6 +840,13 @@ game.addMode(
     },
     {
         translate: 'QQQ',
+        config: {
+            intro: {
+                name: '本模式为潜水火火测试bug专用',
+                frequent: true,
+                clear: true,
+            },
+        },
     }
 );
 lib.mode.QQQ.splash = 'ext:温柔一刀/image/beijing1.jpg';

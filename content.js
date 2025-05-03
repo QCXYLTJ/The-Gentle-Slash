@@ -1350,6 +1350,33 @@ const content = async function () {
     jineng();
     //—————————————————————————————————————————————————————————————————————————————一些杂乱自创函数
     const zawu = function () {
+        lib.element.player.fanwei = function (num) {
+            const players = [];
+            let next = this.next,
+                previous = this.previous;
+            while (num-- > 0) {
+                if (next != this && next) {
+                    players.add(next);
+                    next = next.next;
+                }
+                if (previous != this && previous) {
+                    players.add(previous);
+                    previous = previous.previous;
+                }
+            }
+            return players;
+        }; //获取相邻角色以便范围伤害
+        lib.element.content.QQQ = () => { }; //空事件
+        lib.element.player.nengliangtiao = function () {
+            const player = this;
+            const nengliangtiao = ui.create.div('.nengliangtiao', player);
+            const jindutiao = ui.create.div('.jindutiao', nengliangtiao);
+            return jindutiao;
+        };
+    };
+    zawu();
+    //—————————————————————————————————————————————————————————————————————————————解构魔改本体函数
+    const mogai = function () {
         lib.element.player.dyingResult = async function () {
             game.log(this, '濒死');
             _status.dying.unshift(this);
@@ -1413,23 +1440,6 @@ const content = async function () {
             this.maxHp = 1;
             this.update();
         }; //隐匿函数
-        lib.element.player.fanwei = function (num) {
-            const players = [];
-            let next = this.next,
-                previous = this.previous;
-            while (num-- > 0) {
-                if (next != this && next) {
-                    players.add(next);
-                    next = next.next;
-                }
-                if (previous != this && previous) {
-                    players.add(previous);
-                    previous = previous.previous;
-                }
-            }
-            return players;
-        }; //获取相邻角色以便范围伤害
-        lib.element.content.QQQ = () => { }; //空事件
         lib.element.player.qreinit = function (name) {
             const info = lib.character[name];
             this.name1 = name;
@@ -1610,14 +1620,8 @@ const content = async function () {
                 player.dying({ source: source });
             }
         }; //真实伤害
-        lib.element.player.nengliangtiao = function () {
-            const player = this;
-            const nengliangtiao = ui.create.div('.nengliangtiao', player);
-            const jindutiao = ui.create.div('.jindutiao', nengliangtiao);
-            return jindutiao;
-        };
     };
-    zawu();
+    mogai();
     //—————————————————————————————————————————————————————————————————————————————一些全局技能
     const quanju = function () {
         lib.skill._qunou = {

@@ -4188,8 +4188,8 @@ const skill = {
         forced: true,
         audio: 'dili_chigang',
         filter(event, player) {
-            return event.getParent(2).skill != '乱码';
-        },
+            return !event.getParent('乱码', true);
+        },//QQQ
         content() {
             trigger.cancel();
             var num = Math.random();
@@ -4501,7 +4501,7 @@ const skill = {
                 content() {
                     'step 0';
                     player
-                        .chooseToUse((c) => player.filterCardx(c) && card.name == 'sha', `对${get.translation(trigger.player)}使用一张杀,使${trigger.card}无效`) //QQQ
+                        .chooseToUse((c) => player.filterCardx(c) && c.name == 'sha', `对${get.translation(trigger.player)}使用一张杀,使${trigger.card}无效`) //QQQ
                         .set('logSkill', '破釜_1')
                         .set('complexSelect', true)
                         .set('filterTarget', function (card, player, target) {
