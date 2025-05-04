@@ -378,7 +378,7 @@ const card = {
                 target: -1,
             },
             tag: {
-                damgage: 1,
+                damage: 1,
             },
             basic: {
                 useful: 1,
