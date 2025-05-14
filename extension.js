@@ -30,9 +30,8 @@ if (QQQ.config.扩展全关) {
 } //扩展全部关闭
 if (QQQ.config.扩展修改) {
     var Q = [
-        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花',
-        //'云将', '贴吧精品', '梦隐', '天牢令', '玄武江湖', '大权在握',
-        '王者荣耀', '极略', '蒸蒸日上', '通灵师', '太虚幻境', '浪琴天阙', '心之境界',
+        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM', '全能搜索', '太虚幻境',
+        '东方project', '恒梦', '弹丸杀', '万象物语', '幻想拾夜',
     ];
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -123,20 +122,6 @@ const sha = function () {
 sha();
 //—————————————————————————————————————————————————————————————————————————————一些原型方法
 const yuanxing = function () {
-    if (!lib.number) {
-        lib.number = [];
-        for (var i = 1; i < 14; i++) {
-            lib.number.add(i);
-        }
-    } //添加lib.number
-    Reflect.defineProperty(Array.prototype, 'clear', {
-        configurable: true,
-        enumerable: false,
-        writable: true,
-        value() {
-            return [];
-        },
-    });//清空数组
     Reflect.defineProperty(Array.prototype, 'Qinclude', {
         configurable: true,
         enumerable: false,
@@ -278,6 +263,9 @@ const boss = function () {
             return result;
         },
     });
+    game.kongfunc = function () {
+        return game.kong;
+    };
     game.kong = {
         set() {
             return this;
@@ -358,6 +346,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
     const gentle = {
         name: '温柔一刀',
         arenaReady() {
+            ui.auto.hide = game.kongfunc;//禁止隐藏托管
             console.log(Object.keys(lib.skill).length, 'lib.arenaReady', 'skill');
             console.log(Object.keys(lib.card).length, 'card');
             console.log(Object.keys(lib.character).length, 'character');
@@ -742,9 +731,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
         content: content,
         precontent: precontent,
         config: config,
-        package: {},
+        package: extensionInfo,
     };
-    Object.assign(gentle.package, extensionInfo);
     return gentle;
 });
 //—————————————————————————————————————————————————————————————————————————————测试模式

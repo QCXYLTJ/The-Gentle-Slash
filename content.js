@@ -937,8 +937,7 @@ const content = async function () {
                 next.targets = target;
                 if (check) {
                     next.ai = check;
-                }
-                else {
+                } else {
                     next.ai = function (card) {
                         if (typeof card == 'string' && lib.skill[card]) {
                             var ais =
@@ -1366,7 +1365,7 @@ const content = async function () {
             }
             return players;
         }; //获取相邻角色以便范围伤害
-        lib.element.content.QQQ = () => { }; //空事件
+        lib.element.content.QQQ = game.kongfunc; //空事件
         lib.element.player.nengliangtiao = function () {
             const player = this;
             const nengliangtiao = ui.create.div('.nengliangtiao', player);
@@ -1640,8 +1639,7 @@ const content = async function () {
                         game.zhu = i;
                         i.identity = 'zhu';
                         i.setIdentity('zhu');
-                    }
-                    else {
+                    } else {
                         i.identity = 'fan';
                         i.setIdentity('fan');
                     }
@@ -2061,6 +2059,87 @@ const content = async function () {
                     },
                 },
             }; //和零件锻造配合,必须类型是装备不然会报错没有name
+            lib.card.tao = {
+                fullskin: true,
+                type: 'basic',
+                cardcolor: 'red',
+                toself: true,
+                enable(card, player) {
+                    if (player.getEquip('神农鼎')) return true;
+                    return player.hp < player.maxHp;
+                },
+                savable: true,
+                selectTarget: -1,
+                filterTarget(card, player, target) {
+                    if (player.getEquip('神农鼎')) return target == player;
+                    return target == player && target.hp < target.maxHp;
+                },
+                modTarget(card, player, target) {
+                    if (player.getEquip('神农鼎')) return true;
+                    return target.hp < target.maxHp;
+                },
+                content() {
+                    if (player.getEquip('神农鼎')) {
+                        target.hp += 2;
+                        if (target.maxHp < target.hp) {
+                            target.maxHp = target.hp;
+                        }
+                    } else {
+                        target.recover();
+                    }
+                },
+                ai: {
+                    basic: {
+                        order: 94,
+                        useful(card, i) {
+                            let player = _status.event.player;
+                            if (!game.checkMod(card, player, 'unchanged', 'cardEnabled2', player)) return 2 / (1 + i);
+                            let fs = game.filterPlayer((current) => {
+                                return get.attitude(player, current) > 0 && current.hp <= 2;
+                            }),
+                                damaged = 0,
+                                needs = 0;
+                            fs.forEach((f) => {
+                                if (f.hp > 3 || !lib.filter.cardSavable(card, player, f)) return;
+                                if (f.hp > 1) damaged++;
+                                else needs++;
+                            });
+                            if (needs && damaged) return 5 * needs + 3 * damaged;
+                            if (needs + damaged > 1 || player.hasSkillTag('maixie')) return 8;
+                            if (player.hp / player.maxHp < 0.7) return 7 + Math.abs(player.hp / player.maxHp - 0.5);
+                            if (needs) return 7;
+                            if (damaged) return Math.max(3, 7.8 - i);
+                            return Math.max(1, 7.2 - i);
+                        },
+                        value(card, player) {
+                            let fs = game.filterPlayer((current) => {
+                                return get.attitude(_status.event.player, current) > 0;
+                            }),
+                                damaged = 0,
+                                needs = 0;
+                            fs.forEach((f) => {
+                                if (!player.canUse('tao', f)) return;
+                                if (f.hp <= 1) needs++;
+                                else if (f.hp == 2) damaged++;
+                            });
+                            if ((needs && damaged) || player.hasSkillTag('maixie')) return Math.max(9, 5 * needs + 3 * damaged);
+                            if (needs || damaged > 1) return 8;
+                            if (damaged) return 7.5;
+                            return Math.max(5, 9.2 - player.hp);
+                        },
+                    },
+                    result: {
+                        target(player, target) {
+                            if (target.hasSkillTag('maixie')) return 4;
+                            return 3;
+                        },
+                    },
+                    tag: {
+                        recover: 1,
+                        save: 1,
+                    },
+                },
+            };
         };
         zhijie();
         //————————————————————————————————————————————————————————————————————————————————————————————————————浅层检测
@@ -2073,7 +2152,7 @@ const content = async function () {
                         value: 0,
                     },
                     result: {
-                        target: function (player, target) {
+                        target(player, target) {
                             if (game.players.some((q) => q.side == target.side && q.storage.longchuanzhibao)) {
                                 return 1.5;
                             }
@@ -2305,25 +2384,6 @@ const content = async function () {
                         if (game.hasNature(card, 'thunder')) return 1;
                     },
                 }; //杀的伤害标签
-            }
-            if (lib.card.tao) {
-                lib.card.tao.enable = function (card, player) {
-                    if (player.getEquip('神农鼎')) return true;
-                    return player.hp < player.maxHp;
-                }; //桃适配神农鼎
-                lib.card.tao.filterTarget = function (card, player, target) {
-                    if (player.getEquip('神农鼎')) return target == player;
-                    return target == player && target.hp < target.maxHp;
-                }; //桃适配神农鼎
-                lib.card.tao.modTarget = function (card, player, target) {
-                    if (player.getEquip('神农鼎')) return true;
-                    return target.hp < target.maxHp;
-                }; //桃适配神农鼎
-                lib.card.tao.content = function () {
-                    if (player.getEquip('神农鼎')) {
-                        target.hp += 2;
-                    } else target.recover();
-                }; //桃适配神农鼎
             }
             if (lib.card.zhuge) {
                 lib.card.zhuge.ai = {
@@ -2645,9 +2705,6 @@ const content = async function () {
                 }; //属性杀提高价值
                 lib.card.sha.ai.result.target = () => -5;
             }
-            if (QQQ.DEEP('lib.card.tao.ai.result')) {
-                lib.card.tao.ai.result.target_use = () => 4;
-            }
             if (QQQ.DEEP('lib.card.nanman.ai')) {
                 lib.card.nanman.ai.result = {
                     target_use() {
@@ -2811,9 +2868,6 @@ const content = async function () {
             }
             if (QQQ.DEEP('lib.card.yuanjiao.ai')) {
                 lib.card.yuanjiao.ai.order = 98; //远交近攻AI修改
-            }
-            if (QQQ.DEEP('lib.card.tao.ai.basic')) {
-                lib.card.tao.ai.basic.order = 94; //优先出桃
             }
             if (QQQ.DEEP('lib.card.wuzhong.ai')) {
                 lib.card.wuzhong.ai.order = 94; //无中AI修改
@@ -5237,7 +5291,7 @@ const content = async function () {
                 lib.skill.liangji.audio = 2;
             }
             if (lib.skill.hiroto_huyu_gain) {
-                lib.skill.hiroto_huyu_gain.content = () => { };
+                lib.skill.hiroto_huyu_gain.content = game.kongfunc;
             }
             if (lib.skill.spxizhan) {
                 lib.skill.spxizhan.content = async function (event, trigger, player) {

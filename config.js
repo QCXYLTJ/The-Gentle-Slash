@@ -216,7 +216,7 @@ const config = {
     飞扬跋扈模式: {
         name: '<span class="Qmenu">飞扬跋扈</span>',
         intro: '开启后,将会添加全局性效果:游戏开始时获得两点护甲.按数值增加准备阶段摸牌数、每回合出杀与酒的次数,并减少与其他角色的距离.在判定阶段开始时,可以弃置两张牌,移除判定区的一张牌',
-        init: 0,
+        init: '0',
         item: {
             0: '<span class="Qmenu">关闭</span>',
             1: '<span class="Qmenu">1</span>',
@@ -248,7 +248,7 @@ const config = {
     },
     滚轮速度: {
         name: '<span class="Qmenu">滚轮速度</span>',
-        init: 10,
+        init: '10',
         intro: '滚轮速度',
         item: {
             5: '<span class="Qmenu">5</span>',

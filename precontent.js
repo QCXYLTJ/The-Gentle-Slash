@@ -41,7 +41,6 @@ disableSkill/unmarkSkill/removeSkill/
 /*
 //result的target和player里面,参数直接用player即可,用status.event.player,会因为filter调用get.effect时,当前事件为arrangetrigger,没有player,报错
 markcount(里面unmark就会报错
-info.json\license
 花色
 sdk.js报错是error或者err或者catch的原因
 拼点AI
@@ -80,6 +79,9 @@ for (var i =
 [,//, ,//,]//,)
 cards.splice//i.discard()
 //-------------------------------------------------------正则替换
+function \(.*\) \{\n\s*\}//function \(.*\) \{ \}//= () => { }
+var chat = \[('[^']*')\]\.randomGet\(\);\n\s*player\.say\(chat\);
+player.say($1);
 '[^)']+logSkill[^']*'//'[^)']*logSkill[^']+'//'[^)']+logSkill[^']+'//popup: false,
 \.filterCard\(\{([^),]*)\)
 .filterCard({$1,player)
@@ -142,7 +144,6 @@ countDiscardableCards('//countgainableCards('
 lib.filter.characterDisabled =
 game.notMe//game.swapcontrol//ui.click.auto();
 lib.character[i][4].indexOf(//lib.character[i][4].push
-audio: "ext:耀武将:false",//audio: false//audio: '',//audio: 2,
 if (evt)//phaseLoop//_status.event =
 .hasCard('h
 Object.setPrototypeOf(next, lib.element.Button.prototype);//QQQ
@@ -150,7 +151,6 @@ Object.setPrototypeOf(layer, lib.element.Dialog.prototype); //QQQ
 lib.extensionMenu
 BUTTONVALUE(button.link)
 decade//十周年UI//tenui
-= function (all) {// = () => ({})
 selectTarget() {返回数组而不是数字
 .canAddJudge(//输入字符串导致checkmod报错
 return 8.5 - get.equipValue(card, player) / 20;//value = get.value(current, player);
@@ -190,44 +190,54 @@ const windowq = function () {
             QQQ.config[key.slice(15)] = lib.config[key];
         }
     }
-    window.sgn = function (bool) {
-        if (bool) return 1;
-        return -1;
-    };//true转为1,false转为-1
-    window.numberq0 = function (num) {
-        if (isNaN(Number(num))) return 0;
-        return Math.abs(Number(num));
-    };//始终返回正数(取绝对值)
-    window.numberq1 = function (num) {
-        if (isNaN(Number(num))) return 1;
-        return Math.max(Math.abs(Number(num)), 1);
-    };//始终返回正数且至少为1(取绝对值)
-    window.number0 = function (num) {
-        if (isNaN(Number(num))) return 0;
-        return Math.max(Number(num), 0);
-    };//始终返回正数
-    window.number1 = function (num) {
-        if (isNaN(Number(num))) return 1;
-        return Math.max(Number(num), 1);
-    };//始终返回正数且至少为1
-    window.deepClone = function (obj) {
-        const clone = {};
-        for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                const info = obj[key];
-                if (typeof info == 'object') {
-                    if (Array.isArray(info)) {
-                        clone[key] = info.slice();
+    //—————————————————————————————————————————————————————————————————————————————数据操作相关自定义函数
+    const numfunc = function () {
+        if (!lib.number) {
+            lib.number = [];
+            for (var i = 1; i < 14; i++) {
+                lib.number.add(i);
+            }
+        } //添加lib.number
+        window.sgn = function (bool) {
+            if (bool) return 1;
+            return -1;
+        };//true转为1,false转为-1
+        window.numberq0 = function (num) {
+            if (isNaN(Number(num))) return 0;
+            return Math.abs(Number(num));
+        };//始终返回正数(取绝对值)
+        window.numberq1 = function (num) {
+            if (isNaN(Number(num))) return 1;
+            return Math.max(Math.abs(Number(num)), 1);
+        };//始终返回正数且至少为1(取绝对值)
+        window.number0 = function (num) {
+            if (isNaN(Number(num))) return 0;
+            return Math.max(Number(num), 0);
+        };//始终返回正数
+        window.number1 = function (num) {
+            if (isNaN(Number(num))) return 1;
+            return Math.max(Number(num), 1);
+        };//始终返回正数且至少为1
+        window.deepClone = function (obj) {
+            const clone = {};
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const info = obj[key];
+                    if (typeof info == 'object') {
+                        if (Array.isArray(info)) {
+                            clone[key] = info.slice();
+                        } else {
+                            clone[key] = window.deepClone(info);
+                        }
                     } else {
-                        clone[key] = window.deepClone(info);
+                        clone[key] = info;
                     }
-                } else {
-                    clone[key] = info;
                 }
             }
-        }
-        return clone;
-    }; //深拷贝对象
+            return clone;
+        }; //深拷贝对象
+    };
+    numfunc();
 }
 windowq();
 const precontent = async function () {
@@ -375,13 +385,6 @@ const precontent = async function () {
                 }
             } //加倍模式
             if (QQQ.config.禁止多次触发) {
-                // if (!(info.usable < 3)) {
-                //     try {
-                //         info.usable = 2;
-                //     } catch (e) {
-                //         console.log(i + '不能修改usable');
-                //     }
-                // }
                 try {
                     info.usable = 1;
                 } catch (e) {
@@ -443,23 +446,32 @@ const precontent = async function () {
                 if (info.trigger && !info.content) {
                     alert(i + '没有content');
                 }
+                if (info.result) {
+                    alert(i + 'ai有问题1');
+                }
+                if (info.effect && (info.effect.player || info.effect.target)) {
+                    alert(i + 'ai有问题2');
+                }
                 if (info.ai) {
                     if (info.ai.player || info.ai.target) {
-                        alert(i + 'ai有问题');
+                        alert(i + 'ai有问题3');
                     }
                     if (info.ai.result) {
                         const pla = info.ai.result.player;
                         const tar = info.ai.result.target;
                         if (typeof pla == 'function') {
                             if (pla.toString().includes('_status.event.player')) {
-                                alert(i + 'ai有问题');
+                                alert(i + 'ai有问题4');
                             }
                         }
                         if (typeof tar == 'function') {
                             if (tar.toString().includes('_status.event.player')) {
-                                alert(i + 'ai有问题');
+                                alert(i + 'ai有问题5');
                             }
                         }
+                    }
+                    if (info.ai.ai) {
+                        alert(i + 'ai有问题6');
                     }
                 }
             }
@@ -658,34 +670,6 @@ const precontent = async function () {
         }
         console.log(jilu);
     }); //记录单将胜率
-    //—————————————————————————————————————————————————————————————————————————————CSS
-    const css = function () {
-        lib.init.css(lib.assetURL + 'extension/温柔一刀/QQQ.css');
-        const style = document.createElement('style');
-        style.innerHTML = '@keyframes flame {';
-        for (var i = 0; i <= 100; i++) {
-            // 随着动画进展,颜色逐渐从橙红变为黄色再到白色
-            let r = Math.min(255, 140 + i * 1.15); // 红色分量逐渐增加
-            let g = Math.min(255, 30 + i * 2.25); // 绿色分量逐渐增加
-            let b = Math.min(255, i * 2.5); // 蓝色分量逐渐增加,但较慢
-            // 添加一些随机性来模拟火焰的不规则性
-            let randOffsetX = (Math.random() - 0.5) * 2;
-            let randOffsetY = (Math.random() - 0.5) * 2;
-            // 构建每一帧的样式
-            style.innerHTML += `${i}% {`;
-            style.innerHTML += `color: rgba(${r}, ${g}, ${b}, 1);`; // 文字颜色
-            style.innerHTML += `text-shadow:`;
-            for (let j = 1; j <= 5; j++) {
-                let intensity = j * 2;
-                style.innerHTML += ` ${randOffsetX}px ${randOffsetY}px ${intensity}px rgba(${r}, ${g}, ${b}, 0.6),`;
-            }
-            style.innerHTML = style.innerHTML.slice(0, -1); // 去掉最后一个逗号
-            style.innerHTML += `;}`;
-        }
-        style.innerHTML += '}';
-        document.head.appendChild(style);
-    }; //火焰前缀以及作者名
-    css();
     //—————————————————————————————————————————————————————————————————————————————game相关本体函数
     const gameq = function () {
         game.checkMod = function () {
@@ -695,7 +679,7 @@ const precontent = async function () {
             const target = Q[2]; //playerenable的目标 //targetEnabled的mod主/目标
             let unchanged = Q[Q.length - 3]; //无mod返回值
             const name = Q[Q.length - 2]; //mod名字
-            let player2 = Q[Q.length - 1];
+            const player2 = Q[Q.length - 1];
             if (player2.name == 'HL_许劭') {
                 if (name == 'cardUsable') return true;
                 return unchanged;
@@ -713,22 +697,23 @@ const precontent = async function () {
                 alert('checkMod的card不是一个对象');
                 throw new Error();
             }
+            const skills = [];
             if (typeof player2.getModableSkills == 'function') {
-                player2 = player2.getModableSkills();
+                skills.addArray(player2.getModableSkills());
             } else if (typeof player2.getSkills == 'function') {
-                player2 = player2.getSkills().concat(lib.skill.global);
-                game.expandSkills(player2);
-                player2 = player2.filter(function (skill) {
+                skills.addArray(player2.getSkills());
+                skills.addArray(lib.skill.global);
+                game.expandSkills(skills);
+                skills = skills.filter(function (skill) {
                     var info = get.info(skill);
                     return info && info.mod;
                 });
-                player2.sort((a, b) => get.priority(a) - get.priority(b));
+                skills.sort((a, b) => get.priority(a) - get.priority(b));
             }
             const A = Q.slice(0, -2); //切掉最后两个
-            if (Array.isArray(player2)) {
-                //QQQ
-                player2.forEach((value) => {
-                    var mod = get.info(value).mod[name];
+            if (Array.isArray(skills)) {
+                skills.forEach((skill) => {
+                    var mod = get.info(skill).mod[name];
                     if (!mod) return;
                     const result = mod.call(this, ...A);
                     if (result != undefined && typeof unchanged != 'object') {
@@ -854,98 +839,146 @@ const precontent = async function () {
         };
     } //game相关本体函数
     gameq();
-    //—————————————————————————————————————————————————————————————————————————————game相关自创函数
-    const gamex = function () {
-        const shiwei = function () {
-            lib.element.player.filterCardx = function (card, filter) {
-                if (typeof card == 'string') {
-                    card = { name: card };
+    //—————————————————————————————————————————————————————————————————————————————视为转化虚拟牌相关自创函数
+    const shiwei = function () {
+        lib.element.player.filterCardx = function (card, filter) {
+            if (typeof card == 'string') {
+                card = { name: card };
+            }
+            const player = this, info = get.info(card);
+            if (!lib.filter.cardEnabled(card, player)) return false; //卡牌使用限制
+            if (info.notarget) return true;
+            if (!info.filterTarget) return true;
+            if (!info.enable) return true;
+            return game.hasPlayer(function (current) {
+                if (info.multicheck && !info.multicheck(card, player)) return false;
+                if (filter) {
+                    if (!lib.filter.targetInRange(card, player, current)) return false; //距离限制
+                    return lib.filter.targetEnabledx(card, player, current);
                 }
-                const player = this, info = get.info(card);
-                if (!lib.filter.cardEnabled(card, player)) return false; //卡牌使用限制
+                return lib.filter.targetEnabled(card, player, current); //目标限制
+            });
+        }; //适用于choosetouse的filtercard
+        lib.element.player.filterCard = function (card, filter) {
+            if (typeof card == 'string') {
+                card = { name: card };
+            }
+            const player = this, info = get.info(card), event = _status.event;
+            const evt = event.name.startsWith('chooseTo') ? event : event.getParent((q) => q.name.startsWith('chooseTo'));
+            if (evt.filterCard2) {
+                return evt._backup.filterCard(card, player, evt);
+            }//viewAs的技能会修改chooseToUse事件的filterCard
+            else if (evt.filterCard && evt.filterCard != lib.filter.filterCard) {
+                return evt.filterCard(card, player, evt);//这里也有次数限制
+            }
+            else {
+                if (!lib.filter.cardEnabled(card, player)) return false;//卡牌使用限制
                 if (info.notarget) return true;
                 if (!info.filterTarget) return true;
                 if (!info.enable) return true;
+                if (evt.name == 'chooseToRespond') return true;//chooseToRespond无次数距离目标限制
+                if (filter) {
+                    if (!lib.filter.cardUsable(card, player, evt)) return false;//次数限制
+                }
+                if (evt.filterTarget && evt.filterTarget != lib.filter.filterTarget) {
+                    return game.hasPlayer(function (current) {
+                        return evt.filterTarget(card, player, current);
+                    });
+                }
                 return game.hasPlayer(function (current) {
                     if (info.multicheck && !info.multicheck(card, player)) return false;
                     if (filter) {
-                        if (!lib.filter.targetInRange(card, player, current)) return false; //距离限制
+                        if (!lib.filter.targetInRange(card, player, current)) return false;//距离限制
                         return lib.filter.targetEnabledx(card, player, current);
                     }
-                    return lib.filter.targetEnabled(card, player, current); //目标限制
+                    return lib.filter.targetEnabled(card, player, current);//目标限制
                 });
-            }; //适用于choosetouse的filtercard
-            lib.element.player.filterCard = function (card, filter) {
-                if (typeof card == 'string') {
-                    card = { name: card };
+            }
+        };//删除次数限制//filter决定有无次数距离限制//viewAs的技能会修改chooseToUse事件的filterCard
+        game.qcard = (player, type, filter, range) => {
+            if (range !== false) {
+                range = true;
+            }
+            const list = [];
+            for (const i in lib.card) {
+                const info = lib.card[i];
+                if (info.mode && !info.mode.includes(lib.config.mode)) {
+                    continue;
                 }
-                const player = this, info = get.info(card), event = _status.event;
-                const evt = event.name.startsWith('chooseTo') ? event : event.getParent((q) => q.name.startsWith('chooseTo'));
-                if (evt.filterCard2) {
-                    return evt._backup.filterCard(card, player, evt);
-                }//viewAs的技能会修改chooseToUse事件的filterCard
-                else if (evt.filterCard && evt.filterCard != lib.filter.filterCard) {
-                    return evt.filterCard(card, player, evt);//这里也有次数限制
+                if (!info.content) {
+                    continue;
                 }
-                else {
-                    if (!lib.filter.cardEnabled(card, player)) return false;//卡牌使用限制
-                    if (info.notarget) return true;
-                    if (!info.filterTarget) return true;
-                    if (!info.enable) return true;
-                    if (evt.name == 'chooseToRespond') return true;//chooseToRespond无次数距离目标限制
-                    if (filter) {
-                        if (!lib.filter.cardUsable(card, player, evt)) return false;//次数限制
-                    }
-                    if (evt.filterTarget && evt.filterTarget != lib.filter.filterTarget) {
-                        return game.hasPlayer(function (current) {
-                            return evt.filterTarget(card, player, current);
-                        });
-                    }
-                    return game.hasPlayer(function (current) {
-                        if (info.multicheck && !info.multicheck(card, player)) return false;
-                        if (filter) {
-                            if (!lib.filter.targetInRange(card, player, current)) return false;//距离限制
-                            return lib.filter.targetEnabledx(card, player, current);
-                        }
-                        return lib.filter.targetEnabled(card, player, current);//目标限制
-                    });
+                if (['delay', 'equip'].includes(info.type)) {
+                    continue;
                 }
-            };//删除次数限制//filter决定有无次数距离限制//viewAs的技能会修改chooseToUse事件的filterCard
-            game.qcard = (player, type, filter, range) => {
-                if (range !== false) {
-                    range = true;
+                if (type && info.type != type) {
+                    continue;
                 }
-                const list = [];
-                for (const i in lib.card) {
-                    const info = lib.card[i];
-                    if (info.mode && !info.mode.includes(lib.config.mode)) {
+                if (filter !== false) {
+                    if (!player.filterCard(i, range)) {
                         continue;
                     }
-                    if (!info.content) {
-                        continue;
-                    }
-                    if (['delay', 'equip'].includes(info.type)) {
-                        continue;
-                    }
-                    if (type && info.type != type) {
-                        continue;
-                    }
-                    if (filter !== false) {
-                        if (!player.filterCard(i, range)) {
-                            continue;
-                        }
-                    }
-                    list.push([lib.suits.randomGet(), lib.number.randomGet(), i]); //花色/点数/牌名/属性/应变
-                    if (i == 'sha') {
-                        for (const j of Array.from(lib.nature.keys())) {
-                            list.push([lib.suits.randomGet(), lib.number.randomGet(), 'sha', j]);
-                        }
+                }
+                list.push([lib.suits.randomGet(), lib.number.randomGet(), i]); //花色/点数/牌名/属性/应变
+                if (i == 'sha') {
+                    for (const j of Array.from(lib.nature.keys())) {
+                        list.push([lib.suits.randomGet(), lib.number.randomGet(), 'sha', j]);
                     }
                 }
-                return list;
-            }; //可以转化为的牌//filter控制player.filterCard//range控制是否计算次数与距离限制
-        };
-        shiwei();
+            }
+            return list;
+        }; //可以转化为的牌//filter控制player.filterCard//range控制是否计算次数与距离限制
+    };
+    shiwei();
+    //—————————————————————————————————————————————————————————————————————————————获取卡牌历史相关自创函数
+    const cardfunc = function () {
+        game.center = function () {
+            const list = [];
+            game.countPlayer2(function (current) {
+                current.getHistory('lose', function (evt) {
+                    if (evt.position == ui.discardPile) list.addArray(evt.cards);
+                });
+            });
+            game.getGlobalHistory('cardMove', function (evt) {
+                if (evt.name == 'cardsDiscard') list.addArray(evt.cards);
+            });
+            return list;
+        }; //获取本回合进入弃牌堆的牌
+        game.lose = function () {
+            const list = [];
+            for (const npc of game.players.concat(game.dead)) {
+                const his = npc.actionHistory;
+                const evt = his[his.length - 1];
+                for (const e of evt.lose) {
+                    if (e.cards?.length) {
+                        list.addArray(e.cards);
+                    }
+                }
+            }
+            return list;
+        }; //获取本回合失去过的牌
+        game.xunshi = function (card) {
+            var card = lib.card[card.name];
+            if (!card) {
+                if (QQQ.config.报错) {
+                    alert(card + card.name + '没有卡牌info');
+                    throw new Error();
+                }
+                card = lib.card['sha'];
+            }
+            if (card.notarget || card.selectTarget == undefined) return false;
+            if (Array.isArray(card.selectTarget)) {
+                if (card.selectTarget[0] < 0) return !card.toself;
+                return card.selectTarget[0] != 1 || card.selectTarget[1] != 1;
+            } else {
+                if (card.selectTarget < 0) return !card.toself;
+                return card.selectTarget != 1;
+            }
+        }; //多目标牌检测
+    };
+    cardfunc();
+    //—————————————————————————————————————————————————————————————————————————————game相关自创函数
+    const gamex = function () {
         game.VIDEO = async function (name) {
             return new Promise((resolve) => {
                 const url = lib.assetURL + `extension/温柔一刀/mp4/${name}.mp4`;
@@ -991,49 +1024,6 @@ const precontent = async function () {
                 });
             });
         }; //播放mp4
-        game.center = function () {
-            const list = [];
-            game.countPlayer2(function (current) {
-                current.getHistory('lose', function (evt) {
-                    if (evt.position == ui.discardPile) list.addArray(evt.cards);
-                });
-            });
-            game.getGlobalHistory('cardMove', function (evt) {
-                if (evt.name == 'cardsDiscard') list.addArray(evt.cards);
-            });
-            return list;
-        }; //获取本回合进入弃牌堆的牌
-        game.lose = function () {
-            const list = [];
-            for (const npc of game.players.concat(game.dead)) {
-                const his = npc.actionHistory;
-                const evt = his[his.length - 1];
-                for (const e of evt.lose) {
-                    if (e.cards?.length) {
-                        list.addArray(e.cards);
-                    }
-                }
-            }
-            return list;
-        }; //获取本回合失去过的牌
-        game.xunshi = function (card) {
-            var card = lib.card[card.name];
-            if (!card) {
-                if (QQQ.config.报错) {
-                    alert(card + card.name + '没有卡牌info');
-                    throw new Error();
-                }
-                card = lib.card['sha'];
-            }
-            if (card.notarget || card.selectTarget == undefined) return false;
-            if (Array.isArray(card.selectTarget)) {
-                if (card.selectTarget[0] < 0) return !card.toself;
-                return card.selectTarget[0] != 1 || card.selectTarget[1] != 1;
-            } else {
-                if (card.selectTarget < 0) return !card.toself;
-                return card.selectTarget != 1;
-            }
-        }; //多目标牌检测
         game.movimage = function (src) {
             const div = document.createElement('div');
             div.className = 'movimage';
@@ -3511,83 +3501,6 @@ const precontent = async function () {
                 set() { },
             });
         } //还原初始牌堆
-        if (QQQ.config.界面修改) {
-            lib.init.css(lib.assetURL + 'extension/温柔一刀/QQ.css');
-            if (!(_status.maximumNumberOfPlayers > 32)) {
-                _status.maximumNumberOfPlayers = 32;
-            }
-            for (let num = 9; num < 33; num++) {
-                const list = [];
-                const fan = Math.ceil(num * 0.4);
-                const nei = Math.ceil(num * 0.2);
-                const zhong = num - 1 - fan - nei;
-                list.push('zhu');
-                for (var i = 0; i < zhong; i++) {
-                    list.push('zhong');
-                }
-                for (var i = 0; i < nei; i++) {
-                    list.push('nei');
-                }
-                for (var i = 0; i < fan; i++) {
-                    list.push('fan');
-                }
-                lib.config.mode_config.identity.identity[num - 2] = list;
-                const style = document.createElement('style');
-                style.innerHTML = ``;
-                for (let pos = 1; pos < num; pos++) {
-                    if (pos < num / 4) {
-                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                    top:calc(${60 - (40 / num) * pos}%)!important;
-                                    left:calc(${45 + (200 / num) * pos}%)!important;
-                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                    }`;
-                    }
-                    else if (pos == num / 4) {
-                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                    top:calc(25%)!important;
-                                    left:calc(92%)!important;
-                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                    }`;
-                    }
-                    else if (pos < num / 2) {
-                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                        top:calc(${15 - (40 / num) * pos}%)!important;
-                                        left:calc(${145 - (200 / num) * pos}%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                        }`;
-                    }
-                    else if (pos == num / 2) {
-                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                        top:calc(-5%)!important;
-                                        left:calc(45%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                        }`;
-                    }
-                    else if (pos < 0.75 * num) {
-                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                        top:calc(${(40 / num) * pos - 25}%)!important;
-                                        left:calc(${145 - (200 / num) * pos}%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                        }`;
-                    }
-                    else if (pos == 0.75 * num) {
-                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                        top:calc(25%)!important;
-                                        left:calc(-4%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                        }`;
-                    }
-                    else {
-                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                    top:calc(${20 + (40 / num) * pos}%)!important;
-                                    left:calc(${-155 + (200 / num) * pos}%)!important;
-                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                    }`;
-                    }
-                }
-                document.head.appendChild(style);
-            }
-        } //多人场适配//拉长立绘//移动标记
         if (QQQ.config.神武再世) {
             game.loadModeAsync('boss', function (mode) {
                 for (var i in mode.translate) {
@@ -3646,18 +3559,125 @@ const precontent = async function () {
                 lib.translate.jiange_character_config = '剑阁武将';
             }); //对决模式
         } //添加boss模式专属卡牌技能
-        if (QQQ.config.文字闪烁) {
-            const style = document.createElement('style');
-            style.innerHTML = '@keyframes QQQ{';
-            for (var i = 1; i <= 20; i++) {
-                let rand1 = Math.floor(Math.random() * 255),
-                    rand2 = Math.floor(Math.random() * 255),
-                    rand3 = Math.floor(Math.random() * 255);
-                style.innerHTML += i * 5 + `%{text-shadow: black 0 0 1px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 2px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 5px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 10px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 10px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 20px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 20px}`;
-            }
-            style.innerHTML += '}';
-            document.head.appendChild(style);
-        } //文字闪烁效果
+        //—————————————————————————————————————————————————————————————————————————————CSS
+        const css = function () {
+            lib.init.css(lib.assetURL + 'extension/温柔一刀/QQQ.css');
+            if (QQQ.config.界面修改) {
+                lib.init.css(lib.assetURL + 'extension/温柔一刀/QQ.css');
+                if (!(_status.maximumNumberOfPlayers > 32)) {
+                    _status.maximumNumberOfPlayers = 32;
+                }
+                for (let num = 9; num < 33; num++) {
+                    const list = [];
+                    const fan = Math.ceil(num * 0.4);
+                    const nei = Math.ceil(num * 0.2);
+                    const zhong = num - 1 - fan - nei;
+                    list.push('zhu');
+                    for (var i = 0; i < zhong; i++) {
+                        list.push('zhong');
+                    }
+                    for (var i = 0; i < nei; i++) {
+                        list.push('nei');
+                    }
+                    for (var i = 0; i < fan; i++) {
+                        list.push('fan');
+                    }
+                    lib.config.mode_config.identity.identity[num - 2] = list;
+                    const style = document.createElement('style');
+                    style.innerHTML = ``;
+                    for (let pos = 1; pos < num; pos++) {
+                        if (pos < num / 4) {
+                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(${60 - (40 / num) * pos}%)!important;
+                                        left:calc(${45 + (200 / num) * pos}%)!important;
+                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        }`;
+                        }
+                        else if (pos == num / 4) {
+                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(25%)!important;
+                                        left:calc(92%)!important;
+                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        }`;
+                        }
+                        else if (pos < num / 2) {
+                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                            top:calc(${15 - (40 / num) * pos}%)!important;
+                                            left:calc(${145 - (200 / num) * pos}%)!important;
+                                            transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                            }`;
+                        }
+                        else if (pos == num / 2) {
+                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                            top:calc(-5%)!important;
+                                            left:calc(45%)!important;
+                                            transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                            }`;
+                        }
+                        else if (pos < 0.75 * num) {
+                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                            top:calc(${(40 / num) * pos - 25}%)!important;
+                                            left:calc(${145 - (200 / num) * pos}%)!important;
+                                            transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                            }`;
+                        }
+                        else if (pos == 0.75 * num) {
+                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                            top:calc(25%)!important;
+                                            left:calc(-4%)!important;
+                                            transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                            }`;
+                        }
+                        else {
+                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(${20 + (40 / num) * pos}%)!important;
+                                        left:calc(${-155 + (200 / num) * pos}%)!important;
+                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        }`;
+                        }
+                    }
+                    document.head.appendChild(style);
+                }
+            } //多人场适配//拉长立绘//移动标记
+            if (QQQ.config.文字闪烁) {
+                //—————————————————————————————————————————————————————————————————————————————技能标签
+                const style1 = document.createElement('style');
+                style1.innerHTML = '@keyframes QQQ{';
+                for (var i = 1; i <= 20; i++) {
+                    let rand1 = Math.floor(Math.random() * 255),
+                        rand2 = Math.floor(Math.random() * 255),
+                        rand3 = Math.floor(Math.random() * 255);
+                    style1.innerHTML += i * 5 + `%{text-shadow: black 0 0 1px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 2px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 5px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 10px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 10px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 20px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 20px}`;
+                }
+                style1.innerHTML += '}';
+                document.head.appendChild(style1);
+                //—————————————————————————————————————————————————————————————————————————————火焰前缀
+                const style2 = document.createElement('style');
+                style2.innerHTML = '@keyframes flame {';
+                for (var i = 0; i <= 100; i++) {
+                    // 随着动画进展,颜色逐渐从橙红变为黄色再到白色
+                    let r = Math.min(255, 140 + i * 1.15); // 红色分量逐渐增加
+                    let g = Math.min(255, 30 + i * 2.25); // 绿色分量逐渐增加
+                    let b = Math.min(255, i * 2.5); // 蓝色分量逐渐增加,但较慢
+                    // 添加一些随机性来模拟火焰的不规则性
+                    let randOffsetX = (Math.random() - 0.5) * 2;
+                    let randOffsetY = (Math.random() - 0.5) * 2;
+                    // 构建每一帧的样式
+                    style2.innerHTML += `${i}% {`;
+                    style2.innerHTML += `color: rgba(${r}, ${g}, ${b}, 1);`; // 文字颜色
+                    style2.innerHTML += `text-shadow:`;
+                    for (let j = 1; j <= 5; j++) {
+                        let intensity = j * 2;
+                        style2.innerHTML += ` ${randOffsetX}px ${randOffsetY}px ${intensity}px rgba(${r}, ${g}, ${b}, 0.6),`;
+                    }
+                    style2.innerHTML = style2.innerHTML.slice(0, -1); // 去掉最后一个逗号
+                    style2.innerHTML += `;}`;
+                }
+                style2.innerHTML += '}';
+                document.head.appendChild(style2);
+            } //文字闪烁效果
+        }; //火焰前缀以及作者名
+        css();
         if (QQQ.config.动态背景) {
             document.body.BG('wow');
         } //动态背景
@@ -3825,6 +3845,14 @@ const precontent = async function () {
                     sex: 'male',
                     skills: ['QQQ_zhongli', 'QQQ_suixing', 'QQQ_zhandoujidian', 'QQQ_dahuangxingyun'],
                 },
+                QQQ_Morgott: {
+                    sex: 'male',
+                    skills: ['QQQ_zhoujian', 'QQQ_zhuying'],
+                },
+                QQQ_菈妮: {
+                    sex: 'female',
+                    skills: ['QQQ_anyue'],
+                },
             },
             characterTitle: {
                 QQQ_jinshanshan: `<b style='color:rgb(231, 233, 203); font-size: 25px;'>金闪闪</b>`,
@@ -3835,6 +3863,8 @@ const precontent = async function () {
                 QQQ_CosmicStarfish: `<b style='color:rgb(22, 85, 221); font-size: 25px;'>群星与苍穹之上的梦</b>`,
                 QQQ_Malenia: `<b style='color:rgb(165, 15, 224); font-size: 25px;'>女武神</b>`,
                 QQQ_Radahn: `<b style='color:rgb(74, 8, 161); font-size: 25px;'>碎星将军</b>`,
+                QQQ_Morgott: `<b style='color:rgb(226, 230, 39); font-size: 25px;'>赐福王</b>`,
+                QQQ_菈妮: `<b style='color:rgb(92, 153, 233); font-size: 25px;'>暗月公主</b>`,
             },
             characterIntro: {
                 QQQ_jinshanshan: '最初古代诸神为了抑制人类过度繁衍之后力量的壮大,将人间王族与女神相结合,创造出众神制约人类的<楔子>——吉尔伽美什.是诞生于神与人之间的英雄,拥有<三分之二为神,三分之一为人>的极高神格(拥有神的智慧及力量,但没有神的寿命)以及神明与人类的双方视点.',
@@ -4271,7 +4301,7 @@ const precontent = async function () {
                         player.storage.jiu = 0;
                         player.node.jiu = ui.create.div('.playerjiu', player.node.avatar);
                         player.node.jiu2 = ui.create.div('.playerjiu', player.node.avatar2);
-                        player.node.jiu.delete = () => game.kong;
+                        player.node.jiu.delete = game.kongfunc;
                         player.hongwen = 0;
                         Reflect.defineProperty(player.storage, 'jiu', {
                             get() {
@@ -7195,6 +7225,9 @@ const precontent = async function () {
                             },
                             silent: true,
                             filter(event, player, name) {
+                                if (!_status.fahuan) {
+                                    _status.fahuan = {};
+                                }
                                 if (name == 'changeHp') return event.num < 0;
                                 return event.cards?.length;
                             },
@@ -7216,7 +7249,7 @@ const precontent = async function () {
                                     game.addGlobalSkill('QQQ_posuizhanzheng');
                                     game.addGlobalSkill('QQQ_posuizhanzheng_1');
                                     player.offspring = [];
-                                    for (const i of ['QQQ_Godwyn', 'QQQ_Trina', 'QQQ_Messmer', 'QQQ_Melina', 'QQQ_Malenia', 'QQQ_Radahn']) {
+                                    for (const i of ['QQQ_Godwyn', 'QQQ_Morgott', 'QQQ_Radahn', 'QQQ_菈妮', 'QQQ_Messmer', 'QQQ_Melina', 'QQQ_Malenia', 'QQQ_Trina']) {
                                         const npc = player.addFellow(i);
                                         player.offspring.push(npc);
                                     }
@@ -7261,6 +7294,9 @@ const precontent = async function () {
                             },
                             silent: true,
                             filter(event, player, name) {
+                                if (!_status.fahuan) {
+                                    _status.fahuan = {};
+                                }
                                 if (name == 'changeHp') return event.num > 0;
                                 return event.cards?.length;
                             },
@@ -8000,9 +8036,9 @@ const precontent = async function () {
                     },
                 },
                 // 大荒星陨
-                // 限定技,当你体力值首次降低至2以下时,你暂时移出游戏
-                // 当前回合角色下一个回合结束后或濒死时,你进入游戏,并对其造成x点伤害(x为全场本回合累计失去过牌的数量)
-                // 若其因此进入濒死,此技能重置
+                // 限定技,当你体力值首次降低至2以下时
+                // 若当前回合角色存在且其不是你,你暂时移出游戏.其下一个回合结束后或濒死时,你进入游戏,并对其造成x点伤害(x为全场本回合累计失去过牌的数量).若其因此进入濒死,此技能重置
+                // 否则你恢复体力至上限,且此技能重置
                 QQQ_dahuangxingyun: {
                     limited: true,
                     trigger: {
@@ -8013,12 +8049,15 @@ const precontent = async function () {
                         return player.hp < 2;
                     },
                     async content(event, trigger, player) {
-                        player.awakenSkill('QQQ_dahuangxingyun');
-                        player.out(5);
                         const target = _status.currentPhase;
                         if (target && target != player) {
+                            player.out(5);
+                            player.awakenSkill('QQQ_dahuangxingyun');
                             target.addSkill('QQQ_dahuangxingyun_1');
                             target.storage.QQQ_dahuangxingyun_1 = player;
+                        }
+                        else {
+                            player.hp = player.maxHp;
                         }
                     },
                     subSkill: {
@@ -8057,32 +8096,132 @@ const precontent = async function () {
                         },
                     },
                 },
-                // 米凯拉、大蛇、菈妮
+                //————————————————————————————————————————————蒙葛特 4/4
+                // 咒剑
+                // 回合限一次,当你使用/被使用牌时,令使用者与所有目标各重铸一张牌
+                // 若这些牌数量大于1且颜色均相同,此技能永久增加一次使用次数
+                // 此牌结算完毕后,你获得此牌使用期间内,所有被失去过的牌
+                QQQ_zhoujian: {
+                    usable: 1,
+                    trigger: {
+                        global: ['useCardBefore'],
+                    },
+                    forced: true,
+                    filter(event, player) {
+                        if (event.targets) {
+                            if (event.player != player) {
+                                return event.targets.includes(player);
+                            }
+                            return event.targets.length;
+                        }
+                    },
+                    async content(event, trigger, player) {
+                        const log = game.lose();
+                        const list = [];
+                        const npcs = trigger.targets.add(trigger.player);
+                        for (const npc of npcs.filter((q) => q.countCards('he'))) {
+                            const {
+                                result: { cards },
+                            } = await npc.chooseCard('he', true).set('ai', (c) => 6 - get.value(c));
+                            if (cards && cards[0]) {
+                                list.push(cards[0]);
+                                npc.recast(cards);
+                            }
+                        }
+                        if (list.length > 1 && list.map((q) => get.color(q)).unique().length < 2) {
+                            lib.skill.QQQ_zhoujian.usable++;
+                        }
+                        player.when({ global: 'useCardAfter' })
+                            .filter((e) => e.card == trigger.card)
+                            .then(() => {
+                                const cards = game.lose().filter((c) => !log.includes(c));
+                                player.gain(cards, 'gain2');
+                            }).vars({ log: log });
+                    },
+                },
+                // 铸影
+                // 出牌阶段限一次,你可以检索一张武器牌,并蓄谋此流程中亮出的一种花色的所有牌
+                QQQ_zhuying: {
+                    enable: 'phaseUse',
+                    usable: 1,
+                    async content(event, trigger, player) {
+                        const cards = [];
+                        while (true) {
+                            const card = await get.cards(1)[0];
+                            cards.push(card);
+                            if (get.subtype(card) == 'equip1') {
+                                break;
+                            }
+                        }
+                        const {
+                            result: { links },
+                        } = await player.chooseButton(['蓄谋一种花色的所有牌', cards, [lib.suits.map((i) => [i, get.translation(i)]), 'tdnodes']])
+                            .set('filterButton', (button) => button._args[1] == 'tdnodes')
+                            .set('ai', (button) => cards.filter((q) => q.suit == button.link).length);
+                        if (links && links[0]) {
+                            const cardx = cards.filter((q) => q.suit == links[0]);
+                            if (cardx.length) {
+                                player.addJudge({ name: 'xumou_jsrg' }, cardx);
+                            }
+                        }
+                    },
+                    ai: {
+                        order: 10,
+                        result: {
+                            player: 5,
+                        },
+                    },
+                },
+                //————————————————————————————————————————————菈妮
+                QQQ_anyue: {
+                    audio: 'pianchong',
+                    trigger: {
+                        player: 'loseAfter',
+                    },
+                    forced: true,
+                    filter: (event, player) => event.cards?.length,
+                    async content(event, trigger, player) {
+                        player.draw(trigger.cards.length);
+                    },
+                    ai: {
+                        effect: {
+                            target(card) {
+                                if (card.name == 'guohe') {
+                                    return 0.1;
+                                }
+                            },
+                            player(card, player, target) {
+                                if (lib.card[card.name]) {
+                                    if (player.getEquips('zhuge') && get.subtype(card) == 'equip1' && card.name != 'zhuge') {
+                                        return -1;
+                                    }
+                                    return [1, 1.6]; //无脑用牌
+                                }
+                            },
+                        },
+                        noh: true,
+                    },
+                },
+                // 米凯拉、大蛇
                 //————————————————————————————————————————————葛弗雷 5/5
+                //————————————————————————————————————————————荷莱·露 1/1
+                // 蛮荒
+                // 你造成的伤害进行x次方(底数为2),你的负向体力变化开x次方
+
+                // 浴血狂战
+                // 你的后x个技能失效,当你进入濒死时,将x永久加一,将体力上限翻倍并回满体力
+                // 什么花里胡哨的机制?都不需要,看俺的数值
+
+                // 撼地
+                // 你可以弃置任意张装备牌,令所有其他角色选择弃置与这些牌子类型均不同的装备牌或翻面
+
                 // 繁文缛节
-                // 锁定技,游戏开始时,你随机使用两张装备牌;你每轮至多可使用X张牌(X为你的空置装备栏数+1);摸牌阶段,你额外摸装备区内的牌数张牌
+                // 每轮开始时,你随机使用两张装备牌
+                // 你每轮至多可使用X张牌(X为你的空置装备栏数+1)
+                // 摸牌阶段,你额外摸Y张牌(Y为装备区内的牌数),你的手牌上限加Y
 
                 // 王征
                 // 出牌阶段,你可以消耗所有本轮剩余可使用牌次数,视为使用等量次【南蛮入侵】
-
-                // 当你濒死时,你将武将牌替换为荷莱·露
-
-                //————————————————————————————————————————————荷莱·露 4/4
-                // 王之战吼
-                // 出牌阶段限已损体力值次,可以令你本阶段攻击范围+1,对攻击范围内的其他角色使用一张杀
-                // 蛮荒
-                // 连招技(<王之战吼>+伤害牌),你与此牌目标翻面并拼点,胜者翻面且可视为抵消了此牌;未胜利者无法响应此牌且可使用一张拼点牌
-
-                // 浴血狂战
-                // 当你进入濒死时,
-
-
-                //————————————————————————————————————————————蒙葛特 4/4
-                // 咒剑
-                // 当你使用伤害牌指定唯一目标时,可重铸你与其区域内各一张牌,若三者类别:均相同,此牌不计入次数;均不同,你获得对方此次因重铸失去的牌;否则此技能本阶段失效.
-                // 铸影
-                // 出牌阶段限一次,你可以检索一张武器牌(至多亮出14张),并蓄谋此流程中亮出的一种花色的所有牌.
-
 
                 //————————————————————————————————————————————蒙格 4/4
                 // 授血
@@ -8132,7 +8271,17 @@ const precontent = async function () {
                 */
             },
             translate: {
-                //————————————————————————————————————————————拉塔恩 6/8
+                //————————————————————————————————————————————菈妮
+                QQQ_菈妮: '菈妮',
+                QQQ_anyue: '暗月',
+                QQQ_anyue_info: '<span class="Qmenu">锁定技,</span>你失去牌后摸等量的牌',
+                //————————————————————————————————————————————蒙葛特
+                QQQ_Morgott: '蒙葛特',
+                QQQ_zhoujian: '咒剑',
+                QQQ_zhoujian_info: '回合限一次,当你使用/被使用牌时,令使用者与所有目标各重铸一张牌<br>若这些牌数量大于1且颜色均相同,此技能永久增加一次使用次数<br>此牌结算完毕后,你获得此牌使用期间内,所有被失去过的牌',
+                QQQ_zhuying: '铸影',
+                QQQ_zhuying_info: '出牌阶段限一次,你可以检索一张武器牌,并蓄谋此流程中亮出的一种花色的所有牌',
+                //————————————————————————————————————————————拉塔恩
                 QQQ_Radahn: '拉塔恩',
                 QQQ_zhongli: '重力魔法',
                 QQQ_zhongli_info: '每轮开始时,你选择一种花色,令所有其他角色展示同花色所有牌,展示牌最多的角色受到一点雷电伤害',
@@ -8141,7 +8290,7 @@ const precontent = async function () {
                 QQQ_zhandoujidian: '战斗祭典',
                 QQQ_zhandoujidian_info: '锁定技,其他角色回合开始时须选择一项:重铸两张非伤害牌并令你摸一张牌;展示两张伤害牌并摸一张牌;受到1点伤害',
                 QQQ_dahuangxingyun: '大荒星陨',
-                QQQ_dahuangxingyun_info: '限定技,当你体力值首次降低至2以下时,你暂时移出游戏<br>当前回合角色下一个回合结束后或濒死时,你进入游戏,并对其造成x点伤害(x为全场本回合累计失去过牌的数量)<br>若其因此进入濒死,此技能重置',
+                QQQ_dahuangxingyun_info: '限定技,当你体力值首次降低至2以下时<br>若当前回合角色存在且其不是你,你暂时移出游戏.其下一个回合结束后或濒死时,你进入游戏,并对其造成x点伤害(x为全场本回合累计失去过牌的数量).若其因此进入濒死,此技能重置<br>否则你恢复体力至上限,且此技能重置',
                 //————————————————————————————————————————————玛莲妮娅/Malenia
                 QQQ_Malenia: '玛莲妮娅',
                 QQQ_shuiniao: '水鸟乱舞',
@@ -8483,6 +8632,7 @@ const sha = function () {
 };
 sha();
 <br><br><span style="color: gold">潜水的火修复版<br>温柔一刀扩展群771901025</span><br><br>
+addCharacterPack
 const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.json`);
         package: {
                 for (const i in QQQ.character) {
@@ -8513,6 +8663,33 @@ const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.
                 lib.translate['QQQQQQ_character_config'] = `QQQQQQ`;
                 return QQQ;
             });
+numfunc
+info.json\license
+            game.import('card', function (lib, game, ui, get, ai, _status)  {
+                const QQQ = {
+                    name: 'QQQQQQ',
+                    connect: true,
+                };
+                for (const i in QQQ.card) {
+                    const info = QQQ.card[i];
+                    if (!info.image) {
+                        if (info.fullskin) {
+                            info.image = `ext:QQQQQQ/image/${i}.png`;
+                        }
+                        else {
+                            info.image = `ext:QQQQQQ/image/${i}.jpg`;
+                        }
+                    }
+                    lib.inpile.add(i);
+                    if (info.mode && !info.mode.includes(lib.config.mode)) continue;
+                    lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
+                }
+                lib.config.all.cards.add('QQQQQQ');
+                lib.config.cards.add('QQQQQQ');
+                lib.translate.QQQQQQ_card_config = 'QQQQQQ';
+                return QQQ;
+            });
+
             const card = {
             };
             if (!lib.number) {
@@ -8546,7 +8723,6 @@ const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.
             game.saveConfig(`extension_世界之塔_cards_enable`, true);//扩展卡牌全部打开
             game.saveConfig('cards', lib.config.cards);
             game.saveConfig('defaultcards', lib.config.cards);
-'..', 'extension', '异闻带', '补给.mp3'   
 game.playAudio\('\.\.', 'extension', '(.+)', '(.+)\.mp3'\)
 game.playAudio\('\.\.', 'extension', '(.+)', '(.+)'\)
 game.playAudio\((.+)extension(.+)', '([^/,\.]*)'\)
@@ -8566,13 +8742,10 @@ extension/$1/image/$2.png
 game.playAudio('../extension/秦时明月', 
 'ext:([^/,]*):
 'ext:$1/audio:
-audio: 2,
+audio: "ext:耀武将:false",//audio: false//audio: '',//audio: 2,
 /audio/audio==>/audio
 /image/image
-audio: 'ext:好名的世界/audio:2',
-game.playAudio('../extension', 
-.playAudio('.'
-批量过遍报错
+ext:/
 //有些卡牌没写image但是默认走路径可以看到,如果把jpg移动到image里面就需要写上image//有fullskin是png,fullimage是jpg
 image: `ext:龙族/image/言灵·君焰.jpg`,
 game.changeBoss(
