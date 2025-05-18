@@ -73,43 +73,26 @@ setInterval常量计算会被删掉
 /*
 //------------------------------------------------脚本替换
 \),\n\s*\(====;\n
-forced: true,\n\s*forced: true,
 .i
 for (var i =
 [,//, ,//,]//,)
 cards.splice//i.discard()
 //-------------------------------------------------------正则替换
 function \(.*\) \{\n\s*\}//function \(.*\) \{ \}//= () => { }
-var chat = \[('[^']*')\]\.randomGet\(\);\n\s*player\.say\(chat\);
-player.say($1);
 '[^)']+logSkill[^']*'//'[^)']*logSkill[^']+'//'[^)']+logSkill[^']+'//popup: false,
 \.filterCard\(\{([^),]*)\)
 .filterCard({$1,player)
-get.autoViewAs\(\{([^()]*)\}[^()]*\)//{$1}
-get.autoViewAs\(([^,()]*)\)//$1
 event, step, source, 
-!([^&(]*)\.isFriendsOf\(//$1.isEnemiesOf(
-: \(([^(]*)\) => \{//($1){
 : function//content*\\content: function*\\以及？:
 (?<!classList)(?<!window)(?<!arena)(?<!cardPile)\.contains\(//.includes(
-get.number\(([^()]*)\)//get.suit\(([^()]*)\)//get.name\(([^()]*)\)
-get.number\(([^()]*),[^()]*\)//get.suit\(([^()]*),[^()]*\)//get.name\(([^()]*),[^()]*\)
-$1.number//$1.suit//$1.name
-trigger.cards[0].suit//trigger.cards[0].name//trigger.cards[0].number
-event.cards[0].suit//event.cards[0].name//event.cards[0].number//event.cards可能是自己定义的,注意鉴别
-audio:\s*\[\s*(["'][^"']*["']),\s*(\d+)\s*\],//audio:$1,
-audio:\s*\[(["'][^"']*["'])\],//audio:$1,
+audio:\s*\[\s*('[^']*'),\s*(\d+)\s*\],//audio:$1,
+audio:\s*\[('[^']*')\],//audio:$1,
 lib\.element\.Player.+= fun//   get\..+= fun//game\..+= fun
-\s\sconsole\.log\(.+\);
-\s\s\sgame\.delay\(.*\);
-\s\s\sgame\.delayx\(.*\);
-\s\s\splayer\.logSkill\(.*\);
-\sskillAnimation:.+,
-\sanimationColor:.+,
-\sanimationType:.+,
-\sanimationStr:.+,
+console\.log\(.+\);
+game\.delay\(.*\);
+game\.delayx\(.*\);
+player\.logSkill\(.*\);
 \n\s*\n
-.$1   //(?<![\s:,[(=])\[["']([^·\.'" --+\d]*)["']\]
 \s\scontent\((?!storage\b).+\)//precontent\((?!storage\b).+\)
 \starget\((?!card|player\b).+\)
 \splayer\((?!card|player\b).+\)
@@ -118,11 +101,14 @@ lib\.element\.Player.+= fun//   get\..+= fun//game\..+= fun
 PlayerCard\(.+set\('ai', function \(card\)//PlayerCard\(.+\n\s*\.set\('ai', function \(card\)
 lib.nature.add\('(.+)'\)//lib.nature.set('$1',90)
 card.fix\(\);\n\s*card.remove\(\);
-countCards\(['"](?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)['"])[^'"]*['"]\)
-.hasCard\(['"]([^'"]*)['"]\)
+countCards\('(?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)')[^'"]*'\)
+.hasCard\('([^'"]*)'\)
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
+hasSkill('')
+ai.shown
+player.addExpose
 timeout:
 (result.links[0][2])
 ({ name: result.links[0] })
@@ -133,8 +119,9 @@ $equip
 directequip
 storage.disableEquip//disabledSlots
 storage.disableEquip.includes//hasDisabledSlot
-storage.disableEquip.add//enableEquip
-storage.disableEquip.remove//disableEquip
+storage.disableEquip.length//countDisabledSlot
+storage.disableEquip.add//disableEquip
+storage.disableEquip.remove//enableEquip
 event.getParent(2).filterCard
 if (lib.device || lib.node)
 left2 = left2.previous;
@@ -393,7 +380,7 @@ const precontent = async function () {
             } //禁止多次触发
             if (QQQ.config.卖血模式) {
                 if (!['dcshibei', 'shibei'].includes(i)) {
-                    if (info.ai && (info.ai.maixie || info.ai.maixie_defend || info.ai.maixie_hp) && info.trigger && info.trigger.player) {
+                    if (info.ai && ['maihp', 'maixie_defend', 'maixie'].some((q) => info.ai[q]) && info.trigger?.player) {
                         if (Array.isArray(info.trigger.player)) {
                             for (let j of info.trigger.player) {
                                 if (j == 'damageEnd') {
@@ -3853,6 +3840,12 @@ const precontent = async function () {
                     sex: 'female',
                     skills: ['QQQ_anyue'],
                 },
+                QQQ_Mohg: {
+                    sex: 'male',
+                    skills: ['QQQ_xianxuejixian', 'QQQ_zuzhouzhixue', 'QQQ_zhenshizhimu'],
+                    hp: 5,
+                    maxHp: 5,
+                },
             },
             characterTitle: {
                 QQQ_jinshanshan: `<b style='color:rgb(231, 233, 203); font-size: 25px;'>金闪闪</b>`,
@@ -3865,6 +3858,7 @@ const precontent = async function () {
                 QQQ_Radahn: `<b style='color:rgb(74, 8, 161); font-size: 25px;'>碎星将军</b>`,
                 QQQ_Morgott: `<b style='color:rgb(226, 230, 39); font-size: 25px;'>赐福王</b>`,
                 QQQ_菈妮: `<b style='color:rgb(92, 153, 233); font-size: 25px;'>暗月公主</b>`,
+                QQQ_Mohg: `<b style='color:rgb(221, 22, 22); font-size: 25px;'>鲜血君王</b>`,
             },
             characterIntro: {
                 QQQ_jinshanshan: '最初古代诸神为了抑制人类过度繁衍之后力量的壮大,将人间王族与女神相结合,创造出众神制约人类的<楔子>——吉尔伽美什.是诞生于神与人之间的英雄,拥有<三分之二为神,三分之一为人>的极高神格(拥有神的智慧及力量,但没有神的寿命)以及神明与人类的双方视点.',
@@ -4412,7 +4406,7 @@ const precontent = async function () {
                     async content(event, trigger, player) {
                         trigger.targets = game.players;
                     },
-                    prompt(event, player) {
+                    prompt(event) {
                         return `让所有角色成为${get.translation(event.card)}目标`;
                     },
                     group: ['QQQ_ditu_1'],
@@ -4421,7 +4415,7 @@ const precontent = async function () {
                             trigger: {
                                 global: ['useCardBefore'],
                             },
-                            prompt(event, player) {
+                            prompt(event) {
                                 return `取消${get.translation(event.card)}的目标<${get.translation(event.targets)}>,将所有目标角色各一张牌置于牌堆顶,视为对目标角色使用一张五谷丰登`;
                             },
                             check(event, player) {
@@ -4826,7 +4820,7 @@ const precontent = async function () {
                             trigger: {
                                 global: ['recoverBefore'],
                             },
-                            prompt(event, player) {
+                            prompt(event) {
                                 return `终止${get.translation(event.player)}回复体力,并改为对其使用一张<神杀>`;
                             },
                             filter: (event, player) => player.storage.QQQ_mingsi > 0,
@@ -4843,7 +4837,7 @@ const precontent = async function () {
                             trigger: {
                                 global: ['gainBefore'],
                             },
-                            prompt(event, player) {
+                            prompt(event) {
                                 return `终止${get.translation(event.player)}获得牌,并改为对其使用一张<冰杀>`;
                             },
                             filter: (event, player) => player.storage.QQQ_mingsi > 0,
@@ -7249,7 +7243,12 @@ const precontent = async function () {
                                     game.addGlobalSkill('QQQ_posuizhanzheng');
                                     game.addGlobalSkill('QQQ_posuizhanzheng_1');
                                     player.offspring = [];
-                                    for (const i of ['QQQ_Godwyn', 'QQQ_Morgott', 'QQQ_Radahn', 'QQQ_菈妮', 'QQQ_Messmer', 'QQQ_Melina', 'QQQ_Malenia', 'QQQ_Trina']) {
+                                    for (const i of [
+                                        'QQQ_Godwyn', 'QQQ_Morgott', 'QQQ_Mohg',
+                                        'QQQ_Radahn', 'QQQ_菈妮',
+                                        'QQQ_Messmer', 'QQQ_Melina',
+                                        'QQQ_Malenia', 'QQQ_Trina'
+                                    ]) {
                                         const npc = player.addFellow(i);
                                         player.offspring.push(npc);
                                     }
@@ -8202,6 +8201,67 @@ const precontent = async function () {
                         noh: true,
                     },
                 },
+                //————————————————————————————————————————————蒙格 5/5
+                // 鲜血祭献
+                // 出牌阶段,你可以摸两张牌
+                QQQ_xianxuejixian: {
+                    enable: 'phaseUse',
+                    async content(event, trigger, player) {
+                        player.draw(2);
+                    },
+                    ai: {
+                        order: 20,
+                        result: {
+                            player: 2,
+                        },
+                    },
+                },
+                // 诅咒之血
+                // 锁定技,当你获得牌时,你失去一点体力
+                QQQ_zuzhouzhixue: {
+                    trigger: {
+                        player: ['gainAfter'],
+                    },
+                    forced: true,
+                    filter(event, player) {
+                        return event.cards?.length;
+                    },
+                    async content(event, trigger, player) {
+                        player.loseHp();
+                    },
+                },
+                // 真实之母的眷顾
+                // 当你因失去体力进入濒死时,将体力值调整至体力上限,失去全部技能直至回合结束
+                QQQ_zhenshizhimu: {
+                    init(player) {
+                        player.storage.QQQ_zhenshizhimu = [];
+                    },
+                    trigger: {
+                        player: ['dying'],
+                    },
+                    forced: true,
+                    filter(event, player) {
+                        return event.parent.name == 'loseHp';
+                    },
+                    mark: true,
+                    intro: {
+                        content(storage) {
+                            if (storage.length) {
+                                return `回合结束后获得${get.translation(storage)}技能`;
+                            }
+                            return '无';
+                        }
+                    },
+                    async content(event, trigger, player) {
+                        player.hp = player.maxHp;
+                        player.storage.QQQ_zhenshizhimu = player.GS();
+                        player.CS();
+                        player.when({ global: 'phaseAfter' }).then(() => {
+                            player.addSkill(player.storage.QQQ_zhenshizhimu);
+                            player.storage.QQQ_zhenshizhimu = [];
+                        });
+                    },
+                },
                 // 米凯拉、大蛇
                 //————————————————————————————————————————————葛弗雷 5/5
                 //————————————————————————————————————————————荷莱·露 1/1
@@ -8217,19 +8277,11 @@ const precontent = async function () {
 
                 // 繁文缛节
                 // 每轮开始时,你随机使用两张装备牌
-                // 你每轮至多可使用X张牌(X为你的空置装备栏数+1)
-                // 摸牌阶段,你额外摸Y张牌(Y为装备区内的牌数),你的手牌上限加Y
+                // 你每轮至多可使用9-X张牌(X为当前技能数)
+                // 摸牌阶段,你额外摸x张牌,手牌上限加x
 
                 // 王征
                 // 出牌阶段,你可以消耗所有本轮剩余可使用牌次数,视为使用等量次【南蛮入侵】
-
-                //————————————————————————————————————————————蒙格 4/4
-                // 授血
-                // 出牌阶段限一次,你可以请一名其他角色交给你两张牌并获得<纯血>;然后你可以失去1点体力对所有拒绝过你和响应过你的角色各造成1点伤害.
-                // 仪式
-                // 觉醒技,你参与伤害结算次数超过场上人数次的回合结束时,你将体力值恢复至体力上限,然后修改场上所有<纯血>;此后你溢出的体力回复改为摸等量牌.
-                // 纯血
-                // 宗族技,每回合限一次,同族角色造成伤害后,你可以弃置一张牌,令其也对你造成等量伤害,然后你回复等量体力(修改后:同族角色造成伤害后,蒙格可以弃置一张牌,令你也对受伤角色造成等量伤害,然后其与蒙格回复等量体力).
 
                 //————————————————————————————————————————————安帕赫 3/3
                 // 王朝镰技
@@ -8271,6 +8323,14 @@ const precontent = async function () {
                 */
             },
             translate: {
+                //————————————————————————————————————————————蒙格 5/5
+                QQQ_Mohg: '蒙格',
+                QQQ_xianxuejixian: '鲜血祭献',
+                QQQ_xianxuejixian_info: '出牌阶段,你可以摸两张牌',
+                QQQ_zuzhouzhixue: '诅咒之血',
+                QQQ_zuzhouzhixue_info: '锁定技,当你获得牌时,你失去一点体力',
+                QQQ_zhenshizhimu: '真实之母的眷顾',
+                QQQ_zhenshizhimu_info: '当你因失去体力进入濒死时,将体力值调整至体力上限,失去全部技能直至回合结束',
                 //————————————————————————————————————————————菈妮
                 QQQ_菈妮: '菈妮',
                 QQQ_anyue: '暗月',
@@ -8547,6 +8607,7 @@ const precontent = async function () {
         }
         for (const i in yinu.skill) {
             const info = yinu.skill[i];
+            info.nobracket = true;
             if (!info.audio) {
                 info.audio = 'ext:温柔一刀/audio:2';
             }

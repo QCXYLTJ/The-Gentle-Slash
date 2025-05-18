@@ -1181,18 +1181,6 @@ const content = async function () {
     xiufu();
     //—————————————————————————————————————————————————————————————————————————————技能相关自创函数
     const jineng = function () {
-        lib.element.card.AQ = function (str) {
-            if (!this.qtag) {
-                this.qtag = [];
-            }
-            this.qtag.add(str);
-            const tag = ui.create.div('.qtag', this);
-            tag.innerHTML = str;
-            this.appendChild(tag);
-        }; //添加卡牌永久标记,失去牌不会消失
-        lib.element.card.HQ = function (tag) {
-            return this.qtag && this.qtag.includes(tag);
-        }; //检测卡牌标记
         lib.element.player.GS = function () {
             const skills = this.skills.slice();
             for (const i of Array.from(this.node.equips.childNodes)) {
@@ -1235,23 +1223,6 @@ const content = async function () {
         lib.element.player.GTS = function () {
             return Object.keys(this.tempSkills);
         }; //获取武将临时技能函数
-        lib.element.player.D = function () {
-            _status.roundStart = game.me;
-            if (ui.land && ui.land.player == this) {
-                game.addVideo('destroyLand');
-                ui.land.destroy();
-            }
-            game.log(this, '阵亡');
-            this.classList.add('dead');
-            this.node.count.innerHTML = '0';
-            this.node.hp.hide();
-            this.node.equips.hide();
-            this.node.count.hide();
-            this.previous.next = this.next;
-            this.next.previous = this.previous;
-            game.players.remove(this);
-            game.dead.push(this);
-        }; //简化死亡函数
         lib.element.player.RS = function (Q) {
             if (Array.isArray(Q)) {
                 for (const i of Q) {
@@ -1307,10 +1278,11 @@ const content = async function () {
             game.expandSkills(skill);
             this.skills = [];
             this.tempSkills = {};
+            this.initedSkills = [];
             this.invisibleSkills = [];
             this.hiddenSkills = [];
             this.additionalSkills = {};
-            for (let key in lib.hook) {
+            for (const key in lib.hook) {
                 if (key.startsWith(this.playerid)) {
                     try {
                         delete lib.hook[key];
@@ -1345,10 +1317,39 @@ const content = async function () {
             },
             skillBlocker: (skill, player) => true,
         };
-    }; //自创函数
+    }; //技能相关自创函数
     jineng();
     //—————————————————————————————————————————————————————————————————————————————一些杂乱自创函数
     const zawu = function () {
+        lib.element.card.AQ = function (str) {
+            if (!this.qtag) {
+                this.qtag = [];
+            }
+            this.qtag.add(str);
+            const tag = ui.create.div('.qtag', this);
+            tag.innerHTML = str;
+            this.appendChild(tag);
+        }; //添加卡牌永久标记,失去牌不会消失
+        lib.element.card.HQ = function (tag) {
+            return this.qtag && this.qtag.includes(tag);
+        }; //检测卡牌标记
+        lib.element.player.D = function () {
+            _status.roundStart = game.me;
+            if (ui.land && ui.land.player == this) {
+                game.addVideo('destroyLand');
+                ui.land.destroy();
+            }
+            game.log(this, '阵亡');
+            this.classList.add('dead');
+            this.node.count.innerHTML = '0';
+            this.node.hp.hide();
+            this.node.equips.hide();
+            this.node.count.hide();
+            this.previous.next = this.next;
+            this.next.previous = this.previous;
+            game.players.remove(this);
+            game.dead.push(this);
+        }; //简化死亡函数
         lib.element.player.fanwei = function (num) {
             const players = [];
             let next = this.next,
@@ -1372,7 +1373,7 @@ const content = async function () {
             const jindutiao = ui.create.div('.jindutiao', nengliangtiao);
             return jindutiao;
         };
-    };
+    };//杂乱自创函数
     zawu();
     //—————————————————————————————————————————————————————————————————————————————解构魔改本体函数
     const mogai = function () {
@@ -1619,7 +1620,7 @@ const content = async function () {
                 player.dying({ source: source });
             }
         }; //真实伤害
-    };
+    };//解构魔改本体函数
     mogai();
     //—————————————————————————————————————————————————————————————————————————————一些全局技能
     const quanju = function () {
@@ -1811,29 +1812,25 @@ const content = async function () {
         lib.skill._卖血模式 = {
             mod: {
                 ignoredHandcard(card, player) {
-                    if (QQQ.config.卖血模式 && (player.hasSkillTag('maihp') || player.hasSkillTag('maixie_defend') || player.hasSkillTag('maixie') || player.hasSkillTag('maixie_hp'))) return get.tag(card, 'recover');
+                    const maixie = ['maihp', 'maixie_defend', 'maixie'].some((q) => player.hasSkillTag(q));
+                    if (QQQ.config.卖血模式 && maixie) {
+                        return get.tag(card, 'recover');
+                    }
                 },
             },
             trigger: {
-                global: 'useCardToTargeted',
+                global: ['useCard'],
             },
             filter(event, player) {
-                if (!QQQ.config.卖血模式) return false;
-                if (!player.hasSkillTag('maihp') && !player.hasSkillTag('maixie_defend') && !player.hasSkillTag('maixie') && !player.hasSkillTag('maixie_hp')) return false;
-                return get.tag(event.card, 'damage') && event.target.isFriendsOf(player);
+                const maixie = ['maihp', 'maixie_defend', 'maixie'].some((q) => player.hasSkillTag(q));
+                if (QQQ.config.卖血模式 && maixie) {
+                    return get.tag(event.card, 'damage') && event.targets?.some((i) => player.getFriends().includes(i));
+                }
             },
             forced: true,
             silent: true,
             async content(event, trigger, player) {
-                var Q = game.players.filter(function (i) {
-                    return i.isFriendsOf(player) && trigger.targets.includes(i);
-                });
-                var W = game.players.filter(function (i) {
-                    return i.isFriendsOf(player);
-                });
-                for (var E of W) {
-                    trigger.targets.remove(E);
-                }
+                trigger.targets = trigger.targets.filter((i) => player.getEnemies().includes(i));
                 trigger.targets.push(player);
                 trigger.player.line(player);
                 game.log(get.translation(player), `将${get.translation(trigger.card)}由${get.translation(Q)}转移给自己`);
@@ -1842,20 +1839,19 @@ const content = async function () {
             subSkill: {
                 1: {
                     trigger: {
-                        player: 'loseBefore',
+                        player: ['loseBefore'],
                     },
                     forced: true,
                     silent: true,
                     filter(event, player) {
-                        if (!QQQ.config.卖血模式) return false;
-                        if (!player.hasSkillTag('maihp') && !player.hasSkillTag('maixie_defend') && !player.hasSkillTag('maixie') && !player.hasSkillTag('maixie_hp')) return false;
                         if ('useCard' == event.parent.name) return false;
-                        return event.cards && event.cards.some((card) => get.tag(card, 'recover')); //QQQ
+                        const maixie = ['maihp', 'maixie_defend', 'maixie'].some((q) => player.hasSkillTag(q));
+                        if (QQQ.config.卖血模式 && maixie) {
+                            return event.cards && event.cards.some((card) => get.tag(card, 'recover')); //QQQ
+                        }
                     },
                     async content(event, trigger, player) {
-                        for (const i of trigger.cards) {
-                            if (get.tag(i, 'recover')) trigger.cards.remove(i);
-                        }
+                        trigger.cards = trigger.cards.filter((i) => !get.tag(i, 'recover'));
                     },
                 },
             },
@@ -1895,7 +1891,7 @@ const content = async function () {
                 }
             },
         }; //阶段限一次技能计数清空
-    };
+    };//全局技能
     quanju();
     //—————————————————————————————————————————————————————————————————————————————卡牌AI修改
     const card = function () {
@@ -8360,6 +8356,6 @@ const content = async function () {
             });
             game.saveConfig('layout', 'mobile');
         } //收藏武将修改
-    };
+    };//按钮控制技能添加与修改
     config();
 };

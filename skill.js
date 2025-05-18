@@ -185,7 +185,6 @@ const skill = {
                 });
             ('step 2');
             if (result && result.targets && result.targets[0]) {
-                //QQQ
                 result.targets[0].storage.东皇钟 = result.targets[0].GAS();
                 result.targets[0].CS();
                 player.storage.鸣钟 = 0;
@@ -7499,12 +7498,10 @@ const skill = {
             },
         },
         async content(event, trigger, player) {
-            //QQQ
             const {
                 result: { targets },
             } = await player.chooseTarget(true).set('ai', (target) => -get.attitude(player, target));
             if (targets && targets[0]) {
-                //targets[0].CS();
                 targets[0].damage();
                 player.useCard({ name: 'sha', nature: 'thunder' }, targets[0], false);
             }
@@ -8004,6 +8001,7 @@ const translate1 = {
 };
 for (const i in skill) {
     const info = skill[i];
+    info.nobracket = true;
     if (!info.audio) {
         info.audio = 'ext:温柔一刀/audio:2';
     }
