@@ -30,9 +30,8 @@ if (QQQ.config.扩展全关) {
 } //扩展全部关闭
 if (QQQ.config.扩展修改) {
     var Q = [
-        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM', '全能搜索', '太虚幻境',
-        '东方project', '恒梦', '弹丸杀', '万象物语', '幻想拾夜', '诸神烽火',
-    ];
+        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM', '全能搜索', '太虚幻境', '斗破苍穹X阴阳师',
+    ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
 //boot=>(loadJavaScriptExtension/onload)=>loadExtension=>precontent/content
@@ -547,7 +546,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 for (const j in lib.character) {
                                     if (lib.translate[j] && lib.translate[j].includes(input.value) || j.includes(input.value)) {
                                         const JUESE = window.document.createElement('div');
-                                        JUESE.style.backgroundImage = `url('${game.src(j)}')`;
+                                        JUESE.style.backgroundImage = `url(${game.src(j)})`;
                                         JUESE.className = 'characterQ';
                                         JUESE.innerHTML = get.translation(j);
                                         JUESE.link = j;
@@ -577,7 +576,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                     }
                                     for (const j in lib.characterPack[this.link]) {
                                         const JUESE = window.document.createElement('div');
-                                        JUESE.style.backgroundImage = `url('${game.src(j)}')`;
+                                        JUESE.style.backgroundImage = `url(${game.src(j)})`;
                                         JUESE.className = 'characterQ';
                                         JUESE.innerHTML = get.translation(j);
                                         JUESE.link = j;
@@ -900,9 +899,6 @@ lib.element.content.waitForPlayer = function () {
         lib.translate.温柔一刀_character_config = `温柔一刀`;
         lib.config.all.characters.add('温柔一刀');
         lib.config.characters.add('温柔一刀');
-        game.saveConfig(`extension_温柔一刀_characters_enable`, true); //扩展武将全部打开
-        game.saveConfig('characters', lib.config.characters);
-        game.saveConfig('defaultcharacters', lib.config.characters);
         Object.assign(lib.skill, gentle.skill0);
         Object.assign(lib.character, gentle.character0);
         Object.assign(lib.translate, gentle.translate0);
@@ -910,9 +906,6 @@ lib.element.content.waitForPlayer = function () {
         lib.translate.一怒拔剑_character_config = `一怒拔剑`;
         lib.config.all.characters.add('一怒拔剑');
         lib.config.characters.add('一怒拔剑');
-        game.saveConfig(`extension_一怒拔剑_characters_enable`, true); //扩展武将全部打开
-        game.saveConfig('characters', lib.config.characters);
-        game.saveConfig('defaultcharacters', lib.config.characters);
     }, _status.gentle);
     game.broadcast('gameStart');
     ui.auto.show();

@@ -195,7 +195,7 @@ const config = {
     },
     禁止多次触发: {
         name: '<span class="Qmenu">禁止多次触发</span>',
-        intro: '开启后,将会修改全场技能的使用次数为最多每回合五次',
+        intro: '开启后,将会修改全场技能的使用次数为最多每回合1次',
         init: false,
     },
     禁止循环触发: {

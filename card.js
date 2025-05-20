@@ -498,7 +498,7 @@ for (const i in card) {
     }
 }
 lib.cardPack.温柔一刀 = Object.keys(card);
-lib.translate.温柔一刀_card_config = `<img src="${lib.assetURL}extension/温柔一刀/other/The-Gentle-Slash.png"width="120"height="30">`;
+lib.translate.温柔一刀_card_config = `<img src="extension/温柔一刀/other/The-Gentle-Slash.png"width="120"height="30">`;
 lib.config.all.cards.add('温柔一刀');
 lib.config.cards.add('温柔一刀');
 game.saveConfig(`extension_温柔一刀_cards_enable`, true); //扩展卡牌全部打开

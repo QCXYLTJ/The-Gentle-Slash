@@ -605,11 +605,8 @@ Object.assign(lib.character, character); //不管game.import导入的或者packa
 Object.assign(lib.characterIntro, characterIntro);
 Object.assign(lib.characterTitle, characterTitle);
 lib.characterPack.温柔一刀 = character;
-lib.translate.温柔一刀_character_config = `<img src="${lib.assetURL}extension/温柔一刀/other/The-Gentle-Slash.png"width="120"height="30">`;
+lib.translate.温柔一刀_character_config = `<img src="extension/温柔一刀/other/The-Gentle-Slash.png"width="120"height="30">`;
 lib.config.all.characters.add('温柔一刀');
 lib.config.characters.add('温柔一刀');
-game.saveConfig(`extension_温柔一刀_characters_enable`, true); //扩展武将全部打开
-game.saveConfig('characters', lib.config.characters);
-game.saveConfig('defaultcharacters', lib.config.characters);
 _status.gentle.character = character;
 _status.gentle.translate2 = translate2;

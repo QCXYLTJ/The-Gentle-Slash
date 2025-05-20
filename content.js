@@ -1150,7 +1150,7 @@ const content = async function () {
                     } else {
                         event.playtoload++;
                     }
-                    var script = lib.init.js(lib.assetURL + 'play', content.name);
+                    var script = lib.init.js('play', content.name);
                     script.addEventListener('load', function () {
                         var play = window.play[content.name];
                         if (play && play.video) {
@@ -3104,7 +3104,6 @@ const content = async function () {
                         if (_status.event.nono) return -1;
                         return 7 - get.useful(card);
                     });
-                    next.set('logSkill', ['zhendu', trigger.player]);
                     next.set('nono', nono);
                     next.setHiddenSkill('zhendu');
                     ('step 1');
@@ -3189,10 +3188,6 @@ const content = async function () {
                             return lib.sort.seat(a[0], b[0]);
                         });
                         delete lib.tempSortSeat;
-                        player.logSkill(
-                            'dcluochong',
-                            Q.map((i) => i[0])
-                        );
                         if (Q[0].length == 1) {
                             Q[0][0].discard(Q[0][1]);
                         } else {
@@ -3209,7 +3204,7 @@ const content = async function () {
                         target(card, player, target, current) {
                             if (get.type(card) == 'delay' && current < 0) {
                                 var current = _status.currentPhase;
-                                if (current && current.getSeatNum() > target.getSeatNum()) return 'zerotarget';
+                                if (current && current.seatNum > target.seatNum) return 'zerotarget';
                             }
                         },
                     },
@@ -3571,7 +3566,6 @@ const content = async function () {
                         })
                         .set('max', trigger.target.countDiscardableCards(player, 'he'))
                         .set('goon', get.attitude(player, trigger.target) < 0)
-                        .set('logSkill', ['jsrgjuelie', trigger.target]);
                     ('step 1');
                     if (result.bool) {
                         var num = result.cards.length;
@@ -3935,7 +3929,6 @@ const content = async function () {
                         event.target.lose(card, ui.special);
                         if (!card._selfDestroyed) {
                             hu.storage.shouna.push(card);
-                            player.updateMarks();
                         }
                     }
                 };
@@ -4458,7 +4451,6 @@ const content = async function () {
                         const targets = result.targets;
                         const guohe = new lib.element.VCard({
                             name: 'guohe',
-                            isCard: true,
                         });
                         if (targets[0].canUse(guohe, targets[1])) targets[0].useCard(guohe, targets[1], 'noai');
                     }
@@ -5249,7 +5241,7 @@ const content = async function () {
                                 event.finish();
                                 break;
                             case '选项二':
-                                player.chooseToDiscard('h', true).logSkill = ['twzhian', owner];
+                                player.chooseToDiscard('h', true);
                                 event.target = owner;
                                 break;
                             case '选项三':
@@ -5291,7 +5283,7 @@ const content = async function () {
             }
             if (lib.skill.spxizhan) {
                 lib.skill.spxizhan.content = async function (event, trigger, player) {
-                    const { result } = await player.chooseToDiscard('he', '嬉战:弃置一张牌或失去1点体力', `根据弃置的牌对${get.translation(trigger.player)}视为使用如下牌:<br>♠️,其使用【酒】;♥️,你使用【无中生有】<br>♣️,对其使用【铁索连环】;♦️:对其使用火【杀】`).set('ai', function (card) {
+                    const { result } = await player.chooseToDiscard('he', '嬉战:弃置一张牌或失去1点体力', `根据弃置的牌对${get.translation(trigger.player)}视为使用如下牌:<br>♠️️,其使用【酒】;♥️️,你使用【无中生有】<br>♣️️,对其使用【铁索连环】;♦️️:对其使用火【杀】`).set('ai', function (card) {
                         var player = _status.event.player,
                             target = _status.event.getTrigger().player;
                         var suit = card.suit,
@@ -5340,7 +5332,6 @@ const content = async function () {
                                     player.useCard(
                                         {
                                             name: 'tiesuo',
-                                            isCard: true,
                                         },
                                         target
                                     );
@@ -5350,7 +5341,6 @@ const content = async function () {
                                     player.canUse(
                                         {
                                             name: 'sha',
-                                            isCard: true,
                                             nature: 'fire',
                                         },
                                         target,
@@ -5360,7 +5350,6 @@ const content = async function () {
                                     player.useCard(
                                         {
                                             name: 'sha',
-                                            isCard: true,
                                             nature: 'fire',
                                         },
                                         target,
@@ -5417,7 +5406,6 @@ const content = async function () {
                             lib.skill.clanshengmo_backup.viewAs = {
                                 name,
                                 nature,
-                                isCard: true,
                             };
                             lib.skill.clanshengmo_backup.prompt = `选择${get.translation(nature)}【${get.translation(name)}】的目标`;
                             lib.skill.clanshengmo_backup.cardToGain = toGain;
@@ -5524,7 +5512,6 @@ const content = async function () {
                         if (!event.target.isUnderControl(true) && !event.target.isOnline()) game.delayx();
                         ('step 1');
                         if (result.bool) {
-                            target.logSkill('twchunlao', player);
                             if (!target.hasSkill('twchunlao')) game.trySkillAudio('twchunlao', player);
                             if (player != target) target.give(result.cards, player, 'giveAuto');
                             trigger.baseDamage++;
@@ -5887,7 +5874,6 @@ const content = async function () {
                     if (!target.storage.jiu) target.storage.jiu = 0;
                     target.storage.jiu += event.baseDamage;
                     target.markSkill('jiu');
-                    player.updateMarks();
                     game.broadcastAll(
                         function (target, card, gain2) {
                             if (!target.node.jiu && lib.config.jiu_effect) {
@@ -6097,7 +6083,6 @@ const content = async function () {
                 if (!_status.video) {
                     game.addVideo('update', this, [this.countCards('h'), this.hp, this.maxHp, this.hujia]);
                 }
-                this.updateMarks();
                 return this;
             }; //体力条样式修改
         } //血量可以超上限//已损体力值修改//体力条样式修改
@@ -6202,7 +6187,7 @@ const content = async function () {
                     player.addSkill('olpaoxiao2');
                     player.addMark('olpaoxiao2', 1);
                     if (trigger.target.isIn() && player.canUse('sha', trigger.target, false) && player.hasSha()) {
-                        player.chooseToUse(get.prompt('qinglong', trigger.target), (c) => c.name == 'sha' && player.filterCardx(c), trigger.target, -1).set('addCount', false).logSkill = 'qinglong_skill';
+                        player.chooseToUse(get.prompt('qinglong', trigger.target), (c) => c.name == 'sha' && player.filterCardx(c), trigger.target, -1).set('addCount', false);
                     }
                 },
             }; //青龙刀加强
@@ -7606,7 +7591,7 @@ const content = async function () {
                                     nameskin = nameskin.slice(3);
                                     gzbool = true;
                                 }
-                                img.src = lib.assetURL + `image/skin/${nameskin}/${num}.jpg`;
+                                img.src = `image/skin/${nameskin}/${num}.jpg`;
                             };
                             if (lib.config.change_skin) {
                                 if (!node.isUnseen(0)) {
@@ -8062,7 +8047,7 @@ const content = async function () {
                                     num--;
                                     createButtons(num);
                                 };
-                                img.src = lib.assetURL + `image/skin/${nameskin}/${num}.jpg`;
+                                img.src = `image/skin/${nameskin}/${num}.jpg`;
                             };
                             if (lib.config.change_skin) {
                                 loadImage();

@@ -290,8 +290,6 @@ const skill = {
     },
     炼妖壶: {
         limited: true,
-        skillAnimation: true,
-        animationColor: 'water',
         mark: true,
         intro: {
             content(storage, player) {
@@ -518,8 +516,6 @@ const skill = {
     },
     女娲石: {
         limited: true,
-        skillAnimation: true,
-        animationColor: 'metal',
         trigger: {
             player: 'die',
         },
@@ -705,8 +701,6 @@ const skill = {
     },
     伏羲琴: {
         limited: true,
-        skillAnimation: true,
-        animationColor: 'metal',
         equipSkill: true,
         enable: 'phaseUse',
         usable: 1,
@@ -822,7 +816,7 @@ const skill = {
         audio: 'chongzhen', //QQQ
         charlotte: true,
         enable: ['chooseToUse', 'chooseToRespond'],
-        prompt: '将一张♥️️牌当做桃,♦️牌当做火杀,♣️牌当做闪,♠️牌当做无懈可击使用或打出',
+        prompt: '将一张♥️️️牌当做桃,♦️️牌当做火杀,♣️️牌当做闪,♠️️牌当做无懈可击使用或打出',
         logTarget(event, player) {
             if (event.card.name == 'sha') {
                 return event.targets[0];
@@ -1039,7 +1033,6 @@ const skill = {
                 usable: 1,
                 viewAs: {
                     name: 'sha',
-                    isCard: true,
                 },
                 forced: true,
                 filterCard() {
@@ -1064,7 +1057,6 @@ const skill = {
                 forced: true,
                 viewAs: {
                     name: 'shan',
-                    isCard: true,
                 },
                 mark: false,
                 filterCard() {
@@ -1760,8 +1752,6 @@ const skill = {
             global: 'dieBegin',
         },
         filter: (event, player) => !event.player.hasSkill('寒_1'),
-        skillAnimation: true,
-        animationColor: 'wood',
         forced: true,
         async content(event, trigger, player) {
             trigger.cancel();
@@ -2150,8 +2140,6 @@ const skill = {
         },
         forced: true,
         forceDie: true,
-        skillAnimation: true,
-        animationColor: 'gray',
         filter(event, player) {
             return event.source && event.source.isIn();
         },
@@ -2581,8 +2569,6 @@ const skill = {
         trigger: {
             global: 'roundStart',
         },
-        skillAnimation: true,
-        animationColor: 'wood',
         forced: true,
         async content(event, trigger, player) {
             while (player.next.isIn()) {
@@ -3034,8 +3020,6 @@ const skill = {
             player: 'phaseBefore',
         },
         limited: true,
-        skillAnimation: true,
-        animationColor: 'gray',
         check: (event, player) => player.getHandcardLimit() > player.countCards('h'),
         content() {
             'step 0';
@@ -3728,8 +3712,6 @@ const skill = {
         },
     },
     复活: {
-        skillAnimation: true,
-        animationColor: 'metal',
         trigger: {
             global: 'roundStart',
         },
@@ -4198,11 +4180,9 @@ const skill = {
             player.storage.镶星 += numberq1(trigger.num);
             if (player.storage.镶星 >= 3) {
                 player.storage.镶星 -= 3;
-                player.updateMarks();
                 player.popup('镶星');
                 game.log(player, '失去了一枚星');
             } else {
-                player.updateMarks();
                 event.finish();
             }
             ('step 1');
@@ -4322,7 +4302,6 @@ const skill = {
                     game.countPlayer(function (current) {
                         for (var i in current.storage) {
                             delete current.storage[i];
-                            current.updateMarks();
                         }
                     });
                 },
@@ -4411,8 +4390,6 @@ const skill = {
         },
     },
     问仇: {
-        skillAnimation: true,
-        animationColor: 'wood',
         juexingji: true,
         derivation: ['破釜', '决锋'],
         trigger: {
@@ -4460,7 +4437,6 @@ const skill = {
                     'step 0';
                     player
                         .chooseToUse((c) => player.filterCardx(c) && c.name == 'sha', `对${get.translation(trigger.player)}使用一张杀,使${trigger.card}无效`) //QQQ
-                        .set('logSkill', '破釜_1')
                         .set('complexSelect', true)
                         .set('filterTarget', function (card, player, target) {
                             if (target != _status.event.sourcex && !ui.selected.targets.includes(_status.event.sourcex)) {
@@ -5144,8 +5120,6 @@ const skill = {
         },
         forced: true,
         forcedie: true,
-        skillAnimation: true,
-        animationColor: 'gray',
         async content(event, trigger, player) {
             var Q;
             if (trigger.source) {
@@ -5870,92 +5844,55 @@ const skill = {
             },
         },
     },
+    // 影火
+    // 牌堆顶4张牌始终对你可见;你可如手牌般使用或打出
     影火: {
         trigger: {
-            player: ['chooseToRespondBegin', 'chooseToUseBegin'],
+            player: ['chooseToUseBegin', 'chooseToRespondBegin'],
         },
         forced: true,
-        silent: true,
-        hiddenCard(player, name) {
-            return Array.from(ui.cardPile.childNodes)
-                .slice(0, 4)
-                .some((i) => i.name == name);
-        },
+        firstDo: true,
+        popup: false,
         async content(event, trigger, player) {
-            //QQQ
-            var cardtop = Array.from(ui.cardPile.childNodes).slice(0, 4);
-            var Q = player.getCards('h').filter((Q) => Q.HQ('火'));
-            var i = 4;
-            while (i--) {
-                if (Q[i]) {
-                    Q[i].init(cardtop[i]);
+            const cards = Array.from(ui.cardPile.childNodes).slice(0, 4);
+            const cardx = player.getCards('s', (c) => c.gaintag?.includes('影火'));
+            cards.forEach((card1, index, arr) => {
+                let card2 = cardx[index];
+                if (!card2) {
+                    card2 = game.createCard(card1);
+                    card2._cardid = card1.cardid;
+                    player.directgains([card2], null, '影火');
                 }
-            }
+                if (card2._cardid != card1.cardid) {
+                    card2.init(card1);
+                    card2._cardid = card1.cardid;
+                }
+            });
         },
-        ai: {
-            respondShan: true,
-            respondSha: true,
-            save: true,
-        },
-        group: ['影火_1', '影火_2', '影火_3'],
+        group: ['影火_1'],
         subSkill: {
             1: {
                 trigger: {
-                    global: ['gameStart'],
+                    player: ['useCardBefore', 'respondBefore'],
                 },
                 forced: true,
+                popup: false,
+                firstDo: true,
+                filter(event, player) {
+                    return event.cards?.some((card) => card._cardid);
+                },
                 async content(event, trigger, player) {
-                    var i = 4;
-                    while (i--) {
-                        var card = game.createCard2('火', 'heart', 13);
-                        card.AQ('火');
-                        player.gain(card);
-                    }
-                },
-            },
-            2: {
-                trigger: {
-                    player: ['loseBefore'],
-                },
-                forced: true,
-                silent: true,
-                filter: (event, player) => event.cards && event.cards.some((Q) => Q.HQ('火')),
-                async content(event, trigger, player) {
-                    trigger.cards = trigger.cards.filter((i) => {
-                        if (i.HQ('火')) {
-                            for (var j of Array.from(ui.cardPile.childNodes).slice(0, 4)) {
-                                if (j.name == i.name && trigger.parent.name != 'useCard') {
-                                    ui.discardPile.appendChild(j);
-                                }
-                            }
-                            return false;
-                        }
-                        return true;
-                    });
-                },
-            },
-            3: {
-                trigger: {
-                    player: ['useCardBefore'],
-                },
-                forced: true,
-                silent: true,
-                filter: (event, player) => event.cards && event.cards.some((Q) => Q.HQ('火')),
-                async content(event, trigger, player) {
-                    for (const i of trigger.cards) {
-                        if (i.HQ('火')) {
-                            for (var j of Array.from(ui.cardPile.childNodes).slice(0, 4)) {
-                                if (j.name == i.name) {
-                                    trigger.cards.push(j);
-                                }
-                            }
+                    const cards = Array.from(ui.cardPile.childNodes).slice(0, 4);
+                    for (const card of trigger.cards) {
+                        const cardx = cards.find((q) => q.cardid == card._cardid);
+                        if (cardx) {
+                            cardx.delete();
                         }
                     }
-                    trigger.cards = trigger.cards.filter((i) => !i.HQ('火'));
                 },
             },
         },
-    }, //牌堆顶4张牌始终对你可见;你可如手牌般使用或打出
+    },
     武绝: {
         trigger: {
             player: ['phaseBegin'],
@@ -7076,8 +7013,8 @@ const skill = {
         filter: (event, player) => player.countCards('h') > player.maxcard,
         check: (event, player) => player.countCards('h') > 7 || player.hp < 2,
         async content(event, trigger, player) {
-            player.node.avatar.style.backgroundImage = `url('${lib.assetURL}extension/温柔一刀/image/beijing.jpg')`;
-            ui.background.style.backgroundImage = `url('${lib.assetURL}extension/温柔一刀/image/beijing.jpg')`;
+            player.node.avatar.style.backgroundImage = `url(extension/温柔一刀/image/beijing.jpg)`;
+            ui.background.style.backgroundImage = `url(extension/温柔一刀/image/beijing.jpg)`;
             player.awakenSkill('QQQ_tushe');
             player.maxcard = 0;
             var num = player.countCards('h');
@@ -7687,7 +7624,7 @@ const translate1 = {
     QQQ_taye: '踏野',
     QQQ_taye_info: '当你使用一张牌后,你可以从弃牌堆中选择至多[1]张与此牌类型相同的其他牌,将这些牌置于牌堆底,然后展示牌堆顶等量张牌.然后将与触发技能的牌类型不同的置入弃牌堆,其余牌由你依次分配给场上角色.<br>当有牌不因使用而进入弃牌堆时,你令下次发动此技能时,方括号内的数字+1,至多加至5',
     QQQ_yuepu: '乐谱',
-    QQQ_yuepu_info: '<span class="Qmenu">锁定技,</span>每回合限5次,每当你使用一张牌后你摸一张牌,根据该牌花色(♥️️1. 升号(♯):表示升高半音.♠️️2. 降号(♭):表示降低半音.♣️️3. 重升号(×):表示升高一个全音.♦️️4. 重降号(♭♭):表示降低一个全音.这是由两个降记号合在一起而成.🃏:5. 还原号(♮):表示将已升高或降低的音还原,也可以叫本位号.)记录在你的乐谱库中,每当你的乐谱库中符号不小于2时,你可选择移除3个乐谱符,令一名其他角色根据乐谱执行以下效果:升符:依次展示3张牌数递增的牌,否则失去一点体力降符:依次展示3张牌数递减的牌,否则弃置3张牌重升符:展示3张牌这些牌点数和大于其其余牌点数和,否则失去一点体力上限重降符:展示3张牌这些牌点数和小于其其余牌点数和,否则弃置全部装备牌和3张手牌还原符:依次展示3张牌点数相差不大于3的牌,否则令你获得其3张牌并令你获得一张灵芝,你于回合内使用前5张牌无次数距离限制弃牌阶段弃牌后,你可令一名其他角色弃置两张牌,若其中的一个花色牌大于2,你添加该花色对应的乐谱库至你的乐谱库中',
+    QQQ_yuepu_info: '<span class="Qmenu">锁定技,</span>每回合限5次,每当你使用一张牌后你摸一张牌,根据该牌花色(♥️️️1. 升号(♯):表示升高半音.♠️️️2. 降号(♭):表示降低半音.♣️️️3. 重升号(×):表示升高一个全音.♦️️️4. 重降号(♭♭):表示降低一个全音.这是由两个降记号合在一起而成.🃏:5. 还原号(♮):表示将已升高或降低的音还原,也可以叫本位号.)记录在你的乐谱库中,每当你的乐谱库中符号不小于2时,你可选择移除3个乐谱符,令一名其他角色根据乐谱执行以下效果:升符:依次展示3张牌数递增的牌,否则失去一点体力降符:依次展示3张牌数递减的牌,否则弃置3张牌重升符:展示3张牌这些牌点数和大于其其余牌点数和,否则失去一点体力上限重降符:展示3张牌这些牌点数和小于其其余牌点数和,否则弃置全部装备牌和3张手牌还原符:依次展示3张牌点数相差不大于3的牌,否则令你获得其3张牌并令你获得一张灵芝,你于回合内使用前5张牌无次数距离限制弃牌阶段弃牌后,你可令一名其他角色弃置两张牌,若其中的一个花色牌大于2,你添加该花色对应的乐谱库至你的乐谱库中',
     雄略: '雄略',
     雄略_info: '当你成为伤害牌的目标时,你可以弃置x张牌交换此牌使用者与目标',
     温柔一刀: `<a href='https://qm.qq.com/q/SsTlU9gc24'><span style='animation: fairy 20s infinite; -webkit-animation: fairy 20s infinite;'>温柔一刀</span></a>`,
@@ -7706,7 +7643,7 @@ const translate1 = {
     称象: '称象',
     称象_info: '回合限一次,将手牌与场上共计至多四张点数之和不小于牌堆顶四张牌的牌置于牌堆顶并获得牌堆顶四张牌',
     花招: '花招',
-    花招_info: '你可以重铸所有:1.♥️手牌,视为使用【桃】;2.♠️手牌,视为使用【杀】;3.♦️手牌,视为使用【酒】;4.♣️手牌,视为使用【闪】.选择完毕后令该项失效.当【花招】没有可用选项时,重置所有选项',
+    花招_info: '你可以重铸所有:1.♥️️手牌,视为使用【桃】;2.♠️️手牌,视为使用【杀】;3.♦️️手牌,视为使用【酒】;4.♣️️手牌,视为使用【闪】.选择完毕后令该项失效.当【花招】没有可用选项时,重置所有选项',
     求贤若渴: '求贤若渴',
     求贤若渴_info: '出牌阶段,你声明一个花色及类别,然后亮出牌堆顶3张牌,你获得与你声明相符的牌.若有两项皆满足的牌,你回复一点体力',
     魔翼: '魔翼',
@@ -7783,7 +7720,7 @@ const translate1 = {
     连营_info: '<span class="Qmenu">锁定技,</span>当手牌数小于6时,你将手牌补至6张',
     冲阵: '冲阵',
     冲阵_info:
-        '你可以将一张牌的花色按以下规则使用或打出:♥️️当【桃】;♦️当火【杀】;♣️当【闪】;♠️当【无懈可击】.\
+        '你可以将一张牌的花色按以下规则使用或打出:♥️️️当【桃】;♦️️当火【杀】;♣️️当【闪】;♠️️当【无懈可击】.\
 当你以此法使用或打出【杀】或【闪】时,你可以获得对方一张牌;当你以此法使用【桃】时,你可以获得一名其他角色的一张牌;当你以此法使用【无懈可击】时,你可以获得你响应普通锦囊牌使用者的一张牌',
     持纲4: '持纲4',
     持纲4_info: '<span class="Qmenu">锁定技,</span>结束改出牌',
@@ -7838,11 +7775,11 @@ const translate1 = {
     寄生_1: '寄生_1',
     寄生_1_info: '<span class="Qmenu">锁定技,</span>你出杀无距离次数限制且免疫死亡',
     奇械: '奇械',
-    奇械_info: '你可以将一张手牌当做装备牌使用: ♥️,加一马;♦️,减一马;♠️,八卦阵;♣️,连弩',
+    奇械_info: '你可以将一张手牌当做装备牌使用: ♥️️,加一马;♦️️,减一马;♠️️,八卦阵;♣️️,连弩',
     天谴: '天谴',
     天谴_info: '<span class="Qmenu">锁定技,</span>你已被天谴',
     战陨: '战陨',
-    战陨_info: '<span class="Qmenu">锁定技,</span>杀死你的角色:废除装备区,翻面并横置,体力值修改为1,弃置所有牌,立刻结束出牌阶段(不是出牌阶段则结束当前回合),不能对自己使用牌,判定牌永远视为♠️五,手牌上限为0',
+    战陨_info: '<span class="Qmenu">锁定技,</span>杀死你的角色:废除装备区,翻面并横置,体力值修改为1,弃置所有牌,立刻结束出牌阶段(不是出牌阶段则结束当前回合),不能对自己使用牌,判定牌永远视为♠️️五,手牌上限为0',
     QQQ_人皇幡: '人皇幡',
     QQQ_人皇幡_info: '<span class="Qmenu">锁定技,</span>使用有目标的牌时,若此牌是装备牌或延时锦囊则你摸一张牌.否则此牌无距离次数限制,且可以增加或减少一个目标',
     武德: '武德',
@@ -7938,7 +7875,7 @@ const translate1 = {
     锥锋: '锥锋',
     锥锋_info: '出牌阶段你可以视为使用决斗',
     天辩: '天辩',
-    天辩_info: '<span class="Qmenu">锁定技,</span>当你拼点时,改为用牌堆顶第一张牌,你的♥️拼点牌视为K,你令拼点目标改为随机使用手牌,你拼点输获得你拼点的牌,拼点赢获得对方拼点的牌',
+    天辩_info: '<span class="Qmenu">锁定技,</span>当你拼点时,改为用牌堆顶第一张牌,你的♥️️拼点牌视为K,你令拼点目标改为随机使用手牌,你拼点输获得你拼点的牌,拼点赢获得对方拼点的牌',
     麻将: '麻将',
     麻将_info:
         '<span class="Qmenu">锁定技,</span>回合结束时,你将麻将牌补至4,可以将一张手牌与一张麻将牌交换.选择一名敌方角色并对其造成0点伤害,麻将牌每满足下列一项,伤害加一:3种花色:4种花色:2张同点数牌:3张同点数牌:4张同点数牌.\
@@ -7987,7 +7924,7 @@ const translate1 = {
     连锁_info: '<span class="Qmenu">锁定技,</span>你始终处于横置状态,其他角色使用牌指定你为目标时,横置其.当你受到无属性伤害,改为受到两倍的属性伤害;受到属性伤害后,回复一点体力',
     用: '用',
     掠夺: '掠夺',
-    掠夺_info: '<span class="Qmenu">锁定技,</span>每轮开始时你获得其他所有角色的♦️牌',
+    掠夺_info: '<span class="Qmenu">锁定技,</span>每轮开始时你获得其他所有角色的♦️️牌',
     乱世: '乱世',
     乱世_info: '<span class="Qmenu">锁定技,</span>任意角色使用杀后,你令所有角色成为目标',
     全判定: '全判定',

@@ -39,6 +39,7 @@ disableSkill/unmarkSkill/removeSkill/
 */
 //-------------------------------------------------------备忘录1
 /*
+Q群
 //result的target和player里面,参数直接用player即可,用status.event.player,会因为filter调用get.effect时,当前事件为arrangetrigger,没有player,报错
 markcount(里面unmark就会报错
 花色
@@ -78,6 +79,7 @@ for (var i =
 [,//, ,//,]//,)
 cards.splice//i.discard()
 //-------------------------------------------------------正则替换
+'die:(?!ext\b)
 function \(.*\) \{\n\s*\}//function \(.*\) \{ \}//= () => { }
 '[^)']+logSkill[^']*'//'[^)']*logSkill[^']+'//'[^)']+logSkill[^']+'//popup: false,
 \.filterCard\(\{([^),]*)\)
@@ -106,6 +108,28 @@ countCards\('(?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)')[^'"]*'\)
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
+updateMark
+syncStorage
+lib.config.characters.remove
+lib.config.characters.push
+lib.config.all.characters.remove
+lib.config.all.characters.push
+game.saveConfig('characters', 
+lib.config.cards.remove
+lib.config.cards.push
+lib.config.all.cards.remove
+lib.config.all.cards.push
+game.saveConfig('cards', 
+addCharacterPack
+die_audio
+url("
+url('
+lib.assetURL
+src=extension
+Object.keys(extensionInfo)
+basic.extensionDirectoryPath
+basic.resolve
+basic.js
 hasSkill('')
 ai.shown
 player.addExpose
@@ -484,10 +508,10 @@ const precontent = async function () {
             }
         });
         if (lib.config.gentle_BGM) {
-            ui.backgroundMusic.src = `${lib.assetURL}extension/温柔一刀/BGM/${lib.config.gentle_BGM}`;
+            ui.backgroundMusic.src = `extension/温柔一刀/BGM/${lib.config.gentle_BGM}`;
         }
         else {
-            ui.backgroundMusic.src = `${lib.assetURL}extension/温柔一刀/BGM/望乡曲.mp3`;
+            ui.backgroundMusic.src = `extension/温柔一刀/BGM/望乡曲.mp3`;
         }
         ui.backgroundMusic.loop = true;
         ui.create.system(
@@ -496,15 +520,15 @@ const precontent = async function () {
                 const name = game.BGM.randomGet();
                 if (name) {
                     game.saveConfig('gentle_BGM', name);
-                    ui.backgroundMusic.src = `${lib.assetURL}extension/温柔一刀/BGM/${name}`;
+                    ui.backgroundMusic.src = `extension/温柔一刀/BGM/${name}`;
                 } else {
-                    ui.backgroundMusic.src = `${lib.assetURL}extension/温柔一刀/BGM/望乡曲.mp3`;
+                    ui.backgroundMusic.src = `extension/温柔一刀/BGM/望乡曲.mp3`;
                     Reflect.defineProperty(ui.backgroundMusic, 'src', {
                         get() {
-                            return `${lib.assetURL}extension/温柔一刀/BGM/望乡曲.mp3`;
+                            return `extension/温柔一刀/BGM/望乡曲.mp3`;
                         },
                         set(v) {
-                            v = `${lib.assetURL}extension/温柔一刀/BGM/望乡曲.mp3`;
+                            v = `extension/温柔一刀/BGM/望乡曲.mp3`;
                         },
                     });
                 }
@@ -968,7 +992,7 @@ const precontent = async function () {
     const gamex = function () {
         game.VIDEO = async function (name) {
             return new Promise((resolve) => {
-                const url = lib.assetURL + `extension/温柔一刀/mp4/${name}.mp4`;
+                const url = `extension/温柔一刀/mp4/${name}.mp4`;
                 const video = window.document.createElement('video');
                 video.src = url;
                 video.style.zIndex = 999;
@@ -1561,10 +1585,10 @@ const precontent = async function () {
                         cardpileaddname.style.marginLeft = '-1px';
                         var cardpileaddsuit = ui.create.selectlist(
                             [
-                                ['heart', '♥️'],
-                                ['diamond', '♦️'],
-                                ['club', '♣️'],
-                                ['spade', '♠️'],
+                                ['heart', '♥️️'],
+                                ['diamond', '♦️️'],
+                                ['club', '♣️️'],
+                                ['spade', '♠️️'],
                             ],
                             null,
                             cardpileadd
@@ -2094,7 +2118,6 @@ const precontent = async function () {
                                 if (get.attitude(player, trigger.source) < 0) return 8 - get.value(card);
                                 return 0;
                             })
-                            .set('logSkill', ['boss_zhangwu', trigger.source]);
                         ('step 1');
                         if (result.bool) {
                             var num = result.cards.length;
@@ -2205,14 +2228,12 @@ const precontent = async function () {
                             }
                             player.storage.xiangxing--;
                             player.storage.xiangxing_count = 0;
-                            player.updateMarks();
                             if (!player.storage.xiangxing) {
                                 player.awakenSkill('xiangxing');
                             }
                             player.popup('xiangxing');
                             game.log(player, '失去了一枚星');
                         } else {
-                            player.updateMarks();
                             event.finish();
                         }
                         ('step 1');
@@ -2573,7 +2594,6 @@ const precontent = async function () {
             if (QQQ.config.醉酒模式 && source && source.storage?.jiu && num > source.storage.jiu) {
                 delete source.storage.jiu;
                 source.unmarkSkill('jiu');
-                source.updateMarks();
                 if (source.node.jiu) {
                     source.node.jiu.delete();
                     source.node.jiu2.delete();
@@ -3548,9 +3568,9 @@ const precontent = async function () {
         } //添加boss模式专属卡牌技能
         //—————————————————————————————————————————————————————————————————————————————CSS
         const css = function () {
-            lib.init.css(lib.assetURL + 'extension/温柔一刀/QQQ.css');
+            lib.init.css('extension/温柔一刀/QQQ.css');
             if (QQQ.config.界面修改) {
-                lib.init.css(lib.assetURL + 'extension/温柔一刀/QQ.css');
+                lib.init.css('extension/温柔一刀/QQ.css');
                 if (!(_status.maximumNumberOfPlayers > 32)) {
                     _status.maximumNumberOfPlayers = 32;
                 }
@@ -4613,8 +4633,8 @@ const precontent = async function () {
                                             game.playAudio('../extension/温柔一刀/audio/我必须向你道谢.mp3');
                                         }
                                         player.$skill('使命成功');
-                                        player.node.avatar.style.backgroundImage = `url('${lib.assetURL}extension/温柔一刀/image/Melina_huozhong.jpg')`;
-                                        ui.background.style.backgroundImage = `url('${lib.assetURL}extension/温柔一刀/image/Melina_beijing.jpg')`;
+                                        player.node.avatar.style.backgroundImage = `url(extension/温柔一刀/image/Melina_huozhong.jpg)`;
+                                        ui.background.style.backgroundImage = `url(extension/温柔一刀/image/Melina_beijing.jpg)`;
                                         player.awakenSkill('QQQ_huozhong');
                                         player.addSkill('QQQ_fenjin');
                                     }
@@ -4684,7 +4704,7 @@ const precontent = async function () {
                                     game.playAudio('../extension/温柔一刀/audio/不要否认生命的存在.mp3');
                                 }
                                 player.$skill('使命失败');
-                                player.node.avatar.style.backgroundImage = `url('${lib.assetURL}extension/温柔一刀/image/Melina_dianhuo.jpg')`;
+                                player.node.avatar.style.backgroundImage = `url(extension/温柔一刀/image/Melina_dianhuo.jpg)`;
                                 document.body.BG('癫火之王');
                                 trigger.cancel();
                                 player.awakenSkill('QQQ_huozhong');
@@ -4697,8 +4717,6 @@ const precontent = async function () {
                 //限定技,你令所有累计受到伤害大于等于其原始体力的角色死亡,然后你死亡
                 QQQ_fenjin: {
                     limited: true,
-                    skillAnimation: true,
-                    animationColor: 'water',
                     trigger: {
                         global: ['phaseBegin'],
                     },
@@ -5645,7 +5663,7 @@ const precontent = async function () {
                         }
                     },
                 },
-                //幽影流火:锁定技,当全场失去♦️牌后,你将此牌当作火杀对随机敌方角色使用
+                //幽影流火:锁定技,当全场失去♦️️牌后,你将此牌当作火杀对随机敌方角色使用
                 QQQ_liuhuo: {
                     trigger: {
                         global: ['loseAfter'],
@@ -6258,7 +6276,7 @@ const precontent = async function () {
                         div.style.left = '0%';
                         div.style.width = '30%';
                         div.style.height = '10%';
-                        div.style.backgroundImage = `url('${lib.assetURL}extension/温柔一刀/image/beijing1.jpg')`;
+                        div.style.backgroundImage = `url(extension/温柔一刀/image/beijing1.jpg)`;
                         div.style.backgroundSize = 'cover';
                         div.style.backgroundPosition = 'center';
                         div.style.zIndex = 1;
@@ -7440,7 +7458,7 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————星宿仙尊————明皓、毓秀、丰雅
-                //钟灵毓秀:锁定技,你将全场失去的♥️牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌
+                //钟灵毓秀:锁定技,你将全场失去的♥️️牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌
                 QQQ_yuxiu: {
                     //他既然夸我钟灵毓秀,那我就给你起名毓秀。若有来生,就请你替我好好活着,不要管什么人族未来,不要想什么苍生安危,就为自己活一次,为自己自私一次,痛快地去爱,淋漓地去哭！
                     trigger: {
@@ -7992,7 +8010,7 @@ const precontent = async function () {
                                 lib.translate[`${name}_info`] = lib.translate[`${skill}_info`];
                                 card.init([card.suit, card.number, name, card.nature]);
                                 card.classList.add('fullskin');
-                                card.node.image.style.backgroundImage = `url('${lib.assetURL}${src}')`;
+                                card.node.image.style.backgroundImage = `url(${src})`;
                                 await player.equip(card);
                             }
                         }
@@ -8267,22 +8285,17 @@ const precontent = async function () {
                 //————————————————————————————————————————————荷莱·露 1/1
                 // 蛮荒
                 // 你造成的伤害进行x次方(底数为2),你的负向体力变化开x次方
-
                 // 浴血狂战
                 // 你的后x个技能失效,当你进入濒死时,将x永久加一,将体力上限翻倍并回满体力
                 // 什么花里胡哨的机制?都不需要,看俺的数值
-
                 // 撼地
                 // 你可以弃置任意张装备牌,令所有其他角色选择弃置与这些牌子类型均不同的装备牌或翻面
-
                 // 繁文缛节
                 // 每轮开始时,你随机使用两张装备牌
                 // 你每轮至多可使用9-X张牌(X为当前技能数)
                 // 摸牌阶段,你额外摸x张牌,手牌上限加x
-
                 // 王征
                 // 出牌阶段,你可以消耗所有本轮剩余可使用牌次数,视为使用等量次【南蛮入侵】
-
                 //————————————————————————————————————————————安帕赫 3/3
                 // 王朝镰技
                 // 本局游戏限0次,你可以用【杀】抵消其他角色对你使用的牌,且结算后你可以再对使用者使用此【杀】,此【杀】无视防具.
@@ -8290,7 +8303,6 @@ const precontent = async function () {
                 // 锁定技,你每轮首次参与伤害结算后,令<王朝镰技>本局可发动次数+1;每轮第三次参与伤害结算后,摸你本局受伤次数张牌.
                 // 纯血
                 // 宗族技,同族角色造成伤害后,你可以弃置一张牌,令其也对你造成等量伤害,然后你回复等量体力.
-
                 //————————————————————————————————————————————老翁 3/3
                 // 切腹
                 // 锁定技,你是你使用伤害牌的合法目标,且此牌不计入次数;当你受到致命伤害时,你改为对自己造成1点伤害.
@@ -8300,7 +8312,6 @@ const precontent = async function () {
                 // 阴:当你造成伤害后,你本回合下次使用牌可额外指定一个目标.
                 // 纯血
                 // 宗族技,同族角色造成伤害后,你可以弃置一张牌,令其也对你造成等量伤害,然后你回复等量体力.
-
                 /*
                 仙尊悔而我不悔
                 未来身                         
@@ -8369,7 +8380,7 @@ const precontent = async function () {
                 //————————————————————————————————————————————星宿仙尊————明皓、毓秀、丰雅
                 QQQ_xingxiu: '星宿仙尊',
                 QQQ_yuxiu: '钟灵毓秀',
-                QQQ_yuxiu_info: '<span class="Qmenu">锁定技,</span>你将全场失去的♥️牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌',
+                QQQ_yuxiu_info: '<span class="Qmenu">锁定技,</span>你将全场失去的♥️️牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌',
                 QQQ_fengrufeitun: '丰乳肥臀',
                 QQQ_fengrufeitun_info: '锁定技,每阶段结束时,若此阶段内场上有其他角色累计获得或失去至少两张牌,你令其将这些牌当作顺手牵羊对你使用',
                 //————————————————————————————————————————————玛莉卡&拉达冈————我的半身,击碎彼此吧!
@@ -8472,7 +8483,7 @@ const precontent = async function () {
                 QQQ_ezhishe: '恶之蛇',
                 QQQ_ezhishe_info: '<span class="Qmenu">锁定技,</span>当你受到伤害后,你获得一个觉醒技或限定技并隐匿(登场后,强制发动该技能)',
                 QQQ_liuhuo: '幽影流火',
-                QQQ_liuhuo_info: '<span class="Qmenu">锁定技,</span>当全场失去♦️牌后,你将此牌当作火杀对随机敌方角色使用',
+                QQQ_liuhuo_info: '<span class="Qmenu">锁定技,</span>当全场失去♦️️牌后,你将此牌当作火杀对随机敌方角色使用',
                 QQQ_chuanci: '穿刺者之矛',
                 QQQ_chuanci_info: '<span class="Qmenu">锁定技,</span>其他角色出牌阶段开始时须将一张牌置于你的武将牌上,称为<刺>.若你的<刺>包含三种类型/四种花色/五种牌名,你获得所有<刺>,对其造成等量伤害',
                 //————————————————————————————————————————————董卓
@@ -8620,12 +8631,8 @@ const precontent = async function () {
                 }
             }
         } //QQQ
-        if (!lib.config.all.characters.includes('一怒拔剑')) {
-            lib.config.all.characters.push('一怒拔剑');
-        }
-        if (!lib.config.characters.includes('一怒拔剑')) {
-            lib.config.characters.push('一怒拔剑');
-        }
+        lib.config.all.characters.add('一怒拔剑');
+        lib.config.characters.add('一怒拔剑');
         lib.translate['一怒拔剑_character_config'] = `<span class="Qmenu">一怒拔剑</span>`;
         return yinu;
     });
@@ -8693,7 +8700,6 @@ const sha = function () {
 };
 sha();
 <br><br><span style="color: gold">潜水的火修复版<br>温柔一刀扩展群771901025</span><br><br>
-addCharacterPack
 const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.json`);
         package: {
                 for (const i in QQQ.character) {
@@ -8715,12 +8721,8 @@ const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.
                     info[4].add(`ext:QQQQQQ/image/${i}.jpg`);
                     info[4].push(`die:ext:QQQQQQ/audio/${i}.mp3`);
                 }
-                if (!lib.config.all.characters.includes('QQQQQQ')) {
-                    lib.config.all.characters.push('QQQQQQ');
-                }
-                if (!lib.config.characters.includes('QQQQQQ')) {
-                    lib.config.characters.push('QQQQQQ');
-                }
+                lib.config.all.characters.add('QQQQQQ');
+                lib.config.characters.add('QQQQQQ');
                 lib.translate['QQQQQQ_character_config'] = `QQQQQQ`;
                 return QQQ;
             });
@@ -8750,7 +8752,6 @@ info.json\license
                 lib.translate.QQQQQQ_card_config = 'QQQQQQ';
                 return QQQ;
             });
-
             const card = {
             };
             if (!lib.number) {
