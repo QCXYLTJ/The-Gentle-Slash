@@ -116,7 +116,7 @@ const skill = {
     乌铁锁链: {
         equipSkill: true,
         trigger: {
-            player: 'useCardToPlayered',
+            player: ['useCardToPlayer'],
         },
         forced: true,
         filter(event, player) {
@@ -162,7 +162,7 @@ const skill = {
                         _status.东皇钟 = get.translation(current) + '被镇压技能:' + get.translation(current.storage.东皇钟);
                     }
                 });
-                _status.东皇钟 += `<br><li><span class='texiaotext' style='color:#FF0000'>已鸣钟${game.me.storage.鸣钟}次</span>`;
+                _status.东皇钟 += `<br><li><span class='texiaotext' style='color: #FF0000'>已鸣钟${game.me.storage.鸣钟}次</span>`;
                 return _status.东皇钟;
             },
         },
@@ -295,7 +295,7 @@ const skill = {
             content(storage, player) {
                 var str = '当前伤害';
                 for (var i in player.storage.炼妖壶) {
-                    str += `<br><li><span class='texiaotext' style='color:#FF0000'>${get.translation(i) + player.storage.炼妖壶[i]}点</span>`;
+                    str += `<br><li><span class='texiaotext' style='color: #FF0000'>${get.translation(i) + player.storage.炼妖壶[i]}点</span>`;
                 }
                 str += '<br><li>当前最高伤害:' + game.炼妖;
                 return str;
@@ -468,7 +468,7 @@ const skill = {
     盘古斧: {
         usable: 3,
         trigger: {
-            player: 'useCardToPlayered',
+            player: ['useCardToPlayer'],
         },
         filter(event, player) {
             return event.target.countCards('hej');
@@ -515,15 +515,11 @@ const skill = {
         },
     },
     女娲石: {
-        limited: true,
-        trigger: {
-            player: 'die',
-        },
-        forceDie: true,
-        forced: true,
+        equipSkill: true,
+        enable: 'phaseUse',
         filter(event, player) {
             let num = 0;
-            for (var j of player.actionHistory) {
+            for (const j of player.actionHistory) {
                 if (j.useSkill.length) {
                     for (const evt of j.useSkill) {
                         if (evt.skill == '女娲石') {
@@ -535,68 +531,21 @@ const skill = {
             return num < Math.ceil(game.phaseNumber / 5) && game.dead.length;
         },
         async content(event, trigger, player) {
-            //QQQ
             const {
-                result: { targets },
-            } = await player
-                .chooseTarget(true)
-                .set('ai', function (target) {
-                    return 1;
-                })
-                .set('deadTarget', true)
-                .set('filterTarget', function (card, player, target) {
-                    return target.isDead();
-                });
-            if (targets && targets[0]) {
-                player.line(targets[0]);
-                targets[0].qrevive();
-                player.guhuo(targets[0]);
+                result: { links },
+            } = await player.chooseButton(['将一名已死亡的角色复活为随从', game.dead])
+                .set('ai', (button) => 20 - get.attitude(player, button.link));
+            if (links && links[0]) {
+                player.line(links[0]);
+                links[0].qrevive();
+                player.guhuo(links[0]);
             }
         },
-        group: ['女娲石_1'],
-        subSkill: {
-            1: {
-                equipSkill: true,
-                enable: 'phaseUse',
-                filter(event, player) {
-                    let num = 0;
-                    for (const j of player.actionHistory) {
-                        if (j.useSkill.length) {
-                            for (const evt of j.useSkill) {
-                                if (evt.skill == '女娲石_1') {
-                                    num++;
-                                }
-                            }
-                        }
-                    }
-                    return num < Math.ceil(game.phaseNumber / 5) && game.dead.length;
-                },
-                async content(event, trigger, player) {
-                    //QQQ
-                    const {
-                        result: { targets },
-                    } = await player
-                        .chooseTarget(true)
-                        .set('ai', function (target) {
-                            return 1;
-                        })
-                        .set('deadTarget', true)
-                        .set('filterTarget', function (card, player, target) {
-                            return target.isDead();
-                        });
-                    if (targets && targets[0]) {
-                        player.line(targets[0]);
-                        targets[0].qrevive();
-                        player.guhuo(targets[0]);
-                    }
-                },
-                ai: {
-                    result: {
-                        player: 1,
-                    },
-                    order: 99,
-                },
+        ai: {
+            result: {
+                player: 1,
             },
+            order: 99,
         },
     },
     轩辕剑: {
@@ -690,7 +639,7 @@ const skill = {
                 check(card) {
                     return 15 - get.value(card);
                 },
-                async percontent(event, trigger, player) {
+                async precontent(event, trigger, player) {
                     _status.jieduan.神农鼎 = true;
                 },
                 ai() {
@@ -931,19 +880,6 @@ const skill = {
             },
         },
     },
-    持纲4: {
-        audio: 'dili_chigang',
-        trigger: {
-            player: 'phaseJieshuBegin',
-        },
-        forced: true,
-        content() {
-            trigger.cancel();
-            var next = player.phaseUse();
-            event.next.remove(next);
-            trigger.parent.next.push(next);
-        },
-    },
     擅专: {
         trigger: {
             global: 'damageEnd',
@@ -1126,7 +1062,7 @@ const skill = {
         },
         forced: true,
         content() {
-            player.popup(`<span class='bluetext' style='color:    #B3EE3A'>免伤</span>`);
+            player.popup(`<span class='bluetext' style='color: #B3EE3A'>免伤</span>`);
             trigger.cancel();
             if (trigger.source && trigger.source != player) {
                 trigger.source.loseMaxHp(trigger.num);
@@ -1183,7 +1119,7 @@ const skill = {
             },
         },
         trigger: {
-            player: 'useCardToPlayered',
+            player: ['useCardToPlayer'],
         },
         filter(event, player) {
             return event.card.name == 'sha';
@@ -1434,19 +1370,6 @@ const skill = {
             trigger.next.push(next);
         },
     },
-    持纲3: {
-        audio: 'dili_chigang',
-        trigger: {
-            player: 'phaseDiscardBefore',
-        },
-        forced: true,
-        content() {
-            trigger.cancel();
-            var next = player.phaseUse();
-            event.next.remove(next);
-            trigger.parent.next.push(next);
-        },
-    },
     持纲2: {
         audio: 'dili_chigang',
         trigger: {
@@ -1460,36 +1383,30 @@ const skill = {
             trigger.parent.next.push(next);
         },
     },
-    发装备: {
+    持纲3: {
+        audio: 'dili_chigang',
         trigger: {
-            global: 'gameDrawBefore',
+            player: 'phaseDiscardBefore',
         },
         forced: true,
         content() {
-            'step 0';
-            event.num = 0;
-            ('step 1');
-            event.targets = game.players.sortBySeat(player.next);
-            var target = event.targets[num];
-            if (target.isIn()) {
-                var card = get.cardPile2(function (card) {
-                    if (get.cardtag(card, 'gifts')) {
-                        return false;
-                    }
-                    var type = get.subtype(card);
-                    if (type != 'equip1' && type != 'equip2' && type != 'equip6') {
-                        return false;
-                    }
-                    return target.canUse(card, target, true, true);
-                });
-                if (card) {
-                    target.chooseUseTarget(card, true, false, 'nodistance');
-                }
-            }
-            event.num++;
-            if (event.num < targets.length) {
-                event.redo();
-            }
+            trigger.cancel();
+            var next = player.phaseUse();
+            event.next.remove(next);
+            trigger.parent.next.push(next);
+        },
+    },
+    持纲4: {
+        audio: 'dili_chigang',
+        trigger: {
+            player: 'phaseJieshuBegin',
+        },
+        forced: true,
+        content() {
+            trigger.cancel();
+            var next = player.phaseUse();
+            event.next.remove(next);
+            trigger.parent.next.push(next);
         },
     },
     慈孝: {
@@ -1634,7 +1551,7 @@ const skill = {
     五行鹤翎扇: {
         equipSkill: true,
         trigger: {
-            player: 'useCardToPlayered',
+            player: ['useCardToPlayer'],
         },
         filter(event, player) {
             return event.card.name == 'sha';
@@ -1705,7 +1622,7 @@ const skill = {
     青锋: {
         equipSkill: true,
         trigger: {
-            player: 'useCardToPlayered',
+            player: ['useCardToPlayer'],
         },
         logTarget: 'target',
         forced: true,
@@ -1755,20 +1672,7 @@ const skill = {
         forced: true,
         async content(event, trigger, player) {
             trigger.cancel();
-            trigger.player.side = player.side;
-            trigger.player.identity = player.identity;
-            trigger.player.setIdentity(player.identity, 'blue');
-            trigger.player.boss = player;
-            trigger.player.ai.modAttitudeFrom = function (from, to, att) {
-                //这里from是本人
-                if (to == from.boss) return 99;
-                return att;
-            };
-            trigger.player.ai.modAttitudeTo = function (from, to, att) {
-                //这里to是本人
-                if (to.boss == from) return 99;
-                return att;
-            };
+            player.guhuo(trigger.player);
             trigger.player.qreinit('QQQ_晦暝');
         },
     },
@@ -1796,14 +1700,15 @@ const skill = {
             });
             player.clearMark('暝');
             player.removeSkill('QQQ_tonghua');
-            game.log(player, '结束了', _status.currentPhase, '的回合');
-            var E = _status.event.getParent('phaseUse');
-            var T = _status.event.getParent('phase');
-            if (E && E.name == 'phaseUse') {
-                E.skipped = true;
-            } else if (T && T.name == 'phase') {
-                T.finish();
+            const evt = _status.event.getParent('phaseUse', true);
+            if (evt) {
+                evt.skipped = true;
             }
+            const evt1 = _status.event.getParent('phase', true);
+            if (evt1) {
+                evt1.finish();
+            }
+            game.log(player, '结束了', _status.currentPhase, '的回合');
             player.when({ global: 'phaseAfter' }).then(() => {
                 player.phaseUse();
             });
@@ -1907,7 +1812,7 @@ const skill = {
         subSkill: {
             1: {
                 trigger: {
-                    player: 'useCardToPlayered',
+                    player: ['useCardToPlayer'],
                 },
                 forced: true,
                 audio: 'ext:温柔一刀/audio:3',
@@ -1939,123 +1844,49 @@ const skill = {
             },
         },
     },
+    // 你可以将一张牌当做装备牌使用:♥️️加一马;♦️️减一马;♠️️八卦阵;♣️️连弩;🃏木牛流马
+    // 你手牌上限加装备区花色数
     奇械: {
+        init(player) {
+            player.storage.奇械 = {
+                heart: 'dilu',
+                diamond: 'chitu',
+                spade: 'bagua',
+                club: 'zhuge',
+                none: 'muniu',
+            };
+        },
         mod: {
             maxHandcard(player, num) {
-                var suits = [];
-                var es = player.getCards('e');
-                for (var i = 0; i < es.length; i++) {
-                    suits.add(es[i].suit);
-                }
+                const suits = player.getCards('e').map((c) => c.suit).unique();
                 return num + suits.length;
             },
         },
         enable: 'phaseUse',
-        filterCard: {
-            suit: 'spade',
+        filterCard: true,
+        selectCard: 1,
+        position: 'he',
+        check(card) {
+            const player = _status.event.player;
+            return !player.getEquip(get.subtype(player.storage.奇械[card.suit]));
         },
-        position: 'h',
-        prompt: '八卦',
         filter(event, player) {
-            return player.countCards('h', { suit: 'spade' });
+            return player.countCards('he');
         },
-        content() {
-            player.equip(game.createCard('bagua'));
+        async content(event, trigger, player) {
+            const card = event.cards[0];
+            const name = player.storage.奇械[card.suit];
+            await card.init([card.suit, card.number, name, card.nature]);
+            if (card.cardSymbol) {
+                delete card.cardSymbol;
+            }
+            player.equip(card);
         },
         ai: {
-            basic: {
-                order: 1,
-            },
+            order: 1,
             result: {
                 player(player) {
-                    if (!player.isEmpty(2)) {
-                        return -1;
-                    }
-                    return 1;
-                },
-            },
-        },
-        group: ['奇械_1', '奇械_2', '奇械_3'],
-        subSkill: {
-            1: {
-                enable: 'phaseUse',
-                filterCard: {
-                    suit: 'club',
-                },
-                position: 'h',
-                prompt: '诸葛',
-                filter(event, player) {
-                    return player.countCards('h', { suit: 'club' });
-                },
-                content() {
-                    player.equip(game.createCard('zhuge'));
-                },
-                ai: {
-                    basic: {
-                        order: 1,
-                    },
-                    result: {
-                        player(player) {
-                            if (!player.isEmpty(1)) {
-                                return -1;
-                            }
-                            return 1;
-                        },
-                    },
-                },
-            },
-            2: {
-                enable: 'phaseUse',
-                filterCard: {
-                    suit: 'diamond',
-                },
-                position: 'h',
-                prompt: '减一马',
-                filter(event, player) {
-                    return player.countCards('h', { suit: 'diamond' });
-                },
-                content() {
-                    player.equip(game.createCard('chitu'));
-                },
-                ai: {
-                    basic: {
-                        order: 1,
-                    },
-                    result: {
-                        player(player) {
-                            if (!player.isEmpty(4)) {
-                                return -1;
-                            }
-                            return 1;
-                        },
-                    },
-                },
-            },
-            3: {
-                enable: 'phaseUse',
-                filterCard: {
-                    suit: 'heart',
-                },
-                position: 'h',
-                prompt: '加一马',
-                filter(event, player) {
-                    return player.countCards('h', { suit: 'heart' });
-                },
-                content() {
-                    player.equip(game.createCard('dilu'));
-                },
-                ai: {
-                    basic: {
-                        order: 1,
-                    },
-                    result: {
-                        player(player) {
-                            if (!player.isEmpty(3)) {
-                                return -1;
-                            }
-                            return 1;
-                        },
-                    },
+                    return player.countCards('he', (c) => !player.getEquip(get.subtype(player.storage.奇械[c.suit])));
                 },
             },
         },
@@ -2080,20 +1911,21 @@ const skill = {
             while (num-- > 1) {
                 player.disableEquip(`equip${num}`);
             }
-            game.log(player, '结束了', _status.currentPhase, '的回合');
-            var E = _status.event.getParent('phaseUse');
-            var T = _status.event.getParent('phase');
-            if (E && E.name == 'phaseUse') {
-                E.skipped = true;
-            } else if (T && T.name == 'phase') {
-                T.finish();
+            const evt = _status.event.getParent('phaseUse', true);
+            if (evt) {
+                evt.skipped = true;
             }
+            const evt1 = _status.event.getParent('phase', true);
+            if (evt1) {
+                evt1.finish();
+            }
+            game.log(player, '结束了', _status.currentPhase, '的回合');
         },
         trigger: {
             player: 'judge',
         },
         forced: true,
-        content() {
+        async content(event, trigger, player) {
             var card = game.createCard('shandian', 'spade', 5);
             trigger.cancel();
             trigger.result = {
@@ -2128,7 +1960,7 @@ const skill = {
                 filter(event, player) {
                     return event.cards.some((card) => player.getCards('j').includes(card));
                 },
-                content() {
+                async content(event, trigger, player) {
                     trigger.cards.removeArray(player.getCards('j'));
                 },
             },
@@ -2143,7 +1975,7 @@ const skill = {
         filter(event, player) {
             return event.source && event.source.isIn();
         },
-        content() {
+        async content(event, trigger, player) {
             trigger.source.changeHp(1 - trigger.source.hp);
             trigger.source.turnOver(true);
             trigger.source.link(true);
@@ -2153,14 +1985,15 @@ const skill = {
                 trigger.source.disableEquip(`equip${num}`);
             }
             trigger.source.addSkill('天谴');
-            var E = _status.event.getParent('phaseUse');
-            var T = _status.event.getParent('phase');
-            game.log(player, '结束了', _status.currentPhase, '的回合');
-            if (E && E.name == 'phaseUse') {
-                E.skipped = true;
-            } else if (T && T.name == 'phase') {
-                T.finish();
+            const evt = _status.event.getParent('phaseUse', true);
+            if (evt) {
+                evt.skipped = true;
             }
+            const evt1 = _status.event.getParent('phase', true);
+            if (evt1) {
+                evt1.finish();
+            }
+            game.log(player, '结束了', _status.currentPhase, '的回合');
         },
         logTarget: 'source',
         ai: {
@@ -2179,11 +2012,11 @@ const skill = {
             },
         },
         trigger: {
-            player: 'useCard2',
+            player: ['useCard'],
         },
         forced: true,
         filter(event, player) {
-            return !lib.card[event.card.name].notarget;
+            return event.targets?.length;
         },
         async content(event, trigger, player) {
             if (['delay', 'equip'].includes(get.type(trigger.card))) {
@@ -2221,10 +2054,7 @@ const skill = {
             player: 'damageBegin4',
         },
         filter(event, player) {
-            if (lib.linked.includes(event.nature)) {
-                return false;
-            }
-            return player.countMark('武德') >= player.maxHp;
+            return !event.nature && player.countMark('武德') >= player.maxHp;
         },
         forced: true,
         content() {
@@ -2265,7 +2095,7 @@ const skill = {
             1: {
                 charlotte: true,
                 trigger: {
-                    target: 'useCardToTargeted',
+                    target: ['useCardToPlayer'],
                 },
                 forced: true,
                 filter(event, player) {
@@ -2304,7 +2134,7 @@ const skill = {
     偷袭: {
         shaRelated: true,
         trigger: {
-            player: 'useCardToPlayered',
+            player: ['useCardToPlayer'],
         },
         check(event, player) {
             return get.attitude(player, event.target) <= 0;
@@ -2317,19 +2147,10 @@ const skill = {
         },
         logTarget: 'target',
         preHidden: true,
-        content() {
-            'step 0';
+        async content(event, trigger, player) {
             player.removeMark('武德', 1);
-            ('step 1');
             trigger.parent.directHit.add(trigger.target);
-            ('step 2');
-            var id = trigger.target.playerid;
-            var map = trigger.parent.customArgs;
-            map[id] = {};
-            if (!map[id].extraDamage) {
-                map[id].extraDamage = 0;
-            }
-            map[id].extraDamage++;
+            trigger.parent.baseDamage++;
         },
         ai: {
             directHit_ai: true,
@@ -2348,14 +2169,11 @@ const skill = {
         },
         enable: 'phaseUse',
         usable: 1,
-        content() {
-            'step 0';
+        async content(event, trigger, player) {
             player.loseHp();
-            game.countPlayer(function (current) {
-                if (current != player && current.isEnemiesOf(player)) {
-                    player.gainPlayerCard(current, 1, 'he');
-                }
-            });
+            for (const npc of player.getEnemies()) {
+                player.gainPlayerCard(npc, 1, 'he');
+            }
         },
         ai: {
             basic: {
@@ -2388,9 +2206,9 @@ const skill = {
             content: 'mark',
         },
         enable: 'phaseUse',
-        //出牌阶段, 你可以摸一张牌并猜测其颜色, 若错误: 你获得一枚 < 赌 > 标记;
-        //若正确: 你可以选择移去一枚 < 赌 > 标记或回复一点体力值.<span class="Qmenu">锁定技,</span> 若你的<赌>标记大于3, 你死亡.\
-        //其他角色出牌阶段, 其可以移去一个赌, 视为使用任何一张基本牌或普通锦囊牌
+        // 出牌阶段,你可以摸一张牌并猜测其颜色,若错误:你获得一枚<赌>标记;若正确:你可以选择移去一枚<赌>标记或回复一点体力值
+        // 若你的<赌>标记大于3,你死亡
+        // 其他角色出牌阶段,其可以移去一个赌,视为使用一张任意牌
         async content(event, trigger, player) {
             const { result } = await player.chooseControl('red', 'black').set('prompt', '赌:猜测下一张牌的颜色');
             var card = ui.cardPile.firstChild;
@@ -2579,8 +2397,8 @@ const skill = {
     QQQ_摸牌: {
         init(player) {
             if (player.isUnderControl(true)) {
-                var button = document.createElement('div');
-                button.innerHTML = `<span style='animation: fairy 20s infinite; -webkit-animation: fairy 20s infinite;'>摸牌</span>`;
+                const button = document.createElement('div');
+                button.innerHTML = `<span class=Qmenu>摸牌</span>`;
                 button.className = 'buttonQ';
                 button.style.left = '60%';
                 button.addEventListener('click', async function () {
@@ -2607,10 +2425,10 @@ const skill = {
     QQQ_出牌: {
         init(player) {
             if (player.isUnderControl(true)) {
-                var button = document.createElement('div');
+                const button = document.createElement('div');
                 button.className = 'buttonQ';
                 button.style.left = '40%';
-                button.innerHTML = `<span style='animation: fairy 20s infinite; -webkit-animation: fairy 20s infinite;'>出牌</span>`;
+                button.innerHTML = `<span class=Qmenu>出牌</span>`;
                 button.addEventListener('click', async function () {
                     _status.event.goto(0);
                     game.resume();
@@ -2863,133 +2681,71 @@ const skill = {
     },
     顧曲: {
         trigger: {
-            player: 'phaseBegin',
+            player: ['phaseBegin'],
         },
         forced: true,
-        filter(event, player) {
-            return player.countCards('h') > 0;
+        mark: true,
+        intro: {
+            content: 'expansion',
         },
-        content() {
-            'step 0';
-            player.chooseCard('h', '选择一张牌作为<律>');
-            ('step 1');
-            if (result.bool) {
-                var card = result.cards[0];
-                event.card = card;
-                if (player.getExpansions('顧曲_1').length < 1) {
-                    player.addToExpansion(card, player, 'give').gaintag.add('顧曲_1');
-                } else if (player.getExpansions('顧曲_2').length < 1) {
-                    player.addToExpansion(card, player, 'give').gaintag.add('顧曲_2');
-                } else if (player.getExpansions('顧曲_3').length < 1) {
-                    player.addToExpansion(card, player, 'give').gaintag.add('顧曲_3');
-                } else if (player.getExpansions('顧曲_4').length < 1) {
-                    player.addToExpansion(card, player, 'give').gaintag.add('顧曲_4');
-                } else if (player.getExpansions('顧曲_5').length < 1) {
-                    player.addToExpansion(card, player, 'give').gaintag.add('顧曲_5');
-                } else {
-                    player.chooseControl('顧曲_1', '顧曲_2', '顧曲_3', '顧曲_4', '顧曲_5');
+        filter(event, player) {
+            return player.countCards('h');
+        },
+        async content(event, trigger, player) {
+            const card1 = player.getExpansions('顧曲');
+            const card2 = player.getCards('he');
+            const num0 = card1.length;
+            const num = Math.min(num0 + 1, 5);
+            const {
+                result: { moved },
+            } = await player.chooseToMove().set('list', [['顧曲牌', card1], ['你的牌', card2]])
+                .set('prompt', '调整顧曲牌')
+                .set('processAI', function (list) {
+                    const cards = card1.concat(card2).sort((a, b) => get.value(a) - get.value(b)); //价值低的牌放前面
+                    return [cards.slice(0, num), cards.slice(num)];
+                })
+                .set('filterMove', function (from, to, list) {
+                    if (to == 0 && list[0].length >= num) {
+                        return false;
+                    }
+                    if (to == 1 && list[0].length <= num0) {
+                        return false;
+                    }
+                    return true;
+                }); //给别人观星
+            if (moved?.length) {
+                if (moved[0].length) {
+                    player.addToExpansion(moved[0], 'gain2').gaintag.add('顧曲');
+                }
+                if (moved[1].length) {
+                    player.gain(moved[1].filter((q) => !card2.includes(q)), 'gain2');
                 }
             }
-            ('step 2');
-            if (result.control) {
-                player.gain(player.getExpansions(result.control));
-                player.addToExpansion(event.card, player, 'give').gaintag.add(result.control);
-            }
         },
-        group: ['顧曲_1', '顧曲_2', '顧曲_3', '顧曲_4', '顧曲_5'],
+        group: ['顧曲_1'],
         subSkill: {
             1: {
-                trigger: {
-                    global: 'useCard',
+                mod: {
+                    aiOrder(player, card, num) {
+                        const numx = player.getHistory('useCard').length;
+                        const cardx = player.getExpansions('顧曲')[numx];
+                        if (cardx && lib.card[card.name]) {
+                            if (get.color(card) == get.color(cardx)) {
+                                return num + 10;
+                            }
+                        }
+                    },
                 },
-                intro: {
-                    name: '1',
-                    content: 'expansion',
+                trigger: {
+                    global: ['useCard'],
                 },
                 forced: true,
                 filter(event, player) {
-                    if (event.all_excluded || event.player == player || event.player != _status.currentPhase) {
-                        return false;
-                    }
-                    return event.player.getHistory('useCard').indexOf(event) == 0 && get.color(event.card) == get.color(player.getExpansions('顧曲_1'));
+                    const num = event.player.getHistory('useCard').indexOf(event);
+                    const card = player.getExpansions('顧曲')[num];
+                    return card && get.color(event.card) == get.color(card);
                 },
-                content() {
-                    player.draw();
-                },
-            },
-            2: {
-                trigger: {
-                    global: 'useCard',
-                },
-                intro: {
-                    name: '2',
-                    content: 'expansion',
-                },
-                forced: true,
-                filter(event, player) {
-                    if (event.all_excluded || event.player == player || event.player != _status.currentPhase) {
-                        return false;
-                    }
-                    return event.player.getHistory('useCard').indexOf(event) == 1 && get.color(event.card) == get.color(player.getExpansions('顧曲_2'));
-                },
-                content() {
-                    player.draw();
-                },
-            },
-            3: {
-                trigger: {
-                    global: 'useCard',
-                },
-                intro: {
-                    name: '3',
-                    content: 'expansion',
-                },
-                forced: true,
-                filter(event, player) {
-                    if (event.all_excluded || event.player == player || event.player != _status.currentPhase) {
-                        return false;
-                    }
-                    return event.player.getHistory('useCard').indexOf(event) == 2 && get.color(event.card) == get.color(player.getExpansions('顧曲_3'));
-                },
-                content() {
-                    player.draw();
-                },
-            },
-            4: {
-                trigger: {
-                    global: 'useCard',
-                },
-                intro: {
-                    name: '4',
-                    content: 'expansion',
-                },
-                forced: true,
-                filter(event, player) {
-                    if (event.all_excluded || event.player == player || event.player != _status.currentPhase) {
-                        return false;
-                    }
-                    return event.player.getHistory('useCard').indexOf(event) == 3 && get.color(event.card) == get.color(player.getExpansions('顧曲_4'));
-                },
-                content() {
-                    player.draw();
-                },
-            },
-            5: {
-                trigger: {
-                    global: 'useCard',
-                },
-                intro: {
-                    name: '5',
-                    content: 'expansion',
-                },
-                forced: true,
-                filter(event, player) {
-                    if (event.all_excluded || event.player == player || event.player != _status.currentPhase) {
-                        return false;
-                    }
-                    return event.player.getHistory('useCard').indexOf(event) == 4 && get.color(event.card) == get.color(player.getExpansions('顧曲_5'));
-                },
-                content() {
+                async content(event, trigger, player) {
                     player.draw();
                 },
             },
@@ -2998,7 +2754,7 @@ const skill = {
     雅量: {
         charlotte: true,
         trigger: {
-            target: 'useCardToTargeted',
+            target: ['useCardToPlayer'],
         },
         forced: true,
         filter(event, player) {
@@ -3061,18 +2817,14 @@ const skill = {
         },
         forced: true,
         filter(event, player) {
-            var evt = event.getParent('徒');
-            if (evt && evt.player == player) {
-                return false;
-            }
-            return true;
+            return !event.getParent('徒', true);
         },
         content() {
             player.randomDiscard(trigger.cards.length);
         },
         intro: {
             name: '徒',
-            content: '<span class="Qmenu">锁定技,</span>当你失去牌后,你随机弃置等量的牌(不嵌套触发)',
+            content: '<span class=Qmenu>锁定技,</span>当你失去牌后,你随机弃置等量的牌(不嵌套触发)',
         },
     },
     流: {
@@ -3088,44 +2840,7 @@ const skill = {
         },
         intro: {
             name: '流',
-            content: '<span class="Qmenu">锁定技,</span>结束阶段开始时,你翻面',
-        },
-    },
-    杖: {
-        mod: {
-            cardname(card, player, name) {
-                if (card.name == 'shan') {
-                    return 'zhujinqiyuan';
-                }
-                if (card.name == 'wuxie') {
-                    return 'shuiyanqijunx';
-                }
-                if (card.name == 'jiu') {
-                    return 'huoshaolianying';
-                }
-                if (card.name == 'tao') {
-                    return 'nanman';
-                }
-            },
-        },
-        charlotte: true,
-        mark: true,
-        trigger: {
-            target: 'useCardToTargeted',
-        },
-        forced: true,
-        firstDo: true,
-        _priority: 99,
-        filter(event, player) {
-            return get.tag(event.card, 'damage');
-        },
-        content() {
-            trigger.directHit.add(player);
-        },
-        marktext: '杖',
-        intro: {
-            name: '杖',
-            content: '你不能响应其他角色使用的伤害牌',
+            content: '<span class=Qmenu>锁定技,</span>结束阶段开始时,你翻面',
         },
     },
     神裁: {
@@ -3148,7 +2863,9 @@ const skill = {
             }
         },
     },
-    洗牌: {
+    // 当你体力变化/不因使用失去牌/死亡时,取消之,然后移除牌堆顶X张牌(X为此次事件的数值)
+    // 牌堆洗牌后,你死亡
+    QQQ_xipai: {
         trigger: {
             player: ['loseBegin', 'dieBegin', 'changeHpBegin', 'loseMaxHpBefore'],
         },
@@ -3174,31 +2891,51 @@ const skill = {
         ai: {
             maixie: true,
         },
-        group: ['洗牌_1'],
+        group: ['QQQ_xipai_1'],
         subSkill: {
             1: {
                 trigger: {
-                    global: 'phaseEnd',
+                    global: ['washCard'],
                 },
                 forced: true,
-                filter(event, player) {
-                    return game.hasGlobalHistory('cardMove', function (evt) {
-                        return evt.washCard && evt.shuffleNumber == 1;
-                    });
-                },
-                content() {
-                    if (
-                        game.hasGlobalHistory('cardMove', function (evt) {
-                            return evt.washCard && evt.shuffleNumber == 1;
-                        })
-                    ) {
-                        var next = game.createEvent('diex', false);
-                        next.player = player;
-                        next._triggered = null;
-                        next.setContent(lib.element.content.die);
-                    }
+                async content(event, trigger, player) {
+                    var next = game.createEvent('diex', false);
+                    next.player = player;
+                    next._triggered = null;
+                    next.setContent(lib.element.content.die);
                 },
             },
+        },
+    },
+    // 你不能响应伤害牌;你的桃视为南蛮,酒视为火烧连营,闪视为逐近弃远,无懈视为水淹七军
+    QQQ_zhang: {
+        mod: {
+            cardname(card, player, name) {
+                if (card.name == 'shan') {
+                    return 'zhujinqiyuan';
+                }
+                if (card.name == 'wuxie') {
+                    return 'shuiyanqijunx';
+                }
+                if (card.name == 'jiu') {
+                    return 'huoshaolianying';
+                }
+                if (card.name == 'tao') {
+                    return 'nanman';
+                }
+            },
+        },
+        trigger: {
+            target: ['useCardToPlayer'],
+        },
+        forced: true,
+        firstDo: true,
+        _priority: 99,
+        filter(event, player) {
+            return get.tag(event.card, 'damage');
+        },
+        content() {
+            trigger.directHit.add(player);
         },
     },
     御策: {
@@ -3294,126 +3031,6 @@ const skill = {
             },
         },
     },
-    往烈: {
-        mod: {
-            targetInRange(card, player, target, now) {
-                if (player.hasMark('往烈_距离')) {
-                    return true;
-                }
-            },
-            cardUsable(card, player, target, now) {
-                if (player.hasMark('往烈_次数')) {
-                    return Infinity;
-                }
-            },
-        },
-        trigger: {
-            player: ['useCardAfter', 'phaseBegin'],
-        },
-        forced: true,
-        prompt2(event) {
-            return '下一张牌特效';
-        },
-        content() {
-            'step 0';
-            player.removeMark('往烈_距离');
-            player.removeMark('往烈_次数');
-            player.removeMark('往烈_响应');
-            var list = ['无距离限制', '无次数限制', '不能被响应'];
-            player.chooseControl(list);
-            ('step 1');
-            if (result.control == '无距离限制') {
-                player.addMark('往烈_距离');
-            }
-            if (result.control == '无次数限制') {
-                player.addMark('往烈_次数');
-            }
-            if (result.control == '不能被响应') {
-                player.addMark('往烈_响应');
-            }
-        },
-        group: ['往烈_距离', '往烈_次数', '往烈_响应'],
-        subSkill: {
-            距离: {
-                marktext: '距离',
-                mark: true,
-                intro: {
-                    content: '下一张牌无距离限制',
-                },
-            },
-            次数: {
-                marktext: '次数',
-                mark: true,
-                intro: {
-                    content: '下一张牌无次数限制',
-                },
-            },
-            响应: {
-                marktext: '响应',
-                mark: true,
-                intro: {
-                    content: '下一张牌不能被响应',
-                },
-                trigger: {
-                    player: 'useCard',
-                },
-                forced: true,
-                filter(event, player) {
-                    return player.hasMark('往烈_响应');
-                },
-                content() {
-                    trigger.nowuxie = true;
-                    trigger.directHit.addArray(game.players);
-                },
-                ai: {
-                    directHit_ai: true,
-                    skillTagFilter(player, tag, arg) {
-                        return true;
-                    },
-                },
-            },
-        },
-    },
-    武: {
-        enable: 'phaseUse',
-        usable: 1,
-        filter(event, player) {
-            return true;
-        },
-        content() {
-            'step 0';
-            var list1 = [],
-                list2 = [],
-                list3 = [];
-            for (var i = 0; i < lib.inpile.length; i++) {
-                var type = get.type(lib.inpile[i]);
-                if (type == 'basic') {
-                    list1.push(['基本', '', lib.inpile[i]]);
-                } else if (type == 'trick') {
-                    list2.push(['锦囊', '', lib.inpile[i]]);
-                } else if (type == 'delay') {
-                    list3.push(['锦囊', '', lib.inpile[i]]);
-                }
-            }
-            player.chooseButton([[list1.concat(list2).concat(list3), 'vcard']]);
-            ('step 1');
-            var cardList = Array.from(ui.cardPile.childNodes).concat(Array.from(ui.discardPile.childNodes));
-            event.cards.addArray(
-                cardList.filter(function (card) {
-                    return card.name == result.links[0][2];
-                })
-            );
-            for (var card of cards) {
-                ui.cardPile.insertBefore(card, ui.cardPile.firstChild);
-            }
-        },
-        ai: {
-            order: 10,
-            result: {
-                player: 1,
-            },
-        },
-    },
     全装备: {
         trigger: {
             player: ['loseAfter'],
@@ -3479,24 +3096,6 @@ const skill = {
         forced: true,
         content() {
             player.loseMaxHp(Math.ceil(player.maxHp / 2));
-        },
-    },
-    庇护: {
-        trigger: {
-            player: 'damage',
-        },
-        forced: true,
-        content() {
-            'step 0';
-            event.card = get.cards()[0];
-            game.cardsGotoOrdering(event.card);
-            player.showCards(event.card);
-            ('step 1');
-            if (get.color(event.card) == 'red') {
-                player.gainMaxHp();
-            } else {
-                player.recover();
-            }
         },
     },
     隐忍: {
@@ -3588,12 +3187,12 @@ const skill = {
                     if (get.type(trigger.card) == 'trick') {
                         trigger.effectCount += Math.ceil(player.countMark('隐忍_锦囊') / 10);
                         game.log('暴击锦囊' + Math.ceil(player.countMark('隐忍_锦囊') / 10));
-                        player.popup(`<span class='bluetext' style='color:#B3EE3A'>暴击</span>`);
+                        player.popup(`<span class='bluetext' style='color: #B3EE3A'>暴击</span>`);
                     }
                     if (get.type(trigger.card) == 'basic') {
                         trigger.effectCount += Math.ceil(player.countMark('隐忍_基本') / 10);
                         game.log('暴击基本' + Math.ceil(player.countMark('隐忍_锦囊') / 10));
-                        player.popup(`<span class='bluetext' style='color:#B3EE3A'>暴击</span>`);
+                        player.popup(`<span class='bluetext' style='color: #B3EE3A'>暴击</span>`);
                     }
                 },
             },
@@ -3721,22 +3320,14 @@ const skill = {
             return game.dead.length;
         },
         async content(event, trigger, player) {
-            //QQQ
             const {
-                result: { targets },
-            } = await player
-                .chooseTarget(true)
-                .set('ai', function (target) {
-                    return 1;
-                })
-                .set('deadTarget', true)
-                .set('filterTarget', function (card, player, target) {
-                    return target.isDead();
-                });
-            if (targets && targets[0]) {
-                player.line(targets[0]);
-                targets[0].qrevive();
-                player.guhuo(targets[0]);
+                result: { links },
+            } = await player.chooseButton(['将一名已死亡的角色复活为随从', game.dead])
+                .set('ai', (button) => 20 - get.attitude(player, button.link));
+            if (links && links[0]) {
+                player.line(links[0]);
+                links[0].qrevive();
+                player.guhuo(links[0]);
             }
         },
     },
@@ -3752,24 +3343,20 @@ const skill = {
             var evt = event.getl(player);
             return evt && evt.cards2 && evt.cards2.length;
         },
-        content() {
+        async content(event, trigger, player) {
             player.swapHandcards(trigger.player);
         },
         group: ['奇取_1'],
         subSkill: {
             1: {
                 trigger: {
-                    player: ['loseAfter', 'equipAfter', 'addJudgeAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter'],
+                    player: ['loseAfter'],
                 },
                 forced: true,
                 filter(event, player) {
-                    if (player.countCards('h')) {
-                        return false;
-                    }
-                    var evt = event.getl(player);
-                    return evt && evt.player == player && evt.hs && evt.hs.length;
+                    return !player.countCards('h');
                 },
-                content() {
+                async content(event, trigger, player) {
                     player.recover();
                 },
             },
@@ -3891,7 +3478,7 @@ const skill = {
                     return event.parent.skill == '锥锋_backup';
                 },
                 content() {
-                    player.popup(`<span class='bluetext' style='color:#B3EE3A'>免伤</span>`);
+                    player.popup(`<span class='bluetext' style='color: #B3EE3A'>免伤</span>`);
                     trigger.cancel();
                 },
             },
@@ -4077,65 +3664,33 @@ const skill = {
     },
     偏执: {
         trigger: {
-            player: 'useCardEnd',
+            player: ['useCardBefore', 'useCardAfter'],
         },
         forced: true,
-        usable: 50,
-        filter(event, player) {
-            game.log(event.targets);
-            game.log(player.storage.Q);
-            if (event.targets.join() !== player.storage.Q.join()) {
-                return true;
-            }
-            if (get.tag(event.card, 'damage')) {
-                return (
-                    event.card.nature != 'kami' &&
-                    event.targets.some((Q) => {
-                        return (
-                            Q.isIn() &&
-                            !Q.hasHistory('damage', function (Q) {
-                                return Q.card == event.card;
-                            })
-                        );
-                    })
-                );
-            }
-            return game.players.filter(
-                (E) =>
-                    E.hasHistory('useCard', (Q) => {
-                        return Q.respondTo && Q.respondTo[1] == event.card;
-                    }) ||
-                    E.hasHistory('respond', (Q) => {
-                        return Q.respondTo && Q.respondTo[1] == event.card;
-                    })
-            ).length;
-        },
-        content() {
-            if (trigger.targets.length > player.storage.Q.length) {
-                player.useCard(
-                    trigger.card,
-                    trigger.targets.filter((E) => E.isIn()),
-                    false
-                );
-            } else {
-                player.useCard(
-                    trigger.card,
-                    player.storage.Q.filter((E) => E.isIn()),
-                    false
-                );
+        firstDo: true,
+        usable: 20,
+        filter(event, player, name) {
+            if (event.targets) {
+                if (name == 'useCardBefore') {
+                    return true;
+                }
+                if (!event.targets.Qinclude(event.偏执) || event.excluded.length || event.all_excluded) {
+                    return true;
+                }
+                if (get.tag(event.card, 'damage')) {
+                    return event.targets.some((Q) => Q.isIn() && !Q.hasHistory('damage', (Q) => Q.card == event.card));
+                }
+                return game.players.some((npc) => ['useCard', 'respond'].some((i) => npc.hasHistory(i, (Q) => Q.respondTo && Q.respondTo[1] == event.card)));
             }
         },
-        group: ['偏执_1'],
-        subSkill: {
-            1: {
-                trigger: {
-                    player: 'useCard',
-                },
-                forced: true,
-                content() {
-                    player.storage.Q = trigger.targets.slice();
-                },
-            },
+        async content(event, trigger, player) {
+            if (event.triggername == 'useCardBefore') {
+                trigger.偏执 = trigger.targets.slice();
+            }
+            else {
+                const targets = [...new Set(trigger.targets.concat(trigger.偏执))];
+                player.useCard(trigger.card, targets, false);
+            }
         },
     },
     乱码: {
@@ -4143,68 +3698,23 @@ const skill = {
             player: ['phaseZhunbeiBegin', 'phaseJudgeBegin', 'phaseDrawBegin', 'phaseUseBegin', 'phaseDiscardBegin', 'phaseJieshuBegin'],
         },
         forced: true,
-        audio: 'dili_chigang',
         filter(event, player) {
             return !event.getParent('乱码', true);
         }, //QQQ
-        content() {
+        async content(event, trigger, player) {
             trigger.cancel();
-            var num = Math.random();
+            let phase;
+            const num = Math.random();
             if (num < 0.1) {
-                var Q = 'phaseJudge';
+                phase = 'phaseJudge';
             } else if (num < 0.5) {
-                var Q = 'phaseDraw';
+                phase = 'phaseDraw';
             } else if (num < 0.9) {
-                var Q = 'phaseUse';
+                phase = 'phaseUse';
             } else {
-                var Q = 'phaseDiscard';
+                phase = 'phaseDiscard';
             }
-            event.next.remove(player[Q]());
-            trigger.parent.next.push(player[Q]());
-        },
-    },
-    镶星: {
-        init(player) {
-            player.storage.镶星 = 0;
-        },
-        mark: true,
-        intro: {
-            content: '当前有#枚星',
-        },
-        trigger: {
-            player: ['changeHp'],
-        },
-        forced: true,
-        content() {
-            'step 0';
-            player.storage.镶星 += numberq1(trigger.num);
-            if (player.storage.镶星 >= 3) {
-                player.storage.镶星 -= 3;
-                player.popup('镶星');
-                game.log(player, '失去了一枚星');
-            } else {
-                event.finish();
-            }
-            ('step 1');
-            var list = game.players;
-            list.remove(player);
-            list.sort(lib.sort.seat);
-            var list2 = [];
-            for (var i = 0; i < list.length; i++) {
-                list2.push(0);
-            }
-            for (var i = 0; i < 9; i++) {
-                list2[Math.floor(Math.random() * list2.length)]++;
-            }
-            event.list = list;
-            event.list2 = list2;
-            ('step 2');
-            if (event.list.length) {
-                var target = event.list.shift();
-                target.damage(event.list2.shift(), 'thunder');
-                player.line(target, 'thunder');
-                event.redo();
-            }
+            player[phase]();
         },
     },
     血莲: {
@@ -4218,7 +3728,7 @@ const skill = {
         },
         forced: true,
         filter(event, player) {
-            return event.getParent(2).name != '血莲' && event.getParent(3).name != '血莲';
+            return !event.getParent('血莲', true);
         },
         content() {
             'step 0';
@@ -4235,7 +3745,7 @@ const skill = {
             ('step 2');
             if (result.bool) {
                 for (var E of result.targets) {
-                    player.useCard({ name: 'sha' }, E, false).card.Q = true;
+                    player.useCard({ name: 'sha' }, E, false).血莲 = true;
                 }
             }
         },
@@ -4243,8 +3753,8 @@ const skill = {
             maixie: true,
             unequip: true,
             skillTagFilter(player, tag, arg) {
-                if (!arg || !arg.card || arg.card.Q != true) {
-                    return false;
+                if (arg?.血莲) {
+                    return true;
                 }
             },
         },
@@ -4256,9 +3766,34 @@ const skill = {
         forced: true,
         async content(event, trigger, player) {
             for (const npc of game.players) {
+                if (npc == player) continue;
                 npc.damage(Math.ceil(Math.random() * 9), 'thunder');
             }
         },//QQQ
+    },
+    镶星: {
+        init(player) {
+            player.storage.镶星 = 0;
+        },
+        mark: true,
+        intro: {
+            content: '当前有#枚星',
+        },
+        trigger: {
+            player: ['changeHp'],
+        },
+        forced: true,
+        async content(event, trigger, player) {
+            player.storage.镶星 += numberq1(trigger.num);
+            if (player.storage.镶星 >= 3) {
+                player.storage.镶星 -= 3;
+                player.popup('镶星');
+                for (const npc of game.players) {
+                    if (npc == player) continue;
+                    npc.damage(Math.ceil(Math.random() * 9), 'thunder');
+                }
+            }
+        },
     },
     摸与杀: {
         trigger: {
@@ -4355,10 +3890,7 @@ const skill = {
         },
         forced: true,
         async content(event, trigger, player) {
-            let count = numberq1(trigger.num);
-            while (count-- > 0) {
-                player.draw();
-            }
+            player.draw(numberq1(trigger.num));
         },
         ai: {
             maixie: true,
@@ -4425,7 +3957,7 @@ const skill = {
         subSkill: {
             1: {
                 trigger: {
-                    target: 'useCardToTargeted',
+                    target: ['useCardToPlayer'],
                 },
                 check(event, player) {
                     return get.attitude(player, event.player) <= 0;
@@ -4439,12 +3971,11 @@ const skill = {
                         .chooseToUse((c) => player.filterCardx(c) && c.name == 'sha', `对${get.translation(trigger.player)}使用一张杀,使${trigger.card}无效`) //QQQ
                         .set('complexSelect', true)
                         .set('filterTarget', function (card, player, target) {
-                            if (target != _status.event.sourcex && !ui.selected.targets.includes(_status.event.sourcex)) {
+                            if (target != trigger.player && !ui.selected.targets.includes(trigger.player)) {
                                 return false;
                             }
                             return lib.filter.targetEnabled.apply(this, arguments);
-                        })
-                        .set('sourcex', trigger.player);
+                        });
                     ('step 1');
                     if (result.bool) {
                         trigger.targets.length = 0;
@@ -4719,114 +4250,92 @@ const skill = {
             },
         },
     },
+    // 当其他角色使用目标不为你的单目标牌时,你可以弃置一张与此牌颜色不同的牌选择一项,令其摸一张牌将使用者改为你/令其弃一张牌将目标改为你
     革命: {
         trigger: {
-            global: 'useCardToTargeted',
+            global: ['useCardToPlayer'],
         },
         filter(event, player) {
-            if (
-                player.countCards('hes', function (i) {
-                    return get.color(i) != get.color(event.card);
-                }) < 1
-            ) {
-                return false;
-            }
-            return event.player != player && ['basic', 'trick'].includes(get.type(event.card)) && (event.target != player) & (event.targets.length == 1);
+            return player.countCards('hes', { color: get.color(event.card) }) && event.player != player && event.target != player && event.targets.length == 1;
         },
         forced: true,
-        content() {
-            'step 0';
-            player
-                .chooseControl()
-                .set('choiceList', [`令其摸一张牌,然后你成为${get.translation(trigger.card)}的使用者`, `令其弃置一张牌,然后你成为${get.translation(trigger.card)}的目标`])
-                .set('prompt', `革命:令${get.translation(trigger.player)}执行一项`)
-                .set('ai', function () {
-                    var player = _status.event.player;
-                    if (trigger.player.isFriendsOf(player)) {
-                        return 0;
-                    }
-                    return 1;
-                });
-            ('step 1');
-            if (result.index == 0) {
-                player.chooseToDiscard('弃置一张不同颜色的牌', 'hes', true, function (card) {
-                    return get.color(card) != get.color(trigger.card);
-                });
-                trigger.player.draw();
-                trigger.parent.player = player;
-                game.log(player, '成为了', trigger.card, '的使用者');
-            } else {
-                player.chooseToDiscard('弃置一张不同颜色的牌', 'hes', true, function (card) {
-                    return get.color(card) != get.color(trigger.card);
-                });
-                trigger.player.chooseToDiscard('he', true, 1);
-                trigger.targets.length = 0;
-                trigger.all_excluded = true;
-                trigger.targets.push(player);
-                game.log(player, '成为了', trigger.card, '的目标');
+        async content(event, trigger, player) {
+            const { result: { cards } } = await player.chooseToDiscard('弃置一张与此牌颜色不同的牌选择一项', 'hes')
+                .set('filterCard', (c) => get.color(c) != get.color(trigger.card))
+                .set('ai', (c) => 5 - get.value(c));
+            if (cards && cards[0]) {
+                const controllist = ['选项一', '选项二'];
+                const trans = get.translation(trigger.card);
+                const choiceList = [`令其摸一张牌,然后你成为${trans}的使用者`, `令其弃置一张牌,然后你成为${trans}的目标`];
+                const { result: { index } } = await player.chooseControl(controllist)
+                    .set('prompt', `革命:令${get.translation(trigger.player)}执行一项`)
+                    .set('choiceList', choiceList)
+                    .set('ai', function (event, player) {
+                        if (trigger.player.isFriendsOf(player)) {
+                            return 0;
+                        }
+                        return 1;
+                    });
+                switch (index) {
+                    case 0:
+                        trigger.player.draw();
+                        trigger.parent.player = player;
+                        game.log(player, '成为了', trigger.card, '的使用者');
+                        break;
+                    case 1:
+                        trigger.player.chooseToDiscard('he', true, 1);
+                        trigger.parent.targets = [player];
+                        game.log(player, '成为了', trigger.card, '的目标');
+                        break;
+                }
             }
         },
     },
+    // 回合限一次.阳:出牌阶段,你可以弃置所有牌
+    // 阴:出牌阶段,你可以获得<神临>
     乾明: {
-        group: ['乾明_1', '乾明_2'],
         mark: true,
         zhuanhuanji: true,
         marktext: '☯',
         intro: {
             content(storage, player, skill) {
                 if (player.storage.乾明 == true) {
-                    return '出牌阶段你可以发动此技能,然后你获得状态神临(每当你结束回合后,立刻进入新的回合).此状态一直持续,直到你杀死角色或过程中累计获得的牌大于20张';
+                    return '出牌阶段,你可以获得<神临>';
                 }
                 return '出牌阶段,你可以弃置所有牌';
             },
         },
+        enable: 'phaseUse',
+        filter(event, player) {
+            return !player.hasSkill('神临') && !player.hasSkill('乾明_1');
+        },
+        async content(event, trigger, player) {
+            if (!player.storage.乾明) {
+                player.discard(player.getCards('he'));
+            }
+            else {
+                player.addSkill('神临');
+            }
+            player.changeZhuanhuanji('乾明');
+            player.addTempSkill('乾明_1');
+        },
+        ai: {
+            order: 1,
+            result: {
+                player: 1,
+            },
+        },
         subSkill: {
             1: {
-                enable: 'phaseUse',
-                filter(event, player) {
-                    return !player.storage.乾明 && !player.hasSkill('乾明_3') && !player.hasSkill('神临');
-                },
-                content() {
-                    player.discard(player.getCards('he'));
-                    player.changeZhuanhuanji('乾明');
-                    player.addTempSkill('乾明_3');
-                },
-                ai: {
-                    basic: {
-                        order: 1,
-                    },
-                    result: {
-                        player: 1,
-                    },
-                },
-            },
-            2: {
-                enable: 'phaseUse',
-                filter(event, player) {
-                    return player.storage.乾明 && !player.hasSkill('乾明_3');
-                },
-                async content(event, trigger, player) {
-                    player.addSkill('神临');
-                    player.changeZhuanhuanji('乾明');
-                    player.addTempSkill('乾明_3');
-                },
-                ai: {
-                    basic: {
-                        order: 10,
-                    },
-                    result: {
-                        player: 1,
-                    },
-                },
-            },
-            3: {
                 charlotte: true,
             },
         },
     },
+    // 每当你结束回合后,立刻进入新的回合
+    // 当你杀死角色/牌堆洗牌,失去此技能
     神临: {
         trigger: {
-            player: 'phaseAfter',
+            player: ['phaseAfter'],
         },
         forced: true,
         async content(event, trigger, player) {
@@ -4888,7 +4397,7 @@ const skill = {
                     player: 'useCard',
                 },
                 forced: true,
-                content() {
+                async content(event, trigger, player) {
                     if (!player.storage.静气) {
                         player.storage.静气 = [];
                     }
@@ -4911,10 +4420,10 @@ const skill = {
             }); //始终铁索
         },
         trigger: {
-            target: 'useCardToTargeted',
+            target: ['useCardToPlayer'],
         },
         forced: true,
-        content() {
+        async content(event, trigger, player) {
             trigger.player.link(true);
         },
         group: ['连锁_1'],
@@ -4924,7 +4433,7 @@ const skill = {
                     player: 'damageBegin4',
                 },
                 forced: true,
-                content() {
+                async content(event, trigger, player) {
                     if (!trigger.nature) {
                         trigger.nature = 'thunder';
                         trigger.num = 2 * trigger.num;
@@ -4934,16 +4443,12 @@ const skill = {
             },
         },
     },
-    用: {
-        forced: true,
-        charlotte: true,
-    },
     掠夺: {
         trigger: {
             global: 'roundStart',
         },
         forced: true,
-        content() {
+        async content(event, trigger, player) {
             game.countPlayer(function (Q) {
                 if (Q == player) {
                     return;
@@ -4957,7 +4462,7 @@ const skill = {
     },
     乱世: {
         trigger: {
-            global: 'useCardToPlayered',
+            global: ['useCardToPlayer'],
         },
         filter(event, player) {
             return event.card.name == 'sha' && event.isFirstTarget;
@@ -4991,7 +4496,7 @@ const skill = {
         filter(event, player) {
             return event.player.isEnemiesOf(player);
         },
-        content() {
+        async content(event, trigger, player) {
             game.判定 = Array.from(ui.cardPile.childNodes).concat(Array.from(ui.discardPile.childNodes));
             game.countPlayer(function (current) {
                 game.判定.addArray(current.getCards('hej'));
@@ -5013,7 +4518,7 @@ const skill = {
                 return evt.parent == event && evt.hs.length;
             });
         },
-        content() {
+        async content(event, trigger, player) {
             trigger.addCount = false;
             player.stat[player.stat.length - 1].card[trigger.card.name]--;
             trigger.baseDamage = trigger.baseDamage * 2 || 2;
@@ -5024,7 +4529,7 @@ const skill = {
             global: 'gameDrawBefore', //游戏开始时
         },
         forced: true,
-        content() {
+        async content(event, trigger, player) {
             game.countPlayer(function (Q) {
                 if (Q.hasSkill('乾坤大挪移')) {
                     return;
@@ -5046,7 +4551,7 @@ const skill = {
             global: 'gameDrawBefore', //游戏开始时
         },
         forced: true,
-        content() {
+        async content(event, trigger, player) {
             game.countPlayer(function (Q) {
                 if (Q.hasSkill('合并时间线')) {
                     return;
@@ -5116,10 +4621,10 @@ const skill = {
     },
     门客: {
         trigger: {
-            player: 'dieBefore',
+            player: ['dieBefore'],
         },
         forced: true,
-        forcedie: true,
+        forceDie: true,
         async content(event, trigger, player) {
             var Q;
             if (trigger.source) {
@@ -5128,7 +4633,7 @@ const skill = {
                 Q = player.getEnemies().randomGet();
             }
             if (Q) {
-                game.门客秘境 = true;
+                game.addGlobalSkill('门客_1');
                 const ocheckresult = game.checkResult;
                 game.checkResult = function () {
                     if (game.players.some((current) => current.storage.随从)) {
@@ -5149,7 +4654,6 @@ const skill = {
                     return ocheckresult();
                 };
                 ui.arena.setNumber(4);
-                Q.dataset.position = 2;
                 let num = 3;
                 while (num-- > 0) {
                     const npc = player.addFellow(Object.keys(lib.character).randomGet());
@@ -5162,6 +4666,30 @@ const skill = {
                         current.out(Infinity);
                     }
                 });
+            }
+        },
+        subSkill: {
+            1: {
+                trigger: {
+                    player: ['dieEnd'],
+                },
+                forced: true,
+                forceDie: true,
+                filter(event, player) {
+                    return player.storage.敌人 || player.storage.随从 && !game.players.some((q) => q.storage.随从);
+                },
+                async content(event, trigger, player) {
+                    const players = game.players.slice();
+                    for (const npc of players) {
+                        if (npc.storage.随从) {
+                            await npc.die();
+                            npc.delete();
+                        } else {
+                            npc.in();
+                        }
+                    }
+                    game.removeGlobalSkill('门客_1');
+                },
             }
         },
     },
@@ -5281,7 +4809,7 @@ const skill = {
             source: 'damageBefore',
         },
         forced: true,
-        content() {
+        async content(event, trigger, player) {
             Reflect.defineProperty(trigger, 'finished', {
                 get() {
                     return trigger.step > 5;
@@ -5299,7 +4827,7 @@ const skill = {
         filter(event, player) {
             return event.getParent(2).name != '自书' && _status.currentPhase == event.player;
         },
-        content() {
+        async content(event, trigger, player) {
             player.draw('nodelay');
         },
     },
@@ -5323,7 +4851,7 @@ const skill = {
         filter(event, player) {
             return game.hasPlayer((Q) => Q.hp < 2 && Q.isEnemiesOf(player));
         },
-        content() {
+        async content(event, trigger, player) {
             game.countPlayer((Q) => {
                 if (Q.hp < 2 && Q.isEnemiesOf(player)) {
                     player.gain(Q.getCards('h'), 'gain2');
@@ -5341,7 +4869,7 @@ const skill = {
                 filter(event, player) {
                     return event.player.hp < 2 && event.player.isEnemiesOf(player) && player == _status.currentPhase;
                 },
-                content() {
+                async content(event, trigger, player) {
                     player.gain(trigger.player.getCards('he'), 'gain2');
                     trigger.player.storage.斩杀 = true;
                 },
@@ -5456,111 +4984,13 @@ const skill = {
         },
         _priority: 176,
     },
-    天启: {
-        enable: 'phaseUse', //QQQ
-        usable: 9,
-        forced: true,
-        position: 'he',
-        async content(event, trigger, player) {
-            var list = Object.keys(lib.card).filter((Q) => {
-                var type = get.type(Q);
-                return type == 'spell' || type == 'hsshenqi' || type == 'land' || type == 'jiguan' || type == 'food';
-            });
-            const result = await player
-                .chooseButton(['创造一张地图/法术/神器/机关/食物牌,然后获得一个随机正面效果', [list, 'vcard']])
-                .set('ai', () => Math.random())
-                .forResult();
-            const result1 = await player
-                .chooseControl([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
-                .set('ai', function () {
-                    return list.randomGet();
-                })
-                .forResult();
-            const result2 = await player
-                .chooseControl('diamond', 'spade', 'heart', 'club')
-                .set('ai', function () {
-                    return list.randomGet();
-                })
-                .forResult();
-            list = game.players.filter((current) => current.hasSkill('天启'));
-            for (const i of list) {
-                i.gain(game.createCard(result.links[0][2], result2.control, result1.control, result.links[0][3]), 'gain2');
-                i.getBuff();
-            }
-        }, //QQQ
-        ai: {
-            order: 8.2,
-            result: {
-                player: 3,
-            },
-        },
-    },
-    mianze: {
-        trigger: {
-            global: 'useCard', //QQQ
-        },
-        charlotte: true,
-        fixed: true,
-        forced: true,
-        filter: (event, player) => get.tag(event.card, 'damage') && event.getParent(2).name != 'mianze',
-        async content(event, trigger, player) {
-            if (trigger.player != player) {
-                player.draw(2);
-                player.recover();
-                await player.chooseToUse('绵泽:你可以使用一张伤害类牌', (card) => get.tag(card, 'damage'));
-            } else {
-                player.gainMaxHp();
-                const result = await player
-                    .chooseTarget('请选择〖绵泽〗的目标', [1, game.countPlayer((current) => current != player)], (card, target, player) => target != player)
-                    .set('ai', (target) => target.isFriendsOf(_status.event.player))
-                    .forResult();
-                if (result.bool) {
-                    for (const i of result.targets) {
-                        i.draw();
-                        await i.chooseToUse('绵泽:你可以使用一张伤害类牌', (card) => get.tag(card, 'damage'));
-                    }
-                }
-            }
-        },
-    },
-    hongmengzhixi: {
-        name: '鸿蒙之息',
-        forced: true,
-        intro: {
-            content: 'expansion',
-            markcount: 'expansion',
-        },
-        trigger: {
-            global: ['loseAfter'],
-        },
-        filter(event, player) {
-            return event.cards && event.cards.length > 1;
-        },
-        logTarget: 'player',
-        async content(event, trigger, player) {
-            //QQQ
-            const result = await player
-                .chooseButton(['选择一张置于武将牌上', trigger.cards])
-                .set('ai', (button) => get.value(button.link))
-                .forResult();
-            if (result.links && result.links.length) {
-                player.addToExpansion(result.links, 'giveAuto', player).gaintag.add('hongmengzhixi');
-            }
-        },
-    },
     求贤若渴: {
         enable: 'phaseUse',
         usable: 1,
         async content(event, trigger, player) {
             player.say('山不厌高,海不厌深,周公吐哺,天下归心.');
-            var type = [];
-            for (var i in lib.card) {
-                if (!type.includes(lib.card[i].type)) {
-                    type.push(lib.card[i].type);
-                }
-            } //QQQ
             const result = await player
-                .chooseButton(['声明一个花色和类型,然后亮出牌堆顶三张牌,获得与你描述相符的牌.若有两项皆满足的牌,你回复一点体力', '花色', [lib.suits, 'tdnodes'], '类型', [type, 'tdnodes']], true, 2)
+                .chooseButton(['声明一个花色和类型,然后亮出牌堆顶三张牌,获得与你描述相符的牌.若有两项皆满足的牌,你回复一点体力', '花色', [lib.suits.map((i) => [i, get.translation(i)]), 'tdnodes'], '类型', [lib.type.map((i) => [i, get.translation(i)]), 'tdnodes']], true, 2)
                 .set('filterButton', (button) => {
                     if (ui.selected.buttons.length && lib.suits.includes(ui.selected.buttons[0].link)) {
                         return type.includes(button.link) && button.link != 'none';
@@ -5949,9 +5379,9 @@ const skill = {
                     },
                     modTarget: true,
                     allowMultiple: false,
-                    content() {
-                        if (cards.length && get.position(cards[0], true) == 'o') {
-                            target.equip(cards[0]);
+                    async content(event, trigger, player) {
+                        if (event.cards.length) {
+                            event.target.equip(event.cards[0]);
                         }
                     },
                     toself: true,
@@ -6299,27 +5729,6 @@ const skill = {
             },
         },
     },
-    雄略: {
-        trigger: {
-            target: 'useCardToTarget',
-        },
-        forced: true,
-        filter(event, player) {
-            return event.card && get.tag(event.card, 'damage') && player.countCards('he');
-        },
-        async content(event, trigger, player) {
-            //QQQ
-            var n = trigger.targets.length;
-            const { result } = await player.chooseButton([`雄略:你可以弃置${n}张<略>令` + get.translation(trigger.player) + `使用的${get.translation(trigger.card)}交换使用者与目标`, player.getCards('he')], n).set('ai', (card) => trigger.player.isEnemiesOf(player));
-            if (result.links && result.links.length) {
-                player.discard(result.links);
-                for (const i of trigger.targets) {
-                    await i.useCard(trigger.card, trigger.player);
-                }
-                trigger.parent.excluded.addArray(trigger.targets);
-            }
-        },
-    },
     魔翼: {
         trigger: {
             player: ['changeHp'],
@@ -6645,7 +6054,7 @@ const skill = {
                     }
                     return true;
                 },
-                content() {
+                async content(event, trigger, player) {
                     if (player.storage.QQQ_taye < 5) {
                         player.storage.QQQ_taye++;
                     }
@@ -6891,7 +6300,7 @@ const skill = {
                         storage: { QQQ_kangzou: true },
                     },
                     ignoreMod: true,
-                    precontent() {
+                    async precontent(event, trigger, player) {
                         event.result.cards = [ui.cardPile.firstChild]; //防没有cards[0]
                         player.storage.QQQ_kangzou.add(event.result.card.name);
                         player.storage.QQQ_kangzou.add(event.result.card.nature);
@@ -7351,22 +6760,15 @@ const skill = {
             },
             2: {
                 trigger: {
-                    player: ['useCardToPlayered'],
+                    player: ['shaBegin'],
                 },
                 forced: true,
                 filter(event, player) {
-                    return event.card.name == 'sha' && !event.parent.directHit.includes(event.target) && !event.target.getEquip(2);
+                    return !event.target.getEquip(2);
                 },
                 logTarget: 'target',
                 async content(event, trigger, player) {
-                    const id = trigger.target.playerid;
-                    const map = trigger.parent.customArgs;
-                    if (!map[id]) map[id] = {};
-                    if (typeof map[id].shanRequired == 'number') {
-                        map[id].shanRequired++;
-                    } else {
-                        map[id].shanRequired = 2;
-                    }
+                    trigger.shanRequired = 2;
                 },
                 ai: {
                     directHit_ai: true,
@@ -7376,18 +6778,6 @@ const skill = {
                     },
                 },
             },
-        },
-    },
-    '': {
-        trigger: {
-            source: 'damageBefore',
-        },
-        _priority: 16,
-        check() {
-            return false;
-        },
-        content() {
-            trigger.player.hp--;
         },
     },
     检测: {
@@ -7598,23 +6988,23 @@ const translate1 = {
     QQQ_chuanyang: '穿杨',
     QQQ_chuanyang_info: '出牌阶段,你可以将X字的牌当做无次数限制的【杀】对与你距离为X的角色使用.以此法造成伤害后,你摸X张牌(X为此阶段已使用牌的次数)',
     QQQ_lieshi: '裂石',
-    QQQ_lieshi_info: '<span class="Qmenu">锁定技,</span>你使用的【杀】无视防具,没有防具的角色需要使用两张【闪】来抵消此【杀】.你造成伤害后,直到你下回合开始,你与受伤角色计算与对方的距离+1',
+    QQQ_lieshi_info: '<span class=Qmenu>锁定技,</span>你使用的【杀】无视防具,没有防具的角色需要使用两张【闪】来抵消此【杀】.你造成伤害后,直到你下回合开始,你与受伤角色计算与对方的距离+1',
     QQQ_zhuiyi: '追憶',
-    QQQ_zhuiyi_info: '<span class="Qmenu">锁定技,</span>当有牌进入弃牌堆时,若未记录此牌名,则记录之.你可以移除一项记录,视为使用或打出此牌(无距离次数限制)',
+    QQQ_zhuiyi_info: '<span class=Qmenu>锁定技,</span>当有牌进入弃牌堆时,若未记录此牌名,则记录之.你可以移除一项记录,视为使用或打出此牌(无距离次数限制)',
     QQQ_shenshang: '神傷',
-    QQQ_shenshang_info: '<span class="Qmenu">锁定技,</span>其他角色无法使用或打出你记录的牌名',
+    QQQ_shenshang_info: '<span class=Qmenu>锁定技,</span>其他角色无法使用或打出你记录的牌名',
     QQQ_neifa: '内伐',
     QQQ_neifa_info: '出牌阶段开始时,你可以视为对自己使用一张【决斗】;当你为此【决斗】响应:第奇数次后,你摸三张牌;第偶数次后,你本回合获得「挑衅」「无双」「乱击」中的前一个',
     QQQ_bianshen: '变身',
-    QQQ_bianshen_info: '<span class="Qmenu">锁定技,</span>每回合开始时你随机变为其他一个角色,若你技能数大于36,则你清空技能',
+    QQQ_bianshen_info: '<span class=Qmenu>锁定技,</span>每回合开始时你随机变为其他一个角色,若你技能数大于36,则你清空技能',
     '': `<input type="button" value="空字符串" onclick="alert('QQQ')">`,
     _info: `<input type="button" value="这是一个空字符串" onclick="alert('QQQ')">`,
     undefined: 'undefined',
     undefined_info: '这是一个undefined',
     QQQ_pianan: '偏安',
-    QQQ_pianan_info: '<span class="Qmenu">锁定技,</span>每当你获得牌后,你弃置区域内所有伤害牌,并增加等量手牌上限.当你成为伤害牌的目标后,你将手牌摸至手牌上限,因此获得至少两张牌后,你的手牌上限-1',
+    QQQ_pianan_info: '<span class=Qmenu>锁定技,</span>每当你获得牌后,你弃置区域内所有伤害牌,并增加等量手牌上限.当你成为伤害牌的目标后,你将手牌摸至手牌上限,因此获得至少两张牌后,你的手牌上限-1',
     QQQ_tushe: '图射',
-    QQQ_tushe_info: '限定技,出牌阶段开始时,若你的手牌数大于等于手牌上限,你可以令你的手牌上限减至0,弃置所有手牌,获得等量无次数限制的【杀】,将<偏安>修改为非<span class="Qmenu">锁定技,</span>本回合你每造成1点伤害,你的手牌上限+1',
+    QQQ_tushe_info: '限定技,出牌阶段开始时,若你的手牌数大于等于手牌上限,你可以令你的手牌上限减至0,弃置所有手牌,获得等量无次数限制的【杀】,将<偏安>修改为非<span class=Qmenu>锁定技,</span>本回合你每造成1点伤害,你的手牌上限+1',
     QQQ_kangzou: '抗揍',
     QQQ_kangzou_info: '每回合限x次,当你需使用或打出牌时,若其牌名未记录,则你记录之,并视为使用或打出此牌,而后你增加一点体力上限,并将手牌补至体力上限(x为每回合开始时你的体力上限/因此法使用的牌不记入次数限制).每当你进入濒死时,若你有未记录的牌名,随机记录一个未记录牌名,然后回复体力至一点',
     QQQ_xiangyun: '香陨',
@@ -7624,10 +7014,8 @@ const translate1 = {
     QQQ_taye: '踏野',
     QQQ_taye_info: '当你使用一张牌后,你可以从弃牌堆中选择至多[1]张与此牌类型相同的其他牌,将这些牌置于牌堆底,然后展示牌堆顶等量张牌.然后将与触发技能的牌类型不同的置入弃牌堆,其余牌由你依次分配给场上角色.<br>当有牌不因使用而进入弃牌堆时,你令下次发动此技能时,方括号内的数字+1,至多加至5',
     QQQ_yuepu: '乐谱',
-    QQQ_yuepu_info: '<span class="Qmenu">锁定技,</span>每回合限5次,每当你使用一张牌后你摸一张牌,根据该牌花色(♥️️️1. 升号(♯):表示升高半音.♠️️️2. 降号(♭):表示降低半音.♣️️️3. 重升号(×):表示升高一个全音.♦️️️4. 重降号(♭♭):表示降低一个全音.这是由两个降记号合在一起而成.🃏:5. 还原号(♮):表示将已升高或降低的音还原,也可以叫本位号.)记录在你的乐谱库中,每当你的乐谱库中符号不小于2时,你可选择移除3个乐谱符,令一名其他角色根据乐谱执行以下效果:升符:依次展示3张牌数递增的牌,否则失去一点体力降符:依次展示3张牌数递减的牌,否则弃置3张牌重升符:展示3张牌这些牌点数和大于其其余牌点数和,否则失去一点体力上限重降符:展示3张牌这些牌点数和小于其其余牌点数和,否则弃置全部装备牌和3张手牌还原符:依次展示3张牌点数相差不大于3的牌,否则令你获得其3张牌并令你获得一张灵芝,你于回合内使用前5张牌无次数距离限制弃牌阶段弃牌后,你可令一名其他角色弃置两张牌,若其中的一个花色牌大于2,你添加该花色对应的乐谱库至你的乐谱库中',
-    雄略: '雄略',
-    雄略_info: '当你成为伤害牌的目标时,你可以弃置x张牌交换此牌使用者与目标',
-    温柔一刀: `<a href='https://qm.qq.com/q/SsTlU9gc24'><span style='animation: fairy 20s infinite; -webkit-animation: fairy 20s infinite;'>温柔一刀</span></a>`,
+    QQQ_yuepu_info: '<span class=Qmenu>锁定技,</span>每回合限5次,每当你使用一张牌后你摸一张牌,根据该牌花色(♥️️️1. 升号(♯):表示升高半音.♠️️️2. 降号(♭):表示降低半音.♣️️️3. 重升号(×):表示升高一个全音.♦️️️4. 重降号(♭♭):表示降低一个全音.这是由两个降记号合在一起而成.🃏:5. 还原号(♮):表示将已升高或降低的音还原,也可以叫本位号.)记录在你的乐谱库中,每当你的乐谱库中符号不小于2时,你可选择移除3个乐谱符,令一名其他角色根据乐谱执行以下效果:升符:依次展示3张牌数递增的牌,否则失去一点体力降符:依次展示3张牌数递减的牌,否则弃置3张牌重升符:展示3张牌这些牌点数和大于其其余牌点数和,否则失去一点体力上限重降符:展示3张牌这些牌点数和小于其其余牌点数和,否则弃置全部装备牌和3张手牌还原符:依次展示3张牌点数相差不大于3的牌,否则令你获得其3张牌并令你获得一张灵芝,你于回合内使用前5张牌无次数距离限制弃牌阶段弃牌后,你可令一名其他角色弃置两张牌,若其中的一个花色牌大于2,你添加该花色对应的乐谱库至你的乐谱库中',
+    温柔一刀: `<a href='https://qm.qq.com/q/SsTlU9gc24'><span class=Qmenu>温柔一刀</span></a>`,
     诗寇蒂的剪刀: '诗寇蒂的剪刀',
     诗寇蒂的剪刀_info: '回合开始时,你可以永久裁剪掉自己的任意个阶段,并将其赋予任意角色,且可以插入任意位置.回合开始时,你摸当前缺失阶段数量的牌',
     QQQ_biaoji: '标记',
@@ -7636,8 +7024,8 @@ const translate1 = {
     激将_info: '当你需要砍人时,你可令一名有杀的蜀势力角色替你使用与打出',
     武绝: '武绝',
     武绝_info: '五轮限一次,你可以将一名其他角色置入你的装备区三回合',
-    影火: `<a href='https://qm.qq.com/q/SsTlU9gc24'><span style='animation: fairy 20s infinite; -webkit-animation: fairy 20s infinite;'>影火</span></a>`,
-    影火_info: '<span class="Qmenu">锁定技,</span>牌堆顶4张牌始终对你可见;你可将其如手牌般使用与打出',
+    影火: `<a href='https://qm.qq.com/q/SsTlU9gc24'><span class=Qmenu>影火</span></a>`,
+    影火_info: '<span class=Qmenu>锁定技,</span>牌堆顶4张牌始终对你可见;你可将其如手牌般使用与打出',
     置幻: '置幻',
     置幻_info: '任意角色使用非转化牌时,若【花招】中不含此牌名,你可以令包含此牌花色的选项失效,并交换此牌与【花招】描述中花色相同的选项的牌名.当【花招】没有可用选项时,重置所有选项',
     称象: '称象',
@@ -7647,13 +7035,9 @@ const translate1 = {
     求贤若渴: '求贤若渴',
     求贤若渴_info: '出牌阶段,你声明一个花色及类别,然后亮出牌堆顶3张牌,你获得与你声明相符的牌.若有两项皆满足的牌,你回复一点体力',
     魔翼: '魔翼',
-    魔翼_info: '当你体力值变化一点后,你可以摸一张牌并用一张牌,直到你没有使用牌',
-    mianze: '绵泽',
-    mianze_info: '嵌套用牌',
+    魔翼_info: '体力变化后,你可以摸一张牌并用一张牌,直到你没有使用牌',
     bug: 'bug',
     bug_info: '测bug专用',
-    天启: '天启',
-    天启_info: '出牌阶段限九次,你可以创造一张地图/法术/神器/机关/食物牌,然后你获得一个随机正面效果',
     _append: '',
     _ab: '',
     合包: '合包',
@@ -7661,73 +7045,71 @@ const translate1 = {
     群起: '群起',
     群起_info: '出牌阶段,你可以弃置两张牌,并令所有拥有<群起>的角色摸两张牌,然后可以令一名未拥有<群起>的角色获得<群起>',
     斩杀: '斩杀',
-    斩杀_info: '<span class="Qmenu">锁定技,</span>你的回合内,当有角色体力值小于二时,你获得其所有手牌并且对其使用牌无次数限制和距离',
+    斩杀_info: '<span class=Qmenu>锁定技,</span>你的回合内,当有角色体力值小于二时,你获得其所有手牌并且对其使用牌无次数限制和距离',
     自书: '自书',
-    自书_info: '<span class="Qmenu">锁定技,</span>任意角色回合内摸牌后,你摸一张牌',
+    自书_info: '<span class=Qmenu>锁定技,</span>任意角色回合内摸牌后,你摸一张牌',
     伤害: '伤害',
-    伤害_info: '<span class="Qmenu">锁定技,</span>你的伤害不可阻挡',
+    伤害_info: '<span class=Qmenu>锁定技,</span>你的伤害不可阻挡',
     漫卷: '漫卷',
-    漫卷_info: '<span class="Qmenu">锁定技,</span>如手牌般使用别人的手牌',
+    漫卷_info: '<span class=Qmenu>锁定技,</span>如手牌般使用别人的手牌',
     GXS_snwushuang: '无双',
-    GXS_snwushuang_info: '<span class="Qmenu">锁定技,</span>无双',
+    GXS_snwushuang_info: '<span class=Qmenu>锁定技,</span>无双',
     博弈: '博弈',
     博弈_info: '回合限一次.你选择一张手牌并使全部其他角色猜测该牌的类型.若猜对:你可令你与该角色各摸一张牌:若猜错:你可令你与该角色各弃置一张牌',
     门客: '门客',
-    门客_info: '<span class="Qmenu">锁定技,</span>你死亡后,令杀死你的角色进入门客秘境(其他角色暂时移出游戏,进入门客秘境的人需要面对三名门客的夹击,直至一方全部阵亡)',
+    门客_info: '<span class=Qmenu>锁定技,</span>你死亡后,令杀死你的角色进入门客秘境(其他角色暂时移出游戏,进入门客秘境的人需要面对三名门客的夹击,直至一方全部阵亡)',
     减伤: '减伤',
-    减伤_info: '<span class="Qmenu">锁定技,</span>当你受到伤害时,此伤害减去你已损体力值',
+    减伤_info: '<span class=Qmenu>锁定技,</span>当你受到伤害时,此伤害减去你已损体力值',
     避乱: '避乱',
-    避乱_info: '<span class="Qmenu">锁定技,</span>结束阶段开始时,本局内其他角色计算与你的距离时+X.(X为场上角色数)',
+    避乱_info: '<span class=Qmenu>锁定技,</span>结束阶段开始时,本局内其他角色计算与你的距离时+X.(X为场上角色数)',
     赤焰镇魂琴: '赤焰镇魂琴',
-    赤焰镇魂琴_info: '<span class="Qmenu">锁定技,</span>你的伤害视为火属性且无来源',
+    赤焰镇魂琴_info: '<span class=Qmenu>锁定技,</span>你的伤害视为火属性且无来源',
     禅让诏书: '禅让诏书',
     禅让诏书_info: '其他角色于其回合外获得牌时,你可以选择一项:1.交给其一张牌;2.令其交给你一张牌',
     乌铁锁链: '乌铁锁链',
-    乌铁锁链_info: '<span class="Qmenu">锁定技,</span>你使用牌指定目标后,若其未横置,则横置之',
+    乌铁锁链_info: '<span class=Qmenu>锁定技,</span>你使用牌指定目标后,若其未横置,则横置之',
     崆峒印: '崆峒印',
-    崆峒印_info: '<span class="Qmenu">锁定技,</span>阶段限一次,你受到致命伤害或两点及以上伤害时,防止之',
-    东皇钟: `<a href='https://qm.qq.com/q/SsTlU9gc24'><span style='animation: fairy 20s infinite; -webkit-animation: fairy 20s infinite;'>东皇钟</span></a>`,
+    崆峒印_info: '<span class=Qmenu>锁定技,</span>阶段限一次,你受到致命伤害或两点及以上伤害时,防止之',
+    东皇钟: `<a href='https://qm.qq.com/q/SsTlU9gc24'><span class=Qmenu>东皇钟</span></a>`,
     东皇钟_info: '回合限一次,你可以重铸一张牌,并令一名其他角色武将牌上的所有技能失效直到你的下回合开始,其对你造成伤害后,你摸其技能数张牌并解封其武将牌上的技能',
     封神榜: '封神榜',
     封神榜_info: '回合限一次,你可以弃置一张牌并选择一名其他角色的一个技能,其失去此技能,然后你将一张印有此技能的<封神>置入弃牌堆.＊封神:使用后获得上面印的技能,然后销毁这张卡',
     昊天塔: '昊天塔',
-    昊天塔_info: '分为五个碎片牌.<span class="Qmenu">锁定技,</span>你对其他角色造成的伤害+x,若x为5,你令其立即死亡.(x为你昊天塔碎片比其多的数量)',
+    昊天塔_info: '分为五个碎片牌.<span class=Qmenu>锁定技,</span>你对其他角色造成的伤害+x,若x为5,你令其立即死亡.(x为你昊天塔碎片比其多的数量)',
     炼妖壶: '炼妖壶',
-    炼妖壶_info: '<span class="Qmenu">锁定技,</span>其他角色本局游戏造成伤害的总数对你始终可见.每五轮增加一次使用次数,每轮开始时,你可以令累计造成伤害最多的角色获得<炼妖>:准备阶段开始时失去一点体力或减一点体力上限,结束阶段翻面或弃置三张牌',
+    炼妖壶_info: '<span class=Qmenu>锁定技,</span>其他角色本局游戏造成伤害的总数对你始终可见.每五轮增加一次使用次数,每轮开始时,你可以令累计造成伤害最多的角色获得<炼妖>:准备阶段开始时失去一点体力或减一点体力上限,结束阶段翻面或弃置三张牌',
     炼妖: '炼妖',
-    炼妖_info: '<span class="Qmenu">锁定技,</span>准备阶段开始时失去一点体力或减一点体力上限,结束阶段翻面或弃置三张牌',
+    炼妖_info: '<span class=Qmenu>锁定技,</span>准备阶段开始时失去一点体力或减一点体力上限,结束阶段翻面或弃置三张牌',
     昆仑镜: '昆仑镜',
     昆仑镜_info: '阶段限一次,当你受到伤害后,你可以将体力与手牌数调整至此轮开始',
     盘古斧: '盘古斧',
-    盘古斧_info: '<span class="Qmenu">锁定技,</span>每回合限三次,你使用牌指定目标后,你复制目标角色区域内的一张牌并获得复制牌,复制牌在进入弃牌堆后销毁',
+    盘古斧_info: '<span class=Qmenu>锁定技,</span>每回合限三次,你使用牌指定目标后,你复制目标角色区域内的一张牌并获得复制牌,复制牌在进入弃牌堆后销毁',
     女娲石: '女娲石',
-    女娲石_info: '每五轮增加一次使用次数,出牌阶段或当你死亡时,你可以选择一名已阵亡的角色,将其复活,体力调整至体力上限、摸四张牌,改为由你操控',
+    女娲石_info: '每五轮增加一次使用次数,出牌阶段,你可以选择一名已阵亡的角色,将其复活为随从,体力调整至体力上限、摸四张牌',
     轩辕剑: '轩辕剑',
-    轩辕剑_info: '<span class="Qmenu">锁定技,</span>当你使用杀指定目标时,阳:你令目标回复一点体力增加一个剑标记,然后摸三张牌令此杀失效;阴:你可以额外指定攻击范围内两名目标,并对目标造成x点伤害(x为目标角色剑标记数)',
+    轩辕剑_info: '<span class=Qmenu>锁定技,</span>当你使用杀指定目标时,阳:你令目标回复一点体力增加一个剑标记,然后摸三张牌令此杀失效;阴:你可以额外指定攻击范围内两名目标,并对目标造成x点伤害(x为目标角色剑标记数)',
     神农鼎: '神农鼎',
-    神农鼎_info: '<span class="Qmenu">锁定技,</span>改变你桃的作用,改为可以回血超过上限且回复效果两倍.当有角色使用桃后,你摸一张牌.阶段限一次,你可以将一张牌当桃使用',
+    神农鼎_info: '<span class=Qmenu>锁定技,</span>改变你桃的作用,改为可以回血超过上限且回复效果两倍.当有角色使用桃后,你摸一张牌.阶段限一次,你可以将一张牌当桃使用',
     伏羲琴: '伏羲琴',
     伏羲琴_info: '每五轮增加一次使用次数,混乱全场敌对角色,直至你下个出牌阶段开始',
     金乌落日弓: '金乌落日弓',
     金乌落日弓_info: '你一次性失去2张及以上手牌时,你可以选择一名其他角色,并弃置其X张牌,X为你本次失去的牌的数量',
     义从: '义从',
-    义从_info: '<span class="Qmenu">锁定技,</span>你计算与其他角色的距离时-X,其他角色计算与你的距离时+Y(X为你的体力值,Y为你的已损失体力值)',
+    义从_info: '<span class=Qmenu>锁定技,</span>你计算与其他角色的距离时-X,其他角色计算与你的距离时+Y(X为你的体力值,Y为你的已损体力值)',
     南蛮: '南蛮',
     南蛮_info: '南蛮',
     三窟: '三窟',
-    三窟_info: '<span class="Qmenu">锁定技,</span>当你进入濒死状态时,你减1点体力上限,然后将体力回复至体力上限',
+    三窟_info: '<span class=Qmenu>锁定技,</span>当你进入濒死状态时,你减1点体力上限,然后将体力回复至体力上限',
     连营: '连营',
-    连营_info: '<span class="Qmenu">锁定技,</span>当手牌数小于6时,你将手牌补至6张',
+    连营_info: '<span class=Qmenu>锁定技,</span>当手牌数小于6时,你将手牌补至6张',
     冲阵: '冲阵',
-    冲阵_info:
-        '你可以将一张牌的花色按以下规则使用或打出:♥️️️当【桃】;♦️️当火【杀】;♣️️当【闪】;♠️️当【无懈可击】.\
-当你以此法使用或打出【杀】或【闪】时,你可以获得对方一张牌;当你以此法使用【桃】时,你可以获得一名其他角色的一张牌;当你以此法使用【无懈可击】时,你可以获得你响应普通锦囊牌使用者的一张牌',
+    冲阵_info: '你可以将一张牌的花色按以下规则使用或打出:♥️️️当【桃】;♦️️当火【杀】;♣️️当【闪】;♠️️当【无懈可击】<br>当你以此法使用或打出【杀】或【闪】时,你可以获得对方一张牌<br>当你以此法使用【桃】时,你可以获得一名其他角色的一张牌<br>当你以此法使用【无懈可击】时,你可以获得你响应普通锦囊牌使用者的一张牌',
     持纲4: '持纲4',
-    持纲4_info: '<span class="Qmenu">锁定技,</span>结束改出牌',
+    持纲4_info: '<span class=Qmenu>锁定技,</span>结束改出牌',
     擅专: '擅专',
-    擅专_info: '<span class="Qmenu">锁定技,</span>任意角色受到伤害时,你将其一张牌置于其判定区,黑色视为闪电,红色视为乐不思蜀',
+    擅专_info: '<span class=Qmenu>锁定技,</span>任意角色受到伤害时,你将其一张牌置于其判定区,黑色视为闪电,红色视为乐不思蜀',
     酉鸡: '酉鸡',
-    酉鸡_info: '<span class="Qmenu">锁定技,</span>摸牌阶段,你多摸X张牌(X为游戏轮数)',
+    酉鸡_info: '<span class=Qmenu>锁定技,</span>摸牌阶段,你多摸X张牌(X为游戏轮数)',
     改命: '改命',
     改命_info: '观星七张改判定',
     卫境: '卫境',
@@ -7735,57 +7117,55 @@ const translate1 = {
     慧识: '慧识',
     慧识_info: '回合限一次.你可进行判定获得判定牌并加1点体力上限,直到出现两张相同花色的牌',
     正订: '正订',
-    正订_info: '<span class="Qmenu">锁定技,</span>当你于回合外使用或打出牌响应其他角色使用的牌时,你加1点体力上限',
+    正订_info: '<span class=Qmenu>锁定技,</span>当你于回合外使用或打出牌响应其他角色使用的牌时,你加1点体力上限',
     冯河: '冯河',
-    冯河_info: '<span class="Qmenu">锁定技,</span>当你受到伤害时,你防止之,然后若此伤害有来源且来源不是你,你与伤害来源各减一点体力上限',
+    冯河_info: '<span class=Qmenu>锁定技,</span>当你受到伤害时,你防止之,然后若此伤害有来源且来源不是你,你与伤害来源各减一点体力上限',
     杀: '杀',
-    杀_info: '<span class="Qmenu">锁定技,</span>你的杀无限距离、无限次数、无视防具,且视为神属性',
+    杀_info: '<span class=Qmenu>锁定技,</span>你的杀无限距离、无限次数、无视防具,且视为神属性',
     杀杀: '杀杀',
     杀杀_info: '你可以将任何一张牌当杀使用或打出',
     伤神: '伤神',
-    伤神_info: '<span class="Qmenu">锁定技,</span>任意角色回合开始时,进行一次闪电判定',
+    伤神_info: '<span class=Qmenu>锁定技,</span>任意角色回合开始时,进行一次闪电判定',
     QQQ_zhendu: '鸩毒',
-    QQQ_zhendu_info: '<span class="Qmenu">锁定技,</span>其他角色回合开始时,你对其造成一点伤害并视为对其使用一张<酒>',
+    QQQ_zhendu_info: '<span class=Qmenu>锁定技,</span>其他角色回合开始时,你对其造成一点伤害并视为对其使用一张<酒>',
     持纲1: '持纲1',
-    持纲1_info: '<span class="Qmenu">锁定技,</span>准备改摸牌',
+    持纲1_info: '<span class=Qmenu>锁定技,</span>准备改摸牌',
     持纲3: '持纲3',
-    持纲3_info: '<span class="Qmenu">锁定技,</span>弃牌改出牌',
+    持纲3_info: '<span class=Qmenu>锁定技,</span>弃牌改出牌',
     持纲2: '持纲2',
-    持纲2_info: '<span class="Qmenu">锁定技,</span>判定改摸牌',
-    发装备: '发装备',
-    发装备_info: '<span class="Qmenu">锁定技,</span>开局全场发装备',
+    持纲2_info: '<span class=Qmenu>锁定技,</span>判定改摸牌',
     慈孝: '慈孝',
-    慈孝_info: '<span class="Qmenu">锁定技,</span>准备阶段你令一名未拥有义子标记的其他角色获得一个<义子>标记.(拥有<义子>标记的角色视为拥有技能<叛弑>)',
+    慈孝_info: '<span class=Qmenu>锁定技,</span>准备阶段你令一名未拥有义子标记的其他角色获得一个<义子>标记.(拥有<义子>标记的角色视为拥有技能<叛弑>)',
     叛弑: '叛弑',
-    叛弑_info: '<span class="Qmenu">锁定技,</span>准备阶段,你交给拥有技能<慈孝>的角色一张手牌',
+    叛弑_info: '<span class=Qmenu>锁定技,</span>准备阶段,你交给拥有技能<慈孝>的角色一张手牌',
     食尸: '食尸',
-    食尸_info: '<span class="Qmenu">锁定技,</span>当有角色进入濒死时(每名角色限一次),你增加一点体力上限并回复一点体力,并获得其所有牌',
+    食尸_info: '<span class=Qmenu>锁定技,</span>当有角色进入濒死时(每名角色限一次),你增加一点体力上限并回复一点体力,并获得其所有牌',
     平衡: '平衡',
-    平衡_info: '<span class="Qmenu">锁定技,</span>当其他角色非摸牌阶段获得牌、摸牌阶段摸超过两张牌时,你获得其等量的牌',
+    平衡_info: '<span class=Qmenu>锁定技,</span>当其他角色非摸牌阶段获得牌、摸牌阶段摸超过两张牌时,你获得其等量的牌',
     QQQ_tonghua: '同化',
-    QQQ_tonghua_info: '<span class="Qmenu">锁定技,</span>所有其他角色死亡前将其转变为晦暝,回复至两点体力',
+    QQQ_tonghua_info: '<span class=Qmenu>锁定技,</span>所有其他角色死亡前将其转变为晦暝,回复至两点体力',
     寄生: '寄生',
-    寄生_info: '<span class="Qmenu">锁定技,</span>当你死亡时,所有晦暝死亡,你每个<暝>标记摸9张牌.你弃置所有<暝>标记,并失去技能<同化>.你结束所有人的出牌阶段,并插入一个出牌阶段,且此阶段内你出杀无次数限制,此阶段结束后,你死亡且永久移出游戏',
+    寄生_info: '<span class=Qmenu>锁定技,</span>当你死亡时,所有晦暝死亡,你每个<暝>标记摸9张牌.你弃置所有<暝>标记,并失去技能<同化>.你结束所有人的出牌阶段,并插入一个出牌阶段,且此阶段内你出杀无次数限制,此阶段结束后,你死亡且永久移出游戏',
     暝: '暝',
-    暝_info: '<span class="Qmenu">锁定技,</span>晦暝属于你的阵营.晦暝死亡后你获得一个<暝>标记.每有一个 <暝>标记,摸牌阶段多摸2张牌,出牌阶段出杀次数加一',
+    暝_info: '<span class=Qmenu>锁定技,</span>晦暝属于你的阵营.晦暝死亡后你获得一个<暝>标记.每有一个 <暝>标记,摸牌阶段多摸2张牌,出牌阶段出杀次数加一',
     寒: '寒',
-    寒_info: '<span class="Qmenu">锁定技,</span>结束阶段,你指定一名其他角色获得一个<寒>标记.同一个角色最多标记4个.当你使用杀指定拥有<寒>的角色时,此杀效果额外结算x次,x为目标角色拥有<寒>的数量',
+    寒_info: '<span class=Qmenu>锁定技,</span>结束阶段,你指定一名其他角色获得一个<寒>标记.同一个角色最多标记4个.当你使用杀指定拥有<寒>的角色时,此杀效果额外结算x次,x为目标角色拥有<寒>的数量',
     寒_1: '寒',
-    寒_1_info: '<span class="Qmenu">锁定技,</span>当你使用杀指定拥有<寒>的角色时,此杀效果额外结算x次,x为目标角色拥有<寒>的数量',
+    寒_1_info: '<span class=Qmenu>锁定技,</span>当你使用杀指定拥有<寒>的角色时,此杀效果额外结算x次,x为目标角色拥有<寒>的数量',
     寄生_1: '寄生_1',
-    寄生_1_info: '<span class="Qmenu">锁定技,</span>你出杀无距离次数限制且免疫死亡',
+    寄生_1_info: '<span class=Qmenu>锁定技,</span>你出杀无距离次数限制且免疫死亡',
     奇械: '奇械',
-    奇械_info: '你可以将一张手牌当做装备牌使用: ♥️️,加一马;♦️️,减一马;♠️️,八卦阵;♣️️,连弩',
+    奇械_info: '你可以将一张手牌当做装备牌使用:♥️️加一马;♦️️减一马;♠️️八卦阵;♣️️连弩',
     天谴: '天谴',
-    天谴_info: '<span class="Qmenu">锁定技,</span>你已被天谴',
+    天谴_info: '<span class=Qmenu>锁定技,</span>你已被天谴',
     战陨: '战陨',
-    战陨_info: '<span class="Qmenu">锁定技,</span>杀死你的角色:废除装备区,翻面并横置,体力值修改为1,弃置所有牌,立刻结束出牌阶段(不是出牌阶段则结束当前回合),不能对自己使用牌,判定牌永远视为♠️️五,手牌上限为0',
+    战陨_info: '<span class=Qmenu>锁定技,</span>杀死你的角色:废除装备区,翻面并横置,体力值修改为1,弃置所有牌,立刻结束出牌阶段(不是出牌阶段则结束当前回合),不能对自己使用牌,判定牌永远视为♠️️五,手牌上限为0',
     QQQ_人皇幡: '人皇幡',
-    QQQ_人皇幡_info: '<span class="Qmenu">锁定技,</span>使用有目标的牌时,若此牌是装备牌或延时锦囊则你摸一张牌.否则此牌无距离次数限制,且可以增加或减少一个目标',
+    QQQ_人皇幡_info: '<span class=Qmenu>锁定技,</span>使用有目标的牌时,若此牌是装备牌或延时锦囊则你摸一张牌.否则此牌无距离次数限制,且可以增加或减少一个目标',
     武德: '武德',
-    武德_info: '<span class="Qmenu">锁定技,</span>当你成为杀的目标时,获得一枚<武德>标记.当你的<武德>标记数大于等于你的体力值时,无属性伤害对你无效.你的手牌上限+X(X为你的<武德>标记数)',
+    武德_info: '<span class=Qmenu>锁定技,</span>当你成为杀的目标时,获得一枚<武德>标记.当你的<武德>标记数大于等于你的体力值时,无属性伤害对你无效.你的手牌上限+X(X为你的<武德>标记数)',
     大意: '大意',
-    大意_info: '你可以重铸闪.<span class="Qmenu">锁定技,</span>你无法使用闪来响应杀',
+    大意_info: '你可以重铸闪.<span class=Qmenu>锁定技,</span>你无法使用闪来响应杀',
     连鞭: '连鞭',
     连鞭_info: '回合限一次,你可以横置自己与至多四名其他角色,并对自己造成1点雷电伤害.若如此做,你获得一个<武德>标记',
     偷袭: '偷袭',
@@ -7793,23 +7173,21 @@ const translate1 = {
     强夺: '强夺',
     强夺_info: '出牌阶段你可以失去一点体力,并获得所有非友方角色的一张牌',
     赌: '赌',
-    赌_info:
-        '出牌阶段,你可以摸一张牌并猜测其颜色,若错误:你获得一枚<赌>标记;若正确:你可以选择移去一枚<赌>标记或回复一点体力值.<span class="Qmenu">锁定技,</span>若你的<赌>标记大于3,你死亡.\
-        其他角色出牌阶段,其可以移去一个赌,视为使用一张任意牌',
+    赌_info: '出牌阶段,你可以摸一张牌并猜测其颜色,若错误:你获得一枚<赌>标记;若正确:你可以选择移去一枚<赌>标记或回复一点体力<br><span class=Qmenu>锁定技,</span>若你的<赌>标记大于3,你死亡<br>其他角色出牌阶段,其可以移去一个赌,视为使用一张任意牌',
     赌2: '赌2',
     赌2_info: '其他角色出牌阶段,其可以移去一个赌,视为使用一张任意牌',
     连弩: '连弩',
-    连弩_info: '<span class="Qmenu">锁定技,</span>你使用杀无次数限制,当你使用的杀未造成伤害,你弃置此杀目标角色一张牌',
+    连弩_info: '<span class=Qmenu>锁定技,</span>你使用杀无次数限制,当你使用的杀未造成伤害,你弃置此杀目标角色一张牌',
     青锋: '青锋',
-    青锋_info: '<span class="Qmenu">锁定技,</span>封手牌',
+    青锋_info: '<span class=Qmenu>锁定技,</span>封手牌',
     青锋2: '青锋2',
-    青锋2_info: '<span class="Qmenu">锁定技,</span>你使用牌指定目标后,目标无法使用打出手牌直到回合结束',
+    青锋2_info: '<span class=Qmenu>锁定技,</span>你使用牌指定目标后,目标无法使用打出手牌直到回合结束',
     设伏: '设伏',
     设伏_info: '回合结束时,你选择任意一种牌名,并将一张牌置于武将牌上.当其他角色使用此牌名时,你可以令其失效',
     杀杀杀: '杀杀杀',
-    杀杀杀_info: '<span class="Qmenu">锁定技,</span>你用杀造成伤害时,防止此伤害,让目标减少此伤害数值的体力上限',
+    杀杀杀_info: '<span class=Qmenu>锁定技,</span>你用杀造成伤害时,防止此伤害,让目标减少此伤害数值的体力上限',
     五行鹤翎扇: '五行鹤翎扇',
-    五行鹤翎扇_info: '<span class="Qmenu">锁定技,</span>你使用杀时,将此杀转为任意属性(冰、火、雷、雪、毒、金、神、血)',
+    五行鹤翎扇_info: '<span class=Qmenu>锁定技,</span>你使用杀时,将此杀转为任意属性(冰、火、雷、雪、毒、金、神、血)',
     伏诛: '伏诛',
     伏诛_info: '任意角色回合结束时,你可以对其使用牌堆里面所有的杀',
     QQQ_摸牌: '摸牌',
@@ -7817,7 +7195,7 @@ const translate1 = {
     QQQ_出牌: '出牌',
     QQQ_出牌_info: '任何时候,你可以出牌(不能是需要你响应的时机)',
     碎甲: '碎甲',
-    碎甲_info: '<span class="Qmenu">锁定技,</span>你的防具失效',
+    碎甲_info: '<span class=Qmenu>锁定技,</span>你的防具失效',
     募集: '募集',
     募集_info: '其他角色失去牌时,你可以弃置一张牌或失去一点体力获得这些牌中的一半(向上取整)',
     治军: '治军',
@@ -7825,7 +7203,7 @@ const translate1 = {
     康济: '康济',
     康济_info: '主公技,回合限一次,你可另其他魏势力武将各摸或随机弃置一张牌',
     驭衡: '驭衡',
-    驭衡_info: '<span class="Qmenu">锁定技,</span>准备阶段你弃置所有手牌并随机获得等量技能,结束阶段你摸等量的牌并失去这些技能',
+    驭衡_info: '<span class=Qmenu>锁定技,</span>准备阶段你弃置所有手牌并随机获得等量技能,结束阶段你摸等量的牌并失去这些技能',
     制蛮: '制蛮',
     制蛮_info: '当你受到伤害时,你可以交给来源一张牌防止之',
     帝力: '帝力',
@@ -7833,77 +7211,67 @@ const translate1 = {
     顧曲: '顧曲',
     顧曲_info: '回合开始阶段,你可以将一张手牌置于武将牌,称为<律>或进行更换(<律>至多五张).其他角色于出牌阶段使用牌颜色顺序,若与<律>相符,你摸一张牌',
     雅量: '雅量',
-    雅量_info: '<span class="Qmenu">锁定技,</span>当其他角色对你使用唯一目标的非伤害锦囊时,你需给其一张牌,此锦囊不生效(无牌则此技不生效)',
+    雅量_info: '<span class=Qmenu>锁定技,</span>当其他角色对你使用唯一目标的非伤害锦囊时,你需给其一张牌,此锦囊不生效(无牌则此技不生效)',
     英才: '英才',
     英才_info: '限定技,回合开始阶段,你可以放弃摸牌,此轮距离+1,随后你可以令一名其他角色补充手牌至手牌上限',
     徒: '徒',
-    徒_info: '<span class="Qmenu">锁定技,</span>当你失去牌后,你随机弃置等量的牌(不嵌套触发)',
+    徒_info: '<span class=Qmenu>锁定技,</span>当你失去牌后,你随机弃置等量的牌(不嵌套触发)',
     流: '流',
-    流_info: '<span class="Qmenu">锁定技,</span>结束阶段开始时,你翻面',
-    杖: '杖',
-    杖_info: '<span class="Qmenu">锁定技,</span>你不能响应其他角色使用的伤害牌',
+    流_info: '<span class=Qmenu>锁定技,</span>结束阶段开始时,你翻面',
+    QQQ_zhang: '只攻不防',
+    QQQ_zhang_info: '<span class=Qmenu>锁定技,</span>你不能响应伤害牌;你的桃视为南蛮,酒视为火烧连营,闪视为逐近弃远,无懈视为水淹七军',
     神裁: '神裁',
     神裁_info: '游戏开始时,令一名其他角色获得神裁标记',
-    洗牌: '洗牌',
-    洗牌_info: '<span class="Qmenu">锁定技,</span>当你即将改变体力时,取消之,然后移除牌堆顶X张牌(X为此次改变体力的数值).牌堆第一次洗牌后,你死亡',
+    QQQ_xipai: '万物源气',
+    QQQ_xipai_info: '<span class=Qmenu>锁定技,</span>当你体力变化/不因使用失去牌/死亡时,取消之,然后移除牌堆顶X张牌(X为此次事件的数值).牌堆洗牌后,你死亡',
     御策: '御策',
-    御策_info: '<span class="Qmenu">锁定技,</span>你受到伤害后,除非来源弃置三种不同类型的牌,否则你回复一点体力',
+    御策_info: '<span class=Qmenu>锁定技,</span>你受到伤害后,除非来源弃置三种不同类型的牌,否则你回复一点体力',
     无矩: '无矩',
-    无矩_info: '<span class="Qmenu">锁定技,</span>你使用手牌结算后,重铸所有手牌并摸一张牌,然后你可以令其中任意张牌本回合无法被重铸.当你通过技能弃置的牌数超过x!时,你减一点体力上限,摸两张牌并清空弃牌记录.(x为你发动此技能的次数)',
-    往烈: '往烈',
-    往烈_info: '准备阶段或你使用一张牌时,你可以令你使用的下一张牌:1.不能被响应;2.无距离限制;3.无次数限制',
-    武: '武',
-    武_info: '出牌阶段你可以声明一个牌名,你将所有此牌名的牌置于牌堆顶',
+    无矩_info: '<span class=Qmenu>锁定技,</span>你使用手牌结算后,重铸所有手牌并摸一张牌,然后你可以令其中任意张牌本回合无法被重铸.当你通过技能弃置的牌数超过x!时,你减一点体力上限,摸两张牌并清空弃牌记录.(x为你发动此技能的次数)',
     全装备: '全装备',
-    全装备_info: '<span class="Qmenu">锁定技,</span>开局铠甲合体',
+    全装备_info: '<span class=Qmenu>锁定技,</span>开局铠甲合体',
     自伤: '自伤',
-    自伤_info: '使用后减少当前一半体力上限,体力值上限为1时无法使用该技能.<span class="Qmenu">锁定技,</span>体力上限最少1点',
-    庇护: '庇护',
-    庇护_info: '<span class="Qmenu">锁定技,</span>每次受到伤害进行判定,红色增加1体力上限,黑色回复一体力值,判定结果无法被改变',
+    自伤_info: '使用后减少当前一半体力上限,体力上限为1时无法使用该技能.<span class=Qmenu>锁定技,</span>体力上限最少1点',
     隐忍: '隐忍',
-    隐忍_info:
-        '<span class="Qmenu">锁定技,</span>当你体力值改变时,你增加等量体力上限并亮出牌堆顶一张牌,若为黑则回复一点体力,若为红则增加一点体力上限.\
-        你每失去1点体力上限随机增加以下效果:出杀+1、摸牌+1、喝酒上限+1、距离+1(上限+4)、距离-1(上限-4)、基本牌10%概率重复使用+1、锦囊牌10%概率重复使用+1',
+    隐忍_info: '<span class=Qmenu>锁定技,</span>体力变化后,你增加等量体力上限并亮出牌堆顶一张牌,若为黑则回复一点体力,若为红则增加一点体力上限<br>你每失去1点体力上限,随机增加以下效果:出杀+1、摸牌+1、喝酒上限+1、距离+1(上限+4)、距离-1(上限-4)、基本牌10%概率重复使用+1、锦囊牌10%概率重复使用+1',
     八卦: '八卦',
-    八卦_info: '<span class="Qmenu">锁定技,</span>八卦',
+    八卦_info: '<span class=Qmenu>锁定技,</span>八卦',
     复活: '复活',
-    复活_info: '<span class="Qmenu">锁定技,</span>摸牌阶段若场上有死亡角色,你跳过摸牌阶段令一名死亡角色复活且其转为你阵营',
+    复活_info: '<span class=Qmenu>锁定技,</span>摸牌阶段若场上有死亡角色,你跳过摸牌阶段令一名死亡角色复活且其转为你阵营',
     奇取: '奇取',
-    奇取_info: '<span class="Qmenu">锁定技,</span>当你失去所有的手牌后,你回复一点体力,其他角色获得你的牌时,你与其交换手牌',
+    奇取_info: '<span class=Qmenu>锁定技,</span>当你失去所有的手牌后,你回复一点体力,其他角色获得你的牌时,你与其交换手牌',
     假意: '假意',
     假意_info: '回合限一次,你可以交给一名其他角色一张手牌',
     锥锋: '锥锋',
     锥锋_info: '出牌阶段你可以视为使用决斗',
     天辩: '天辩',
-    天辩_info: '<span class="Qmenu">锁定技,</span>当你拼点时,改为用牌堆顶第一张牌,你的♥️️拼点牌视为K,你令拼点目标改为随机使用手牌,你拼点输获得你拼点的牌,拼点赢获得对方拼点的牌',
+    天辩_info: '<span class=Qmenu>锁定技,</span>当你拼点时,改为用牌堆顶第一张牌,你的♥️️拼点牌视为K,你令拼点目标改为随机使用手牌,你拼点输获得你拼点的牌,拼点赢获得对方拼点的牌',
     麻将: '麻将',
-    麻将_info:
-        '<span class="Qmenu">锁定技,</span>回合结束时,你将麻将牌补至4,可以将一张手牌与一张麻将牌交换.选择一名敌方角色并对其造成0点伤害,麻将牌每满足下列一项,伤害加一:3种花色:4种花色:2张同点数牌:3张同点数牌:4张同点数牌.\
-        若上述五项均满足,其立即死亡',
+    麻将_info: '<span class=Qmenu>锁定技,</span>回合结束时,你将麻将牌补至4,可以将一张手牌与一张麻将牌交换.选择一名敌方角色并对其造成0点伤害<br>麻将牌每满足下列一项,伤害加一:3种花色:4种花色:2张同点数牌:3张同点数牌:4张同点数牌<br>若上述五项均满足,其立即死亡',
     QQQ_三刀: '三刀',
     QQQ_三刀_info: '回合结束时你可以视为使用三张锦囊',
     偏执: '偏执',
-    偏执_info: '<span class="Qmenu">锁定技,</span>当你使用的牌被响应后,你在此牌结算完成后视为再次使用一张同名牌',
+    偏执_info: '<span class=Qmenu>锁定技,</span>当你使用的牌被响应后,你在此牌结算完成后视为再次使用一张同名牌',
     乱码: '乱码',
-    乱码_info: '<span class="Qmenu">锁定技,</span>当你一个阶段开始前,你取消之并随机执行一个阶段(准备和结束阶段除外)',
+    乱码_info: '<span class=Qmenu>锁定技,</span>当你一个阶段开始前,你取消之并随机执行一个阶段(准备和结束阶段除外)',
     镶星: '镶星',
-    镶星_info: '<span class="Qmenu">锁定技,</span>当你受到三次伤害后,随机对场上其他角色造成九点雷电伤害',
+    镶星_info: '<span class=Qmenu>锁定技,</span>体力变化三次后,随机对场上其他角色造成九点雷电伤害',
     血莲: '血莲',
-    血莲_info: '<span class="Qmenu">锁定技,</span>你每受到四次伤害后,回复x/2体 力值,摸两张牌,并视为对场上任意名角 色使用一张无视防具的杀.(x为你已损失的 体力值,向上取整)',
+    血莲_info: '<span class=Qmenu>锁定技,</span>体力变化四次后,回复x/2体力值,摸两张牌,并视为对场上任意名角 色使用一张无视防具的杀.(x为你已损体力值,向上取整)',
     星陨: '星陨',
-    星陨_info: '<span class="Qmenu">锁定技,</span>每轮开始时,随机对场上其他角色造成九点雷电伤害',
+    星陨_info: '<span class=Qmenu>锁定技,</span>每轮开始时,随机对场上其他角色造成九点雷电伤害',
     测试: '测试',
     测试_info: '测试',
     检测: '检测',
     检测_info: '检测',
     摸与杀: '摸与杀',
-    摸与杀_info: '<span class="Qmenu">锁定技,</span>回合开始时随机获得四个有描述的技能,回合结束时选择失去三分之一的技能(向上取整)',
+    摸与杀_info: '<span class=Qmenu>锁定技,</span>回合开始时随机获得四个有描述的技能,回合结束时选择失去三分之一的技能(向上取整)',
     宗祚: '宗祚',
-    宗祚_info: '<span class="Qmenu">锁定技,</span>游戏开始时你增加x点体力上限和体力,x为势力数.当一名势力最后的角色死亡后,你失去两点体力上限',
+    宗祚_info: '<span class=Qmenu>锁定技,</span>游戏开始时你增加x点体力上限和体力,x为势力数.当一名势力最后的角色死亡后,你失去两点体力上限',
     普通卖血: '普通卖血',
-    普通卖血_info: '<span class="Qmenu">锁定技,</span>当你<体力变化/造成伤害/每轮开始>,你摸等量牌',
+    普通卖血_info: '<span class=Qmenu>锁定技,</span><体力变化/造成伤害/每轮开始>时,你摸等量牌',
     隐伏: '隐伏',
-    隐伏_info: '<span class="Qmenu">锁定技,</span>当你受到伤害时,改为回复等量体力.当你回复体力时,摸回复量两倍的牌',
+    隐伏_info: '<span class=Qmenu>锁定技,</span>当你受到伤害时,改为回复等量体力.当你回复体力时,摸回复量两倍的牌',
     问仇: '问仇',
     问仇_info: '觉醒技,准备阶段若你未受伤,你失去隐伏获得破釜',
     破釜: '破釜',
@@ -7913,28 +7281,27 @@ const translate1 = {
     龙威: '龙威',
     龙威_info: '你可以将一张基本牌当作任意基本牌使用或打出并摸一张牌,你可以将一张锦囊牌当作任意锦囊牌使用',
     革命: '革命',
-    革命_info: '当其他角色使用目标不为你的单目标牌时,你可以令其摸一张牌将使用者改为你,或者令其弃一张牌将目标改为你,然后你弃置一张与此牌颜色不同的牌',
+    革命_info: '当其他角色使用目标不为你的单目标牌时,你可以弃置一张与此牌颜色不同的牌选择一项,令其摸一张牌将使用者改为你/令其弃一张牌将目标改为你',
     乾明: '乾明',
-    乾明_info: '回合限一次.阳:出牌阶段,若你没有<神临>,你可以弃置所有牌.阴:出牌阶段你可以发动此技能,然后你获得<神临>',
+    乾明_info: '回合限一次.阳:出牌阶段,你可以弃置所有牌<br>阴:出牌阶段,你可以获得<神临>',
     神临: '神临',
-    神临_info: '<span class="Qmenu">锁定技,</span>每当你结束回合后,立刻进入新的回合.当有角色死亡或牌堆洗牌,你失去此技能',
+    神临_info: '<span class=Qmenu>锁定技,</span>每当你结束回合后,立刻进入新的回合<br>当你杀死角色/牌堆洗牌,失去此技能',
     静气: '静气',
-    静气_info: '<span class="Qmenu">锁定技,</span>离开你区域的牌对你始终可见,你每使用一张牌,随机获得一半静气牌',
+    静气_info: '<span class=Qmenu>锁定技,</span>离开你区域的牌对你始终可见,你每使用一张牌,随机获得一半静气牌',
     连锁: '连锁',
-    连锁_info: '<span class="Qmenu">锁定技,</span>你始终处于横置状态,其他角色使用牌指定你为目标时,横置其.当你受到无属性伤害,改为受到两倍的属性伤害;受到属性伤害后,回复一点体力',
-    用: '用',
+    连锁_info: '<span class=Qmenu>锁定技,</span>你始终处于横置状态,其他角色使用牌指定你为目标时,横置其.当你受到无属性伤害,改为受到两倍的属性伤害;受到属性伤害后,回复一点体力',
     掠夺: '掠夺',
-    掠夺_info: '<span class="Qmenu">锁定技,</span>每轮开始时你获得其他所有角色的♦️️牌',
+    掠夺_info: '<span class=Qmenu>锁定技,</span>每轮开始时,你获得其他所有角色的♦️️牌',
     乱世: '乱世',
-    乱世_info: '<span class="Qmenu">锁定技,</span>任意角色使用杀后,你令所有角色成为目标',
+    乱世_info: '<span class=Qmenu>锁定技,</span>任意角色使用杀后,你令所有角色成为目标',
     全判定: '全判定',
-    全判定_info: '<span class="Qmenu">锁定技,</span>任意角色回合开始时,你将牌堆中所有延时锦囊置入其判定区',
+    全判定_info: '<span class=Qmenu>锁定技,</span>任意角色回合开始时,你将牌堆中所有延时锦囊置入其判定区',
     惠质: '惠质',
-    惠质_info: '<span class="Qmenu">锁定技,</span>你使用非你手牌的牌不计入次数限制且伤害翻倍',
+    惠质_info: '<span class=Qmenu>锁定技,</span>你使用非你手牌的牌不计入次数限制且伤害翻倍',
     乾坤大挪移: '乾坤大挪移',
-    乾坤大挪移_info: '<span class="Qmenu">锁定技,</span>游戏开始时,全场其他角色依次交换一个技能',
+    乾坤大挪移_info: '<span class=Qmenu>锁定技,</span>游戏开始时,全场其他角色依次交换一个技能',
     合并时间线: '合并时间线',
-    合并时间线_info: '<span class="Qmenu">锁定技,</span>游戏开始时,全场角色获得其同名角色的技能',
+    合并时间线_info: '<span class=Qmenu>锁定技,</span>游戏开始时,全场角色获得其同名角色的技能',
 };
 for (const i in skill) {
     const info = skill[i];

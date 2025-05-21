@@ -253,7 +253,42 @@ const windowq = function () {
 windowq();
 const precontent = async function () {
     //—————————————————————————————————————————————————————————————————————————————测试区
-    const ceshi = function () {
+    if (QQQ.config.报错) {
+        lib.skill._QUANJU = {
+            trigger: {
+                global: ['gameStart'],
+            },
+            silent: true,
+            firstDo: true,
+            _priority: 9999,
+            filter: (event, player) => player == game.me,
+            async content(event, trigger, player) {
+                for (const i of lib.inpile) {
+                    if (!lib.card[i]) {
+                        console.log(i);
+                        alert(i + '没有info');
+                    }
+                }//onfree之后才有inpile与牌堆
+                for (const i of Array.from(ui.cardPile.childNodes)) {
+                    if (lib.card[i.name].mode && !lib.card[i.name].mode.includes(lib.config.mode)) {
+                        console.log(i.name, '不该存在于牌堆的牌');
+                    }
+                }//onfree之后才有inpile与牌堆
+                for (const i in lib.card) {
+                    const info = lib.card[i];
+                    let range;
+                    let select = get.copy(info.selectTarget);
+                    if (select == undefined) {
+                        if (info.filterTarget == undefined) range = [0, 0];
+                    } else if (typeof select == 'number') range = [select, select];
+                    else if (get.itemtype(select) == 'select') range = select;
+                    else if (typeof select == 'function') range = select({ name: i }, player);
+                    if (!Array.isArray(range)) {
+                        alert(i + 'range有问题');
+                    }
+                } //卡牌加入牌堆
+            },
+        };//只触发一次
         lib.skill._测试4 = {
             trigger: {
                 global: [
@@ -273,10 +308,6 @@ const precontent = async function () {
                 ],
             },
             silent: true,
-            filter(event, player, name) {
-                //return QQQ.config.报错 && player == game.me;
-                return QQQ.config.报错;
-            },
             async content(event, trigger, player) {
                 debugger;
                 //QQQ
@@ -339,7 +370,6 @@ const precontent = async function () {
             _priority: 19,
         };
     }
-    ceshi();
     //—————————————————————————————————————————————————————————————————————————————lib.onfree
     lib.onfree.push(function () {
         console.log(Object.keys(lib.skill).length, 'lib.onfree', 'skill');
@@ -377,6 +407,10 @@ const precontent = async function () {
                 if (!info.ai.result.player && !info.ai.result.target) {
                     info.ai.result.player = 1;
                     console.log(`修改${i}的result.player为1`);
+                }
+                const con = info.content;
+                if (con && con.toString().includes('event.card.') && !con.toString().includes('event.card =')) {
+                    alert(i + 'content有问题4');
                 }
             }//防止主动技ai不发动
             // if (info.trigger && !info.forced && !info.silent && !info.cost && !info.direct && !info.frequent && !info.check) {
@@ -537,55 +571,6 @@ const precontent = async function () {
             true
         ); //BGM
     }); //需要晚的时机的
-    //—————————————————————————————————————————————————————————————————————————————gameStart
-    lib.skill._QUANJU = {
-        trigger: {
-            global: ['gameStart'],
-        },
-        silent: true,
-        firstDo: true,
-        _priority: 9999,
-        filter: (event, player) => player == game.me,
-        async content(event, trigger, player) {
-            if (QQQ.config.报错) {
-                for (const i of lib.inpile) {
-                    if (!lib.card[i]) {
-                        console.log(i);
-                        alert(i + '没有info');
-                    }
-                }//onfree之后才有inpile与牌堆
-                for (const i of Array.from(ui.cardPile.childNodes)) {
-                    if (lib.card[i.name].mode && !lib.card[i.name].mode.includes(lib.config.mode)) {
-                        console.log(i.name, '不该存在于牌堆的牌');
-                    }
-                }//onfree之后才有inpile与牌堆
-                for (const i in lib.card) {
-                    const info = lib.card[i];
-                    let range;
-                    let select = get.copy(info.selectTarget);
-                    if (select == undefined) {
-                        if (info.filterTarget == undefined) range = [0, 0];
-                    } else if (typeof select == 'number') range = [select, select];
-                    else if (get.itemtype(select) == 'select') range = select;
-                    else if (typeof select == 'function') range = select({ name: i }, player);
-                    if (!Array.isArray(range)) {
-                        alert(i + 'range有问题');
-                    }
-                } //卡牌加入牌堆
-            } //报错
-        },
-    };//只触发一次
-    lib.skill._QUANJU1 = {
-        trigger: {
-            global: ['gameStart'],
-        },
-        silent: true,
-        _priority: -9,
-        filter: (event, player) => parseInt(QQQ.config.飞扬跋扈模式),
-        async content(event, trigger, player) {
-            player.changeHujia(2);
-        },
-    };//全体触发
     //—————————————————————————————————————————————————————————————————————————————lib.onover
     lib.onover.push(function (result) {
         if (!lib.config.Qrecord) {
@@ -1212,7 +1197,7 @@ const precontent = async function () {
         ui.click.mousewheel = function (evt) {
             if (this.firstElementChild && this.firstElementChild.classList.contains('handcards') && !this.classList.contains('scrollh')) return;
             var node = this;
-            var num = parseInt(QQQ.config.滚轮速度); //this._scrollnum || 6;
+            var num = Number(QQQ.config.滚轮速度); //this._scrollnum || 6;
             var speed = 3 * num;
             clearInterval(node.interval);
             if (evt.detail > 0 || evt.wheelDelta < 0) {
@@ -2118,7 +2103,7 @@ const precontent = async function () {
                                 if (get.attitude(player, trigger.source) < 0) return 8 - get.value(card);
                                 return 0;
                             })
-                        ('step 1');
+                            ('step 1');
                         if (result.bool) {
                             var num = result.cards.length;
                             var cnum = get.cnNumber(num);
@@ -3734,10 +3719,6 @@ const precontent = async function () {
                     isBoss: true,
                     isBossAllowed: true,
                 },
-                QQQ_jianting: {
-                    sex: 'female',
-                    skills: ['QQQ_jianting'],
-                },
                 QQQ_无极: {
                     sex: 'female',
                     skills: ['QQQ_无极', '论道', 'QQQ_guji'],
@@ -3868,17 +3849,17 @@ const precontent = async function () {
                 },
             },
             characterTitle: {
-                QQQ_jinshanshan: `<b style='color:rgb(231, 233, 203); font-size: 25px;'>金闪闪</b>`,
-                QQQ_Messmer: `<b style='color:rgb(221, 22, 22); font-size: 25px;'>幽影之火</b>`,
-                QQQ_Godwyn: `<b style='color:rgb(22, 4, 70); font-size: 25px;'>死王子</b>`,
-                QQQ_Melina: `<b style='color:rgb(231, 111, 12); font-size: 25px;'>火种少女</b>`,
-                QQQ_hongting: `<b style='color:rgb(221, 22, 22); font-size: 25px;'>红莲魔尊</b>`,
-                QQQ_CosmicStarfish: `<b style='color:rgb(22, 85, 221); font-size: 25px;'>群星与苍穹之上的梦</b>`,
-                QQQ_Malenia: `<b style='color:rgb(165, 15, 224); font-size: 25px;'>女武神</b>`,
-                QQQ_Radahn: `<b style='color:rgb(74, 8, 161); font-size: 25px;'>碎星将军</b>`,
-                QQQ_Morgott: `<b style='color:rgb(226, 230, 39); font-size: 25px;'>赐福王</b>`,
-                QQQ_菈妮: `<b style='color:rgb(92, 153, 233); font-size: 25px;'>暗月公主</b>`,
-                QQQ_Mohg: `<b style='color:rgb(221, 22, 22); font-size: 25px;'>鲜血君王</b>`,
+                QQQ_jinshanshan: `<b style='color: rgb(231, 233, 203); font-size: 25px;'>金闪闪</b>`,
+                QQQ_Messmer: `<b style='color: rgb(221, 22, 22); font-size: 25px;'>幽影之火</b>`,
+                QQQ_Godwyn: `<b style='color: rgb(22, 4, 70); font-size: 25px;'>死王子</b>`,
+                QQQ_Melina: `<b style='color: rgb(231, 111, 12); font-size: 25px;'>火种少女</b>`,
+                QQQ_hongting: `<b style='color: rgb(221, 22, 22); font-size: 25px;'>红莲魔尊</b>`,
+                QQQ_CosmicStarfish: `<b style='color: rgb(22, 85, 221); font-size: 25px;'>群星与苍穹之上的梦</b>`,
+                QQQ_Malenia: `<b style='color: rgb(165, 15, 224); font-size: 25px;'>女武神</b>`,
+                QQQ_Radahn: `<b style='color: rgb(74, 8, 161); font-size: 25px;'>碎星将军</b>`,
+                QQQ_Morgott: `<b style='color: rgb(226, 230, 39); font-size: 25px;'>赐福王</b>`,
+                QQQ_菈妮: `<b style='color: rgb(92, 153, 233); font-size: 25px;'>暗月公主</b>`,
+                QQQ_Mohg: `<b style='color: rgb(221, 22, 22); font-size: 25px;'>鲜血君王</b>`,
             },
             characterIntro: {
                 QQQ_jinshanshan: '最初古代诸神为了抑制人类过度繁衍之后力量的壮大,将人间王族与女神相结合,创造出众神制约人类的<楔子>——吉尔伽美什.是诞生于神与人之间的英雄,拥有<三分之二为神,三分之一为人>的极高神格(拥有神的智慧及力量,但没有神的寿命)以及神明与人类的双方视点.',
@@ -3902,46 +3883,6 @@ const precontent = async function () {
                 QQQ_CosmicStarfish: '一位沉睡的王在水中安息.碎为五片,他翻滚在永恒的噩梦里:一个篡权者夺取了他的王座.但他并非全然不知.第五王看向世界,用不息之火焚尽世界,惩罚那把他流放的叛徒.他的怒火是无可驾驭的.所以,他分享了梦.他们为特定的缘由被选中,他们是他的斗士,命定要以他的荣光共享这世界.命定要用妨碍他者的血沐浴世界,提醒所有人谁为真正的尊主.即便是怀着最盛的饥渴,有时他们也只咬一小口.血祭是其所欲.魂祭是其所需',
             },
             skill: {
-                //————————————————————————————————————————————监听节点
-                QQQ_jianting: {
-                    init(player) {
-                        // new MutationObserver((mutations) => {
-                        //     mutations.forEach((mutation) => {
-                        //         if (mutation.type === 'childList') {
-                        //             if (mutation.addedNodes.length > 0) {
-                        //                 game.log('卡牌进入S区');
-                        //                 player.draw(mutation.addedNodes.length);
-                        //             }
-                        //         }
-                        //     });
-                        // }).observe(ui.special, { childList: true, subtree: true });
-                        //谁指定我我就给他添加一个XX
-                        // for (const i of game.players) {
-                        //     new MutationObserver((mutations) => {
-                        //         mutations.forEach((mutation) => {
-                        //             if (mutation.type === 'childList') {
-                        //                 if (mutation.addedNodes.length > 0) {
-                        //                     game.log('卡牌进入X区');
-                        //                     player.draw(mutation.addedNodes.length);
-                        //                 }
-                        //             }
-                        //         });
-                        //     }).observe(i.node.expansions, { childList: true, subtree: true });
-                        // }
-                        // const oremove = lib.element.card.remove;
-                        // lib.element.card.remove = function () {
-                        //     game.log('卡牌被删除');
-                        //     player.draw();
-                        //     return oremove.apply(this, arguments);
-                        // };
-                        // const ospecial = game.cardsGotoSpecial;
-                        // game.cardsGotoSpecial = function () {
-                        //     game.log('卡牌进入S区');
-                        //     player.draw();
-                        //     return ospecial.apply(this, arguments);
-                        // };
-                    },
-                },
                 //————————————————————————————————————————————吉尔伽美什
                 QQQ_黄金律法: {
                     trigger: {
@@ -5036,7 +4977,7 @@ const precontent = async function () {
                     enable: 'phaseUse',
                     filterTarget: (c, p, t) => t != p,
                     async content(event, trigger, player) {
-                        game.log(`<span class="Qmenu">${get.translation(player)}与${get.translation(event.targets[0])}交换手牌</span>`);
+                        game.log(`<span class=Qmenu>${get.translation(player)}与${get.translation(event.targets[0])}交换手牌</span>`);
                         const cards0 = event.targets[0].getCards('h');
                         const { cards } = await event.targets[0].gain(player.getCards('h'), 'gain2');
                         if (cards && cards[0]) {
@@ -6812,7 +6753,7 @@ const precontent = async function () {
                                     });
                                     if (links1 && links1[0]) {
                                         player.removeSkill(links1[0]);
-                                        game.log(`<span class="Qmenu">${get.translation(player)}发动回溯气运衰败,失去了技能${get.translation(links1[0])}</span>`);
+                                        game.log(`<span class=Qmenu>${get.translation(player)}发动回溯气运衰败,失去了技能${get.translation(links1[0])}</span>`);
                                         lib.config.huisu[links[0]] = {
                                             avatar: player.node.avatar.backgroundImage,
                                             name: player.name,
@@ -7206,7 +7147,7 @@ const precontent = async function () {
                 //当你使用实体伤害牌指定目标后,根据法环修复度视为敌方角色使用随机x张伤害牌(x为法环修复度除以10)
                 QQQ_Marikashichui: {
                     trigger: {
-                        player: ['useCardToTarget'],
+                        player: ['useCardToPlayer'],
                     },
                     forced: true,
                     filter(event, player) {
@@ -7278,7 +7219,7 @@ const precontent = async function () {
                 //当你成为实体非伤害牌的目标后,根据法环破碎度令友方角色回复x点体力(已死亡的角色会因此复活)(x为法环破碎度除以10)
                 QQQ_Radagonshichui: {
                     trigger: {
-                        target: ['useCardToTarget'],
+                        target: ['useCardToPlayer'],
                     },
                     forced: true,
                     filter(event, player) {
@@ -7379,11 +7320,11 @@ const precontent = async function () {
                             }
                         }
                         if (maxplayer.isEnemiesOf(player)) {
-                            game.log(`<span class="Qmenu">${get.translation(maxplayer)}体力最大,受到世界秩序制裁</span>`);
+                            game.log(`<span class=Qmenu>${get.translation(maxplayer)}体力最大,受到世界秩序制裁</span>`);
                             maxplayer.damage(2);
                         }
                         if (minplayer.isFriendsOf(player)) {
-                            game.log(`<span class="Qmenu">${get.translation(minplayer)}体力最小,受到世界秩序补偿</span>`);
+                            game.log(`<span class=Qmenu>${get.translation(minplayer)}体力最小,受到世界秩序补偿</span>`);
                             minplayer.recover(2);
                         }
                     },
@@ -7417,11 +7358,11 @@ const precontent = async function () {
                                     }
                                 }
                                 if (maxplayer.isEnemiesOf(player)) {
-                                    game.log(`<span class="Qmenu">${get.translation(maxplayer)}手牌最多,受到世界秩序制裁</span>`);
+                                    game.log(`<span class=Qmenu>${get.translation(maxplayer)}手牌最多,受到世界秩序制裁</span>`);
                                     maxplayer.randomDiscard(2);
                                 }
                                 if (minplayer.isFriendsOf(player)) {
-                                    game.log(`<span class="Qmenu">${get.translation(minplayer)}手牌最少,受到世界秩序补偿</span>`);
+                                    game.log(`<span class=Qmenu>${get.translation(minplayer)}手牌最少,受到世界秩序补偿</span>`);
                                     minplayer.draw(2);
                                 }
                             },
@@ -7458,7 +7399,7 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————星宿仙尊————明皓、毓秀、丰雅
-                //钟灵毓秀:锁定技,你将全场失去的♥️️牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌
+                //钟灵毓秀:锁定技,你将全场失去的♥️️牌置于牌堆底,每次你体力变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌
                 QQQ_yuxiu: {
                     //他既然夸我钟灵毓秀,那我就给你起名毓秀。若有来生,就请你替我好好活着,不要管什么人族未来,不要想什么苍生安危,就为自己活一次,为自己自私一次,痛快地去爱,淋漓地去哭！
                     trigger: {
@@ -8249,7 +8190,8 @@ const precontent = async function () {
                     },
                 },
                 // 真实之母的眷顾
-                // 当你因失去体力进入濒死时,将体力值调整至体力上限,失去全部技能直至回合结束
+                // 当你进入濒死时,若伤害来源为其他角色,你令其获得<诅咒之血>
+                // 否则将体力值调整至体力上限,失去全部技能直至回合结束
                 QQQ_zhenshizhimu: {
                     init(player) {
                         player.storage.QQQ_zhenshizhimu = [];
@@ -8258,9 +8200,6 @@ const precontent = async function () {
                         player: ['dying'],
                     },
                     forced: true,
-                    filter(event, player) {
-                        return event.parent.name == 'loseHp';
-                    },
                     mark: true,
                     intro: {
                         content(storage) {
@@ -8271,13 +8210,18 @@ const precontent = async function () {
                         }
                     },
                     async content(event, trigger, player) {
-                        player.hp = player.maxHp;
-                        player.storage.QQQ_zhenshizhimu = player.GS();
-                        player.CS();
-                        player.when({ global: 'phaseAfter' }).then(() => {
-                            player.addSkill(player.storage.QQQ_zhenshizhimu);
-                            player.storage.QQQ_zhenshizhimu = [];
-                        });
+                        if (trigger.source && trigger.source != player) {
+                            trigger.source.addSkill('QQQ_zuzhouzhixue');
+                        }
+                        else {
+                            player.hp = player.maxHp;
+                            player.storage.QQQ_zhenshizhimu = player.GS();
+                            player.CS();
+                            player.when({ global: 'phaseAfter' }).then(() => {
+                                player.addSkill(player.storage.QQQ_zhenshizhimu);
+                                player.storage.QQQ_zhenshizhimu = [];
+                            });
+                        }
                     },
                 },
                 // 米凯拉、大蛇
@@ -8341,11 +8285,11 @@ const precontent = async function () {
                 QQQ_zuzhouzhixue: '诅咒之血',
                 QQQ_zuzhouzhixue_info: '锁定技,当你获得牌时,你失去一点体力',
                 QQQ_zhenshizhimu: '真实之母的眷顾',
-                QQQ_zhenshizhimu_info: '当你因失去体力进入濒死时,将体力值调整至体力上限,失去全部技能直至回合结束',
+                QQQ_zhenshizhimu_info: '当你进入濒死时,若伤害来源为其他角色,你令其获得<诅咒之血><br>否则将体力值调整至体力上限,失去全部技能直至回合结束',
                 //————————————————————————————————————————————菈妮
                 QQQ_菈妮: '菈妮',
                 QQQ_anyue: '暗月',
-                QQQ_anyue_info: '<span class="Qmenu">锁定技,</span>你失去牌后摸等量的牌',
+                QQQ_anyue_info: '<span class=Qmenu>锁定技,</span>你失去牌后摸等量的牌',
                 //————————————————————————————————————————————蒙葛特
                 QQQ_Morgott: '蒙葛特',
                 QQQ_zhoujian: '咒剑',
@@ -8376,27 +8320,27 @@ const precontent = async function () {
                 //————————————————————————————————————————————宇宙海星
                 QQQ_CosmicStarfish: '宇宙海星',
                 QQQ_diwuweidu: '第五维度',
-                QQQ_diwuweidu_info: '<span class="Qmenu">锁定技,</span>你各个区域内的牌数量始终相等',
+                QQQ_diwuweidu_info: '<span class=Qmenu>锁定技,</span>你各个区域内的牌数量始终相等',
                 //————————————————————————————————————————————星宿仙尊————明皓、毓秀、丰雅
                 QQQ_xingxiu: '星宿仙尊',
                 QQQ_yuxiu: '钟灵毓秀',
-                QQQ_yuxiu_info: '<span class="Qmenu">锁定技,</span>你将全场失去的♥️️牌置于牌堆底,每次你体力值变化后或每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌',
+                QQQ_yuxiu_info: '<span class=Qmenu>锁定技,</span>你将全场失去的♥️️牌置于牌堆底,体力变化/每轮开始时,你依次展示牌堆底的牌直到出现两种花色,然后你选择使用其中任意牌,并摸没有被使用的牌数的牌',
                 QQQ_fengrufeitun: '丰乳肥臀',
                 QQQ_fengrufeitun_info: '锁定技,每阶段结束时,若此阶段内场上有其他角色累计获得或失去至少两张牌,你令其将这些牌当作顺手牵羊对你使用',
                 //————————————————————————————————————————————玛莉卡&拉达冈————我的半身,击碎彼此吧!
                 QQQ_Marika: '玛莉卡',
                 QQQ_Radagon: '拉达冈',
                 QQQ_shuangmian: '神之双面',
-                QQQ_shuangmian_info: '<span class="Qmenu">锁定技,</span>游戏开始时召唤你的半身,且装备半损的法环<br>每回合结束后你切换一次形态,双形态彼此独立',
+                QQQ_shuangmian_info: '<span class=Qmenu>锁定技,</span>游戏开始时召唤你的半身,且装备半损的法环<br>每回合结束后你切换一次形态,双形态彼此独立',
                 QQQ_shuangmian_append: '我的半身,击碎彼此吧!',
                 QQQ_shichui: '神之石槌',
-                QQQ_shichui_info: '<span class="Qmenu">锁定技,</span>根据你当前的形态,你始终装备对应的神器石槌',
+                QQQ_shichui_info: '<span class=Qmenu>锁定技,</span>根据你当前的形态,你始终装备对应的神器石槌',
                 QQQ_shichui_append: '被神持有而具备神性的石槌,玛莉卡用其击碎法环,拉达冈用其修复法环',
                 QQQ_Marikashichui: '玛莉卡石槌',
-                QQQ_Marikashichui_info: '<span class="Qmenu">锁定技,</span>当你使用实体伤害牌指定目标后,根据法环修复度视为敌方角色使用随机x张伤害牌(x为法环修复度除以10)',
+                QQQ_Marikashichui_info: '<span class=Qmenu>锁定技,</span>当你使用实体伤害牌指定目标后,根据法环修复度视为敌方角色使用随机x张伤害牌(x为法环修复度除以10)',
                 QQQ_Marikashichui_append: '用来击碎世界秩序化身————法环的武器,全场造成伤害后与失去牌后会增加法环破碎度',
                 QQQ_Radagonshichui: '拉达冈石槌',
-                QQQ_Radagonshichui_info: '<span class="Qmenu">锁定技,</span>当你成为实体非伤害牌的目标后,根据法环破碎度令友方角色回复x点体力(已死亡的角色会因此复活,x为法环破碎度除以10)<br>当法环处于半损状态时,你拒绝死亡',
+                QQQ_Radagonshichui_info: '<span class=Qmenu>锁定技,</span>当你成为实体非伤害牌的目标后,根据法环破碎度令友方角色回复x点体力(已死亡的角色会因此复活,x为法环破碎度除以10)<br>当法环处于半损状态时,你拒绝死亡',
                 QQQ_Radagonshichui_append: '用来修复世界秩序化身————法环的武器,全场回复体力后与获得牌后会增加法环修复度',
                 QQQ_EldenRing: '艾尔登法环(半损)',
                 QQQ_EldenRing_info: '世界秩序化身,每一次破碎或修复都会带来秩序的剧变<br>当其完全破碎后,玛莉卡将完全取代拉达冈,并踏上登神之路开启破碎战争<br>当其完全修复后,拉达冈将完全取代玛莉卡,然后装备完整的法环统御天地众生',
@@ -8406,42 +8350,42 @@ const precontent = async function () {
                 //————————————————————————————————————————————贾南风
                 QQQ_jiananfeng: '贾南风',
                 QQQ_xingluan: '兴乱',
-                QQQ_xingluan_info: '<span class="Qmenu">锁定技,</span>每张杀第一次被使用后由使用者下家获得,然后你增加一点护甲.第二次被使用后不计入使用次数且置于牌堆顶,然后你从牌堆底摸一张牌',
+                QQQ_xingluan_info: '<span class=Qmenu>锁定技,</span>每张杀第一次被使用后由使用者下家获得,然后你增加一点护甲.第二次被使用后不计入使用次数且置于牌堆顶,然后你从牌堆底摸一张牌',
                 QQQ_kuangzheng: '匡政',
                 QQQ_kuangzheng_info: '其他角色结束阶段,若其本回合使用了超过一张【杀】,你可以对任意名角色使用一张【五谷丰登】',
                 //————————————————————————————————————————————EX钟会
                 EX_zhonghui: 'EX钟会',
                 EX_duji: '毒计',
-                EX_duji_info: '<span class="Qmenu">锁定技,</span>当其他角色令你的体力值变化后,或你对其他角色造成伤害后,你令对方获得等量毒标记,任意角色累计满三枚毒标记,引发爆炸,受到两点毒属性伤害',
+                EX_duji_info: '<span class=Qmenu>锁定技,</span>当其他角色令你的体力变化后,或你对其他角色造成伤害后,你令对方获得等量毒标记,任意角色累计满三枚毒标记,引发爆炸,受到两点毒属性伤害',
                 //————————————————————————————————————————————秦百胜
                 QQQ_qinbaisheng: '秦百胜',
                 QQQ_datongfeng: '大同风幕',
                 QQQ_datongfeng_info: '限定技,出牌阶段你可以失去全部体力值并将失去体力值数十倍的杀加入牌堆,与全部其他角色进入大同风中,直到牌堆洗牌.在此期间:①你每次死亡前, 以移除剩余十分之一牌堆为代价豁免.②全场角色每累计失去三张牌时, 随机一名角色受到一点无来源伤害.③任意角色死亡后, 将五分之一的弃牌堆加入牌堆.④所有锦囊牌均失效',
                 QQQ_wuzhiquanxinjian: '五指拳心剑',
-                QQQ_wuzhiquanxinjian_info: '<span class="Qmenu">锁定技,</span>每当你不因使用而失去牌时,可以将其当作无距离次数限制无视闪避无视防具的杀使用,且每次以此法使用的杀基础伤害值翻倍',
+                QQQ_wuzhiquanxinjian_info: '<span class=Qmenu>锁定技,</span>每当你不因使用而失去牌时,可以将其当作无距离次数限制无视闪避无视防具的杀使用,且每次以此法使用的杀基础伤害值翻倍',
                 QQQ_wuzhiquanxinjian_append: '起手不是再见,五指拳心剑!',
                 //————————————————————————————————————————————红莲魔尊————洪亭
                 QQQ_hongting: '洪亭',
                 QQQ_chunqiuchan: '春秋蝉',
-                QQQ_chunqiuchan_info: '<span class="Qmenu">锁定技,</span>每轮开始时与每回合结束后,你记录自身状态,你每次受伤害后或死亡前,可以回溯至任意记录获取当时的手牌与装备并更换技能与体力,然后你须选择一个技能失去,然后以当前状态覆盖此记录',
+                QQQ_chunqiuchan_info: '<span class=Qmenu>锁定技,</span>每轮开始时与每回合结束后,你记录自身状态,你每次受伤害后或死亡前,可以回溯至任意记录获取当时的手牌与装备并更换技能与体力,然后你须选择一个技能失去,然后以当前状态覆盖此记录',
                 //————————————————————————————————————————————陆逊
                 QQQ_lunxunq: '陆逊',
                 QQQ_baixiangl: '拜相',
-                QQQ_baixiangl_info: '<span class="Qmenu">锁定技,</span>每轮开始时你可将当前区域内任意牌交给任意名角色.本轮中,这些角色的回合内你移除游戏,你的回合内这些角色失去所有技能,且无法使用或打出手牌',
+                QQQ_baixiangl_info: '<span class=Qmenu>锁定技,</span>每轮开始时你可将当前区域内任意牌交给任意名角色.本轮中,这些角色的回合内你移除游戏,你的回合内这些角色失去所有技能,且无法使用或打出手牌',
                 QQQ_linlve: '凛略',
-                QQQ_linlve_info: '<span class="Qmenu">锁定技,</span>游戏开始时你获得一枚<略>.你手牌数始终不小于<略>数.当你对任意角色造成伤害时,若其区域内牌数不小于你手牌数,你获得一枚<略>.当你受到伤害时,若来源区域内牌数小于你手牌数,你失去一枚<略>',
+                QQQ_linlve_info: '<span class=Qmenu>锁定技,</span>游戏开始时你获得一枚<略>.你手牌数始终不小于<略>数.当你对任意角色造成伤害时,若其区域内牌数不小于你手牌数,你获得一枚<略>.当你受到伤害时,若来源区域内牌数小于你手牌数,你失去一枚<略>',
                 QQQ_shidi: '势敵',
-                QQQ_shidi_info: '<span class="Qmenu">锁定技,</span>当你指定或成为牌的目标时,你可以将其区域内的牌扣至与你手牌相同(于弃牌阶段归还)',
+                QQQ_shidi_info: '<span class=Qmenu>锁定技,</span>当你指定或成为牌的目标时,你可以将其区域内的牌扣至与你手牌相同(于弃牌阶段归还)',
                 //————————————————————————————————————————————总督军务威武大将军总兵官朱寿
                 QQQ_zhushou: '总督军务威武大将军总兵官朱寿',
                 QQQ_cejun: '策军',
                 QQQ_cejun_info: '你可以将一张非伤害牌当做【我就打你】使用',
                 QQQ_zhenzhan: '阵斩',
-                QQQ_zhenzhan_info: '<span class="Qmenu">锁定技,</span>当你造成伤害后,令受伤者一张牌当做【我就打你】对你使用,若你未受到伤害,你摸一张牌',
+                QQQ_zhenzhan_info: '<span class=Qmenu>锁定技,</span>当你造成伤害后,令受伤者一张牌当做【我就打你】对你使用,若你未受到伤害,你摸一张牌',
                 //————————————————————————————————————————————熔炉骑士
                 QQQ_SmelterKnights: '熔炉骑士',
                 QQQ_ronglu: '生命熔炉',
-                QQQ_ronglu_info: '<span class="Qmenu">锁定技,</span>游戏开始时你开辟一片新区域,称为<生命熔炉>,然后摸四张牌并将四张牌置于<生命熔炉>内.准备阶段你可以选择至多两名其他角色,令这些角色参与<生命熔炉>直到下一次发动此技能',
+                QQQ_ronglu_info: '<span class=Qmenu>锁定技,</span>游戏开始时你开辟一片新区域,称为<生命熔炉>,然后摸四张牌并将四张牌置于<生命熔炉>内.准备阶段你可以选择至多两名其他角色,令这些角色参与<生命熔炉>直到下一次发动此技能',
                 QQQ_ronglu_append: '熔炉百相:<生命熔炉>内角色回合限一次,可以将一张牌置于<生命熔炉>内.<生命熔炉>内角色不因使用而失去牌后,将此牌置于<生命熔炉>内.<生命熔炉>内角色可以将<生命熔炉>内的基本牌当做【杀】/【闪】,锦囊牌当做【酒】/【桃】,装备牌当做【无懈可击】使用',
                 QQQ_baixiang: '熔炉百相',
                 QQQ_baixiang_info: '<生命熔炉>内角色回合限一次,可以将一张牌置于<生命熔炉>内.<生命熔炉>内角色不因使用而失去牌后,将此牌置于<生命熔炉>内.<生命熔炉>内角色可以将<生命熔炉>内的基本牌当做【杀】/【闪】,锦囊牌当做【酒】/【桃】,装备牌当做【无懈可击】使用',
@@ -8452,17 +8396,17 @@ const precontent = async function () {
                 //————————————————————————————————————————————葛德文
                 QQQ_Godwyn: '葛德文',
                 QQQ_sidan: '死诞',
-                QQQ_sidan_info: '<span class="Qmenu">锁定技,</span>在你受到伤害前,你摸一张牌并防止此伤害,然后将牌堆顶一张牌置于你的武将牌上称为<死>,若你的<死>包含四种花色,你获得全部<死>然后减一点体力上限',
+                QQQ_sidan_info: '<span class=Qmenu>锁定技,</span>在你受到伤害前,你摸一张牌并防止此伤害,然后将牌堆顶一张牌置于你的武将牌上称为<死>,若你的<死>包含四种花色,你获得全部<死>然后减一点体力上限',
                 QQQ_siwangshanyan: '死亡闪焰',
-                QQQ_siwangshanyan_info: '<span class="Qmenu">锁定技,</span>当你使用牌指定其他角色为目标后,为目标角色添加一层<咒死>.当你使用相同牌名的牌再次指定其为目标后,引爆其<咒死>形成一次范围伤害(伤害范围为y,伤害值为y/x且至少为1.y为其<咒死>层数,x为其体力值.每距离伤害中心远一距离,伤害减一),受到此伤害的角色添加伤害值的<咒死>层数.任意角色<咒死>层数大于其体力上限时,立即死亡',
+                QQQ_siwangshanyan_info: '<span class=Qmenu>锁定技,</span>当你使用牌指定其他角色为目标后,为目标角色添加一层<咒死>.当你使用相同牌名的牌再次指定其为目标后,引爆其<咒死>形成一次范围伤害(伤害范围为y,伤害值为y/x且至少为1.y为其<咒死>层数,x为其体力值.每距离伤害中心远一距离,伤害减一),受到此伤害的角色添加伤害值的<咒死>层数.任意角色<咒死>层数大于其体力上限时,立即死亡',
                 //————————————————————————————————————————————梦诸葛亮
                 QQQ_mengzhuge: '梦诸葛亮',
                 QQQ_jieming: '借命',
-                QQQ_jieming_info: '<span class="Qmenu">锁定技,</span>准备阶段,记录你此刻的状态.结束阶段开始时,你亮出牌堆顶x张牌,若你准备阶段记录的手牌与其中存在牌名相同的牌,你将体力值和手牌调整为准备阶段的状态并弃置牌名相同的牌,然后进行一个额外回合(x为你已损失体力值)',
+                QQQ_jieming_info: '<span class=Qmenu>锁定技,</span>准备阶段,记录你此刻的状态.结束阶段开始时,你亮出牌堆顶x张牌,若你准备阶段记录的手牌与其中存在牌名相同的牌,你将体力值和手牌调整为准备阶段的状态并弃置牌名相同的牌,然后进行一个额外回合(x为你已损失体力值)',
                 QQQ_beiding: '北定',
                 QQQ_beiding_info: '回合限一次,你可以交换自己的体力值和以损体力值,若你以此法失去了体力,你可以摸三张牌,若你此次发回复了体力,你需弃所有手牌',
                 QQQ_chuancheng: '傳承',
-                QQQ_chuancheng_info: '<span class="Qmenu">锁定技,</span>当有角色进行额外回合时,你减少一点体力上限,并且选择一名角色获得<八阵>,若选择的角色为自己,则获得<界观星>(若目标已有对应技能,则改为摸三张牌)',
+                QQQ_chuancheng_info: '<span class=Qmenu>锁定技,</span>当有角色进行额外回合时,你减少一点体力上限,并且选择一名角色获得<八阵>,若选择的角色为自己,则获得<界观星>(若目标已有对应技能,则改为摸三张牌)',
                 //————————————————————————————————————————————燎原火
                 QQQ_liaoyuanhuo: '燎原火',
                 QQQ_xiaozhang: '嚣张',
@@ -8472,24 +8416,24 @@ const precontent = async function () {
                 //————————————————————————————————————————————李靖
                 QQQ_lijing: '李靖',
                 QQQ_tuota: '托塔',
-                QQQ_tuota_info: '<span class="Qmenu">锁定技,</span>你视为装备【玲珑宝塔】',
+                QQQ_tuota_info: '<span class=Qmenu>锁定技,</span>你视为装备【玲珑宝塔】',
                 QQQ_tuota_append: '玲珑宝塔:每轮游戏开始时,你可以选择一名角色(不能是上次选择的角色),其被镇压于塔内(镇压效果:造成或受到伤害-1,摸牌数-1,跳过回合然后你令其回复或失去一点体力)',
                 QQQ_baota: '玲珑宝塔',
                 QQQ_baota_info: '每轮游戏开始时,你可以选择一名角色(不能是上次选择的角色),其被镇压于塔内(镇压效果:造成或受到伤害-1,摸牌数-1,跳过回合然后你令其回复或失去一点体力)',
                 QQQ_baota_1: '宝塔镇压',
-                QQQ_baota_1_info: '<span class="Qmenu">锁定技,</span>造成或受到伤害-1,摸牌数-1,跳过回合然后宝塔持有者令你回复或失去一点体力',
+                QQQ_baota_1_info: '<span class=Qmenu>锁定技,</span>造成或受到伤害-1,摸牌数-1,跳过回合然后宝塔持有者令你回复或失去一点体力',
                 //————————————————————————————————————————————梅瑟莫
                 QQQ_Messmer: '梅瑟莫',
                 QQQ_ezhishe: '恶之蛇',
-                QQQ_ezhishe_info: '<span class="Qmenu">锁定技,</span>当你受到伤害后,你获得一个觉醒技或限定技并隐匿(登场后,强制发动该技能)',
+                QQQ_ezhishe_info: '<span class=Qmenu>锁定技,</span>当你受到伤害后,你获得一个觉醒技或限定技并隐匿(登场后,强制发动该技能)',
                 QQQ_liuhuo: '幽影流火',
-                QQQ_liuhuo_info: '<span class="Qmenu">锁定技,</span>当全场失去♦️️牌后,你将此牌当作火杀对随机敌方角色使用',
+                QQQ_liuhuo_info: '<span class=Qmenu>锁定技,</span>当全场失去♦️️牌后,你将此牌当作火杀对随机敌方角色使用',
                 QQQ_chuanci: '穿刺者之矛',
-                QQQ_chuanci_info: '<span class="Qmenu">锁定技,</span>其他角色出牌阶段开始时须将一张牌置于你的武将牌上,称为<刺>.若你的<刺>包含三种类型/四种花色/五种牌名,你获得所有<刺>,对其造成等量伤害',
+                QQQ_chuanci_info: '<span class=Qmenu>锁定技,</span>其他角色出牌阶段开始时须将一张牌置于你的武将牌上,称为<刺>.若你的<刺>包含三种类型/四种花色/五种牌名,你获得所有<刺>,对其造成等量伤害',
                 //————————————————————————————————————————————董卓
                 QQQ_dongzhuo: '✫董卓',
                 QQQ_chenshi: '沉势',
-                QQQ_chenshi_info: '<span class="Qmenu">锁定技,</span>若弃牌堆里的基本牌数大于弃牌堆里的非基本牌数,你使用<杀>造成的伤害+1,受到<杀>造成的伤害-1',
+                QQQ_chenshi_info: '<span class=Qmenu>锁定技,</span>若弃牌堆里的基本牌数大于弃牌堆里的非基本牌数,你使用<杀>造成的伤害+1,受到<杀>造成的伤害-1',
                 QQQ_tanbao: '贪暴',
                 QQQ_tanbao_info: '其他角色准备阶段,你可以弃置x%的牌堆(x为你体力值),并将其中的非基本牌移出游戏.若这些牌中<杀>的数量w大于本局游戏其他角色累计使用杀的次数y,则对其使用其中w-y张杀.否则其对你使用其中y-w张杀,且将y归零',
                 QQQ_jiaoheng: '骄横',
@@ -8499,45 +8443,42 @@ const precontent = async function () {
                 QQQ_daoshu: '盗书',
                 QQQ_daoshu_info: '回合限一次,你可与一名其他角色进行两次谋弈,你选择真盗、伪盗,其选择真睡、假睡,你选择真降、伪降,其选择真醉、假醉,谋弈成功你获得其3张牌对其造成1点刺属性伤害',
                 QQQ_daizui: '戴罪',
-                QQQ_daizui_info: '<span class="Qmenu">锁定技,</span>你进入濒死时,0.3概率回复一点体力,所有友方角色获得随机一张食物牌',
+                QQQ_daizui_info: '<span class=Qmenu>锁定技,</span>你进入濒死时,0.3概率回复一点体力,所有友方角色获得随机一张食物牌',
                 //————————————————————————————————————————————郭嘉
                 QQQ_guojia: '郭嘉',
                 QQQ_youyou: '优游',
-                QQQ_youyou_info: '<span class="Qmenu">锁定技,</span>当你的判定牌生效后,你随机获得牌堆\弃牌堆\场上与此牌类型不同的牌各一张.你可以使用或打出<怀隐>牌',
+                QQQ_youyou_info: '<span class=Qmenu>锁定技,</span>当你的判定牌生效后,你随机获得牌堆\弃牌堆\场上与此牌类型不同的牌各一张.你可以使用或打出<怀隐>牌',
                 QQQ_huaiyin: '怀隐',
-                QQQ_huaiyin_info: '<span class="Qmenu">锁定技,</span>每当你受到一点伤害后,你展示牌堆顶两张牌并置于你的的武将牌上,称为<怀隐>.若你以此法展示的两张牌颜色相同,你将血量回复至体力上限,否则,你摸两张牌.然后你可将任意张牌分别交给任意名角色',
+                QQQ_huaiyin_info: '<span class=Qmenu>锁定技,</span>每当你受到一点伤害后,你展示牌堆顶两张牌并置于你的的武将牌上,称为<怀隐>.若你以此法展示的两张牌颜色相同,你将血量回复至体力上限,否则,你摸两张牌.然后你可将任意张牌分别交给任意名角色',
                 QQQ_qingshi: '清识',
                 QQQ_qingshi_info: '出牌阶段,你可弃置一张未以此法弃置过的花色牌并发动一次判定,若判定为黑色/ 红色,你获得〖先辅〗并可发动之/ 你可选择一名其他角色,你与其依次视为使用一张【树上开花】,然后该角色获得〖优游〗直到你下个出牌阶段开始',
                 //————————————————————————————————————————————邹氏
                 QQQ_zoushi: '邹氏',
                 QQQ_meiying: '魅影',
-                QQQ_meiying_info: '<span class="Qmenu">锁定技,</span>准备阶段,你选择一名其他角色,本回合,其当前所有手牌均视为<影>(仅在其手牌区内)',
+                QQQ_meiying_info: '<span class=Qmenu>锁定技,</span>准备阶段,你选择一名其他角色,本回合,其当前所有手牌均视为<影>(仅在其手牌区内)',
                 QQQ_qingwu: '倾舞',
                 QQQ_qingwu_info: '出牌阶段,你可以将所有手牌与一名其他角色的所有手牌交换,若你仅失去<影>,则此技能本回合失效',
                 QQQ_huoshui: '祸水',
-                QQQ_huoshui_info: '<span class="Qmenu">锁定技,</span>你的回合内,失去<影>的角色视为使用一张不计次数的<杀>(若该角色是你,则改为使用x张不计次数的<杀>,x为失去<影>的数量)',
+                QQQ_huoshui_info: '<span class=Qmenu>锁定技,</span>你的回合内,失去<影>的角色视为使用一张不计次数的<杀>(若该角色是你,则改为使用x张不计次数的<杀>,x为失去<影>的数量)',
                 //————————————————————————————————————————————桴挝
                 QQQ_fuzhua: '桴挝',
-                QQQ_fuzhua_info: '<span class="Qmenu">锁定技,</span>游戏开始时,你的初始手牌增加<桴挝>标记且不计入手牌上限.<br>你失去一张<桴挝>牌时,若你其余手牌中有与<桴挝>点数相同的牌,将这些牌增加<桴挝>标记,否则你摸一张牌并标记为<桴挝>,你弃置其他角色一张牌,若此时为你的回合外,再对一名角色造成一点伤害',
+                QQQ_fuzhua_info: '<span class=Qmenu>锁定技,</span>游戏开始时,你的初始手牌增加<桴挝>标记且不计入手牌上限.<br>你失去一张<桴挝>牌时,若你其余手牌中有与<桴挝>点数相同的牌,将这些牌增加<桴挝>标记,否则你摸一张牌并标记为<桴挝>,你弃置其他角色一张牌,若此时为你的回合外,再对一名角色造成一点伤害',
                 //————————————————————————————————————————————无极
                 QQQ_无极: '无极',
-                QQQ_无极_info: '<span class="Qmenu">锁定技,</span>每轮开始时,你随机获得一个有技能描述的技能',
+                QQQ_无极_info: '<span class=Qmenu>锁定技,</span>每轮开始时,你随机获得一个有技能描述的技能',
                 论道: '论道',
-                论道_info: '<span class="Qmenu">锁定技,</span>每名角色出牌阶段开始时,所有角色都对随机目标使用手牌中的一张牌,若有人以此法指定自身为目标,则你摸一张牌',
+                论道_info: '<span class=Qmenu>锁定技,</span>每名角色出牌阶段开始时,所有角色都对随机目标使用手牌中的一张牌,若有人以此法指定自身为目标,则你摸一张牌',
                 QQQ_guji: '孤寂',
-                QQQ_guji_info: '<span class="Qmenu">锁定技,</span>每轮结束时,若存在角色在此轮中未成为过其他角色牌的目标,你令其死亡',
+                QQQ_guji_info: '<span class=Qmenu>锁定技,</span>每轮结束时,若存在角色在此轮中未成为过其他角色牌的目标,你令其死亡',
                 QQQ_guji_append: '有一种寂寞足以杀人,不是吗?',
-                //————————————————————————————————————————————监听
-                QQQ_jianting: '监听',
-                QQQ_jianting_info: '<span class="Qmenu">锁定技,</span>当有牌被移出游戏之后,你摸一张牌',
                 //————————————————————————————————————————————夢塵
                 QQQ_mengchen: '夢塵',
                 QQQ_ditu: '帝圖',
                 QQQ_ditu_info: '当有角色成为牌唯一目标时,你可以让所有角色成为此牌目标;当一张牌指定多个目标时,你可以取消之,将所有目标角色各一张牌置于牌堆顶,视为对目标角色使用一张五谷丰登',
                 QQQ_qitao: '乞討',
-                QQQ_qitao_info: '<span class="Qmenu">锁定技,</span>任意角色摸牌阶段结束后,若手牌数为全场最多,其须选择一项①交给你x张牌②视为你对其使用x张杀,每造成一次伤害执行一次①选项(x为其手牌数减手牌上限)',
+                QQQ_qitao_info: '<span class=Qmenu>锁定技,</span>任意角色摸牌阶段结束后,若手牌数为全场最多,其须选择一项①交给你x张牌②视为你对其使用x张杀,每造成一次伤害执行一次①选项(x为其手牌数减手牌上限)',
                 QQQ_shuangsheng: '雙生',
-                QQQ_shuangsheng_info: '<span class="Qmenu">锁定技,</span>任意角色回合结束时,若你本回合受到过伤害,你摸八张不同牌名的牌,将体力调整至上限,更换武将牌为梦婉清,执行一个出牌阶段',
+                QQQ_shuangsheng_info: '<span class=Qmenu>锁定技,</span>任意角色回合结束时,若你本回合受到过伤害,你摸八张不同牌名的牌,将体力调整至上限,更换武将牌为梦婉清,执行一个出牌阶段',
                 //————————————————————————————————————————————梅琳娜
                 QQQ_Melina: '梅琳娜',
                 QQQ_huozhong: '火种使命,卢恩女巫',
@@ -8545,40 +8486,40 @@ const precontent = async function () {
                 QQQ_fenjin: '雪山诀别,与树同焚',
                 QQQ_fenjin_info: '限定技,你令所有累计受到伤害大于等于其原始体力的角色死亡,然后你死亡',
                 QQQ_mingsi: '猎杀癫火,命定之死',
-                QQQ_mingsi_info: '<span class="Qmenu">锁定技,</span>任意角色在其濒死结算后未死亡,你获得一个<命定之死>.<br>任意角色回复体力时,你可以移去一枚<命定之死>并改为对其使用一张<神杀>.任意角色获得牌时,你可以移去一枚<命定之死>并改为对其使用一张<冰杀><br>当你死亡前,若你的<命定之死>数小于你的体力上限,你豁免',
+                QQQ_mingsi_info: '<span class=Qmenu>锁定技,</span>任意角色在其濒死结算后未死亡,你获得一个<命定之死>.<br>任意角色回复体力时,你可以移去一枚<命定之死>并改为对其使用一张<神杀>.任意角色获得牌时,你可以移去一枚<命定之死>并改为对其使用一张<冰杀><br>当你死亡前,若你的<命定之死>数小于你的体力上限,你豁免',
                 //————————————————————————————————————————————红温流打野
                 QQQ_hongwenliu: '红温流打野',
                 QQQ_hongwen: '红温',
-                QQQ_hongwen_info: '<span class="Qmenu">锁定技,</span>你的红温不会因使用杀或回合结束消失.若你处于红温状态,则你使用杀指定目标后可以弃置所有牌,然后弃置目标角色所有牌',
+                QQQ_hongwen_info: '<span class=Qmenu>锁定技,</span>你的红温不会因使用杀或回合结束消失.若你处于红温状态,则你使用杀指定目标后可以弃置所有牌,然后弃置目标角色所有牌',
                 QQQ_daye: '打野',
-                QQQ_daye_info: '<span class="Qmenu">锁定技,</span>每当你获得伤害牌后,增加一层红温.当你使用伤害牌后,若此牌未造成伤害,则增加一层红温',
+                QQQ_daye_info: '<span class=Qmenu>锁定技,</span>每当你获得伤害牌后,增加一层红温.当你使用伤害牌后,若此牌未造成伤害,则增加一层红温',
                 QQQ_huanzhuang: '换装',
-                QQQ_huanzhuang_info: '<span class="Qmenu">锁定技,</span>当你濒死时,移除红温层数并回复等量体力直到你的体力值大于零',
+                QQQ_huanzhuang_info: '<span class=Qmenu>锁定技,</span>当你濒死时,移除红温层数并回复等量体力直到你的体力值大于零',
                 //————————————————————————————————————————————周泰
                 QQQ_zhoutai: '周泰',
                 QQQ_buqu: '不屈',
-                QQQ_buqu_info: '<span class="Qmenu">锁定技,</span>当你受到伤害后:你将对你造成伤害的牌和牌堆顶的一张牌置于你的武将牌上.若如此做,且你的武将牌上有牌名相同的牌,弃置这些牌,回复等量体力',
+                QQQ_buqu_info: '<span class=Qmenu>锁定技,</span>当你受到伤害后:你将对你造成伤害的牌和牌堆顶的一张牌置于你的武将牌上.若如此做,且你的武将牌上有牌名相同的牌,弃置这些牌,回复等量体力',
                 QQQ_fujian: '负箭',
                 QQQ_fujian_info: '任意角色使用牌造成伤害后,你将此牌置于你武将牌上,然后你可令其选择使用你武将牌上与此牌名不同的一张牌',
                 QQQ_zhanjie: '战竭',
                 QQQ_zhanjie_info: '若你本阶段未造成伤害,你可以使用或打出武将牌上的牌',
                 //————————————————————————————————————————————饕餮
                 QQQ_taotieQ: '饕餮',
-                QQQ_taotieQ_info: '<span class="Qmenu">锁定技,</span>摸牌阶段你改为从任意位置获得等量的桃,每当你摸到桃后,为此牌增加一个标记.每当你摸到带标记的牌之后,你摸等同于此牌标记数的牌',
+                QQQ_taotieQ_info: '<span class=Qmenu>锁定技,</span>摸牌阶段你改为从任意位置获得等量的桃,每当你摸到桃后,为此牌增加一个标记.每当你摸到带标记的牌之后,你摸等同于此牌标记数的牌',
                 //————————————————————————————————————————————吉尔伽美什
                 QQQ_黄金律法: '黄金律法',
                 QQQ_黄金律法_info: '<span style="color: gold;">偉大的黃金律法——讓世界規律不亂,讓生命蒙受福祉與賜福</span>',
-                QQQ_黄金律法_append: '<span class="Qmenu">锁定技,</span>在赐福消逝之前,你每次死亡都会重生.你每次受到无属性伤害,都会消耗赐福.你每次造成伤害后,都会增加伤害值的赐福',
+                QQQ_黄金律法_append: '<span class=Qmenu>锁定技,</span>在赐福消逝之前,你每次死亡都会重生.你每次受到无属性伤害,都会消耗赐福.你每次造成伤害后,都会增加伤害值的赐福',
                 QQQ_jinshanshan: '吉尔伽美什',
                 QQQ_王之财宝: '王之财宝',
                 QQQ_王之财宝_info: '<span style="color: gold;">连接黄金之都的钥匙</span>',
-                QQQ_王之财宝_append: '<span class="Qmenu">锁定技,</span>当场上有角色A使用牌X时,你随机装备一张装备牌Y.若Y与X牌名字数相同,你令S加一,然后你对A造成S点金属性伤害.S初始为0,每回合结束后将S重置为0',
+                QQQ_王之财宝_append: '<span class=Qmenu>锁定技,</span>当场上有角色A使用牌X时,你随机装备一张装备牌Y.若Y与X牌名字数相同,你令S加一,然后你对A造成S点金属性伤害.S初始为0,每回合结束后将S重置为0',
                 QQQ_天之锁: '天之锁',
                 QQQ_天之锁_info: '<span style="color: gold;">对神兵装,曾捕缚了让乌鲁克陷入七年饥荒的<天之公牛>的锁链,其能力为<律神>之物,捕缚的对象神性越高越是增加硬度</span>',
-                QQQ_天之锁_append: '<span class="Qmenu">锁定技,</span>每轮开始时,你随机跳过一个阶段并选择任意名角色,令其随机跳过两个阶段.若其为神势力,则随机跳过四个阶段.',
+                QQQ_天之锁_append: '<span class=Qmenu>锁定技,</span>每轮开始时,你随机跳过一个阶段并选择任意名角色,令其随机跳过两个阶段.若其为神势力,则随机跳过四个阶段.',
                 QQQ_贯穿永恒之枪: '贯穿永恒之枪',
                 QQQ_贯穿永恒之枪_info: '<span style="color: gold;">不出意外的话,这把武器命中的目标都会死去</span>',
-                QQQ_贯穿永恒之枪_append: '<span class="Qmenu">锁定技,</span>当你连续使用三次相同牌名的牌且这些牌均指定相同的目标,则令目标角色立刻死亡.',
+                QQQ_贯穿永恒之枪_append: '<span class=Qmenu>锁定技,</span>当你连续使用三次相同牌名的牌且这些牌均指定相同的目标,则令目标角色立刻死亡.',
             },
         };
         _status.gentle.translate0 = yinu.translate;
@@ -8633,7 +8574,7 @@ const precontent = async function () {
         } //QQQ
         lib.config.all.characters.add('一怒拔剑');
         lib.config.characters.add('一怒拔剑');
-        lib.translate['一怒拔剑_character_config'] = `<span class="Qmenu">一怒拔剑</span>`;
+        lib.translate['一怒拔剑_character_config'] = `<span class=Qmenu>一怒拔剑</span>`;
         return yinu;
     });
     /*

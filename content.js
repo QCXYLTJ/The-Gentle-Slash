@@ -26,13 +26,13 @@ const content = async function () {
         game.addGroup('狂', '<span style="color: #FF0000">狂</span>', '狂', {
             color: ' #FF0000',
         });
-        game.addGroup('龙', '<span style="color:rgb(218, 188, 18)">龙</span>', '龙', {
+        game.addGroup('龙', '<span style="color: rgb(218, 188, 18)">龙</span>', '龙', {
             color: 'rgb(218, 188, 18)',
         });
-        game.addGroup('啸', '<span style="color:rgb(11, 235, 142)">啸</span>', '啸', {
+        game.addGroup('啸', '<span style="color: rgb(11, 235, 142)">啸</span>', '啸', {
             color: 'rgb(11, 235, 142)',
         });
-        game.addGroup('天', '<span style="color:rgb(96, 13, 151)">天</span>', '天', {
+        game.addGroup('天', '<span style="color: rgb(96, 13, 151)">天</span>', '天', {
             color: 'rgb(96, 13, 151)',
         });
         if (['single', 'QQQ'].includes(lib.config.mode)) {
@@ -193,7 +193,7 @@ const content = async function () {
                 card = [card.suit, card.number, card.name, card.nature];
             }
             var cardnum = card[1] || '';
-            if (parseInt(cardnum) == cardnum) cardnum = parseInt(cardnum);
+            if (Number(cardnum) == cardnum) cardnum = Number(cardnum);
             if (!lib.card[card[2]]) {
                 lib.card[card[2]] = {};
             }
@@ -209,7 +209,7 @@ const content = async function () {
                 delete info.global;
             }
             this.suit = card[0];
-            this.number = numberq0(parseInt(card[1]));
+            this.number = numberq0(card[1]);
             this.name = card[2];
             this.type = lib.card[card[2]].type;
             if (this.suit == 'heart' || this.suit == 'diamond') this.color = 'red';
@@ -1624,29 +1624,6 @@ const content = async function () {
     mogai();
     //—————————————————————————————————————————————————————————————————————————————一些全局技能
     const quanju = function () {
-        lib.skill._qunou = {
-            trigger: {
-                global: ['gameStart'],
-            },
-            firstDo: true,
-            forced: true,
-            mode: ['identity'],
-            filter(event, player, card) {
-                return player == game.me && QQQ.config.一主多反;
-            },
-            async content(event, trigger, player) {
-                for (const i of game.players) {
-                    if (i == player) {
-                        game.zhu = i;
-                        i.identity = 'zhu';
-                        i.setIdentity('zhu');
-                    } else {
-                        i.identity = 'fan';
-                        i.setIdentity('fan');
-                    }
-                }
-            },
-        };
         lib.skill._huocard = {
             trigger: {
                 player: ['gainEnd', 'loseEnd'],
@@ -1659,203 +1636,6 @@ const content = async function () {
                 player.damage();
             },
         };
-        lib.skill._主公 = {
-            trigger: {
-                global: ['reviveEnd', 'dieEnd'],
-            },
-            forced: true,
-            silent: true,
-            filter(event, player, card) {
-                return player == game.zhu && ['identity'].includes(get.mode()) && QQQ.config.主公加强;
-            },
-            async content(event, trigger, player) {
-                lib.skill._主公.init(player, '_主公');
-            },
-            derivation: ['zongzuo', 'aocai', 'tianming', 'xiangle'],
-            init(player, skill) {
-                player.removeAdditionalSkill(skill);
-                if (game.players.length >= 3) player.addAdditionalSkill(skill, ['aocai'], true);
-                if (game.players.length >= 5) player.addAdditionalSkill(skill, ['tianming'], true);
-                if (game.players.length >= 7) player.addAdditionalSkill(skill, ['xiangle'], true);
-            },
-            group: ['_主公_1'],
-            subSkill: {
-                1: {
-                    trigger: {
-                        global: 'gameDrawBefore',
-                    },
-                    forced: true,
-                    silent: true,
-                    filter(event, player, card) {
-                        return player == game.zhu && ['identity'].includes(get.mode()) && QQQ.config.主公加强;
-                    },
-                    async content(event, trigger, player) {
-                        player.addSkill('宗祚');
-                        lib.skill._主公.init(player, '_主公');
-                    },
-                },
-            },
-        }; //身份场主公加强
-        lib.skill._飞扬 = {
-            trigger: {
-                player: 'phaseJudgeBegin',
-            },
-            forced: true,
-            silent: true,
-            filter(event, player) {
-                return player.countCards('j') && player.countCards('he') > 1 && parseInt(QQQ.config.飞扬跋扈模式);
-            },
-            async content(event, trigger, player) {
-                //QQQ
-                var { result } = await player.chooseToDiscard('he', 2, '弃置两张牌并弃置判定区里的一张牌').set('ai', function (card) {
-                    var Q = player.getCards('j');
-                    let E = {};
-                    if (Q.some((i) => i.name == 'yanxiao_card')) return false; //QQQ
-                    if (Q.length == 1 && Q[0].viewAs == 'shandian') return 1 - get.value(card);
-                    if (
-                        Q.some((i) => {
-                            if (E[i.name]) {
-                                return true;
-                            } else {
-                                E[i.name] = true;
-                                return false;
-                            }
-                        })
-                    )
-                        return 1 - get.value(card);
-                    var value = 0;
-                    for (const i of Q) {
-                        if (!i.viewAs) var name = i.name;
-                        else var name = i.viewAs;
-                        if (!lib.card[name].ai || !lib.card[name].ai.result) continue;
-                        var W = lib.card[name].ai.result.target;
-                        if (typeof W == 'function') value += W(player, player, { name: name });
-                        value += W;
-                    }
-                    return -6 * value - get.value(card);
-                });
-                if (result.cards && result.cards[0] && player.countCards('j')) {
-                    //QQQ
-                    var { result } = await player.chooseButton(['弃置判定区里的一张牌', player.getCards('j')], true).set('ai', function (button) {
-                        var Q = player.getCards('j');
-                        if (Q.some((i) => i.name == button.link.name && i != button.link)) return 0;
-                        if (!button.link.viewAs) var name = button.link.name;
-                        else var name = button.link.viewAs;
-                        if (!lib.card[name].ai || !lib.card[name].ai.result) return 0;
-                        var W = lib.card[name].ai.result.target;
-                        if (typeof W == 'function') return -W(player, player, { name: name });
-                        return -W;
-                    });
-                    if (result && result.links && result.links[0]) {
-                        ui.discardPile.appendChild(result.links[0]);
-                    }
-                }
-            },
-        }; //所有武将添加飞扬
-        lib.skill._跋扈 = {
-            trigger: {
-                player: 'phaseZhunbeiBegin',
-            },
-            forced: true,
-            silent: true,
-            filter(event, player) {
-                return parseInt(QQQ.config.飞扬跋扈模式);
-            },
-            async content(event, trigger, player) {
-                var numx = parseInt(QQQ.config.飞扬跋扈模式);
-                game.log(player, '跋扈摸' + numx);
-                player.draw(numx);
-            },
-            mod: {
-                cardUsable(card, player, num) {
-                    var numx = parseInt(QQQ.config.飞扬跋扈模式);
-                    if (numx) {
-                        if (card.name == 'sha' || card.name == 'jiu') return num + numx;
-                    }
-                },
-                globalFrom(from, to, distance) {
-                    var numx = parseInt(QQQ.config.飞扬跋扈模式);
-                    if (numx) {
-                        return distance - numx;
-                    }
-                },
-            },
-        }; //所有武将添加跋扈
-        lib.skill._门客秘境 = {
-            trigger: {
-                global: 'dieEnd',
-            },
-            forced: true,
-            silent: true,
-            filter(event, player) {
-                if (game.门客秘境) {
-                    if (event.player.storage.随从 && !game.players.some((q) => q.storage.随从)) {
-                        return true;
-                    }
-                    if (event.player.storage.敌人) {
-                        return true;
-                    }
-                }
-            },
-            async content(event, trigger, player) {
-                for (const npc of game.players) {
-                    if (npc.storage.随从) {
-                        await npc.die();
-                        npc.delete();
-                    } else {
-                        npc.classList.remove('out');
-                    }
-                }
-                game.门客秘境 = false;
-            },
-        }; //门客秘境//排座位
-        lib.skill._卖血模式 = {
-            mod: {
-                ignoredHandcard(card, player) {
-                    const maixie = ['maihp', 'maixie_defend', 'maixie'].some((q) => player.hasSkillTag(q));
-                    if (QQQ.config.卖血模式 && maixie) {
-                        return get.tag(card, 'recover');
-                    }
-                },
-            },
-            trigger: {
-                global: ['useCard'],
-            },
-            filter(event, player) {
-                const maixie = ['maihp', 'maixie_defend', 'maixie'].some((q) => player.hasSkillTag(q));
-                if (QQQ.config.卖血模式 && maixie) {
-                    return get.tag(event.card, 'damage') && event.targets?.some((i) => player.getFriends().includes(i));
-                }
-            },
-            forced: true,
-            silent: true,
-            async content(event, trigger, player) {
-                trigger.targets = trigger.targets.filter((i) => player.getEnemies().includes(i));
-                trigger.targets.push(player);
-                trigger.player.line(player);
-                game.log(get.translation(player), `将${get.translation(trigger.card)}由${get.translation(Q)}转移给自己`);
-            },
-            group: ['_卖血模式_1'], //QQQ
-            subSkill: {
-                1: {
-                    trigger: {
-                        player: ['loseBefore'],
-                    },
-                    forced: true,
-                    silent: true,
-                    filter(event, player) {
-                        if ('useCard' == event.parent.name) return false;
-                        const maixie = ['maihp', 'maixie_defend', 'maixie'].some((q) => player.hasSkillTag(q));
-                        if (QQQ.config.卖血模式 && maixie) {
-                            return event.cards && event.cards.some((card) => get.tag(card, 'recover')); //QQQ
-                        }
-                    },
-                    async content(event, trigger, player) {
-                        trigger.cards = trigger.cards.filter((i) => !get.tag(i, 'recover'));
-                    },
-                },
-            },
-        }; //卖血模式
         lib.skill._手牌上限与补充牌堆 = {
             trigger: {
                 player: ['gainBefore'],
@@ -1864,7 +1644,7 @@ const content = async function () {
             fixed: true,
             charlotte: true,
             filter(event, player) {
-                if (event.cards?.length + player.countCards('h') >= parseInt(QQQ.config.平衡)) {
+                if (event.cards?.length + player.countCards('h') >= Number(QQQ.config.平衡)) {
                     event.cancel();
                 }
                 if (!QQQ.cardList) {
@@ -1891,6 +1671,213 @@ const content = async function () {
                 }
             },
         }; //阶段限一次技能计数清空
+        if (QQQ.config.卖血模式) {
+            lib.skill._卖血模式 = {
+                mod: {
+                    ignoredHandcard(card, player) {
+                        const maixie = ['maihp', 'maixie_defend', 'maixie'].some((q) => player.hasSkillTag(q));
+                        if (maixie) {
+                            return get.tag(card, 'recover');
+                        }
+                    },
+                },
+                trigger: {
+                    global: ['useCard'],
+                },
+                filter(event, player) {
+                    const maixie = ['maihp', 'maixie_defend', 'maixie'].some((q) => player.hasSkillTag(q));
+                    if (maixie) {
+                        return get.tag(event.card, 'damage') && event.targets?.some((i) => player.getFriends().includes(i));
+                    }
+                },
+                forced: true,
+                silent: true,
+                async content(event, trigger, player) {
+                    trigger.targets = trigger.targets.filter((i) => player.getEnemies().includes(i));
+                    trigger.targets.push(player);
+                    trigger.player.line(player);
+                    game.log(get.translation(player), `将${get.translation(trigger.card)}由${get.translation(Q)}转移给自己`);
+                },
+                group: ['_卖血模式_1'], //QQQ
+                subSkill: {
+                    1: {
+                        trigger: {
+                            player: ['loseBefore'],
+                        },
+                        forced: true,
+                        silent: true,
+                        filter(event, player) {
+                            if ('useCard' == event.parent.name) return false;
+                            const maixie = ['maihp', 'maixie_defend', 'maixie'].some((q) => player.hasSkillTag(q));
+                            if (maixie) {
+                                return event.cards && event.cards.some((card) => get.tag(card, 'recover')); //QQQ
+                            }
+                        },
+                        async content(event, trigger, player) {
+                            trigger.cards = trigger.cards.filter((i) => !get.tag(i, 'recover'));
+                        },
+                    },
+                },
+            }; //卖血模式
+        }
+        if (QQQ.config.一主多反) {
+            lib.skill._qunou = {
+                trigger: {
+                    global: ['gameStart'],
+                },
+                firstDo: true,
+                forced: true,
+                mode: ['identity'],
+                filter(event, player, card) {
+                    return player == game.me;
+                },
+                async content(event, trigger, player) {
+                    for (const i of game.players) {
+                        if (i == player) {
+                            game.zhu = i;
+                            i.identity = 'zhu';
+                            i.setIdentity('zhu');
+                        } else {
+                            i.identity = 'fan';
+                            i.setIdentity('fan');
+                        }
+                    }
+                },
+            };
+        }
+        if (QQQ.config.主公加强) {
+            lib.skill._主公 = {
+                trigger: {
+                    global: ['reviveEnd', 'dieEnd'],
+                },
+                forced: true,
+                silent: true,
+                filter(event, player, card) {
+                    return player == game.zhu && ['identity'].includes(get.mode());
+                },
+                async content(event, trigger, player) {
+                    lib.skill._主公.init(player, '_主公');
+                },
+                derivation: ['zongzuo', 'aocai', 'tianming', 'xiangle'],
+                init(player, skill) {
+                    player.removeAdditionalSkill(skill);
+                    if (game.players.length >= 3) player.addAdditionalSkill(skill, ['aocai'], true);
+                    if (game.players.length >= 5) player.addAdditionalSkill(skill, ['tianming'], true);
+                    if (game.players.length >= 7) player.addAdditionalSkill(skill, ['xiangle'], true);
+                },
+                group: ['_主公_1'],
+                subSkill: {
+                    1: {
+                        trigger: {
+                            global: 'gameDrawBefore',
+                        },
+                        forced: true,
+                        silent: true,
+                        filter(event, player, card) {
+                            return player == game.zhu && ['identity'].includes(get.mode());
+                        },
+                        async content(event, trigger, player) {
+                            player.addSkill('宗祚');
+                            lib.skill._主公.init(player, '_主公');
+                        },
+                    },
+                },
+            }; //身份场主公加强
+        }
+        if (Number(QQQ.config.飞扬跋扈模式)) {
+            lib.skill._飞扬 = {
+                trigger: {
+                    player: 'phaseJudgeBegin',
+                },
+                forced: true,
+                silent: true,
+                filter(event, player) {
+                    return player.countCards('j') && player.countCards('he') > 1;
+                },
+                async content(event, trigger, player) {
+                    //QQQ
+                    var { result } = await player.chooseToDiscard('he', 2, '弃置两张牌并弃置判定区里的一张牌').set('ai', function (card) {
+                        var Q = player.getCards('j');
+                        let E = {};
+                        if (Q.some((i) => i.name == 'yanxiao_card')) return false; //QQQ
+                        if (Q.length == 1 && Q[0].viewAs == 'shandian') return 1 - get.value(card);
+                        if (
+                            Q.some((i) => {
+                                if (E[i.name]) {
+                                    return true;
+                                } else {
+                                    E[i.name] = true;
+                                    return false;
+                                }
+                            })
+                        )
+                            return 1 - get.value(card);
+                        var value = 0;
+                        for (const i of Q) {
+                            if (!i.viewAs) var name = i.name;
+                            else var name = i.viewAs;
+                            if (!lib.card[name].ai || !lib.card[name].ai.result) continue;
+                            var W = lib.card[name].ai.result.target;
+                            if (typeof W == 'function') value += W(player, player, { name: name });
+                            value += W;
+                        }
+                        return -6 * value - get.value(card);
+                    });
+                    if (result.cards && result.cards[0] && player.countCards('j')) {
+                        //QQQ
+                        var { result } = await player.chooseButton(['弃置判定区里的一张牌', player.getCards('j')], true).set('ai', function (button) {
+                            var Q = player.getCards('j');
+                            if (Q.some((i) => i.name == button.link.name && i != button.link)) return 0;
+                            if (!button.link.viewAs) var name = button.link.name;
+                            else var name = button.link.viewAs;
+                            if (!lib.card[name].ai || !lib.card[name].ai.result) return 0;
+                            var W = lib.card[name].ai.result.target;
+                            if (typeof W == 'function') return -W(player, player, { name: name });
+                            return -W;
+                        });
+                        if (result && result.links && result.links[0]) {
+                            ui.discardPile.appendChild(result.links[0]);
+                        }
+                    }
+                },
+            }; //所有武将添加飞扬
+            lib.skill._跋扈 = {
+                trigger: {
+                    player: 'phaseZhunbeiBegin',
+                },
+                forced: true,
+                silent: true,
+                async content(event, trigger, player) {
+                    var numx = Number(QQQ.config.飞扬跋扈模式);
+                    game.log(player, '跋扈摸' + numx);
+                    player.draw(numx);
+                },
+                mod: {
+                    cardUsable(card, player, num) {
+                        var numx = Number(QQQ.config.飞扬跋扈模式);
+                        if (numx) {
+                            if (card.name == 'sha' || card.name == 'jiu') return num + numx;
+                        }
+                    },
+                    globalFrom(from, to, distance) {
+                        var numx = Number(QQQ.config.飞扬跋扈模式);
+                        if (numx) {
+                            return distance - numx;
+                        }
+                    },
+                },
+            }; //所有武将添加跋扈
+            lib.skill._跋扈1 = {
+                trigger: {
+                    global: ['gameStart'],
+                },
+                silent: true,
+                _priority: -9,
+                async content(event, trigger, player) {
+                    player.changeHujia(2);
+                },
+            };//全体触发
+        }
     };//全局技能
     quanju();
     //—————————————————————————————————————————————————————————————————————————————卡牌AI修改
@@ -3503,7 +3490,7 @@ const content = async function () {
             lib.skill.chixueqingfeng = {
                 equipSkill: true,
                 trigger: {
-                    player: 'useCardToPlayered',
+                    player: 'useCardToPlayer',
                 },
                 filter(event, player) {
                     return event.card.name == 'sha';
@@ -3550,7 +3537,7 @@ const content = async function () {
             };
             lib.skill.jsrgjuelie = {
                 audio: 2,
-                trigger: { player: 'useCardToPlayered' },
+                trigger: { player: 'useCardToPlayer' },
                 filter(event, player) {
                     return player.countCards('he') && event.card.name == 'sha';
                 },
@@ -3566,7 +3553,7 @@ const content = async function () {
                         })
                         .set('max', trigger.target.countDiscardableCards(player, 'he'))
                         .set('goon', get.attitude(player, trigger.target) < 0)
-                    ('step 1');
+                        ('step 1');
                     if (result.bool) {
                         var num = result.cards.length;
                         if (trigger.target.countDiscardableCards(player, 'he')) player.discardPlayerCard(`平讨:弃置${get.translation(trigger.target) + get.cnNumber(num)}张牌`, num, 'he', trigger.target, true);

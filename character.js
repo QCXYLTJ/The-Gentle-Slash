@@ -190,8 +190,8 @@ const character = {
         skills: ['神裁'],
     },
     QQQ_哦哦: {
-        sex: 'male',
-        skills: ['洗牌', '杖'],
+        sex: 'female',
+        skills: ['QQQ_xipai', 'QQQ_zhang'],
     },
     QQQ_全装备1: {
         sex: 'male',
@@ -313,7 +313,7 @@ const character = {
     },
     QQQ_潜水的火: {
         sex: 'female',
-        skills: ['合包', '天启'],
+        skills: ['合包'],
     },
     QQQ_SB: {
         sex: 'female',

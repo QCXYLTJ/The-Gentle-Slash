@@ -297,7 +297,8 @@ const card = {
             },
         },
     },
-    //尸爆:对一名已死亡的角色使用,将其炸掉(移出游戏),然后对其相邻角色造成一点伤害
+    // 尸爆
+    // 将一名已死亡的角色炸掉,然后对其相邻角色造成一点伤害
     QQQ_shibao: {
         type: 'trick',
         filterTarget(card, player, target) {
@@ -306,27 +307,14 @@ const card = {
         selectTarget: -1,
         async content(event, trigger, player) {
             const {
-                result: { targets },
-            } = await player
-                .chooseTarget('对一名已死亡的角色使用,将其炸掉', (c, p, t) => t.isDead())
-                .set('deadTarget', true)
-                .set('ai', (target) => {
-                    var num = 0;
-                    const next = target.next;
-                    const previous = target.previous;
-                    if (next) {
-                        num -= get.attitude(player, next);
-                    }
-                    if (previous) {
-                        num -= get.attitude(player, previous);
-                    }
-                    return get.attitude(player, target) * num;
-                });
-            if (targets && targets[0]) {
-                const next = targets[0].next;
-                const previous = targets[0].previous;
-                game.log(`<span class="Qmenu">${get.translation(targets[0])}尸体被炸掉</span>`);
-                game.removePlayer(targets[0]);
+                result: { links },
+            } = await player.chooseButton(['将一名已死亡的角色炸掉', game.dead])
+                .set('ai', (button) => 20 - get.attitude(player, button.link));
+            if (links && links[0]) {
+                const next = links[0].next;
+                const previous = links[0].previous;
+                game.log(`<span class=Qmenu>${get.translation(links[0])}尸体被炸掉</span>`);
+                game.removePlayer(links[0]);
                 if (next) {
                     next.damage();
                 }
@@ -433,9 +421,9 @@ for (const i in card) {
                         let equips = player.vcardsMap.equips || [];
                         Reflect.defineProperty(player.vcardsMap, 'equips', {
                             get() {
-                                equips = [...new Set([...equips, ...player.artifact])];
+                                equips.addArray(player.artifact);
                                 return equips;
-                            },
+                            },//不需要取消代理就没必要重赋值数组,会导致加减元素出点问题
                             configurable: false,
                             set(value) {
                                 equips = value;
@@ -508,7 +496,7 @@ const translate3 = {
     火: '火',
     火_info: '当此牌被获得或失去时,当前角色受到一点火属性伤害',
     QQQ_人皇幡: '人皇幡',
-    QQQ_人皇幡_info: '<span class="Qmenu">锁定技,</span>使用有目标的牌时,若此牌是装备牌或延时锦囊则你摸一张牌.否则此牌无距离次数限制,且可以增加或减少一个目标',
+    QQQ_人皇幡_info: '<span class=Qmenu>锁定技,</span>使用有目标的牌时,若此牌是装备牌或延时锦囊则你摸一张牌.否则此牌无距离次数限制,且可以增加或减少一个目标',
     QQQ_wodani: '我就打你',
     QQQ_wodani_info: '普通伤害锦囊牌,视为对目标使用随机一张伤害牌',
     QQQ_baota: '玲珑宝塔',
@@ -536,9 +524,9 @@ const translate3 = {
     封神: '封神',
     封神_info: '使用后获得上面印的技能,然后销毁这张卡',
     昊天塔: '昊天塔',
-    昊天塔_info: '分为五个碎片牌.<span class="Qmenu">锁定技,</span>你对其他角色造成的伤害+x,若x为5,你令其立即死亡.(x为你昊天塔碎片比其多的数量)',
+    昊天塔_info: '分为五个碎片牌.<span class=Qmenu>锁定技,</span>你对其他角色造成的伤害+x,若x为5,你令其立即死亡.(x为你昊天塔碎片比其多的数量)',
     炼妖壶: '炼妖壶',
-    炼妖壶_info: '<span class="Qmenu">锁定技,</span>其他角色本局游戏造成伤害的总数对你始终可见.限定技:每轮开始时,你可以令累计造成伤害最多的角色获得<炼妖>:准备阶段开始时失去一点体力或减一点体力上限,结束阶段翻面或弃置三张牌',
+    炼妖壶_info: '<span class=Qmenu>锁定技,</span>其他角色本局游戏造成伤害的总数对你始终可见.限定技:每轮开始时,你可以令累计造成伤害最多的角色获得<炼妖>:准备阶段开始时失去一点体力或减一点体力上限,结束阶段翻面或弃置三张牌',
     昆仑镜: '昆仑镜',
     昆仑镜_info: '回合限一次,当你受到伤害后,你可以将体力与手牌数调整至此轮开始',
     盘古斧: '盘古斧',

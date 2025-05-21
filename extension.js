@@ -137,16 +137,18 @@ const yuanxing = function () {
     });//检测两个数组完全互相包含
     Array.prototype.contains = Array.prototype.includes; //给所有数组修改includes方法
     HTMLElement.prototype.lock = function (son) {
-        //this是父元素,son子元素
         const parent = this;
-        parent.appendChild(son);
-        new MutationObserver(function () {
+        const artifact = function () {
             if (parent.contains(son)) return;
             console.log('神器不可失去');
             parent.appendChild(son);
             son.style.transform = '';
+        };
+        artifact();
+        new MutationObserver(function () {
+            artifact();
         }).observe(parent, { childList: true });
-    }; //DOM将子元素锁定于父元素上
+    }; //DOM将子元素锁定于父元素上//this是父元素,son子元素
     HTMLElement.prototype.BG = function (name) {
         const video = document.createElement('video');
         video.src = `extension/温柔一刀/mp4/${name}.mp4`;
@@ -850,7 +852,7 @@ lib.element.content.waitForPlayer = function () {
         event.func();
     }
     if (!lib.configOL.number) {
-        lib.configOL.number = parseInt(lib.configOL.player_number);
+        lib.configOL.number = Number(lib.configOL.player_number);
     }
     if (game.onlineroom) {
         game.send('server', 'config', lib.configOL);
