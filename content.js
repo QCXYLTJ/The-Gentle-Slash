@@ -1321,14 +1321,20 @@ const content = async function () {
     jineng();
     //—————————————————————————————————————————————————————————————————————————————一些杂乱自创函数
     const zawu = function () {
-        lib.element.card.AQ = function (str) {
-            if (!this.qtag) {
-                this.qtag = [];
+        lib.element.card.AQ = function (tag) {
+            if (!this.qdiv) {
+                this.qdiv = ui.create.div('.qtag', this);
             }
-            this.qtag.add(str);
-            const tag = ui.create.div('.qtag', this);
-            tag.innerHTML = str;
-            this.appendChild(tag);
+            if (!this.qdiv.list) {
+                this.qdiv.list = [];
+            }
+            this.qdiv.list.add(tag);
+            let str = '';
+            for (const i of this.qdiv.list) {
+                str += `${i}<br>`;
+            }
+            this.qdiv.innerHTML = str;
+            return this;
         }; //添加卡牌永久标记,失去牌不会消失
         lib.element.card.HQ = function (tag) {
             return this.qtag && this.qtag.includes(tag);

@@ -301,6 +301,9 @@ const card = {
     // 将一名已死亡的角色炸掉,然后对其相邻角色造成一点伤害
     QQQ_shibao: {
         type: 'trick',
+        enable(card, player, event) {
+            return game.dead.length;
+        },
         filterTarget(card, player, target) {
             return target == player;
         },//QQQ
