@@ -775,9 +775,7 @@ const skill = {
         viewAs(cards, player) {
             var name = false;
             var nature = null;
-            switch (
-            cards[0]?.suit //QQQ
-            ) {
+            switch (cards[0]?.suit) {
                 case 'club':
                     name = 'shan';
                     break;
@@ -1155,169 +1153,8 @@ const skill = {
         check(card) {
             return 20 - get.value(card);
         },
-        ai: {
-            skillTagFilter(player) {
-                if (get.zhu(player, 'shouyue')) {
-                    if (!player.countCards('hes')) {
-                        return false;
-                    }
-                }
-            },
-            respondSha: true,
-            yingbian(card, player, targets, viewer) {
-                if (get.attitude(viewer, player) <= 0) {
-                    return 0;
-                }
-                var base = 0,
-                    hit = false;
-                if (get.cardtag(card, 'yingbian_hit')) {
-                    hit = true;
-                    if (
-                        targets.filter(function (target) {
-                            return target.hasShan() && get.attitude(viewer, target) < 0 && get.damageEffect(target, player, viewer, get.nature(card)) > 0;
-                        })
-                    ) {
-                        base += 5;
-                    }
-                }
-                if (get.cardtag(card, 'yingbian_all')) {
-                    if (
-                        game.hasPlayer(function (current) {
-                            return !targets.includes(current) && lib.filter.targetEnabled2(card, player, current) && get.effect(current, card, player, player) > 0;
-                        })
-                    ) {
-                        base += 5;
-                    }
-                }
-                if (get.cardtag(card, 'yingbian_damage')) {
-                    if (
-                        targets.filter(function (target) {
-                            return (
-                                get.attitude(player, target) < 0 &&
-                                (hit ||
-                                    !target.mayHaveShan() ||
-                                    player.hasSkillTag(
-                                        'directHit_ai',
-                                        true,
-                                        {
-                                            target: target,
-                                            card: card,
-                                        },
-                                        true
-                                    )) &&
-                                !target.hasSkillTag('filterDamage', null, {
-                                    player: player,
-                                    card: card,
-                                    jiu: true,
-                                })
-                            );
-                        })
-                    ) {
-                        base += 5;
-                    }
-                }
-                return base;
-            },
-            canLink(player, target, card) {
-                if (!target.isLinked() && !player.hasSkill('wutiesuolian_skill')) {
-                    return false;
-                }
-                if (
-                    target.mayHaveShan() &&
-                    !player.hasSkillTag(
-                        'directHit_ai',
-                        true,
-                        {
-                            target: target,
-                            card: card,
-                        },
-                        true
-                    )
-                ) {
-                    return false;
-                }
-                if (player.hasSkill('jueqing') || player.hasSkill('gangzhi') || target.hasSkill('gangzhi')) {
-                    return false;
-                }
-                return true;
-            },
-            basic: {
-                useful: [5, 3, 1],
-                value: [5, 3, 1],
-            },
-            order: 15,
-            result: {
-                target(player, target, card, isLink) {
-                    var eff = (function () {
-                        if (!isLink && player.hasSkill('jiu')) {
-                            if (
-                                !target.hasSkillTag('filterDamage', null, {
-                                    player: player,
-                                    card: card,
-                                    jiu: true,
-                                })
-                            ) {
-                                if (get.attitude(player, target) > 0) {
-                                    return -7;
-                                } else {
-                                    return -4;
-                                }
-                            }
-                            return -0.5;
-                        }
-                        return -1.5;
-                    })();
-                    if (
-                        !isLink &&
-                        target.mayHaveShan() &&
-                        !player.hasSkillTag(
-                            'directHit_ai',
-                            true,
-                            {
-                                target: target,
-                                card: card,
-                            },
-                            true
-                        )
-                    ) {
-                        return eff / 1.2;
-                    }
-                    return eff;
-                },
-                player(player) {
-                    return 1;
-                },
-            },
-            tag: {
-                respond: 1,
-                respondShan: 1,
-                damage(card) {
-                    if (card.nature == 'poison') {
-                        return;
-                    }
-                    return 1;
-                },
-                natureDamage(card) {
-                    if (card.nature) {
-                        return 1;
-                    }
-                },
-                fireDamage(card, nature) {
-                    if (card.nature == 'fire') {
-                        return 1;
-                    }
-                },
-                thunderDamage(card, nature) {
-                    if (card.nature == 'thunder') {
-                        return 1;
-                    }
-                },
-                poisonDamage(card, nature) {
-                    if (card.nature == 'poison') {
-                        return 1;
-                    }
-                },
-            },
+        ai() {
+            return lib.card.sha.ai;
         },
     },
     杀杀杀: {
@@ -1793,19 +1630,17 @@ const skill = {
                 return current != player && current.countMark('寒') < 4;
             });
         },
-        content() {
-            'step 0';
-            player.chooseTarget('令一名其他角色获得一个【寒】', true, function (card, player, target) {
+        async content(event, trigger, player) {
+            const {
+                result: { targets },
+            } = await player.chooseTarget('令一名其他角色获得一个【寒】', true, function (card, player, target) {
                 if (target.countMark('寒') > 3) {
                     return false;
                 }
                 return target != player;
-            }).ai = function (target) {
-                return -get.attitude(player, target);
-            };
-            ('step 1');
-            if (result.bool) {
-                result.targets[0].addMark('寒', 1);
+            }).set('ai', (t) => -get.attitude(player, t));
+            if (targets && targets[0]) {
+                targets[0].addMark('寒', 1);
             }
         },
         group: ['寒_1'],
@@ -1822,24 +1657,8 @@ const skill = {
                     }
                     return event.target.countMark('寒') > 0;
                 },
-                prompt2(event, player) {
-                    var str = `额外结算${get.cnNumber(num)}次`;
-                    if (event.card.name == 'sha' && event.card.nature) {
-                        str += get.translation(event.card.nature);
-                    }
-                    return str + `【${get.translation(event.card.name)}】`;
-                },
-                content() {
+                async content(event, trigger, player) {
                     trigger.parent.effectCount += trigger.target.countMark('寒');
-                },
-                ai: {
-                    effect: {
-                        target(card, player, target) {
-                            if (player.hasSkill('寒_1') && get.attitude(player, target) < 0) {
-                                return [-1, 0];
-                            }
-                        },
-                    },
                 },
             },
         },
@@ -1994,12 +1813,6 @@ const skill = {
                 evt1.finish();
             }
             game.log(player, '结束了', _status.currentPhase, '的回合');
-        },
-        logTarget: 'source',
-        ai: {
-            threaten() {
-                return 9;
-            },
         },
     },
     QQQ_人皇幡: {
@@ -2211,11 +2024,11 @@ const skill = {
         // 其他角色出牌阶段,其可以移去一个赌,视为使用一张任意牌
         async content(event, trigger, player) {
             const { result } = await player.chooseControl('red', 'black').set('prompt', '赌:猜测下一张牌的颜色');
-            var card = ui.cardPile.firstChild;
+            const card = ui.cardPile.firstChild;
             player.showCards(card);
             player.gain(card, 'gain2');
-            if (card.color == result.control) {
-                var list = ['移除一枚标记', '回复一点体力'];
+            if (get.color(card) == result.control) {
+                const list = ['移除一枚标记', '回复一点体力'];
                 if (player.countMark('赌') < 1) {
                     list.remove('移除一枚标记');
                 }
@@ -2455,23 +2268,14 @@ const skill = {
     },
     募集: {
         trigger: {
-            global: 'loseAfter',
+            global: ['loseAfter'],
         },
         filter(event, player) {
-            if (event.cards?.length) {
-                const card = event.cards[0];
-                if (event.cards.length == 1 && ['equip', 'delay'].includes(get.type(card))) {
-                    return false;
-                }
-                return event.player != player && !event.getParent('募集').name;
+            if (event.cards?.length > 1) {
+                return event.player != player && !event.getParent('募集', true);
             }
         },
-        check(event, cards, player) {
-            if (event.cards.length > 2) {
-                return true;
-            }
-            return get.value(event.cards, player) > 6;
-        },
+        forced: true,
         async content(event, trigger, player) {
             const {
                 result: { cards },
@@ -2479,25 +2283,15 @@ const skill = {
             if (!cards || !cards.length) {
                 player.loseHp();
             }
-            if (trigger.cards.length == 1) {
+            const num = Math.ceil(trigger.cards.length / 2);
+            const {
+                result: { links },
+            } = await player.chooseButton(['选择要获得的牌', trigger.cards], num, true)
+                .set('ai', (button) => get.value(button.link));
+            if (links?.length) {
                 setTimeout(async function () {
-                    player.node.handcards1.appendChild(trigger.cards[0]);
-                    ui.updatehl();
+                    player.gain(links, 'gain2');
                 }, 600);
-            } else {
-                const {
-                    result: { links },
-                } = await player.chooseButton(['选择要获得的牌', trigger.cards], num, true).set('ai', function (button) {
-                    return get.value(button.link);
-                });
-                if (links?.length) {
-                    setTimeout(async function () {
-                        for (const i of links) {
-                            player.node.handcards1.appendChild(i);
-                        }
-                        ui.updatehl();
-                    }, 600);
-                }
             }
         },
     },
@@ -2507,20 +2301,17 @@ const skill = {
         },
         forced: true,
         filter(event, player) {
-            return event.cards.length > 1;
+            return event.cards?.length > 1;
         },
-        content() {
-            'step 0';
-            var num = Math.ceil(trigger.cards.length / 2);
-            var cards = [];
-            for (var i = 0; i < trigger.cards.length; i++) {
-                cards.push(trigger.cards[i]);
+        async content(event, trigger, player) {
+            const num = Math.ceil(trigger.cards.length / 2);
+            const {
+                result: { links },
+            } = await player.chooseButton(['选择防止失去的牌', trigger.cards], num, true)
+                .set('ai', (button) => get.value(button.link));
+            if (links?.length) {
+                trigger.cards.removeArray(links);
             }
-            player.chooseButton(['选择防止失去的牌', cards], num, true).set('ai', function (button) {
-                return get.value(button.link, _status.event.player, 'raw');
-            });
-            ('step 1');
-            trigger.cards.removeArray(result.links);
         },
     },
     康济: {
@@ -2884,7 +2675,7 @@ const skill = {
                 trigger.cancel();
             }
             const card = get.cards(num);
-            game.cardsGotoOrdering(card);
+            game.cardsDiscard(card);
             player.popup(card, 'thunder');
             game.log('移入弃牌堆', card);
         },
@@ -7155,7 +6946,7 @@ const translate1 = {
     寄生_1: '寄生_1',
     寄生_1_info: '<span class=Qmenu>锁定技,</span>你出杀无距离次数限制且免疫死亡',
     奇械: '奇械',
-    奇械_info: '你可以将一张手牌当做装备牌使用:♥️️加一马;♦️️减一马;♠️️八卦阵;♣️️连弩',
+    奇械_info: '你可以将一张手牌当做装备牌使用:♥️️加一马;♦️️减一马;♠️️八卦阵;♣️️连弩;🃏木牛流马<br>你手牌上限加装备区花色数',
     天谴: '天谴',
     天谴_info: '<span class=Qmenu>锁定技,</span>你已被天谴',
     战陨: '战陨',
@@ -7197,9 +6988,9 @@ const translate1 = {
     碎甲: '碎甲',
     碎甲_info: '<span class=Qmenu>锁定技,</span>你的防具失效',
     募集: '募集',
-    募集_info: '其他角色失去牌时,你可以弃置一张牌或失去一点体力获得这些牌中的一半(向上取整)',
+    募集_info: '其他角色失去至少2牌时,你可以弃置一张牌或失去一点体力获得这些牌中的一半(向上取整)',
     治军: '治军',
-    治军_info: '当你失去牌时,如数量大于1,你可以防止其中一半的牌失去(向上取整)',
+    治军_info: '当你失去至少2牌时,你可以防止其中一半的牌失去(向上取整)',
     康济: '康济',
     康济_info: '主公技,回合限一次,你可另其他魏势力武将各摸或随机弃置一张牌',
     驭衡: '驭衡',
