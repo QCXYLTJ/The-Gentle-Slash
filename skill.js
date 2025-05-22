@@ -2663,9 +2663,12 @@ const skill = {
             player: ['loseBegin', 'dieBegin', 'changeHpBegin', 'loseMaxHpBefore'],
         },
         forced: true,
-        filter(event, player) {
-            if (event.name == 'lose' && (event.getParent(2).name == 'recast' || ['useCard', 'respond', 'equip'].includes(event.parent.name))) {
-                return false;
+        filter(event, player, name) {
+            if (name == 'loseBegin') {
+                return event.getParent(2).name != 'recast' && !['useCard', 'respond', 'equip'].includes(event.parent.name);
+            }
+            if (name == 'changeHpBegin') {
+                return event.num < 0;
             }
             return true;
         },

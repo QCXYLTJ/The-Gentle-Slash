@@ -108,6 +108,7 @@ countCards\('(?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)')[^'"]*'\)
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
+identityList[i]
 updateMark
 syncStorage
 lib.config.characters.remove
@@ -1957,7 +1958,7 @@ const precontent = async function () {
                     return lib.card.sha;
                 }
                 var name = item.name;
-                if (player !== false) name = item.name;
+                if (player !== false) name = get.name(item, player);//这里不能换成自带子属性,不然视为牌不能正常使用(神关羽武神)
                 return lib.card[name];
             } else {
                 if (QQQ.config.报错) {
