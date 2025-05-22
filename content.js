@@ -1167,6 +1167,7 @@ const content = async function () {
                     if (game.videoContent[content.type]) game.videoContent[content.type](content.content);
                 } //QQQ
                 if (event.video.length) {
+                    game.delay(0, _status.videoDuration * Math.min(2000, event.video[0].delay));
                 }
                 event.redo();
             } else {

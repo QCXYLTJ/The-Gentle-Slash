@@ -31,6 +31,7 @@ if (QQQ.config.扩展全关) {
 if (QQQ.config.扩展修改) {
     var Q = [
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM', '全能搜索', '太虚幻境', '斗破苍穹X阴阳师',
+        '列疆',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改

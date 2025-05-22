@@ -2562,41 +2562,43 @@ const skill = {
             player.give(result.cards, trigger.player);
         },
     },
+    // 回合开始时,你可以放弃摸牌,令一名角色手牌调整至手牌上限,其他角色至你的距离永久+1
     英才: {
         trigger: {
-            player: 'phaseBefore',
+            player: ['phaseBefore'],
         },
-        limited: true,
-        check: (event, player) => player.getHandcardLimit() > player.countCards('h'),
-        content() {
-            'step 0';
-            player.awakenSkill('英才');
-            player.skip('phaseDraw');
-            trigger.player.addTempSkill('英才_1', 'roundStart');
-            player
-                .chooseTarget(function (card, player, target) {
-                    return target.countCards('h') < target.getHandcardLimit() && target.isFriendsOf(player);
-                })
-                .set('ai', function (target) {
-                    return Math.max(0, target.getHandcardLimit() - target.countCards('h'));
-                });
-            ('step 1');
-            if (result.bool) {
-                result.targets[0].drawTo(result.targets[0].getHandcardLimit());
-            }
+        check(event, player) {
+            return player.getHandcardLimit() > player.countCards('h');
         },
-        subSkill: {
-            1: {
-                charlotte: true,
-                mod: {
-                    globalTo(from, to, current) {
-                        return current + 1;
-                    },
-                },
-                intro: {
-                    content: '其他角色至你的距离+1',
-                },
+        init(player) {
+            player.storage.英才 = 0;
+        },
+        mod: {
+            globalTo(from, to, current) {
+                return current + to.storage.英才;
             },
+        },
+        mark: true,
+        intro: {
+            content: '其他角色至你的距离+#',
+        },
+        async content(event, trigger, player) {
+            player.skip('phaseDraw');
+            player.storage.英才++;
+            const {
+                result: { targets },
+            } = await player.chooseTarget('令一名角色手牌调整至手牌上限')
+                .set('filterTarget', (c, p, t) => t.countCards('h') != t.getHandcardLimit())
+                .set('ai', (t) => (t.getHandcardLimit() - t.countCards('h')) * get.attitude(player, t));
+            if (targets && targets[0]) {
+                const num = targets[0].getHandcardLimit() - targets[0].countCards('h');
+                if (num > 0) {
+                    targets[0].draw(num);
+                }
+                else {
+                    targets[0].chooseToDiscard(-num, 'h', true);
+                }
+            }
         },
     },
     徒: {
@@ -6662,7 +6664,7 @@ const skill = {
                 set() { },
             });
             game.bug = [];
-            var Q = '幻想拾夜'; //mode_extension_xxx//////
+            var Q = '列疆'; //mode_extension_xxx//////
             for (var j in lib.characterPack[Q]) {
                 game.bug.addArray(lib.characterPack[Q][j][3].filter((Q) => Q != 'dualside'));
             }
@@ -6672,7 +6674,7 @@ const skill = {
         _priority: 9,
         async content(event, trigger, player) {
             //QQQ
-            var Q = game.bug.slice(100, 200); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(0, 100); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
             const {
                 result: { bool },
@@ -7004,7 +7006,7 @@ const translate1 = {
     雅量: '雅量',
     雅量_info: '<span class=Qmenu>锁定技,</span>当其他角色对你使用唯一目标的非伤害锦囊时,你需给其一张牌,此锦囊不生效(无牌则此技不生效)',
     英才: '英才',
-    英才_info: '限定技,回合开始阶段,你可以放弃摸牌,此轮距离+1,随后你可以令一名其他角色补充手牌至手牌上限',
+    英才_info: '回合开始时,你可以放弃摸牌,令一名角色手牌调整至手牌上限,其他角色至你的距离永久+1',
     徒: '徒',
     徒_info: '<span class=Qmenu>锁定技,</span>当你失去牌后,你随机弃置等量的牌(不嵌套触发)',
     流: '流',
