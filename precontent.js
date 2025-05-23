@@ -79,6 +79,7 @@ for (var i =
 [,//, ,//,]//,)
 cards.splice//i.discard()
 //-------------------------------------------------------正则替换
+!((?!\(\b)[^&|\s]*) == //$1 !=
 'die:(?!ext\b)
 function \(.*\) \{\n\s*\}//function \(.*\) \{ \}//= () => { }
 '[^)']+logSkill[^']*'//'[^)']*logSkill[^']+'//'[^)']+logSkill[^']+'//popup: false,
@@ -798,12 +799,12 @@ const precontent = async function () {
             if (typeof name != 'string') {
                 name = 'sha';
             }
-            if (!lib.card[name]) {
+            const info = lib.card[name];
+            if (!info && QQQ.config.报错) {
                 alert(name + '没有info');
                 name = 'sha';
                 throw new Error();
             }
-            var info = lib.card[name];
             let noclick = false;
             if (suit == 'noclick') {
                 noclick = true;
@@ -823,7 +824,7 @@ const precontent = async function () {
                 suit = Math.random() < 0.5 ? 'diamond' : 'heart';
             }
             if (typeof number != 'number' && typeof number != 'string') {
-                number = Math.ceil(Math.random() * 13);
+                number = Math.ceil(Math.random() * 13);//随机点数
             }
             let card;
             if (noclick) {
