@@ -1,3 +1,4 @@
+console.time('温柔一刀extension');
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
 import { precontent } from './precontent.js';
 import { content } from './content.js';
@@ -348,6 +349,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
     const gentle = {
         name: '温柔一刀',
         arenaReady() {
+            console.time('温柔一刀arenaReady');
             ui.auto.hide = game.kongfunc;//禁止隐藏托管
             console.log(Object.keys(lib.skill).length, 'lib.arenaReady', 'skill');
             console.log(Object.keys(lib.card).length, 'card');
@@ -372,7 +374,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 const info = lib.card[i];
                 if (typeof info != 'object') {
                     if (QQQ.config.报错) {
-                        alert(i + 'info不是对象');
+                        alert(i + '没有对应lib.card1');
                     }
                     continue;
                 }
@@ -421,7 +423,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 const info = lib.character[i];
                 if (typeof info != 'object') {
                     if (QQQ.config.报错) {
-                        alert(i + 'info不是对象');
+                        alert(i + '没有对应lib.character1');
                     }
                     continue;
                 }
@@ -432,7 +434,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 if (QQQ.config.报错) {
                     for (const j of info[4]) {
                         if (!j) {
-                            alert(i + '角色没有info');
+                            alert(i + 'lib.character[4]有问题');
                         }
                     }
                     if (!info.hp && info.hp != 0) {
@@ -440,8 +442,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     }
                     for (const j of info.skills) {
                         if (!lib.skill[j] && !_status.auto) {
-                            console.log(j, '是一个不存在的技能名info', i);
-                            alert(j + '是一个不存在的技能名info' + i);
+                            console.log(j, '没有对应lib.skill2', i);
+                            alert(j + '没有对应lib.skill2' + i);
                         }
                     }
                 }
@@ -451,13 +453,10 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 const info = lib.card[name];
                 if (!name || !info) {
                     if (QQQ.config.报错) {
-                        alert(i + '是没有info的卡牌');
+                        alert(i + '没有对应lib.card2');
                     }
                     return false;
                 }
-                if (['gw_tunshi', 'gw_xinsheng'].includes(name)) {
-                    return false;
-                }//移除巫师逆天卡牌
                 if (info.mode && !info.mode.includes(lib.config.mode)) {
                     console.log(name, 'mode不符合');
                     return false;
@@ -729,6 +728,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 },
                 true
             ); //温柔一刀按钮
+            console.timeEnd('温柔一刀arenaReady');
         },
         content: content,
         precontent: precontent,
@@ -917,3 +917,4 @@ lib.element.content.waitForPlayer = function () {
         ui.cardPileButton.style.display = '';
     }
 };
+console.timeEnd('温柔一刀extension');

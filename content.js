@@ -21,6 +21,7 @@
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
 export { content };
 const content = async function () {
+    console.time('温柔一刀content');
     //—————————————————————————————————————————————————————————————————————————————添加新势力/加入lib.boss/修改checkresult等
     const group = function () {
         game.addGroup('狂', '<span style="color: #FF0000">狂</span>', '狂', {
@@ -265,7 +266,7 @@ const content = async function () {
                     if (QQQ.config.报错 && get.mode() != 'boss') {
                         if (skill) {
                             console.log(skill, '是一个不存在的技能名addskill');
-                            alert(skill + '是一个不存在的技能名addskill');
+                            alert(skill + '没有对应lib.skill1');
                             throw new Error();
                         }
                     }
@@ -8337,4 +8338,5 @@ const content = async function () {
         } //收藏武将修改
     };//按钮控制技能添加与修改
     config();
+    console.timeEnd('温柔一刀content');
 };

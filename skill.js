@@ -6098,7 +6098,7 @@ const skill = {
                     },
                     ignoreMod: true,
                     async precontent(event, trigger, player) {
-                        event.result.cards = [ui.cardPile.firstChild]; //防没有cards[0]
+                        event.result.cards = get.cards(); //防没有cards[0]
                         player.storage.QQQ_kangzou.add(event.result.card.name);
                         player.storage.QQQ_kangzou.add(event.result.card.nature);
                         player.gainMaxHp();
@@ -6783,6 +6783,10 @@ const skill = {
     },
 };
 const translate1 = {
+    '': '空字符串',
+    _info: '这是一个空字符串',
+    undefined: 'undefined',
+    undefined_info: '这是一个undefined',
     QQQ_chuanyang: '穿杨',
     QQQ_chuanyang_info: '出牌阶段,你可以将X字的牌当做无次数限制的【杀】对与你距离为X的角色使用.以此法造成伤害后,你摸X张牌(X为此阶段已使用牌的次数)',
     QQQ_lieshi: '裂石',
@@ -6795,16 +6799,12 @@ const translate1 = {
     QQQ_neifa_info: '出牌阶段开始时,你可以视为对自己使用一张【决斗】;当你为此【决斗】响应:第奇数次后,你摸三张牌;第偶数次后,你本回合获得「挑衅」「无双」「乱击」中的前一个',
     QQQ_bianshen: '变身',
     QQQ_bianshen_info: '每回合开始时你随机变为其他一个角色,若你技能数大于36,则你清空技能',
-    '': `<input type="button" value="空字符串" onclick="alert('QQQ')">`,
-    _info: `<input type="button" value="这是一个空字符串" onclick="alert('QQQ')">`,
-    undefined: 'undefined',
-    undefined_info: '这是一个undefined',
     QQQ_pianan: '偏安',
     QQQ_pianan_info: '每当你获得牌后,你弃置区域内所有伤害牌,并增加等量手牌上限.当你成为伤害牌的目标后,你将手牌摸至手牌上限,因此获得至少两张牌后,你的手牌上限-1',
     QQQ_tushe: '图射',
     QQQ_tushe_info: '限定技,出牌阶段开始时,若你的手牌数大于等于手牌上限,你可以令你的手牌上限减至0,弃置所有手牌,获得等量无次数限制的【杀】,将<偏安>修改为非本回合你每造成1点伤害,你的手牌上限+1',
     QQQ_kangzou: '抗揍',
-    QQQ_kangzou_info: '每回合限x次,当你需使用或打出牌时,若其牌名未记录,则你记录之,并视为使用或打出此牌,而后你增加一点体力上限,并将手牌补至体力上限(x为每回合开始时你的体力上限/因此法使用的牌不记入次数限制).每当你进入濒死时,若你有未记录的牌名,随机记录一个未记录牌名,然后回复体力至一点',
+    QQQ_kangzou_info: '每回合限x次,当你需使用或打出牌时,若其牌名未记录,则你记录之,并视为使用或打出此牌,而后你增加一点体力上限,并将手牌补至体力上限(x为每回合开始时你的体力上限/因此法使用的牌不记入次数限制)<br>当你进入濒死时,若你有未记录的牌名,随机记录一个未记录牌名,然后回复体力至一点',
     QQQ_xiangyun: '香陨',
     QQQ_xiangyun_info: '使命技,游戏开始时,你将牌堆顶X张牌置于武将牌上称为<香>,X为场上角色数一半向下取整.<br>①每轮开始时,你需将至少一张花色各不相同的牌(二或更多周目则没有花色限制)置入<香>,然后摸 等量(二或更多周目则改为双倍)的牌.<br>②场上角色的出牌阶段开始时,若其为你或手牌数小于体力值,其可以获得你的一张<香>,<br>③成功:准备阶段,若你的<香>包含三种花色(二或更多周目则改为四种),则你获得所有<香>,并回复一点体力,然后在本轮结束时重新激活并令周目数+1.<br>④失败:准备阶段,若你没有<香>,你失去一点体力并重铸所有手牌,然后在本轮结束时重新激活(不过不增加周目数)',
     QQQ_yaoyi: '妖异',

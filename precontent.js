@@ -254,8 +254,10 @@ const windowq = function () {
 }
 windowq();
 const precontent = async function () {
+    console.time('温柔一刀precontent');
     //—————————————————————————————————————————————————————————————————————————————测试区
     if (QQQ.config.报错) {
+        const ceshi = '测试局部变量是否正常传递';
         lib.skill._QUANJU = {
             trigger: {
                 global: ['gameStart'],
@@ -265,10 +267,11 @@ const precontent = async function () {
             _priority: 9999,
             filter: (event, player) => player == game.me,
             async content(event, trigger, player) {
+                console.log(ceshi, '测试局部变量是否正常传递');
                 for (const i of lib.inpile) {
                     if (!lib.card[i]) {
                         console.log(i);
-                        alert(i + '没有info');
+                        alert(i + '没有对应lib.card3');
                     }
                 }//onfree之后才有inpile与牌堆
                 for (const i of Array.from(ui.cardPile.childNodes)) {
@@ -374,6 +377,7 @@ const precontent = async function () {
     }
     //—————————————————————————————————————————————————————————————————————————————lib.onfree
     lib.onfree.push(function () {
+        console.time('温柔一刀onfree');
         console.log(Object.keys(lib.skill).length, 'lib.onfree', 'skill');
         console.log(Object.keys(lib.card).length, 'card');
         console.log(Object.keys(lib.character).length, 'character');
@@ -382,7 +386,7 @@ const precontent = async function () {
             const info = lib.skill[i];
             if (typeof info != 'object') {
                 if (QQQ.config.报错) {
-                    alert(i + 'info不是对象');
+                    alert(i + '没有对应lib.skill3');
                 }
                 continue;
             }
@@ -410,9 +414,11 @@ const precontent = async function () {
                     info.ai.result.player = 1;
                     console.log(`修改${i}的result.player为1`);
                 }
-                const con = info.content;
-                if (con && con.toString().includes('event.card.') && !con.toString().includes('event.card =')) {
-                    alert(i + 'content有问题4');
+                if (QQQ.config.报错) {
+                    const con = info.content;
+                    if (con && con.toString().includes('event.card.') && !con.toString().includes('event.card =')) {
+                        alert(i + 'content有问题4');
+                    }
                 }
             }//防止主动技ai不发动
             // if (info.trigger && !info.forced && !info.silent && !info.cost && !info.direct && !info.frequent && !info.check) {
@@ -462,10 +468,10 @@ const precontent = async function () {
                     for (const j in info.trigger) {
                         const infox = info.trigger[j];
                         if (!['player', 'global', 'source', 'target'].includes(j)) {
-                            alert(i + 'trigger有问题');
+                            alert(i + 'trigger有问题1');
                         }
                         if (!Array.isArray(infox) && typeof infox != 'string') {
-                            alert(i + 'trigger有问题');
+                            alert(i + 'trigger有问题2');
                         }
                         if (typeof infox == 'string') {
                             if (infox == 'logSkillBegin' && info.popup != false && !info.direct && !info.usable) {
@@ -485,10 +491,10 @@ const precontent = async function () {
                     }
                 }
                 if (info.audio == i) {
-                    alert(i + 'audio');
+                    alert(i + 'audio有问题1');
                 }
                 if (info.audio && info.audio[0] == i) {
-                    alert(i + 'audio');
+                    alert(i + 'audio有问题2');
                 }
                 if (info.trigger && !info.content) {
                     alert(i + '没有content');
@@ -571,6 +577,7 @@ const precontent = async function () {
             },
             true
         ); //BGM
+        console.timeEnd('温柔一刀onfree');
     }); //需要晚的时机的
     //—————————————————————————————————————————————————————————————————————————————lib.onover
     lib.onover.push(function (result) {
@@ -800,7 +807,7 @@ const precontent = async function () {
             }
             const info = lib.card[name];
             if (!info && QQQ.config.报错) {
-                alert(name + '没有info');
+                alert(name + '没有对应lib.card4');
                 name = 'sha';
                 throw new Error();
             }
@@ -1937,8 +1944,8 @@ const precontent = async function () {
                 if (!lib.skill[item]) {
                     if (QQQ.config.报错 && (get.mode() == 'single' || lib.config.mode == 'QQQ')) {
                         if (item) {
-                            console.log(item, '不存在的技能名info');
-                            alert(item + '是一个不存在的技能名info');
+                            console.log(item, '没有对应lib.skill4');
+                            alert(item + '没有对应lib.skill4');
                             throw new Error();
                         }
                     }
@@ -1950,8 +1957,8 @@ const precontent = async function () {
                 if (!lib.card[item.name]) {
                     if (QQQ.config.报错) {
                         if (item.name) {
-                            console.log(item, item.name, '是一个不存在的卡牌名info');
-                            alert(item.name + '是一个不存在的卡牌名info');
+                            console.log(item, item.name, '没有对应lib.card5');
+                            alert(item.name + '没有对应lib.card5');
                             throw new Error();
                         }
                     }
@@ -1963,8 +1970,8 @@ const precontent = async function () {
             } else {
                 if (QQQ.config.报错) {
                     if (item) {
-                        console.log(item, '不存在的技能名info');
-                        alert(item + '是一个不存在的技能名info');
+                        console.log(item, '没有对应lib.skill5');
+                        alert(item + '没有对应lib.skill5');
                         throw new Error();
                     }
                 }
@@ -1979,7 +1986,7 @@ const precontent = async function () {
                 if (!name) {
                     if (QQQ.config.报错) {
                         console.log(obj);
-                        alert(obj + '是一个不存在的卡牌名type');
+                        alert(obj + '没有对应lib.card6');
                         throw new Error();
                     }
                     return;
@@ -8041,7 +8048,7 @@ const precontent = async function () {
                     async content(event, trigger, player) {
                         const log = game.lose();
                         const list = [];
-                        const npcs = trigger.targets.add(trigger.player);
+                        const npcs = [...new Set([...trigger.targets, trigger.player])];
                         for (const npc of npcs.filter((q) => q.countCards('he'))) {
                             const {
                                 result: { cards },
@@ -8748,4 +8755,5 @@ for (const name of ['索托斯', '大鱼人']) {
     npc.setIdentity('zhong');
 }
 */
+    console.timeEnd('温柔一刀precontent');
 };
