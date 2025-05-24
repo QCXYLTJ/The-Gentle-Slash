@@ -382,6 +382,9 @@ const precontent = async function () {
         console.log(Object.keys(lib.card).length, 'card');
         console.log(Object.keys(lib.character).length, 'character');
         game.finishCards();
+        const console1 = [];
+        const console2 = [];
+        const console3 = [];
         for (const i in lib.skill) {
             const info = lib.skill[i];
             if (typeof info != 'object') {
@@ -398,26 +401,29 @@ const precontent = async function () {
                             player: 1,
                         },
                     };
-                    console.log('修复增加', `${i}的ai`);
+                    console1.push(i);
                 }
                 if (!info.ai.order && !info.ai.basic?.order) {
                     info.ai.order = 10;
-                    console.log(`修改${i}的order为10`);
+                    console1.push(i);
                 }
                 if (typeof info.ai.result != 'object') {
                     info.ai.result = {
                         player: 1,
                     };
-                    console.log('修复增加', `${i}的ai.result`);
+                    console1.push(i);
                 }
                 if (!info.ai.result.player && !info.ai.result.target) {
                     info.ai.result.player = 1;
-                    console.log(`修改${i}的result.player为1`);
+                    console1.push(i);
                 }
                 if (QQQ.config.报错) {
                     const con = info.content;
-                    if (con && con.toString().includes('event.card.') && !con.toString().includes('event.card =')) {
-                        alert(i + 'content有问题4');
+                    if (con) {
+                        const string = con.toString();
+                        if (string.includes('event.card.') && !string.includes('event.card =') && !string.includes('async content')) {
+                            alert(i + 'content有问题4');
+                        }
                     }
                 }
             }//防止主动技ai不发动
@@ -529,6 +535,7 @@ const precontent = async function () {
                 }
             }
         }
+        console.log('修复增加ai', console1);
         if (QQQ.config.报错) {
             for (const i in lib.characterSort) {
                 const info = lib.characterSort[i];
@@ -1372,7 +1379,7 @@ const precontent = async function () {
                 node.mode = mode;
                 node._initLink = function () {
                     node.link = page;
-                    var list = [];
+                    const list = [];
                     for (var i = 0; i < info.length; i++) {
                         if (!lib.card[info[i]]) continue; //QQQ
                         list.push([get.translation(get.type(info[i], 'trick')), '', info[i]]);
@@ -1834,11 +1841,11 @@ const precontent = async function () {
                 if ([...start.firstChild.children].map((node) => node.mode).includes(packName)) return;
                 // 显示不是无名杀自带的卡牌包
                 if (!lib.connectCardPack.includes(packName) && !lib.config.all.cards.includes(packName)) {
-                    if (!(connectMenu && ['mode_derivation', 'mode_banned'].includes(packName))) {
+                    if (!connectMenu) {
                         createModeConfig(packName, start.firstChild, node1);
-                    }
+                    }//显示衍生牌
                     if (connectMenu) lib.connectCardPack.add(packName);
-                }
+                }//显示衍生牌
             };
         }; //修复扩展乱斗模式报错,因为本体把扩展中带有衍生标签的卡牌都放进了衍生卡牌包里面,导致原扩展卡牌包变成空的,然后游戏要添加卡牌包开关按钮,就找不到firstchlid
     } //UI相关函数

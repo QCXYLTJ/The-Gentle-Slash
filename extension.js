@@ -33,6 +33,7 @@ if (QQQ.config.扩展修改) {
     var Q = [
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM', '全能搜索', '斗破苍穹X阴阳师',
         '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
+        '综漫季刊壹', '综漫季刊伍', '综漫季刊陆', '综漫季刊柒', '综漫季刊捌', '综漫季刊玖', '混沌界', '活动萌扩', '神魔乱舞',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -370,6 +371,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
             if (!lib.type) {
                 lib.type = [];
             }
+            const console2 = [];
+            const console3 = [];
             for (const i in lib.card) {
                 const info = lib.card[i];
                 if (typeof info != 'object') {
@@ -394,10 +397,10 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     }
                     if (info.type == 'equip') {
                         if (!info.subtype) {
-                            console.log(i + '没有subtype');
+                            console3.push(i);
                         }
                         if (['equip2', 'equip1', 'equip5'].includes(info.subtype) && !info.skills) {
-                            console.log(i + '没有装备技能');
+                            console2.push(i);
                         }
                         if (!info.ai.equipValue && !info.ai.basic.equipValue) {
                             alert(i + '没有装备AI');
@@ -416,6 +419,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
                 }
             } //卡牌加入牌堆
+            console.log(console2, '没有装备技能');
+            console.log(console3, '没有subtype');
             lib.config.all.characters.add('温柔一刀');
             lib.connectCardPack.add('温柔一刀');
             lib.connectCharacterPack.add('温柔一刀');
@@ -448,6 +453,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     }
                 }
             }
+            const console1 = [];
             lib.card.list = lib.card.list.filter((i) => {
                 const name = i[2];
                 const info = lib.card[name];
@@ -458,11 +464,12 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     return false;
                 }
                 if (info.mode && !info.mode.includes(lib.config.mode)) {
-                    console.log(name, 'mode不符合');
+                    console1.push(name);
                     return false;
                 }
                 return true;
             });//最晚lib.arenaReady里面
+            console.log(console1, 'mode不符合');
             if (QQQ.config.卡牌全开) {
                 game.saveConfig('connect_cards', []);
                 game.saveConfig('bannedcards', []);

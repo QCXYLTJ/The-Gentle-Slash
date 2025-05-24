@@ -1785,7 +1785,7 @@ const content = async function () {
                             return player == game.zhu && ['identity'].includes(get.mode());
                         },
                         async content(event, trigger, player) {
-                            player.addSkill('宗祚');
+                            player.addSkill('zongzuo');
                             lib.skill._主公.init(player, '_主公');
                         },
                     },
@@ -5534,8 +5534,8 @@ const content = async function () {
                     return 0;
                 };
             } //爆栈
-            if (QQQ.DEEP('lib.skill.reluanwu.ai.result')) {
-                lib.skill.reluanwu.ai.result.player = function (player) {
+            if (QQQ.DEEP('lib.skill.luanwu.ai.result')) {
+                lib.skill.luanwu.ai.result.player = function (player) {
                     if (player.hasSkill('clanzhongliu')) return 99;
                     if (lib.config.mode == 'identity' && game.zhu.isZhu && player.identity == 'fan') {
                         if (game.zhu.hp == 1 && game.zhu.countCards('h') <= 2) return 1;

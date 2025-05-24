@@ -3640,45 +3640,6 @@ const skill = {
             },
         },
     },
-    宗祚: {
-        trigger: {
-            global: ['gameDrawBefore'],
-        },
-        forced: true,
-        audio: 'zongzuo',
-        content() {
-            'step 0';
-            player.gainMaxHp(game.countGroup());
-            ('step 1');
-            player.recover(game.countGroup());
-        },
-        group: ['宗祚_1'],
-        subSkill: {
-            1: {
-                trigger: {
-                    global: 'dieAfter',
-                },
-                forced: true,
-                audio: 'zongzuo',
-                filter(event, player) {
-                    if (!lib.group.includes(event.player.group)) {
-                        return false;
-                    }
-                    if (
-                        game.hasPlayer(function (current) {
-                            return current.group == event.player.group;
-                        })
-                    ) {
-                        return false;
-                    }
-                    return player.maxHp > 3;
-                },
-                content() {
-                    player.loseMaxHp(2);
-                },
-            },
-        },
-    },
     普通卖血: {
         trigger: {
             player: ['changeHp'],
@@ -4996,7 +4957,7 @@ const skill = {
             }
         },
     },
-    称象: {
+    QQQ_称象: {
         audio: 'rechengxiang',
         enable: 'phaseUse',
         usable: 1,
@@ -6826,8 +6787,8 @@ const translate1 = {
     影火_info: '牌堆顶4张牌始终对你可见;你可将其如手牌般使用与打出',
     置幻: '置幻',
     置幻_info: '任意角色使用非转化牌时,若【花招】中不含此牌名,你可以令包含此牌花色的选项失效,并交换此牌与【花招】描述中花色相同的选项的牌名.当【花招】没有可用选项时,重置所有选项',
-    称象: '称象',
-    称象_info: '回合限一次,将手牌与场上共计至多四张点数之和不小于牌堆顶四张牌的牌置于牌堆顶并获得牌堆顶四张牌',
+    QQQ_称象: '称象',
+    QQQ_称象_info: '回合限一次,将手牌与场上共计至多四张点数之和不小于牌堆顶四张牌的牌置于牌堆顶并获得牌堆顶四张牌',
     花招: '花招',
     花招_info: '你可以重铸所有:1.♥️️手牌,视为使用【桃】;2.♠️️手牌,视为使用【杀】;3.♦️️手牌,视为使用【酒】;4.♣️️手牌,视为使用【闪】.选择完毕后令该项失效.当【花招】没有可用选项时,重置所有选项',
     求贤若渴: '求贤若渴',
@@ -7066,8 +7027,6 @@ const translate1 = {
     检测_info: '检测',
     摸与杀: '摸与杀',
     摸与杀_info: '回合开始时随机获得四个有描述的技能,回合结束时选择失去三分之一的技能(向上取整)',
-    宗祚: '宗祚',
-    宗祚_info: '游戏开始时你增加x点体力上限和体力,x为势力数.当一名势力最后的角色死亡后,你失去两点体力上限',
     普通卖血: '普通卖血',
     普通卖血_info: '<体力变化/造成伤害/每轮开始>时,你摸等量牌',
     隐伏: '隐伏',
