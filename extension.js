@@ -350,10 +350,14 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
         name: '温柔一刀',
         arenaReady() {
             console.time('温柔一刀arenaReady');
-            ui.auto.hide = game.kongfunc;//禁止隐藏托管
             console.log(Object.keys(lib.skill).length, 'lib.arenaReady', 'skill');
             console.log(Object.keys(lib.card).length, 'card');
             console.log(Object.keys(lib.character).length, 'character');
+            ui.auto.hide = game.kongfunc;//禁止隐藏托管
+            if (QQQ.config.界面比例) {
+                game.documentZoom = game.deviceZoom * Number(QQQ.config.界面比例);
+                ui.updatez(); //缩放
+            }
             game.finishCards();
             if (QQQ.config.卖血模式) {
                 lib.skill.yuqi.ai = { maixie: true };

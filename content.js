@@ -1381,7 +1381,7 @@ const content = async function () {
             const jindutiao = ui.create.div('.jindutiao', nengliangtiao);
             return jindutiao;
         };
-    };//杂乱自创函数
+    }; //杂乱自创函数
     zawu();
     //—————————————————————————————————————————————————————————————————————————————解构魔改本体函数
     const mogai = function () {
@@ -1628,7 +1628,7 @@ const content = async function () {
                 player.dying({ source: source });
             }
         }; //真实伤害
-    };//解构魔改本体函数
+    }; //解构魔改本体函数
     mogai();
     //—————————————————————————————————————————————————————————————————————————————一些全局技能
     const quanju = function () {
@@ -1884,9 +1884,9 @@ const content = async function () {
                 async content(event, trigger, player) {
                     player.changeHujia(2);
                 },
-            };//全体触发
+            }; //全体触发
         }
-    };//全局技能
+    }; //全局技能
     quanju();
     //—————————————————————————————————————————————————————————————————————————————卡牌AI修改
     const card = function () {
@@ -2632,6 +2632,69 @@ const content = async function () {
                     if (max <= 0) return 2;
                     return 0.53 * max;
                 };
+                lib.card.shunshou.ai.result = {
+                    player(player, target) {
+                        const hs = target.getGainableCards(player, 'h');
+                        const es = target.getGainableCards(player, 'e');
+                        const js = target.getGainableCards(player, 'j');
+                        const att = get.attitude(player, target);
+                        if (att < 0) {
+                            if (
+                                !hs.length &&
+                                !es.some((card) => {
+                                    return get.type(card) == 'equip' && gget.value(card, target) > 0 && card != target.getEquip('jinhe');
+                                }) &&
+                                !js.some((card) => {
+                                    var cardj = card.viewAs ? { name: card.viewAs } : card;
+                                    if (cardj.name == 'xumou_jsrg') return true;
+                                    return get.effect(target, cardj, target, player) < 0;
+                                })
+                            )
+                                return 0;
+                        } else if (att > 1) {
+                            return es.some((card) => {
+                                return get.type(card) == 'equip' && gget.value(card, target) <= 0;
+                            }) ||
+                                js.some((card) => {
+                                    var cardj = card.viewAs ? { name: card.viewAs } : card;
+                                    if (cardj.name == 'xumou_jsrg') return false;
+                                    return get.effect(target, cardj, target, player) < 0;
+                                })
+                                ? 1.5
+                                : 0;
+                        }
+                        return 1;
+                    },
+                    target(player, target) {
+                        const hs = target.getGainableCards(player, 'h');
+                        const es = target.getGainableCards(player, 'e');
+                        const js = target.getGainableCards(player, 'j');
+
+                        if (get.attitude(player, target) <= 0) {
+                            if (hs.length > 0) return -1.5;
+                            return es.some((card) => {
+                                return get.type(card) == 'equip' && gget.value(card, target) > 0 && card != target.getEquip('jinhe');
+                            }) ||
+                                js.some((card) => {
+                                    var cardj = card.viewAs ? { name: card.viewAs } : card;
+                                    if (cardj.name == 'xumou_jsrg') return true;
+                                    return get.effect(target, cardj, target, player) < 0;
+                                })
+                                ? -1.5
+                                : 1.5;
+                        }
+                        return es.some((card) => {
+                            return get.type(card) == 'equip' && gget.value(card, target) <= 0;
+                        }) ||
+                            js.some((card) => {
+                                var cardj = card.viewAs ? { name: card.viewAs } : card;
+                                if (cardj.name == 'xumou_jsrg') return false;
+                                return get.effect(target, cardj, target, player) < 0;
+                            })
+                            ? 1.5
+                            : -1.5;
+                    },
+                };
             }
             if (QQQ.DEEP('lib.card.guohe.ai.basic')) {
                 lib.card.guohe.ai.basic.value = function (card, player) {
@@ -2643,6 +2706,52 @@ const content = async function () {
                     });
                     if (max <= 0) return 5;
                     return 0.42 * max;
+                };
+                lib.card.guohe.ai.result = {
+                    target(player, target) {
+                        const att = get.attitude(player, target);
+                        const hs = target.getDiscardableCards(player, 'h');
+                        const es = target.getDiscardableCards(player, 'e');
+                        const js = target.getDiscardableCards(player, 'j');
+                        if (!hs.length && !es.length && !js.length) return 0;
+                        if (att > 0) {
+                            if (
+                                js.some((card) => {
+                                    const cardj = card.viewAs ? { name: card.viewAs } : card;
+                                    if (cardj.name == 'xumou_jsrg') return false;
+                                    return get.effect(target, cardj, target, player) < 0;
+                                })
+                            )
+                                return 3;
+                            if (target.isDamaged() && es.some((card) => card.name == 'baiyin') && get.recoverEffect(target, player, player) > 0) {
+                                if (target.hp == 1 && !target.hujia) return 1.6;
+                            }
+                            if (
+                                es.some((card) => {
+                                    return get.type(card) == 'equip' && get.value(card, target) < 0;
+                                }) //AAA
+                            )
+                                return 1;
+                            return -1.5;
+                        } else {
+                            const noh = hs.length == 0 || target.hasSkillTag('noh');
+                            const noe = es.length == 0 || target.hasSkillTag('noe');
+                            const noe2 =
+                                noe ||
+                                !es.some((card) => {
+                                    return get.type(card) == 'equip' && gget.value(card, target) > 0;
+                                });
+                            const noj =
+                                js.length == 0 ||
+                                !js.some((card) => {
+                                    const cardj = card.viewAs ? { name: card.viewAs } : card;
+                                    if (cardj.name == 'xumou_jsrg') return true;
+                                    return get.effect(target, cardj, target, player) < 0;
+                                });
+                            if (noh && noe2 && noj) return 1.5;
+                            return -1.5;
+                        }
+                    },
                 };
             }
             if (QQQ.DEEP('lib.card.xujiu.ai')) {
@@ -3560,8 +3669,10 @@ const content = async function () {
                             return 0;
                         })
                         .set('max', trigger.target.countDiscardableCards(player, 'he'))
-                        .set('goon', get.attitude(player, trigger.target) < 0)
-                        ('step 1');
+                        .set(
+                            'goon',
+                            get.attitude(player, trigger.target) < 0
+                        )('step 1');
                     if (result.bool) {
                         var num = result.cards.length;
                         if (trigger.target.countDiscardableCards(player, 'he')) player.discardPlayerCard(`平讨:弃置${get.translation(trigger.target) + get.cnNumber(num)}张牌`, num, 'he', trigger.target, true);
@@ -8336,7 +8447,7 @@ const content = async function () {
             });
             game.saveConfig('layout', 'mobile');
         } //收藏武将修改
-    };//按钮控制技能添加与修改
+    }; //按钮控制技能添加与修改
     config();
     console.timeEnd('温柔一刀content');
 };
