@@ -31,9 +31,8 @@ if (QQQ.config.扩展全关) {
 } //扩展全部关闭
 if (QQQ.config.扩展修改) {
     var Q = [
-        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM', '全能搜索', '斗破苍穹X阴阳师',
-        '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
-        '综漫季刊壹', '综漫季刊伍', '综漫季刊陆', '综漫季刊柒', '综漫季刊捌', '综漫季刊玖', '混沌界', '活动萌扩', '神魔乱舞',
+        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM',
+        '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -502,18 +501,19 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 game.saveConfig('characters', characters);
                 game.saveConfig('defaultcharacters', characters);
             } //扩展武将全部打开
-            const guanfang = ['jiange', 'boss', 'mtg', 'yxs', 'ow', 'xianjian', 'gwent', 'gujian', 'hearth', 'swd', 'standard', 'shenhua', 'yijiang', 'extra', 'refresh', 'sp2', 'newjiang', 'clan', 'ddd', 'sb', 'sixiang', 'yingbian', 'key', 'collab', 'old', 'sp', 'tw', 'huicui', 'shiji', 'onlyOL', 'mobile', 'offline', 'diy', 'jsrg', 'xianding'];
+            const GFchar = ['jiange', 'boss', 'mtg', 'yxs', 'ow', 'xianjian', 'gwent', 'gujian', 'hearth', 'swd', 'standard', 'shenhua', 'yijiang', 'extra', 'refresh', 'sp2', 'newjiang', 'clan', 'ddd', 'sb', 'sixiang', 'yingbian', 'key', 'collab', 'old', 'sp', 'tw', 'huicui', 'shiji', 'onlyOL', 'mobile', 'offline', 'diy', 'jsrg', 'xianding'];
             if (QQQ.config.联机禁官服将) {
-                game.saveConfig('connect_characters', guanfang);
+                game.saveConfig('connect_characters', GFchar);
             }
             if (QQQ.config.单机禁官服将) {
-                const characters = Object.keys(lib.characterPack).filter((q) => !guanfang.includes(q));
+                const characters = Object.keys(lib.characterPack).filter((q) => !GFchar.includes(q));
                 lib.connectCharacterPack = characters;
                 lib.config.all.characters = characters;
                 game.saveConfig('all', lib.config.all);
                 game.saveConfig('characters', characters);
                 game.saveConfig('defaultcharacters', characters);
             }
+            const GFcard = ['standard', 'guozhan', 'extra', 'yingbian', 'yongjian', 'sp', 'yunchou', 'zhulu', 'kaiheiji', 'zhenfa', 'swd', 'gujian', 'hearth', 'mtg', 'gwent', 'xianxia', 'huanlekapai'];
             ui.create.system(
                 '换将',
                 function () {

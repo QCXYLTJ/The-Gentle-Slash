@@ -6630,7 +6630,7 @@ const skill = {
                 set() { },
             });
             game.bug = [];
-            var Q = '列疆'; //mode_extension_xxx//////
+            var Q = '地府武将'; //mode_extension_xxx//////
             for (var j in lib.characterPack[Q]) {
                 game.bug.addArray(lib.characterPack[Q][j][3].filter((Q) => Q != 'dualside'));
             }

@@ -2179,7 +2179,7 @@ const precontent = async function () {
                             players = game.players;
                         if (result.color == 'red') {
                             for (var i = 0; i < players.length; i++) {
-                                if (!players[i].isFriendOf(player)) {
+                                if (players[i].isEnemiesOf(player)) {
                                     players[i].addSkill('boss_biantian3');
                                     players[i].popup('kuangfeng');
                                     targets.push(players[i]);
@@ -2187,7 +2187,7 @@ const precontent = async function () {
                             }
                         } else if (result.color == 'black') {
                             for (var i = 0; i < players.length; i++) {
-                                if (players[i].isFriendOf(player)) {
+                                if (players[i].isFriendsOf(player)) {
                                     players[i].addSkill('boss_biantian2');
                                     players[i].popup('dawu');
                                     targets.push(players[i]);
@@ -8644,7 +8644,7 @@ const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.
                 };
                 for (const i in QQQ.character) {
                     const info = QQQ.character[i];
-                    info[4].add(`ext:QQQQQQ/image/${i}.jpg`);
+                    info[4].push(`ext:QQQQQQ/image/${i}.jpg`);
                     info[4].push(`die:ext:QQQQQQ/audio/${i}.mp3`);
                 }
                 lib.config.all.characters.add('QQQQQQ');
@@ -8654,6 +8654,53 @@ const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.
             });
 numfunc
 info.json\license
+            const numfunc = function () {
+                if (!lib.number) {
+                    lib.number = [];
+                    for (var i = 1; i < 14; i++) {
+                        lib.number.add(i);
+                    }
+                } //添加lib.number
+                window.sgn = function (bool) {
+                    if (bool) return 1;
+                    return -1;
+                }; //true转为1,false转为-1
+                window.numberq0 = function (num) {
+                    if (isNaN(Number(num))) return 0;
+                    return Math.abs(Number(num));
+                }; //始终返回正数(取绝对值)
+                window.numberq1 = function (num) {
+                    if (isNaN(Number(num))) return 1;
+                    return Math.max(Math.abs(Number(num)), 1);
+                }; //始终返回正数且至少为1(取绝对值)
+                window.number0 = function (num) {
+                    if (isNaN(Number(num))) return 0;
+                    return Math.max(Number(num), 0);
+                }; //始终返回正数
+                window.number1 = function (num) {
+                    if (isNaN(Number(num))) return 1;
+                    return Math.max(Number(num), 1);
+                }; //始终返回正数且至少为1
+                window.deepClone = function (obj) {
+                    const clone = {};
+                    for (const key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            const info = obj[key];
+                            if (typeof info == 'object') {
+                                if (Array.isArray(info)) {
+                                    clone[key] = info.slice();
+                                } else {
+                                    clone[key] = window.deepClone(info);
+                                }
+                            } else {
+                                clone[key] = info;
+                            }
+                        }
+                    }
+                    return clone;
+                }; //深拷贝对象
+            };
+            numfunc();
             game.import('card', function (lib, game, ui, get, ai, _status)  {
                 const QQQ = {
                     name: 'QQQQQQ',
@@ -8717,25 +8764,26 @@ game.playAudio\((.+)extension(.+)', '([^/,\.]*)'\)
 game.playAudio($1extension$2/$3.mp3')
 extension/([^/,]*)/([^/,]*).mp3
 extension/$1/audio/$2.mp3
-'ext:([^/,]*)/([^/,]*).mp3
-'ext:$1/audio/$2.mp3
+ext:([^/,]*)/([^/,]*).mp3
+ext:$1/audio/$2.mp3
 extension/([^/,]*)/([^/,]*).jpg
 extension/$1/image/$2.jpg
-'ext:([^/,]*)/([^/,]*).jpg
-'ext:$1/image/$2.jpg
+ext:([^/,]*)/([^/,]*).jpg
+ext:$1/image/$2.jpg
 extension/([^/,]*)/([^/,]*).png
 extension/$1/image/$2.png
-'ext:([^/,]*)/([^/,]*).png
-'ext:$1/image/$2.png
+ext:([^/,]*)/([^/,]*).png
+ext:$1/image/$2.png
 game.playAudio('../extension/秦时明月', 
-'ext:([^/,]*):
-'ext:$1/audio:
+ext:([^/,]*):
+ext:$1/audio:
 audio: "ext:耀武将:false",//audio: false//audio: '',//audio: 2,
 /audio/audio==>/audio
 /image/image
 ext:/
 //有些卡牌没写image但是默认走路径可以看到,如果把jpg移动到image里面就需要写上image//有fullskin是png,fullimage是jpg
-image: `ext:龙族/image/言灵·君焰.jpg`,
+image: 'ext:花好月圆/image/liangyuan.jpg',
+audio: 'ext:花好月圆/audio:2',
 game.changeBoss(
 addplayer(
 addfellow(

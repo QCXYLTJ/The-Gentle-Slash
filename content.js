@@ -4726,12 +4726,12 @@ const content = async function () {
                     audio: 2,
                     trigger: { player: 'phaseUseBegin' },
                     filter(event, player) {
-                        return game.hasPlayer((current) => current.isFriendOf(player) && current.countDiscardableCards(player, 'hej') > 0);
+                        return game.hasPlayer((current) => current.isFriendsOf(player) && current.countDiscardableCards(player, 'hej') > 0);
                     },
                     async cost(event, trigger, player) {
                         event.result = await player
                             .chooseTarget(function (card, player, target) {
-                                return target.isFriendOf(player) && target.countDiscardableCards(player, 'hej') > 0;
+                                return target.isFriendsOf(player) && target.countDiscardableCards(player, 'hej') > 0;
                             }, get.prompt2('wlcuorui'))
                             .set('ai', function (target) {
                                 if (
@@ -4746,24 +4746,24 @@ const content = async function () {
                                     })
                                 )
                                     return 10;
-                                return game.countPlayer((current) => current.isEnemyOf(player) && current.countCards('he'));
+                                return game.countPlayer((current) => current.isEnemiesOf(player) && current.countCards('he'));
                             })
                             .forResult();
                     },
                     async content(event, trigger, player) {
                         var target = event.targets[0];
-                        const { result } = await player.discardPlayerCard(target, 'hej', true).set('ai', (button) => game.countPlayer((current) => current.isEnemyOf(player) && current.countCards('he', (card) => get.color(card) == get.color(button.link))));
+                        const { result } = await player.discardPlayerCard(target, 'hej', true).set('ai', (button) => game.countPlayer((current) => current.isEnemiesOf(player) && current.countCards('he', (card) => get.color(card) == get.color(button.link))));
                         if (result.cards && result.cards[0]) {
                             event.color = get.color(result.cards[0]);
                             var list = [];
-                            if (game.hasPlayer((current) => current.isEnemyOf(player) && current.countCards('h'))) list.push('展示手牌');
-                            if (game.hasPlayer((current) => current.isEnemyOf(player) && current.countCards('e', (card) => get.color(card) == event.color))) list.push('弃置装备');
+                            if (game.hasPlayer((current) => current.isEnemiesOf(player) && current.countCards('h'))) list.push('展示手牌');
+                            if (game.hasPlayer((current) => current.isEnemiesOf(player) && current.countCards('e', (card) => get.color(card) == event.color))) list.push('弃置装备');
                             if (list.length) {
                                 if (list.length == 1) {
                                     const result1 = { control: list[0] };
                                     if (result1.control == '弃置装备') {
                                         var dialog = ['请选择要弃置的牌'];
-                                        var list = game.players.filter((current) => current.isEnemyOf(player) && current.countCards('e', (card) => get.color(card) == event.color));
+                                        var list = game.players.filter((current) => current.isEnemiesOf(player) && current.countCards('e', (card) => get.color(card) == event.color));
                                         for (const i of list) {
                                             dialog.push(`<div class='text center'>${get.translation(i)}</div>`);
                                             dialog.push(
@@ -4791,7 +4791,7 @@ const content = async function () {
                                         });
                                     } else {
                                         var dialog = ['请选择要展示的牌'];
-                                        var list = game.players.filter((current) => current.isEnemyOf(player) && current.countCards('h'));
+                                        var list = game.players.filter((current) => current.isEnemiesOf(player) && current.countCards('h'));
                                         for (const i of list) {
                                             dialog.push(`<div class='text center'>${get.translation(i)}</div>`);
                                             if (player.hasSkillTag('viewHandcard', null, i, true)) dialog.push(i.getCards('h'));
@@ -4827,12 +4827,12 @@ const content = async function () {
                                         .chooseControl(list)
                                         .set('prompt', `挫锐:展示对手的至多两张手牌,或弃置对手装备区内至多两张${get.translation(event.color)}牌`)
                                         .set('ai', function () {
-                                            if (game.countPlayer((current) => current.isEnemyOf(player) && current.countCards('e', (card) => get.color(card) == event.color && get.value(card) > 0))) return 1;
+                                            if (game.countPlayer((current) => current.isEnemiesOf(player) && current.countCards('e', (card) => get.color(card) == event.color && get.value(card) > 0))) return 1;
                                             return 0;
                                         });
                                     if (result1.control == '弃置装备') {
                                         var dialog = ['请选择要弃置的牌'];
-                                        var list = game.players.filter((current) => current.isEnemyOf(player) && current.countCards('e', (card) => get.color(card) == event.color));
+                                        var list = game.players.filter((current) => current.isEnemiesOf(player) && current.countCards('e', (card) => get.color(card) == event.color));
                                         for (const i of list) {
                                             dialog.push(`<div class='text center'>${get.translation(i)}</div>`);
                                             dialog.push(
@@ -4860,7 +4860,7 @@ const content = async function () {
                                         });
                                     } else {
                                         var dialog = ['请选择要展示的牌'];
-                                        var list = game.players.filter((current) => current.isEnemyOf(player) && current.countCards('h'));
+                                        var list = game.players.filter((current) => current.isEnemiesOf(player) && current.countCards('h'));
                                         for (const i of list) {
                                             dialog.push(`<div class='text center'>${get.translation(i)}</div>`);
                                             if (player.hasSkillTag('viewHandcard', null, i, true)) dialog.push(i.getCards('h'));
