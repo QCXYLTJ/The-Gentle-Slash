@@ -6062,7 +6062,10 @@ const skill = {
                         event.result.cards = get.cards(); //防没有cards[0]
                         player.storage.QQQ_kangzou.add(event.result.card.name);
                         player.storage.QQQ_kangzou.add(event.result.card.nature);
-                        player.gainMaxHp();
+                        player.maxHp++;
+                        if (player.maxHp > 20) {
+                            player.maxHp = 20;
+                        }
                         player.drawTo(player.maxHp);
                     },
                 };

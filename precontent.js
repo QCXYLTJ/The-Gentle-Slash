@@ -3710,10 +3710,6 @@ const precontent = async function () {
                     sex: 'male',
                     skills: ['QQQ_xiaozhang', 'QQQ_canbing'],
                 },
-                QQQ_taotieQ: {
-                    sex: 'male',
-                    skills: ['QQQ_taotieQ'],
-                },
                 QQQ_zhoutai: {
                     sex: 'male',
                     skills: ['QQQ_buqu', 'QQQ_fujian', 'QQQ_zhanjie'],
@@ -4048,56 +4044,6 @@ const precontent = async function () {
                                 i.die();
                             }
                         }
-                    },
-                },
-                //————————————————————————————————————————————饕餮
-                //摸牌阶段你改为从任意位置获得等量的桃,每当你摸到桃后,为此牌增加一个标记.每当你摸到带标记的牌之后,你摸等同于此牌标记数的牌
-                QQQ_taotieQ: {
-                    trigger: {
-                        player: ['gainAfter'],
-                    },
-                    forced: true,
-                    filter(event, player) {
-                        if (event.cards) {
-                            return event.cards.some((q) => Object.keys(player.storage).length || q.gaintag.length || (q.cardtags && q.cardtags.length) || q.name == 'tao');
-                        }
-                    },
-                    async content(event, trigger, player) {
-                        var num = 0;
-                        for (const i of trigger.cards) {
-                            num += Object.keys(i.storage).length;
-                            num += i.gaintag.length;
-                            if (i.cardtags) {
-                                num += i.cardtags.length;
-                            }
-                            if (i.name == 'tao') {
-                                i.addGaintag('QQQ_taotieQ');
-                                i.storage[Math.random()] = true;
-                            }
-                        }
-                        if (num > 0) {
-                            player.draw(num);
-                        }
-                    },
-                    group: ['QQQ_taotieQ_1'],
-                    subSkill: {
-                        1: {
-                            trigger: {
-                                player: ['phaseDrawBegin'],
-                            },
-                            forced: true,
-                            async content(event, trigger, player) {
-                                trigger.cancel();
-                                const cardList = Array.from(ui.cardPile.childNodes).concat(Array.from(ui.discardPile.childNodes));
-                                game.countPlayer(function (current) {
-                                    cardList.addArray(current.getCards('hej'));
-                                });
-                                const cards = cardList.filter((q) => q.name == 'tao');
-                                if (cards[0]) {
-                                    player.gain(cards.randomGets(trigger.num), 'gain2');
-                                }
-                            },
-                        },
                     },
                 },
                 //————————————————————————————————————————————周泰
@@ -8484,9 +8430,6 @@ const precontent = async function () {
                 QQQ_fujian_info: '任意角色使用牌造成伤害后,你将此牌置于你武将牌上,然后你可令其选择使用你武将牌上与此牌名不同的一张牌',
                 QQQ_zhanjie: '战竭',
                 QQQ_zhanjie_info: '若你本阶段未造成伤害,你可以使用或打出武将牌上的牌',
-                //————————————————————————————————————————————饕餮
-                QQQ_taotieQ: '饕餮',
-                QQQ_taotieQ_info: '摸牌阶段你改为从任意位置获得等量的桃,每当你摸到桃后,为此牌增加一个标记.每当你摸到带标记的牌之后,你摸等同于此牌标记数的牌',
                 //————————————————————————————————————————————吉尔伽美什
                 QQQ_黄金律法: '黄金律法',
                 QQQ_黄金律法_info: '<span style="color: gold;">偉大的黃金律法——讓世界規律不亂,讓生命蒙受福祉與賜福</span>',

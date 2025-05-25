@@ -8290,7 +8290,7 @@ const content = async function () {
                 'yue_daqiao',
                 'yue_miheng', //35
                 'dc_sb_jushou',
-                'QQQ_沙包',
+                'QQQ_哦哦',
                 'QQQ_测试',
             ]; //收藏武将修改
             game.saveConfig('favouriteCharacter', lib.config.favouriteCharacter);

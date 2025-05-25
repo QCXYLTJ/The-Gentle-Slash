@@ -399,12 +399,6 @@ const character = {
         sex: 'female',
         skills: ['激将', '检测', '测试'],
     },
-    QQQ_沙包: {
-        sex: 'male',
-        hp: 20,
-        maxHp: 20,
-        skills: ['三窟'],
-    }, //173
 };
 const characterIntro = {
     QQQ_许天: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)<br>许天没有回头,而在他背后混沌与火的狂潮中,那撕裂时间的恶魔对着他狂笑.<br>世界在这一刻步入终结,就像怀表摔碎在石面.<br>聆听,那最后一声回响.<br>三十五亿光年的黑暗将他吞噬,星空,近在咫尺',
@@ -450,7 +444,7 @@ const characterTitle = {
     QQQ_无极: `<b style='color: #00FFFF; font-size: 25px;'>燭淚堆紅  幾人歌吹</b>`,
     QQQ_影火: `<b style='color: #00FFFF; font-size: 25px;'>紅蓮業火  燔燼須彌</b>`,
     QQQ_诗寇蒂: `<b style='color: #00FFFF; font-size: 25px;'>霧熒風曜  星灼九霄</b>`,
-    QQQ_沙包: `<b style='color: #00FFFF; font-size: 25px;'>風雨晦暝  不動如山</b>`,
+    QQQ_哦哦: `<b style='color: #00FFFF; font-size: 25px;'>風雨晦暝  不動如山</b>`,
     QQQ_花招: `<b style='color: #00FFFF; font-size: 25px;'>芒昇而掩朗月  道彰而移群星</b>`,
     QQQ_北绝玄冥: `<b style='color: #00FFFF; font-size: 25px;'>星河瀾雨,若淚繽紛  北斗傷風,亦墮凡塵</b>`,
     QQQ_mengwanqing: '婉清挽情挽不住情',
@@ -510,7 +504,6 @@ const translate2 = {
     QQQ_强夺: '强夺',
     QQQ_判定: '判定',
     QQQ_高达: '高达',
-    QQQ_沙包: '沙包',
     QQQ_莫逍遥: '莫逍遥',
     QQQ_Q: 'Q',
     QQQ_驭衡: '驭衡',
