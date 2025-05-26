@@ -1,391 +1,376 @@
-/* 能量条 */
-.player[data-position="0"]>.nengliangtiao {
-	width: 50%;
-	height: 10%;
-	left: 25%;
-	top: -20%;
-	background-size: cover;
-	background-image: url(../温柔一刀/image/nengliangtiao.jpg);
-	border-radius: 9px;
-	z-index: 10;
-}
+ /* 天气按钮 */
+ .tqjs {
+ 	right: 10%;
+ 	top: 10%;
+ 	width: 100px;
+ 	height: 100px;
+ 	text-align: center;
+ 	background-image: url(./image/HL_button.png);
+ 	background-size: cover;
+ 	background-position: center;
+ 	z-index: 20;
+ 	display: flex;
+ 	justify-content: center;
+ 	/* 水平居中 */
+ 	align-items: center;
+ 	/* 垂直居中 */
+ }
 
-/* 能量条 */
-.player[data-position="0"]>.nengliangtiao>.jindutiao {
-	font-size: 10px;
-	text-align: center;
-	border-radius: 9px;
-	height: 100%;
-	width: 50%;
-	z-index: 20;
-	background-color: rgb(199 18 92);
-}
+ /* 天气介绍 */
+ .HL_dialog {
+ 	right: 40%;
+ 	top: 40%;
+ 	width: 20%;
+ 	height: 20%;
+ 	text-align: center;
+ 	background-size: cover;
+ 	background-position: center;
+ 	background-image: url(./image/HL_dialog.png);
+ 	z-index: 30;
+ 	display: flex;
+ 	justify-content: center;
+ 	/* 水平居中 */
+ 	align-items: center;
+ 	/* 垂直居中 */
+ }
 
-/* 能量条 */
-.player:not([data-position="0"])>.nengliangtiao {
-	width: 10%;
-	height: 100%;
-	left: 100%;
-	background-size: contain;
-	background-image: url(../温柔一刀/image/nengliangtiao1.jpg);
-	border-radius: 9px;
-	z-index: 10;
-}
+ /* 卡牌永久标记 */
+ .card>.qtag {
+ 	position: relative;
+ 	font-size: 25px;
+ 	bottom: 5px;
+ 	left: 5px;
+ 	text-align: left;
+ 	color: gold;
+ 	text-shadow: gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 1px;
+ }
 
-/* 能量条 */
-.player:not([data-position="0"])>.nengliangtiao>.jindutiao {
-	font-size: 10px;
-	text-align: center;
-	border-radius: 9px;
-	height: 50%;
-	width: 100%;
-	bottom: 0;
-	z-index: 20;
-	background-color: rgb(199 18 92);
-}
+ /* 修改右键弹窗简介宽度 */
+ #arena .player.Qselectable {
+ 	box-shadow:
+ 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
+ 		rgb(16, 33, 217) 0 0 10px 5px,
+ 		rgb(16, 33, 217) 0 0 20px 10px !important;
+ 	z-index: 99;
+ }
 
-/* 卡牌永久标记 */
-.card>.qtag {
-	position: relative;
-	font-size: 25px;
-	bottom: 5px;
-	left: 5px;
-	text-align: left;
-	color: gold;
-	text-shadow: gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 1px;
-}
+ /* 修改右键弹窗简介宽度 */
+ #arena .player.Qselectable:not(.selectable):not(.selected).glow_phase {
+ 	box-shadow:
+ 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
+ 		rgb(16, 33, 217) 0 0 10px 5px,
+ 		rgb(16, 33, 217) 0 0 20px 10px !important;
+ 	z-index: 99;
+ }
 
-/* 选中变色 */
-#arena .player.Qselectable {
-	box-shadow:
-		rgba(0, 0, 0, 0.3) 0 0 0 2px,
-		rgb(16, 33, 217) 0 0 10px 5px,
-		rgb(16, 33, 217) 0 0 20px 10px !important;
-	z-index: 99;
-}
+ /* 修改右键弹窗简介宽度 */
+ #arena:not(.chess) .player[data-position="0"].Qselectable:not(.selected):not(.selectedx):not(.selectable):not(.glow) {
+ 	box-shadow:
+ 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
+ 		rgb(16, 33, 217) 0 0 10px 5px,
+ 		rgb(16, 33, 217) 0 0 20px 10px !important;
+ 	z-index: 99;
+ }
 
-/* 选中变色 */
-#arena .player.Qselectable:not(.selectable):not(.selected).glow_phase {
-	box-shadow:
-		rgba(0, 0, 0, 0.3) 0 0 0 2px,
-		rgb(16, 33, 217) 0 0 10px 5px,
-		rgb(16, 33, 217) 0 0 20px 10px !important;
-	z-index: 99;
-}
+ /* 武将列表 */
+ #divQ {
+ 	display: grid;
+ 	grid-template-columns: repeat(8, 1fr);
+ 	gap: 10px;
+ 	padding: 20px;
+ 	z-index: 99;
+ 	right: 10%;
+ 	left: 10%;
+ 	top: 10%;
+ 	bottom: 10%;
+ 	overflow-y: auto;
+ }
 
-/* 选中变色 */
-#arena:not(.chess) .player[data-position="0"].Qselectable:not(.selected):not(.selectedx):not(.selectable):not(.glow) {
-	box-shadow:
-		rgba(0, 0, 0, 0.3) 0 0 0 2px,
-		rgb(16, 33, 217) 0 0 10px 5px,
-		rgb(16, 33, 217) 0 0 20px 10px !important;
-	z-index: 99;
-}
+ /* 瞬发技按钮 */
+ .buttonQ {
+ 	width: 5%;
+ 	height: 10%;
+ 	background-image: url(./image/QQQ_Q.jpg);
+ 	background-size: cover;
+ 	background-position: center;
+ 	z-index: 99;
+ 	top: 60%;
+ 	cursor: pointer;
+ }
 
-/* 黑白样式 */
-#arena .player.deadx {
-	filter: grayscale(1);
-}
+ /* 武将包按钮 */
+ .packQ {
+ 	text-align: center;
+ 	width: 60%;
+ 	height: 20%;
+ 	min-height: 20px;
+ 	display: block;
+ 	overflow: hidden;
+ 	border-radius: 2px;
+ 	line-height: 25px;
+ 	position: relative;
+ 	background-color: rgb(5, 89, 52);
+ }
 
-/* 武将列表 */
-#divQ {
-	display: grid;
-	grid-template-columns: repeat(8, 1fr);
-	gap: 10px;
-	padding: 20px;
-	z-index: 99;
-	right: 10%;
-	left: 10%;
-	top: 10%;
-	bottom: 10%;
-	overflow-y: auto;
-}
+ /* 武将图片 */
+ .characterQ {
+ 	background-size: cover;
+ 	background-position: center;
+ 	text-align: center;
+ 	width: 60%;
+ 	height: 60%;
+ 	min-height: 90px;
+ 	display: block;
+ 	overflow: hidden;
+ 	border-radius: 2px;
+ 	line-height: 25px;
+ 	position: relative;
+ }
 
-/* 瞬发技按钮 */
-.buttonQ {
-	width: 5%;
-	height: 10%;
-	background-image: url(../温柔一刀/image/QQQ_Q.jpg);
-	background-size: cover;
-	background-position: center;
-	z-index: 99;
-	top: 60%;
-	cursor: pointer;
-}
+ /* 技能列表 */
+ #skilllist {
+ 	z-index: 99;
+ 	right: 10%;
+ 	left: 10%;
+ 	top: 10%;
+ 	bottom: 10%;
+ 	overflow-y: auto;
+ }
 
-/* 武将包按钮 */
-.packQ {
-	text-align: center;
-	width: 60%;
-	height: 20%;
-	min-height: 20px;
-	display: block;
-	overflow: hidden;
-	border-radius: 2px;
-	line-height: 25px;
-	position: relative;
-	background-color: rgb(5, 89, 52);
-}
+ /* 技能及翻译按钮 */
+ .skillQ {
+ 	position: relative;
+ 	width: 90%;
+ 	height: 10%;
+ 	top: 10%;
+ 	left: 5%;
+ 	z-index: 999;
+ 	font-size: 25px;
+ 	color: rgb(35, 21, 221);
+ }
 
-/* 武将图片 */
-.characterQ {
-	background-size: cover;
-	background-position: center;
-	text-align: center;
-	width: 60%;
-	height: 60%;
-	min-height: 90px;
-	display: block;
-	overflow: hidden;
-	border-radius: 2px;
-	line-height: 25px;
-	position: relative;
-}
+ /* 技能及翻译按钮 */
+ .introQ {
+ 	position: relative;
+ 	width: 60%;
+ 	height: 5%;
+ 	top: 5%;
+ 	left: 20%;
+ 	right: 20%;
+ 	z-index: 999;
+ 	font-size: 25px;
+ 	color: rgb(35, 21, 221);
+ }
 
-/* 技能列表 */
-#skilllist {
-	z-index: 99;
-	right: 10%;
-	left: 10%;
-	top: 10%;
-	bottom: 10%;
-	overflow-y: auto;
-}
+ /* 返回按钮 */
+ .backQ {
+ 	z-index: 9999;
+ 	position: absolute;
+ 	top: 5%;
+ 	right: 5%;
+ 	color: red;
+ 	font-size: 25px;
+ 	padding: 5px 10px;
+ 	background: rgba(0, 0, 0, 0.3);
+ }
 
-/* 技能及翻译按钮 */
-.skillQ {
-	position: relative;
-	width: 90%;
-	height: 10%;
-	top: 10%;
-	left: 5%;
-	z-index: 999;
-	font-size: 25px;
-	color: rgb(35, 21, 221);
-}
+ /* 输入框 */
+ .shuruQ {
+ 	height: 5%;
+ 	width: 30%;
+ 	z-index: 9999;
+ 	position: absolute;
+ 	top: 5%;
+ 	right: 40%;
+ }
 
-/* 技能及翻译按钮 */
-.introQ {
-	position: relative;
-	width: 60%;
-	height: 5%;
-	top: 5%;
-	left: 20%;
-	right: 20%;
-	z-index: 999;
-	font-size: 25px;
-	color: rgb(35, 21, 221);
-}
+ /* 重置按钮 */
+ .chongzhiQ {
+ 	z-index: 9999;
+ 	position: absolute;
+ 	top: 5%;
+ 	right: 20%;
+ 	color: red;
+ 	font-size: 25px;
+ 	padding: 5px 10px;
+ 	background: rgba(0, 0, 0, 0.3);
+ }
 
-/* 返回按钮 */
-.backQ {
-	z-index: 9999;
-	position: absolute;
-	top: 5%;
-	right: 5%;
-	color: red;
-	font-size: 25px;
-	padding: 5px 10px;
-	background: rgba(0, 0, 0, 0.3);
-}
+ /* 搜索按钮 */
+ .findQ {
+ 	z-index: 9999;
+ 	position: absolute;
+ 	top: 5%;
+ 	right: 30%;
+ 	color: red;
+ 	font-size: 25px;
+ 	padding: 5px 10px;
+ 	background: rgba(0, 0, 0, 0.3);
+ }
 
-/* 输入框 */
-.shuruQ {
-	height: 5%;
-	width: 30%;
-	z-index: 9999;
-	position: absolute;
-	top: 5%;
-	right: 40%;
-}
+ .configQ.on {
+ 	white-space: nowrap;
+ 	text-align: center;
+ 	width: 90%;
+ 	height: 20%;
+ 	border-radius: 20%;
+ 	position: relative;
+ 	background-color: rgba(47, 101, 150, 1);
+ }
 
-/* 重置按钮 */
-.chongzhiQ {
-	z-index: 9999;
-	position: absolute;
-	top: 5%;
-	right: 20%;
-	color: red;
-	font-size: 25px;
-	padding: 5px 10px;
-	background: rgba(0, 0, 0, 0.3);
-}
+ .configQ:not(.on) {
+ 	white-space: nowrap;
+ 	text-align: center;
+ 	width: 90%;
+ 	height: 20%;
+ 	border-radius: 20%;
+ 	position: relative;
+ 	background-color: rgb(220, 17, 17);
+ }
 
-/* 搜索按钮 */
-.findQ {
-	z-index: 9999;
-	position: absolute;
-	top: 5%;
-	right: 30%;
-	color: red;
-	font-size: 25px;
-	padding: 5px 10px;
-	background: rgba(0, 0, 0, 0.3);
-}
+ .configQ.on>.toggleQ {
+ 	width: 30%;
+ 	height: 100%;
+ 	right: -15%;
+ 	border-radius: 100%;
+ 	position: absolute;
+ 	background: white;
+ }
 
-.configQ.on {
-	white-space: nowrap;
-	text-align: center;
-	width: 90%;
-	height: 20%;
-	border-radius: 20%;
-	position: relative;
-	background-color: rgba(47, 101, 150, 1);
-}
+ .configQ:not(.on)>.toggleQ {
+ 	width: 30%;
+ 	height: 100%;
+ 	left: -15%;
+ 	border-radius: 100%;
+ 	position: absolute;
+ 	background: white;
+ }
 
-.configQ:not(.on) {
-	white-space: nowrap;
-	text-align: center;
-	width: 90%;
-	height: 20%;
-	border-radius: 20%;
-	position: relative;
-	background-color: rgb(220, 17, 17);
-}
+ /* 修改右键弹窗简介宽度 */
+ #window>.dialog.popped {
+ 	width: 600px;
+ }
 
-.configQ.on>.toggleQ {
-	width: 30%;
-	height: 100%;
-	right: -15%;
-	border-radius: 100%;
-	position: absolute;
-	background: white;
-}
+ /* 限定技动画从右往左切图 */
+ .movimage {
+ 	top: 40%;
+ 	width: 100%;
+ 	height: 50%;
+ 	overflow: hidden;
+ 	z-index: 99;
+ }
 
-.configQ:not(.on)>.toggleQ {
-	width: 30%;
-	height: 100%;
-	left: -15%;
-	border-radius: 100%;
-	position: absolute;
-	background: white;
-}
+ /* 限定技动画从右往左切图 */
+ .movimage img {
+ 	animation: movimage 2s linear infinite;
+ 	z-index: 99;
+ 	display: block;
+ 	position: absolute;
+ 	top: 0;
+ 	left: 0;
+ 	width: 100%;
+ 	height: 100%;
+ 	object-fit: fill;
+ 	margin: auto;
+ }
 
-/* 修改右键弹窗简介宽度 */
-#window>.dialog.popped {
-	width: 600px;
-}
+ /* 限定技动画从右往左切图 */
+ @keyframes movimage {
+ 	0% {
+ 		transform: translateX(100%);
+ 	}
 
-/* 限定技动画从右往左切图 */
-.movimage {
-	top: 40%;
-	width: 100%;
-	height: 50%;
-	overflow: hidden;
-	z-index: 99;
-}
+ 	25% {
+ 		transform: translateX(0);
+ 	}
 
-/* 限定技动画从右往左切图 */
-.movimage img {
-	animation: movimage 2s linear infinite;
-	z-index: 99;
-	display: block;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	object-fit: fill;
-	margin: auto;
-}
+ 	75% {
+ 		transform: translateX(0);
+ 	}
 
-/* 限定技动画从右往左切图 */
-@keyframes movimage {
-	0% {
-		transform: translateX(100%);
-	}
+ 	100% {
+ 		transform: translateX(-100%);
+ 	}
+ }
 
-	25% {
-		transform: translateX(0);
-	}
+ /* 菜单动画渐变效果 */
+ .Qmenu {
+ 	animation: QQQ 5s linear 0s infinite;
+ 	font-family: shousha;
+ 	font-weight: bold;
+ 	font-size: 20px;
+ }
 
-	75% {
-		transform: translateX(0);
-	}
+ /* 火焰文字效果 */
+ .flame {
+ 	animation: flame 5s linear 0s infinite;
+ 	font-family: shousha;
+ 	font-weight: bold;
+ 	font-size: 25px;
+ }
 
-	100% {
-		transform: translateX(-100%);
-	}
-}
+ /* 作者名动画渐变效果 */
+ .Qflame {
+ 	animation: flame 5s linear 0s infinite;
+ 	font-family: shousha;
+ 	font-weight: bold;
+ 	font-size: 60px;
+ }
 
-/* 菜单动画渐变效果 */
-.Qmenu {
-	animation: QQQ 5s linear 0s infinite;
-	font-family: shousha;
-	font-weight: bold;
-	font-size: 20px;
-}
+ /* 挑战模式BOSS滚动条 */
+ #bosslist {
+ 	width: 100%;
+ 	height: 350px !important;
+ 	text-align: center;
+ 	top: 60px;
+ 	z-index: 1;
+ 	overflow-x: scroll;
+ 	overflow-y: hidden;
+ }
 
-/* 火焰文字效果 */
-.flame {
-	animation: flame 5s linear 0s infinite;
-	font-family: shousha;
-	font-weight: bold;
-	font-size: 25px;
-}
+ .poem-container {
+ 	right: 10%;
+ 	left: 10%;
+ 	top: 10%;
+ 	bottom: 10%;
+ 	display: flex;
+ 	flex-direction: row-reverse;
+ 	/* 使列从右往左排列 */
+ 	justify-content: flex-end;
+ 	/* 列靠右对齐 */
+ }
 
-/* 作者名动画渐变效果 */
-.Qflame {
-	animation: flame 5s linear 0s infinite;
-	font-family: shousha;
-	font-weight: bold;
-	font-size: 60px;
-}
+ .column {
+ 	right: -60%;
+ 	position: relative;
+ 	display: flex;
+ 	flex-direction: column;
+ 	margin-left: 20px;
+ 	/* 增大列之间的间距 */
+ }
 
-/* 挑战模式BOSS滚动条 */
-#bosslist {
-	width: 100%;
-	height: 350px !important;
-	text-align: center;
-	top: 60px;
-	z-index: 1;
-	overflow-x: scroll;
-	overflow-y: hidden;
-}
+ .poem-char {
+ 	opacity: 0;
+ 	transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+ 	margin-bottom: 20px;
+ 	/* 增大字符之间的间距 */
+ 	font-size: 24px;
+ 	color: #8d1d09;
+ 	text-shadow: 0 0 10px #8d1d09, 0 0 20px #8d1d09, 0 0 30px #8d1d09;
+ 	filter: url(#fireFilter);
+ 	/* 应用SVG滤镜 */
+ 	transform: scale(0);
+ 	/* 缩放效果 */
+ }
 
-.poem-container {
-	right: 10%;
-	left: 10%;
-	top: 10%;
-	bottom: 10%;
-	display: flex;
-	flex-direction: row-reverse;
-	/* 使列从右往左排列 */
-	justify-content: flex-end;
-	/* 列靠右对齐 */
-}
+ .show {
+ 	opacity: 1;
+ 	transform: scale(1);
+ 	/* 恢复缩放 */
+ }
 
-.column {
-	right: -60%;
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	margin-left: 20px;
-	/* 增大列之间的间距 */
-}
-
-.poem-char {
-	opacity: 0;
-	transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-	margin-bottom: 20px;
-	/* 增大字符之间的间距 */
-	font-size: 24px;
-	color: #8d1d09;
-	text-shadow: 0 0 10px #8d1d09, 0 0 20px #8d1d09, 0 0 30px #8d1d09;
-	filter: url(#fireFilter);
-	/* 应用SVG滤镜 */
-	transform: scale(0);
-	/* 缩放效果 */
-}
-
-.show {
-	opacity: 1;
-	transform: scale(1);
-	/* 恢复缩放 */
-}
-
-/* SVG滤镜定义 */
-svg {
-	position: absolute;
-	top: -1000px;
-}
+ /* SVG滤镜定义 */
+ svg {
+ 	position: absolute;
+ 	top: -1000px;
+ }

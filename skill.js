@@ -6594,7 +6594,7 @@ const skill = {
                 result: { targets },
             } = await player.chooseTarget(true).set('ai', (target) => -get.attitude(player, target));
             if (targets && targets[0]) {
-                targets[0].damage();
+                targets[0].damage('nosource');
                 player.useCard({ name: 'sha', nature: 'thunder' }, targets[0], false);
             }
         },
@@ -6636,18 +6636,19 @@ const skill = {
                 set() { },
             });
             game.bug = [];
-            var Q = '地府武将'; //mode_extension_xxx//////
+            var Q = 'MAtcmjsn'; //mode_extension_xxx//////
             for (var j in lib.characterPack[Q]) {
                 game.bug.addArray(lib.characterPack[Q][j][3].filter((Q) => Q != 'dualside'));
             }
-            game.bug = game.bug.unique().filter((Q) => Q != 'gezi_qiyao' && Q != 'gezi_kehua');
+            game.bug = game.bug.unique().filter((Q) => Q != 'jjxsddpx_bukenengnan' && Q != 'fg_wangzhicaibao');
             game.log(`当前武将包有${game.bug.length}个技能`);
         },
         _priority: 9,
         async content(event, trigger, player) {
             //QQQ
-            var Q = game.bug.slice(0, 100); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(100, 200); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
+            //debugger;
             const {
                 result: { bool },
             } = await player.chooseBool().set('ai', () => true); //开局点确认加入技能

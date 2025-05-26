@@ -275,8 +275,9 @@ const card = {
         async content(event, trigger, player) {
             const cards = event.target.getCards('hej');
             const cards1 = cards.randomGets(Math.ceil(cards.length / 2));
-            for (var j of cards1) {
-                j.init([lib.suits.randomGet(), lib.number.randomGet(), 'du']);
+            event.target.removeEquipTrigger();
+            for (const card of cards1) {
+                card.init([lib.suits.randomGet(), lib.number.randomGet(), 'du']);
             }
             const cards2 = event.target.getCards('hej').filter((q) => q.name == 'du');
             event.target.discard(cards2);

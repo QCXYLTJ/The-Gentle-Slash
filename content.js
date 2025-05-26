@@ -1704,7 +1704,7 @@ const content = async function () {
                     trigger.targets = trigger.targets.filter((i) => player.getEnemies().includes(i));
                     trigger.targets.push(player);
                     trigger.player.line(player);
-                    game.log(get.translation(player), `将${get.translation(trigger.card)}由${get.translation(Q)}转移给自己`);
+                    game.log(get.translation(player), `将${get.translation(trigger.card)}由${get.translation(trigger.targets)}转移给自己`);
                 },
                 group: ['_卖血模式_1'], //QQQ
                 subSkill: {
@@ -2642,7 +2642,7 @@ const content = async function () {
                             if (
                                 !hs.length &&
                                 !es.some((card) => {
-                                    return get.type(card) == 'equip' && gget.value(card, target) > 0 && card != target.getEquip('jinhe');
+                                    return get.type(card) == 'equip' && get.value(card, target) > 0 && card != target.getEquip('jinhe');
                                 }) &&
                                 !js.some((card) => {
                                     var cardj = card.viewAs ? { name: card.viewAs } : card;
@@ -2653,7 +2653,7 @@ const content = async function () {
                                 return 0;
                         } else if (att > 1) {
                             return es.some((card) => {
-                                return get.type(card) == 'equip' && gget.value(card, target) <= 0;
+                                return get.type(card) == 'equip' && get.value(card, target) <= 0;
                             }) ||
                                 js.some((card) => {
                                     var cardj = card.viewAs ? { name: card.viewAs } : card;
@@ -2673,7 +2673,7 @@ const content = async function () {
                         if (get.attitude(player, target) <= 0) {
                             if (hs.length > 0) return -1.5;
                             return es.some((card) => {
-                                return get.type(card) == 'equip' && gget.value(card, target) > 0 && card != target.getEquip('jinhe');
+                                return get.type(card) == 'equip' && get.value(card, target) > 0 && card != target.getEquip('jinhe');
                             }) ||
                                 js.some((card) => {
                                     var cardj = card.viewAs ? { name: card.viewAs } : card;
@@ -2684,7 +2684,7 @@ const content = async function () {
                                 : 1.5;
                         }
                         return es.some((card) => {
-                            return get.type(card) == 'equip' && gget.value(card, target) <= 0;
+                            return get.type(card) == 'equip' && get.value(card, target) <= 0;
                         }) ||
                             js.some((card) => {
                                 var cardj = card.viewAs ? { name: card.viewAs } : card;
@@ -2739,7 +2739,7 @@ const content = async function () {
                             const noe2 =
                                 noe ||
                                 !es.some((card) => {
-                                    return get.type(card) == 'equip' && gget.value(card, target) > 0;
+                                    return get.type(card) == 'equip' && get.value(card, target) > 0;
                                 });
                             const noj =
                                 js.length == 0 ||
@@ -8292,11 +8292,15 @@ const content = async function () {
                 linked: true,
                 order: 1000,
             }); //添加杀的属性
+            game.addNature('water', '水', {
+                linked: true,
+                order: 1000,
+            }); //添加杀的属性
             game.addNature('ScarletRot', '猩红腐败', {
                 linked: true,
                 order: 1000,
             }); //添加杀的属性
-            for (const i of ['gold', 'poison', 'blood', 'snow', 'kami', 'ice', 'ScarletRot']) {
+            for (const i of ['gold', 'poison', 'blood', 'snow', 'kami', 'water', 'ice', 'ScarletRot']) {
                 lib.card.sha.ai.tag[i + 'Damage'] = eval(` (card, nature) => {
                     if (game.hasNature(card, '${i}')) return 1;
                 }`);

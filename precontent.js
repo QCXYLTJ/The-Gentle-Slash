@@ -82,7 +82,7 @@ cards.splice//i.discard()
 !((?!\(\b)[^&|\s]*) == //$1 !=
 'die:(?!ext\b)
 function \(.*\) \{\n\s*\}//function \(.*\) \{ \}//= () => { }
-'[^)']+logSkill[^']*'//'[^)']*logSkill[^']+'//'[^)']+logSkill[^']+'//popup: false,
+logSkill
 \.filterCard\(\{([^),]*)\)
 .filterCard({$1,player)
 event, step, source, 
@@ -94,7 +94,6 @@ lib\.element\.Player.+= fun//   get\..+= fun//game\..+= fun
 console\.log\(.+\);
 game\.delay\(.*\);
 game\.delayx\(.*\);
-player\.logSkill\(.*\);
 \n\s*\n
 \s\scontent\((?!storage\b).+\)//precontent\((?!storage\b).+\)
 \starget\((?!card|player\b).+\)
@@ -943,6 +942,15 @@ const precontent = async function () {
     shiwei();
     //—————————————————————————————————————————————————————————————————————————————获取卡牌历史相关自创函数
     const cardfunc = function () {
+        game.isxuni = function (event) {
+            if (!event.cards) {
+                return false;
+            }
+            if (event.cards.length == 1 && event.cards[0].name == event.card.name) {
+                return true;
+            }
+            return null;
+        };//事件卡牌是否为虚拟牌或转化牌
         game.center = function () {
             const list = [];
             game.countPlayer2(function (current) {
@@ -7614,6 +7622,7 @@ const precontent = async function () {
                         while (count-- > 0) {
                             const num = Math.floor(game.players.length * Math.random());
                             const target = game.players.find((q) => q.dataset.position == num);
+                            player.line(target);
                             target.dataset.position = player.dataset.position;
                             player.dataset.position = num;
                             game.log(player, target, '交换位置');
@@ -8568,7 +8577,7 @@ const sha = function () {
     });
 };
 sha();
-<br><br><span style="color: gold">潜水的火修复版<br>温柔一刀扩展群771901025</span><br><br>
+<br><br><span style='color: gold'>潜水的火修复版<br>温柔一刀扩展群771901025</span><br><br>
 const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.json`);
         package: {
                 for (const i in QQQ.character) {
