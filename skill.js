@@ -2844,26 +2844,30 @@ const skill = {
             player.loseMaxHp(Math.ceil(player.maxHp / 2));
         },
     },
+    // 体力变化后,你增加等量体力上限并亮出牌堆顶一张牌,若为红则回复一点体力,否则增加一点体力上限
+    // 你每失去1点体力上限,随机增加以下效果:出杀+1、摸牌+1、距离-1(上限-4)、使用牌1%概率额外结算
     隐忍: {
-        group: ['隐忍_1', '隐忍_2', '隐忍_3', '隐忍_杀', '隐忍_摸', '隐忍_减', '隐忍_基本', '隐忍_锦囊'],
         mod: {
             cardUsable(card, player, num) {
                 if (card.name == 'sha') {
-                    return num + player.countMark('隐忍_杀');
+                    return num + player.countMark('隐忍_1');
                 }
             },
             globalFrom(from, to, distance) {
-                //from是本人
-                if (typeof from.storage.隐忍_减 == 'number') {
-                    return distance - from.storage.隐忍_减;
+                if (typeof from.storage.隐忍 == 'number') {
+                    return distance - from.storage.隐忍;
                 }
-            },
+            }, //from是本人
         },
         trigger: {
             player: ['changeHp'],
         },
         forced: true,
-        content() {
+        marktext: '减',
+        intro: {
+            content: 'mark',
+        },
+        async content(event, trigger, player) {
             let count = numberq1(trigger.num);
             player.gainMaxHp(count);
             while (count-- > 0) {
@@ -2880,106 +2884,67 @@ const skill = {
         ai: {
             maixie: true,
         },
+        group: ['隐忍_1', '隐忍_2', '隐忍_3'],
         subSkill: {
             1: {
+                marktext: '杀',
+                intro: {
+                    content: 'mark',
+                },
                 trigger: {
                     player: ['loseMaxHpEnd'],
                 },
                 forced: true,
-                content() {
+                async content(event, trigger, player) {
                     let count = numberq1(trigger.num);
                     while (count-- > 0) {
-                        var list = ['隐忍_杀', '隐忍_摸', '隐忍_减', '隐忍_基本', '隐忍_锦囊'];
-                        if (player.countMark('隐忍_减') > 4) {
-                            list.remove('隐忍_减');
+                        var list = ['隐忍', '隐忍_1', '隐忍_2', '隐忍_3'];
+                        if (player.countMark('隐忍') > 4) {
+                            list.remove('隐忍');
                         }
-                        if (player.countMark('隐忍_摸') > 20) {
-                            list.remove('隐忍_摸');
+                        if (player.countMark('隐忍_2') > 20) {
+                            list.remove('隐忍_2');
                         }
-                        if (player.countMark('隐忍_杀') > 20) {
-                            list.remove('隐忍_杀');
+                        if (player.countMark('隐忍_1') > 20) {
+                            list.remove('隐忍_1');
                         }
                         player.addMark(list.randomGet(), 1);
                     }
                 },
             },
             2: {
+                marktext: '摸',
+                intro: {
+                    content: 'mark',
+                },
                 trigger: {
                     player: 'phaseDrawBegin2',
                 },
                 forced: true,
                 filter(event, player) {
-                    return player.countMark('隐忍_摸') > 0;
+                    return player.countMark('隐忍_2') > 0;
                 },
-                content() {
-                    trigger.num += player.countMark('隐忍_摸');
+                async content(event, trigger, player) {
+                    trigger.num += player.countMark('隐忍_2');
                 },
             },
             3: {
+                marktext: '基本',
+                intro: {
+                    content: 'mark',
+                },
                 trigger: {
-                    player: 'useCard',
+                    player: ['useCard'],
                 },
                 forced: true,
                 filter(event, player) {
-                    if (get.type(event.card) == 'basic') {
-                        return Math.random() < 0.1 * player.countMark('隐忍_基本');
-                    }
-                    if (get.type(event.card) == 'trick') {
-                        return Math.random() < 0.1 * player.countMark('隐忍_锦囊');
-                    }
-                    return false;
+                    return event.targets?.length && !['delay', 'equip'].includes(get.type(event.card)) && Math.random() < player.countMark('隐忍_3') / 100;
                 },
-                content() {
-                    if (get.type(trigger.card) == 'trick') {
-                        trigger.effectCount += Math.ceil(player.countMark('隐忍_锦囊') / 10);
-                        game.log('暴击锦囊' + Math.ceil(player.countMark('隐忍_锦囊') / 10));
-                        player.popup(`<span class='bluetext' style='color: #B3EE3A'>暴击</span>`);
-                    }
-                    if (get.type(trigger.card) == 'basic') {
-                        trigger.effectCount += Math.ceil(player.countMark('隐忍_基本') / 10);
-                        game.log('暴击基本' + Math.ceil(player.countMark('隐忍_锦囊') / 10));
-                        player.popup(`<span class='bluetext' style='color: #B3EE3A'>暴击</span>`);
-                    }
-                },
-            },
-            杀: {
-                marktext: '杀',
-                mark: true,
-                intro: {
-                    name: '杀',
-                    content: 'mark',
-                },
-            },
-            摸: {
-                marktext: '摸',
-                mark: true,
-                intro: {
-                    name: '摸',
-                    content: 'mark',
-                },
-            },
-            减: {
-                marktext: '减',
-                mark: true,
-                intro: {
-                    name: '减',
-                    content: 'mark',
-                },
-            },
-            基本: {
-                marktext: '基本',
-                mark: true,
-                intro: {
-                    name: '基本',
-                    content: 'mark',
-                },
-            },
-            锦囊: {
-                marktext: '锦囊',
-                mark: true,
-                intro: {
-                    name: '锦囊',
-                    content: 'mark',
+                async content(event, trigger, player) {
+                    const num = Math.ceil(player.countMark('隐忍_3') / 100);
+                    trigger.effectCount += num;
+                    game.log(trigger.card, '额外结算', num);
+                    player.popup(`<span class='bluetext' style='color: #B3EE3A'>暴击</span>`);
                 },
             },
         },
@@ -6951,7 +6916,7 @@ const translate1 = {
     自伤: '自伤',
     自伤_info: '使用后减少当前一半体力上限,体力上限为1时无法使用该技能.体力上限最少1点',
     隐忍: '隐忍',
-    隐忍_info: '体力变化后,你增加等量体力上限并亮出牌堆顶一张牌,若为黑则回复一点体力,若为红则增加一点体力上限<br>你每失去1点体力上限,随机增加以下效果:出杀+1、摸牌+1、喝酒上限+1、距离+1(上限+4)、距离-1(上限-4)、基本牌10%概率重复使用+1、锦囊牌10%概率重复使用+1',
+    隐忍_info: '体力变化后,你增加等量体力上限并亮出牌堆顶一张牌,若为红则回复一点体力,否则增加一点体力上限<br>你每失去1点体力上限,随机增加以下效果:出杀+1、摸牌+1、距离-1(上限-4)、使用牌1%概率额外结算',
     八卦: '八卦',
     八卦_info: '八卦',
     复活: '复活',
