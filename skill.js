@@ -2695,7 +2695,8 @@ const skill = {
                 },
                 forced: true,
                 async content(event, trigger, player) {
-                    var next = game.createEvent('diex', false);
+                    const next = game.createEvent('diex', false);
+                    next.source = player;
                     next.player = player;
                     next._triggered = null;
                     next.setContent(lib.element.content.die);
