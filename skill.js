@@ -733,13 +733,13 @@ const skill = {
     },
     连营: {
         trigger: {
-            player: 'loseAfter',
+            player: ['loseAfter'],
         },
         forced: true,
         filter(event, player) {
             return player.countCards('h') < 6;
         },
-        content() {
+        async content(event, trigger, player) {
             player.draw(6 - player.countCards('h'));
         },
         ai: {
@@ -751,9 +751,6 @@ const skill = {
                 },
                 player(card, player, target) {
                     if (lib.card[card.name]) {
-                        if (player.getEquips('zhuge') && get.subtype(card) == 'equip1' && card.name != 'zhuge') {
-                            return -1;
-                        }
                         return [1, 1.6]; //无脑用牌
                     }
                 },
@@ -762,84 +759,55 @@ const skill = {
         },
     },
     冲阵: {
-        audio: 'chongzhen', //QQQ
-        charlotte: true,
-        enable: ['chooseToUse', 'chooseToRespond'],
-        prompt: '将一张♥️️️牌当做桃,♦️️牌当做火杀,♣️️牌当做闪,♠️️牌当做无懈可击使用或打出',
-        logTarget(event, player) {
-            if (event.card.name == 'sha') {
-                return event.targets[0];
-            }
-            return event.respondTo[0];
+        init(player) {
+            player.storage.冲阵 = new Map([
+                ['none', 'zhuge'],
+                ['heart', 'tao'],
+                ['diamond', 'sha'],
+                ['club', 'shan'],
+                ['spade', 'wuxie']
+            ]);
         },
+        audio: 'chongzhen', //QQQ
+        enable: ['chooseToUse', 'chooseToRespond'],
+        prompt: '你可将牌按如下<♥️️️桃/♦️️火杀/♣️️闪/♠️️牌无懈/🃏诸葛>花色对应关系使用或打出',
         viewAs(cards, player) {
-            var name = false;
-            var nature = null;
-            switch (cards[0]?.suit) {
-                case 'club':
-                    name = 'shan';
-                    break;
-                case 'diamond':
-                    name = 'sha';
-                    nature = 'fire';
-                    break;
-                case 'spade':
-                    name = 'wuxie';
-                    break;
-                case 'heart':
-                    name = 'tao';
-                    break;
+            const card = cards[0];
+            if (!card) return null;
+            const vcard = {
+                name: player.storage.冲阵.get(card.suit),
+                cards: cards,
+            };
+            if (vcard.name == 'sha') {
+                vcard.nature = 'fire';
             }
-            if (name) {
-                return { name: name, nature: nature };
+            if (vcard.name == 'zhuge') {
+                card.cardSymbol = Symbol();
+                card[card.cardSymbol] = new lib.element.VCard([card.suit, card.number, 'zhuge', card.nature]);
             }
-            return null;
+            return vcard;
         },
         hiddenCard(player, name) {
-            if (name == 'wuxie' && _status.connectMode && player.countCards('hes') > 0) {
-                return true;
-            }
-            if (name == 'wuxie') {
-                return player.countCards('hes', { suit: 'spade' }) > 0;
-            }
-            if (name == 'tao') {
-                return player.countCards('hes', { suit: 'heart' }) > 0;
+            for (const [suit, targetName] of player.storage.冲阵) {
+                if (targetName === name) {
+                    return player.countCards('he', { suit }) > 0;
+                }
             }
         },
         check(card) {
             return 90 - get.value(card);
         },
-        position: 'hes',
+        position: 'he',
         filterCard(card, player, event) {
-            if (card.suit == 'club' && player.filterCard('shan')) {
-                return true;
-            }
-            if (card.suit == 'diamond' && player.filterCard('sha', true)) {
-                return true;
-            }
-            if (card.suit == 'spade' && player.filterCard('wuxie')) {
-                return true;
-            }
-            if (card.suit == 'heart' && player.filterCard('tao')) {
-                return true;
-            }
-            return false;
+            return player.filterCard(player.storage.冲阵.get(card.suit));
         },
         selectCard: 1,
         filter(event, player) {
-            if (player.filterCard('sha', true) && player.countCards('hes', { suit: 'diamond' })) {
-                return true;
+            for (const [suit, name] of player.storage.冲阵) {
+                if (player.countCards('he', { suit }) && player.filterCard(name)) {
+                    return true;
+                }
             }
-            if (player.filterCard('shan') && player.countCards('hes', { suit: 'club' })) {
-                return true;
-            }
-            if (player.filterCard('tao') && player.countCards('hes', { suit: 'heart' })) {
-                return true;
-            }
-            if (player.filterCard('wuxie') && player.countCards('hes', { suit: 'spade' })) {
-                return true;
-            }
-            return false;
         },
         async precontent(event, trigger, player) {
             var target = game.players.find((q) => q.isEnemiesOf(player) && q.countCards('he'));
@@ -848,25 +816,6 @@ const skill = {
             }
         },
         ai: {
-            respondSha: true,
-            respondShan: true,
-            skillTagFilter(player, tag) {
-                var name;
-                switch (tag) {
-                    case 'respondSha':
-                        name = 'diamond';
-                        break;
-                    case 'respondShan':
-                        name = 'club';
-                        break;
-                    case 'save':
-                        name = 'heart';
-                        break;
-                }
-                if (!player.countCards('hes', { suit: name })) {
-                    return false;
-                }
-            },
             order: 15,
             result: {
                 player(player) {
@@ -6872,7 +6821,7 @@ const translate1 = {
     连营: '连营',
     连营_info: '当手牌数小于6时,你将手牌补至6张',
     冲阵: '冲阵',
-    冲阵_info: '你可以将一张牌的花色按以下规则使用或打出:♥️️️当【桃】;♦️️当火【杀】;♣️️当【闪】;♠️️当【无懈可击】<br>当你以此法使用或打出【杀】或【闪】时,你可以获得对方一张牌<br>当你以此法使用【桃】时,你可以获得一名其他角色的一张牌<br>当你以此法使用【无懈可击】时,你可以获得你响应普通锦囊牌使用者的一张牌',
+    冲阵_info: '你可将牌按如下<♥️️️桃/♦️️火杀/♣️️闪/♠️️牌无懈/🃏诸葛>花色对应关系使用或打出并获得随机对方一张牌',
     持纲4: '持纲4',
     持纲4_info: '结束改出牌',
     擅专: '擅专',
