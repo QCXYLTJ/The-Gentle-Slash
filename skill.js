@@ -2040,7 +2040,6 @@ const skill = {
                         return false;
                     },
                     selectCard: -1,
-                    popname: true,
                     viewAs: {
                         name: links[0][2],
                         nature: links[0][3],
@@ -3155,7 +3154,6 @@ const skill = {
                         suit: links[0][0],
                         number: links[0][1],
                     },
-                    popname: true,
                     selectCard: -1,
                     filterCard() {
                         return false;
@@ -4774,7 +4772,6 @@ const skill = {
             },
             backup(links, player) {
                 return {
-                    popname: true,
                     filterCard: () => false,
                     selectCard: -1,
                     viewAs: {
@@ -6550,25 +6547,17 @@ const skill = {
                 },
                 set() { },
             });
-            game.bug = [];
-            var Q = 'MAtcmjsn'; //mode_extension_xxx//////
-            for (var j in lib.characterPack[Q]) {
-                game.bug.addArray(lib.characterPack[Q][j][3].filter((Q) => Q != 'dualside'));
-            }
-            game.bug = game.bug.unique().filter((Q) => Q != 'jjxsddpx_bukenengnan' && Q != 'fg_wangzhicaibao');
+            game.bug = window.ceshiskill.unique().filter((Q) => Q != 'jjxsddpx_bukenengnan' && Q != 'fg_wangzhicaibao');//改用这个直接获取技能
             game.log(`当前武将包有${game.bug.length}个技能`);
         },
         _priority: 9,
         async content(event, trigger, player) {
-            //QQQ
-            var Q = game.bug.slice(100, 200); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(200, 300); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
-            //debugger;
             const {
                 result: { bool },
             } = await player.chooseBool().set('ai', () => true); //开局点确认加入技能
             if (bool) {
-                //var Q = 'bhzhilin';
                 player.addSkill(Q);
             }
         },

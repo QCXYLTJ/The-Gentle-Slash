@@ -3400,7 +3400,6 @@ const content = async function () {
                             ai1: (card) => 10 - get.value(card),
                             filterCard: true,
                             position: 'hs',
-                            popname: true,
                         };
                     },
                     prompt(links, player) {
@@ -3724,7 +3723,6 @@ const content = async function () {
                 discard: false,
                 lose: false,
                 delay: false,
-                popname: true,
                 check(card) {
                     if (ui.selected.cards.length) {
                         return 30 - get.value(card) + card.number;
