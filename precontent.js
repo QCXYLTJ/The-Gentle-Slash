@@ -2310,11 +2310,15 @@ const precontent = async function () {
                             att = 0;
                         }
                     }
-                    if (from.ai.modAttitudeFrom) {
-                        att = from.ai.modAttitudeFrom(from, to, att);
-                    }
-                    if (to.ai.modAttitudeTo) {
-                        att = to.ai.modAttitudeTo(from, to, att);
+                    if (!_status.tempnofake) {
+                        _status.tempnofake = true;
+                        if (from.ai.modAttitudeFrom) {
+                            att = from.ai.modAttitudeFrom(from, to, att);
+                        }
+                        if (to.ai.modAttitudeTo) {
+                            att = to.ai.modAttitudeTo(from, to, att);
+                        }
+                        delete _status.tempnofake;
                     }
                     return att;
                 };

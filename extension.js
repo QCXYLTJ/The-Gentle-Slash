@@ -33,7 +33,7 @@ if (QQQ.config.扩展修改) {
     var Q = [
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM',
         '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
-        'MA动漫包', 'MA天才麻将少女', '天牢令', '大战七阴', '星火燎原·紫',
+        'MA动漫包', 'MA天才麻将少女', '抗性测试',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -175,8 +175,10 @@ const boss = function () {
         silent: true,
         forceDie: true,
         forceOut: true,
-        filter: () => game.sort(),
-        async content(event, trigger, player) { },
+        filter() {
+            game.sort();
+        },
+        content() { },
     }; //排座位
     let _me;
     Reflect.defineProperty(game, 'me', {

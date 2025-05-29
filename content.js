@@ -1665,7 +1665,7 @@ const content = async function () {
                     }
                 } //当牌堆与弃牌堆中牌少于记录一半的时候将记录的牌创造并加入
             },
-            async content(event, trigger, player) { },
+            content() { },
         };
         _status.jieduan = {};
         lib.skill._jieduan = {
