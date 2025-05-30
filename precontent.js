@@ -3522,21 +3522,23 @@ const precontent = async function () {
         } //还原初始牌堆
         if (QQQ.config.神武再世) {
             game.loadModeAsync('boss', function (mode) {
-                for (var i in mode.translate) {
+                for (const i in mode.translate) {
                     lib.translate[i] = lib.translate[i] || mode.translate[i];
                 }
-                for (var i in mode.skill) {
+                for (const i in mode.skill) {
                     if (!lib.skill[i]) {
                         lib.skill[i] = mode.skill[i];
                     } //QQQ
                     game.finishSkill(i);
                 }
-                for (var i in mode.card) {
+                for (const i in mode.card) {
                     lib.card[i] = lib.card[i] || mode.card[i];
                     lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
                     lib.inpile.add(i);
                 }
-                for (var i in mode.characterPack.mode_boss) {
+                lib.cardPack.boss = Object.keys(mode.card);
+                lib.translate.boss_card_config = '挑战卡牌';
+                for (const i in mode.characterPack.mode_boss) {
                     lib.character[i] = lib.character[i] || mode.characterPack.mode_boss[i];
                     Reflect.defineProperty(lib.character[i], 'trashBin', {
                         get() {
@@ -3550,21 +3552,23 @@ const precontent = async function () {
                 lib.translate.boss_character_config = '挑战武将';
             }); //挑战模式
             game.loadModeAsync('versus', function (mode) {
-                for (var i in mode.translate) {
+                for (const i in mode.translate) {
                     lib.translate[i] = lib.translate[i] || mode.translate[i];
                 }
-                for (var i in mode.skill) {
+                for (const i in mode.skill) {
                     if (!lib.skill[i]) {
                         lib.skill[i] = mode.skill[i];
                     } //QQQ
                     game.finishSkill(i);
                 }
-                for (var i in mode.card) {
+                for (const i in mode.card) {
                     lib.card[i] = lib.card[i] || mode.card[i];
                     lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
                     lib.inpile.add(i);
                 }
-                for (var i in mode.jiangeboss) {
+                lib.cardPack.jiange = Object.keys(mode.card);
+                lib.translate.jiange_card_config = '剑阁卡牌';
+                for (const i in mode.jiangeboss) {
                     lib.character[i] = lib.character[i] || mode.jiangeboss[i];
                     Reflect.defineProperty(lib.character[i], 'trashBin', {
                         get() {
