@@ -108,7 +108,7 @@ countCards\('(?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)')[^'"]*'\)
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
-然后
+
 switch (cards[0].//switch (cards[0]?.
 identityList[i]
 updateMark
@@ -3613,7 +3613,7 @@ const precontent = async function () {
                     for (let pos = 1; pos < num; pos++) {
                         if (pos < num / 4) {
                             style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                        top:calc(${60 - (40 / num) * pos}%)!important;
+                                        top:calc(${50 - (40 / num) * pos}%)!important;
                                         left:calc(${45 + (200 / num) * pos}%)!important;
                                         transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
                                         }`;
@@ -3649,13 +3649,13 @@ const precontent = async function () {
                         else if (pos == 0.75 * num) {
                             style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                             top:calc(25%)!important;
-                                            left:calc(-4%)!important;
+                                            left:calc(-2%)!important;
                                             transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
                                             }`;
                         }
                         else {
                             style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                        top:calc(${20 + (40 / num) * pos}%)!important;
+                                        top:calc(${10 + (40 / num) * pos}%)!important;
                                         left:calc(${-155 + (200 / num) * pos}%)!important;
                                         transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
                                         }`;

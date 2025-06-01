@@ -4267,6 +4267,15 @@ const skill = {
                 }
             }
         },
+        ai: {
+            effect: {
+                player(card, player, target) {
+                    if (lib.card[card.name]) {
+                        return [1, 1.6]; //无脑用牌
+                    }
+                },
+            },
+        },
         group: ['漫卷_1'],
         subSkill: {
             1: {
@@ -4968,6 +4977,15 @@ const skill = {
                     card2._cardid = card1.cardid;
                 }
             });
+        },
+        ai: {
+            effect: {
+                player(card, player, target) {
+                    if (lib.card[card.name]) {
+                        return [1, 1.6]; //无脑用牌
+                    }
+                },
+            },
         },
         group: ['影火_1'],
         subSkill: {
