@@ -265,7 +265,7 @@ const card = {
             },
         },
     },
-    //毒爆:将全场所有角色随机一半牌变成毒,然后弃置所有毒
+    //毒爆:将全场所有角色随机一半牌变成毒,弃置所有毒
     QQQ_dubao: {
         type: 'trick',
         filterTarget(card, player, target) {
@@ -299,7 +299,7 @@ const card = {
         },
     },
     // 尸爆
-    // 将一名已死亡的角色炸掉,然后对其相邻角色造成一点伤害
+    // 将一名已死亡的角色炸掉,对其相邻角色造成一点伤害
     QQQ_shibao: {
         type: 'trick',
         enable(card, player, event) {
@@ -499,9 +499,9 @@ const translate3 = {
     QQQ_wodani: '我就打你',
     QQQ_wodani_info: '普通伤害锦囊牌,视为对目标使用随机一张伤害牌',
     QQQ_dubao: '毒爆',
-    QQQ_dubao_info: '将全场所有角色随机一半牌变成毒,然后弃置所有毒',
+    QQQ_dubao_info: '将全场所有角色随机一半牌变成毒,弃置所有毒',
     QQQ_shibao: '尸爆',
-    QQQ_shibao_info: '对一名已死亡的角色使用,将其炸掉,然后对其相邻角色造成一点伤害',
+    QQQ_shibao_info: '对一名已死亡的角色使用,将其炸掉,对其相邻角色造成一点伤害',
     QQQ_灵芝: '灵芝',
     QQQ_灵芝_info: '出牌阶段对一名角色使用,其增加一点体力上限回复全部体力',
 };

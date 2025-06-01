@@ -1969,7 +1969,7 @@ const content = async function () {
                     return target == player;
                 },
                 selectTarget: -1,
-                //出牌阶段对自己使用,用随机祭器强化装备区内的一张随机装备,然后用随机零件强化其余的装备
+                //出牌阶段对自己使用,用随机祭器强化装备区内的一张随机装备,用随机零件强化其余的装备
                 content() {
                     'step 0';
                     var es = target.getCards('e').filter((q) => lib.card[q.name].type == 'equip'); //QQQ
@@ -2539,7 +2539,7 @@ const content = async function () {
                 lib.card.jiguanyuan.content = function () {
                     'step 0';
                     if (player.countCards('he')) {
-                        player.chooseCard(true, 'he').set('prompt2', '你将' + get.translation(cards) + '和选择牌置于' + get.translation(target) + '的武将牌上,然后摸一张牌;' + get.translation(target) + '于下一结束阶段获得武将牌上的牌');
+                        player.chooseCard(true, 'he').set('prompt2', '你将' + get.translation(cards) + '和选择牌置于' + get.translation(target) + '的武将牌上,摸一张牌;' + get.translation(target) + '于下一结束阶段获得武将牌上的牌');
                     } else {
                         event.finish();
                     }
@@ -3484,7 +3484,7 @@ const content = async function () {
                     ('step 1');
                     if (!player.countCards('he')) event.finish();
                     else
-                        player.chooseCard(`四论:选择一张牌(${event.count + 1}/4)`, '然后选择将此牌置于场上或牌堆的两端', true, 'he').set('ai', (card) => {
+                        player.chooseCard(`四论:选择一张牌(${event.count + 1}/4)`, '选择将此牌置于场上或牌堆的两端', true, 'he').set('ai', (card) => {
                             var player = _status.event.player;
                             if (get.type(card) == 'equip' && !player.getEquips(get.subtype(card)).length) return 40;
                             if (get.position(card) == 'e') return 90 - get.value(card);
@@ -3661,7 +3661,7 @@ const content = async function () {
                 content() {
                     'step 0';
                     player
-                        .chooseToDiscard(get.prompt('jsrgjuelie', trigger.target), '当你使用【杀】指定一名角色为目标后,你可以弃置任意张牌,然后弃置其等量的牌', [1, Infinity], 'he')
+                        .chooseToDiscard(get.prompt('jsrgjuelie', trigger.target), '当你使用【杀】指定一名角色为目标后,你可以弃置任意张牌,弃置其等量的牌', [1, Infinity], 'he')
                         .set('ai', (card) => {
                             if (ui.selected.cards.length >= _status.event.max) return 0;
                             if (_status.event.goon) return 4.5 - get.value(card);
@@ -5682,7 +5682,7 @@ const content = async function () {
             if (QQQ.DEEP('lib.skill.drlt_jieying.subSkill.2')) {
                 lib.skill.drlt_jieying.subSkill['2'].content = function () {
                     'step 0';
-                    player.chooseTarget(get.prompt('drlt_jieying'), '将<营>交给一名角色;其摸牌阶段多摸一张牌,出牌阶段使用【杀】的次数上限+1且手牌上限+1.该角色回合结束后,其移去<营>标记,然后你获得其所有手牌.', function (card, player, target) {
+                    player.chooseTarget(get.prompt('drlt_jieying'), '将<营>交给一名角色;其摸牌阶段多摸一张牌,出牌阶段使用【杀】的次数上限+1且手牌上限+1.该角色回合结束后,其移去<营>标记,你获得其所有手牌.', function (card, player, target) {
                         return target != player;
                     }).ai = function (target) {
                         let th = target.countCards('h'),
@@ -6511,7 +6511,7 @@ const content = async function () {
                 },
                 group: 'dcxiongmu_minus',
                 prompt2(event, player) {
-                    return (player.countCards('h') < player.maxHp ? `将手牌摸至${get.cnNumber(player.maxHp)}张,然后` : '') + '将任意张牌随机置入牌堆并从牌堆或弃牌堆中获得等量点数为8的牌.';
+                    return (player.countCards('h') < player.maxHp ? `将手牌摸至${get.cnNumber(player.maxHp)}张,` : '') + '将任意张牌随机置入牌堆并从牌堆或弃牌堆中获得等量点数为8的牌.';
                 },
                 content() {
                     'step 0';
@@ -6862,7 +6862,7 @@ const content = async function () {
                             case 'xuanjian':
                                 {
                                     var ingame = game.hasPlayer((current) => ['re_xushu', 'xin_xushu', 'xushu', 'dc_xushu'].includes(current.name)) ? true : false;
-                                    var prompt = `请选择一名角色,令其回复1点体力并摸一张牌${ingame ? ',然后你摸一张牌.' : '.'}`;
+                                    var prompt = `请选择一名角色,令其回复1点体力并摸一张牌${ingame ? ',你摸一张牌.' : '.'}`;
                                     const { result: result1 } = await player.chooseTarget(prompt).set('ai', (target) => get.attitude(player, target) * (target.isDamaged() ? 2 : 1));
                                     if (result1.targets && result1.targets[0]) {
                                         result1.targets[0].draw();
