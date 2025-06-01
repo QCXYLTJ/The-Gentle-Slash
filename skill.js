@@ -3693,9 +3693,6 @@ const skill = {
                     const {
                         result: { links },
                     } = await player.chooseButton(['视为使用或打出牌名字数相同的牌', [list, 'vcard']]).set('ai', (button) => {
-                        if (evt.name == '_wuxie') {
-                            return -get.attitude(player, evt.getParent('useCard').player);
-                        }
                         const num = player.getUseValue(
                             {
                                 name: button.link[2],
@@ -5249,10 +5246,6 @@ const skill = {
                                 true,
                                 true
                             );
-                            if (evt.name == '_wuxie') {
-                                //console.log(evt.getParent('useCard').player.name);
-                                return -get.attitude(player, evt.getParent('useCard').player);
-                            }
                             if (button.link[2] == 'jiu') {
                                 return 999 * (99 + num);
                             }
@@ -6298,9 +6291,6 @@ const skill = {
                                 null,
                                 true
                             );
-                            if (evt.name == '_wuxie') {
-                                return -get.attitude(player, evt.getParent('useCard').player);
-                            }
                             return number0(num) + 10;
                         });
                         if (links && links[0]) {

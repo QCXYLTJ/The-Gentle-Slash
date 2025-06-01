@@ -3589,81 +3589,81 @@ const precontent = async function () {
             lib.init.css('extension/温柔一刀/QQQ.css');
             if (QQQ.config.界面修改) {
                 lib.init.css('extension/温柔一刀/QQ.css');
-                if (!(_status.maximumNumberOfPlayers > 32)) {
-                    _status.maximumNumberOfPlayers = 32;
+            } //拉长立绘//移动标记//历史记录显示
+            if (!(_status.maximumNumberOfPlayers > 32)) {
+                _status.maximumNumberOfPlayers = 32;
+            }
+            for (let num = 9; num < 33; num++) {
+                const list = [];
+                const fan = Math.ceil(num * 0.4);
+                const nei = Math.ceil(num * 0.2);
+                const zhong = num - 1 - fan - nei;
+                list.push('zhu');
+                for (var i = 0; i < zhong; i++) {
+                    list.push('zhong');
                 }
-                for (let num = 9; num < 33; num++) {
-                    const list = [];
-                    const fan = Math.ceil(num * 0.4);
-                    const nei = Math.ceil(num * 0.2);
-                    const zhong = num - 1 - fan - nei;
-                    list.push('zhu');
-                    for (var i = 0; i < zhong; i++) {
-                        list.push('zhong');
+                for (var i = 0; i < nei; i++) {
+                    list.push('nei');
+                }
+                for (var i = 0; i < fan; i++) {
+                    list.push('fan');
+                }
+                lib.config.mode_config.identity.identity[num - 2] = list;
+                const style = document.createElement('style');
+                style.innerHTML = ``;
+                for (let pos = 1; pos < num; pos++) {
+                    if (pos < num / 4) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                    top:calc(${50 - (40 / num) * pos}%)!important;
+                                    left:calc(${45 + (200 / num) * pos}%)!important;
+                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                    }`;
                     }
-                    for (var i = 0; i < nei; i++) {
-                        list.push('nei');
+                    else if (pos == num / 4) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                    top:calc(25%)!important;
+                                    left:calc(92%)!important;
+                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                    }`;
                     }
-                    for (var i = 0; i < fan; i++) {
-                        list.push('fan');
-                    }
-                    lib.config.mode_config.identity.identity[num - 2] = list;
-                    const style = document.createElement('style');
-                    style.innerHTML = ``;
-                    for (let pos = 1; pos < num; pos++) {
-                        if (pos < num / 4) {
-                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                        top:calc(${50 - (40 / num) * pos}%)!important;
-                                        left:calc(${45 + (200 / num) * pos}%)!important;
+                    else if (pos < num / 2) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(${15 - (40 / num) * pos}%)!important;
+                                        left:calc(${145 - (200 / num) * pos}%)!important;
                                         transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
                                         }`;
-                        }
-                        else if (pos == num / 4) {
-                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                    }
+                    else if (pos == num / 2) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(-5%)!important;
+                                        left:calc(45%)!important;
+                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        }`;
+                    }
+                    else if (pos < 0.75 * num) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                        top:calc(${(40 / num) * pos - 25}%)!important;
+                                        left:calc(${145 - (200 / num) * pos}%)!important;
+                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        }`;
+                    }
+                    else if (pos == 0.75 * num) {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                         top:calc(25%)!important;
-                                        left:calc(92%)!important;
+                                        left:calc(-2%)!important;
                                         transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
                                         }`;
-                        }
-                        else if (pos < num / 2) {
-                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                            top:calc(${15 - (40 / num) * pos}%)!important;
-                                            left:calc(${145 - (200 / num) * pos}%)!important;
-                                            transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                            }`;
-                        }
-                        else if (pos == num / 2) {
-                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                            top:calc(-5%)!important;
-                                            left:calc(45%)!important;
-                                            transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                            }`;
-                        }
-                        else if (pos < 0.75 * num) {
-                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                            top:calc(${(40 / num) * pos - 25}%)!important;
-                                            left:calc(${145 - (200 / num) * pos}%)!important;
-                                            transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                            }`;
-                        }
-                        else if (pos == 0.75 * num) {
-                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                            top:calc(25%)!important;
-                                            left:calc(-2%)!important;
-                                            transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                            }`;
-                        }
-                        else {
-                            style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
-                                        top:calc(${10 + (40 / num) * pos}%)!important;
-                                        left:calc(${-155 + (200 / num) * pos}%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
-                                        }`;
-                        }
                     }
-                    document.head.appendChild(style);
+                    else {
+                        style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
+                                    top:calc(${10 + (40 / num) * pos}%)!important;
+                                    left:calc(${-155 + (200 / num) * pos}%)!important;
+                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                    }`;
+                    }
                 }
-            } //多人场适配//拉长立绘//移动标记
+                document.head.appendChild(style);
+            } //多人场适配
             if (QQQ.config.文字闪烁) {
                 //—————————————————————————————————————————————————————————————————————————————技能标签
                 const style1 = document.createElement('style');
@@ -4165,9 +4165,6 @@ const precontent = async function () {
                             const {
                                 result: { links },
                             } = await player.chooseButton(['使用或打出武将牌上的牌', list]).set('ai', (button) => {
-                                if (evt.name == '_wuxie') {
-                                    return -get.attitude(player, evt.getParent('useCard').player);
-                                }
                                 const num = player.getUseValue(button.link, null, true);
                                 return number0(num) + 10;
                             });
@@ -5110,9 +5107,6 @@ const precontent = async function () {
                                     const {
                                         result: { links },
                                     } = await player.chooseButton(['使用或打出武将牌上的牌', list]).set('ai', (button) => {
-                                        if (evt.name == '_wuxie') {
-                                            return -get.attitude(player, evt.getParent('useCard').player);
-                                        }
                                         const num = player.getUseValue(button.link, null, true);
                                         return number0(num) + 10;
                                     });
@@ -6132,9 +6126,6 @@ const precontent = async function () {
                                 const {
                                     result: { links },
                                 } = await player.chooseButton(['视为使用或打出对应基本牌/锦囊牌', [vcard, 'vcard']]).set('ai', (button) => {
-                                    if (evt.name == '_wuxie') {
-                                        return -get.attitude(player, evt.getParent('useCard').player);
-                                    }
                                     const num = player.getUseValue({
                                         name: button.link[2],
                                         nature: button.link[3],
