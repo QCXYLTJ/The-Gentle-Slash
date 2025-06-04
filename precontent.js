@@ -4874,7 +4874,7 @@ const precontent = async function () {
                         player.gain(player.storage.QQQ_fuzhua, 'gain2').gaintag = ['桴挝'];
                     },
                     trigger: {
-                        player: ['loseAfter'],
+                        player: ['loseEnd'],
                     },
                     forced: true,
                     filter: (event, player) => event.cards && event.cards.some((q) => player.storage.QQQ_fuzhua.includes(q)),
@@ -4994,7 +4994,7 @@ const precontent = async function () {
                 //祸水:你的回合内,失去<影>的角色视为使用一张不计次数的<杀>(若该角色是你,则改为使用x张不计次数的<杀>,x为失去<影>的数量)
                 QQQ_huoshui: {
                     trigger: {
-                        global: ['loseAfter'],
+                        global: ['loseEnd'],
                     },
                     forced: true,
                     filter: (event, player) => _status.currentPhase == player && event.cards && event.cards.some((q) => q.name == 'ying' || (q.storage && q.storage.QQQ_meiying)),
@@ -5593,7 +5593,7 @@ const precontent = async function () {
                 //幽影流火:当全场失去♦️️牌后,你将此牌当作火杀对随机敌方角色使用
                 QQQ_liuhuo: {
                     trigger: {
-                        global: ['loseAfter'],
+                        global: ['loseEnd'],
                     },
                     forced: true,
                     filter: (event, player) => event.cards?.some((q) => q.suit == 'diamond'),
@@ -5757,7 +5757,7 @@ const precontent = async function () {
                 //残兵:当你使用或打出牌时,你可以观看一名角色的手牌并弃置其区域内一张牌,你摸一张牌并交给其一张牌
                 QQQ_canbing: {
                     trigger: {
-                        player: ['loseAfter'],
+                        player: ['loseEnd'],
                     },
                     forced: true,
                     filter: (event, player) => event.cards?.length && !event.getParent('QQQ_canbing').name,
@@ -6262,12 +6262,13 @@ const precontent = async function () {
                     subSkill: {
                         1: {
                             trigger: {
-                                player: ['loseAfter'],
+                                player: ['loseEnd'],
                             },
                             forced: true,
-                            filter: (event, player) => _status.QQQ_ronglu.baixiang.includes(player) && event.cards?.length && event.parent.name != 'useCard',
+                            filter(event, player) {
+                                return _status.QQQ_ronglu.baixiang.includes(player) && event.cards?.length && !['useCard', 'respond', 'equip'].includes(event.parent.name)
+                            },
                             async content(event, trigger, player) {
-                                //QQQ
                                 _status.QQQ_ronglu.add(trigger.cards);
                             },
                         },
@@ -6554,7 +6555,7 @@ const precontent = async function () {
                     },
                     _priority: 67,
                     trigger: {
-                        player: ['loseAfter'],
+                        player: ['loseEnd'],
                     },
                     forced: true,
                     init: (player) => player.addMark('QQQ_linlve'),
@@ -6810,7 +6811,7 @@ const precontent = async function () {
                         },
                         2: {
                             trigger: {
-                                player: ['loseAfter'],
+                                player: ['loseEnd'],
                             },
                             forced: true,
                             filter: (event, player) => event.cards?.length,
@@ -6854,10 +6855,12 @@ const precontent = async function () {
                 //每当你不因使用而失去牌时,可以将其当作无距离次数限制无视闪避无视防具的杀使用,且每次以此法使用的杀基础伤害值翻倍(挥手不是再见,五指拳心剑!)
                 QQQ_wuzhiquanxinjian: {
                     trigger: {
-                        player: ['loseAfter'],
+                        player: ['loseEnd'],
                     },
                     forced: true,
-                    filter: (event, player) => event.cards?.length && event.parent.name != 'useCard',
+                    filter(event, player) {
+                        return event.cards?.length && !['useCard', 'respond', 'equip'].includes(event.parent.name);
+                    },
                     _priority: 73,
                     async content(event, trigger, player) {
                         for (const card of trigger.cards) {
@@ -7158,7 +7161,7 @@ const precontent = async function () {
                     subSkill: {
                         1: {
                             trigger: {
-                                global: ['changeHp', 'loseAfter'],
+                                global: ['changeHp', 'loseEnd'],
                             },
                             silent: true,
                             filter(event, player, name) {
@@ -7389,7 +7392,7 @@ const precontent = async function () {
                 QQQ_yuxiu: {
                     //他既然夸我钟灵毓秀,那我就给你起名毓秀。若有来生,就请你替我好好活着,不要管什么人族未来,不要想什么苍生安危,就为自己活一次,为自己自私一次,痛快地去爱,淋漓地去哭！
                     trigger: {
-                        global: ['loseAfter'],
+                        global: ['loseEnd'],
                     },
                     forced: true,
                     filter: (event, player) => event.cards?.some((q) => q.suit == 'heart'),
@@ -7442,7 +7445,7 @@ const precontent = async function () {
                 // 你装备区、手牌区、判定区内的牌数量始终相等（若不相等则为牌数少的区域内合法的置入牌直至相等）
                 QQQ_diwuweidu: {
                     trigger: {
-                        player: ['gainAfter', 'loseAfter'],
+                        player: ['gainAfter', 'loseEnd'],
                     },
                     forced: true,
                     filter(event, player) {
@@ -7514,7 +7517,7 @@ const precontent = async function () {
                 //丰乳肥臀:每阶段结束时,若此阶段内场上有其他角色累计获得或失去至少两张牌,你令其将这些牌当作顺手牵羊对你使用
                 QQQ_fengrufeitun: {
                     trigger: {
-                        global: ['loseAfter', 'gainAfter'],
+                        global: ['loseEnd', 'gainAfter'],
                     },
                     forced: true,
                     popup: false,
@@ -7654,6 +7657,7 @@ const precontent = async function () {
                                     }
                                 }
                             } //用历史写法就得等usecard结束,when写法就是要多加技能
+                            await game.delay(2);
                         }
                     },
                 },
@@ -7685,12 +7689,12 @@ const precontent = async function () {
                     subSkill: {
                         1: {
                             trigger: {
-                                player: ['changeHpBefore', 'loseBefore'],
+                                player: ['changeHpBefore', 'loseBefore', 'dieBefore'],
                             },
                             forced: true,
                             filter(event, player, name) {
-                                if (name == 'loseBefore' && event.parent.name == 'useCard') {
-                                    return false;
+                                if (name == 'loseBefore') {
+                                    return !['useCard', 'respond', 'equip'].includes(event.parent.name);
                                 }
                                 return player.storage.QQQ_yishoudao.length;
                             },
@@ -8069,7 +8073,7 @@ const precontent = async function () {
                 QQQ_anyue: {
                     audio: 'pianchong',
                     trigger: {
-                        player: 'loseAfter',
+                        player: ['loseEnd'],
                     },
                     forced: true,
                     filter: (event, player) => event.cards?.length,
@@ -8246,7 +8250,7 @@ const precontent = async function () {
                 QQQ_shuiniao: '水鸟乱舞',
                 QQQ_shuiniao_info: '当你使用杀指定目标时,你连续在场上变换三次位置,并对经过的角色造成一点出血伤害<br>此过程中,每有角色进入过濒死,你额外变换一次位置',
                 QQQ_yishoudao: '女武神的义手刀',
-                QQQ_yishoudao_info: '在你使用牌的结算过程中,你处于无敌状态',
+                QQQ_yishoudao_info: '在你使用牌的结算过程中,你处于无敌状态(免疫体力值扣减/死亡/不因使用而失去牌)',
                 QQQ_xinghongfubai: '猩红腐败绽放',
                 QQQ_xinghongfubai_info: '当你进入濒死时,视为对攻击范围内的全部其他角色使用一张腐败属性的杀;恢复此杀结算过程中,场上角色受到伤害值的体力',
                 _ScarletRot: '猩红腐败',

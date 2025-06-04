@@ -500,7 +500,7 @@ const skill = {
         subSkill: {
             1: {
                 trigger: {
-                    player: 'loseAfter',
+                    player: ['loseEnd'],
                 },
                 forced: true,
                 filter(event, player) {
@@ -683,7 +683,7 @@ const skill = {
     金乌落日弓: {
         equipSkill: true,
         trigger: {
-            player: 'loseAfter',
+            player: ['loseEnd'],
         },
         forced: true,
         filter(event, player) {
@@ -733,7 +733,7 @@ const skill = {
     },
     连营: {
         trigger: {
-            player: ['loseAfter'],
+            player: ['loseEnd'],
         },
         forced: true,
         filter(event, player) {
@@ -1721,7 +1721,7 @@ const skill = {
         subSkill: {
             1: {
                 trigger: {
-                    player: 'loseBefore',
+                    player: ['loseBefore'],
                 },
                 audio: 'fulin',
                 forced: true,
@@ -2216,7 +2216,7 @@ const skill = {
     },
     募集: {
         trigger: {
-            global: ['loseAfter'],
+            global: ['loseEnd'],
         },
         filter(event, player) {
             if (event.cards?.length > 1) {
@@ -2554,7 +2554,7 @@ const skill = {
         mark: true,
         marktext: '徒',
         trigger: {
-            player: 'loseAfter',
+            player: ['loseEnd'],
         },
         forced: true,
         filter(event, player) {
@@ -2586,7 +2586,7 @@ const skill = {
     },
     神裁: {
         trigger: {
-            global: ['gameDrawBefore', 'roundStart'],
+            global: ['roundStart'],
         },
         forced: true,
         filter(event, player) {
@@ -2604,7 +2604,7 @@ const skill = {
             }
         },
     },
-    // 当你体力变化/不因使用失去牌/死亡时,取消之,移除牌堆顶X张牌(X为此次事件的数值)
+    // 当你体力变化/不因使用而失去牌/死亡时,取消之,移除牌堆顶X张牌(X为此次事件的数值)
     // 牌堆洗牌后,你死亡
     QQQ_xipai: {
         trigger: {
@@ -2778,7 +2778,7 @@ const skill = {
     },
     全装备: {
         trigger: {
-            player: ['loseAfter'],
+            player: ['loseEnd'],
             global: ['equipAfter', 'addJudgeAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter'],
         },
         forced: true,
@@ -3060,7 +3060,7 @@ const skill = {
         subSkill: {
             1: {
                 trigger: {
-                    player: ['loseAfter'],
+                    player: ['loseEnd'],
                 },
                 forced: true,
                 filter(event, player) {
@@ -4039,7 +4039,7 @@ const skill = {
             },
         },
         trigger: {
-            player: 'loseAfter',
+            player: ['loseEnd'],
         },
         forced: true,
         async content(event, trigger, player) {
@@ -4194,46 +4194,45 @@ const skill = {
     },
     乾坤大挪移: {
         trigger: {
-            global: 'gameDrawBefore', //游戏开始时
+            global: ['gameStart'],
         },
         forced: true,
         async content(event, trigger, player) {
-            game.countPlayer(function (Q) {
-                if (Q.hasSkill('乾坤大挪移')) {
-                    return;
+            let log1, log2;
+            for (const npc of game.players) {
+                if (npc.hasSkill('乾坤大挪移')) continue;
+                if (!log1) {
+                    log1 = npc;
                 }
-                if (!game.挪移) {
-                    game.挪移 = [];
-                    game.NY = Q;
+                const skill = npc.skills.randomGet();
+                if (skill) {
+                    game.log(npc, '失去了技能', skill);
+                    npc.RS(skill);
+                    if (log2) {
+                        npc.addSkillLog(log2);
+                    }
+                    log2 = skill;
                 }
-                var E = Q.skills.randomGet();
-                Q.RS(E);
-                Q.addSkill(game.挪移);
-                game.挪移 = E;
-            });
-            game.NY.addSkill(game.挪移);
+            }
+            if (log1 && log2) {
+                log1.addSkillLog(log2);
+            }
         },
     },
     合并时间线: {
         trigger: {
-            global: 'gameDrawBefore', //游戏开始时
+            global: ['gameStart'],
         },
         forced: true,
         async content(event, trigger, player) {
-            game.countPlayer(function (Q) {
-                if (Q.hasSkill('合并时间线')) {
-                    return;
+            for (const npc of game.players) {
+                if (npc.hasSkill('合并时间线')) continue;
+                const string = get.translation(npc).slice(-2);
+                const chars = Object.keys(lib.character).filter((W) => get.translation(W).includes(string));
+                for (const name of chars) {
+                    npc.addSkillLog(lib.character[name].skills);
                 }
-                var E = get.translation(Q).slice(-2);
-                game.log(E);
-                var T = Object.keys(lib.character).filter((W) => get.translation(W).includes(E));
-                game.log(T);
-                if (T) {
-                    T.filter((i) => {
-                        Q.addSkill(lib.character[i][3]);
-                    });
-                }
-            });
+            }
         },
     },
     漫卷: {
@@ -5114,7 +5113,7 @@ const skill = {
             },
             2: {
                 trigger: {
-                    player: ['loseAfter'],
+                    player: ['loseEnd'],
                 },
                 forced: true,
                 filter: (event, player) => event.cards && event.cards.some((Q) => Q.storage.武绝),
@@ -5669,7 +5668,7 @@ const skill = {
     },
     QQQ_taye: {
         trigger: {
-            player: 'useCardAfter',
+            player: ['useCardAfter'],
         },
         forced: true,
         mark: true,
@@ -5678,7 +5677,7 @@ const skill = {
         },
         init: (player) => (player.storage.QQQ_taye = 1),
         //当你使用一张牌后,你可以从弃牌堆中选择至多[1]张与此牌类型相同的其他牌,将这些牌置于牌堆底,展示牌堆顶等量张牌.
-        //将与触发技能的牌类型不同的置入弃牌堆,其余牌由你依次分配给场上角色.<br>当有牌不因使用而进入弃牌堆时,你令下次发动此技能时,方括号内的数字+1,至多加至5
+        //将与触发技能的牌类型不同的置入弃牌堆,其余牌由你依次分配给场上角色.<br>当有牌不因使用而失去时,你令下次发动此技能时,方括号内的数字+1,至多加至5
         filter: (event, player) => Array.from(ui.discardPile.childNodes).some((q) => get.type(q) == get.type(event.card)),
         async content(event, trigger, player) {
             //QQQ
@@ -5720,20 +5719,10 @@ const skill = {
             buff: {
                 forced: true,
                 trigger: {
-                    global: ['loseAfter', 'cardsDiscardAfter', 'loseAsyncAfter'],
+                    global: ['loseEnd'],
                 },
                 filter(event, player) {
-                    if (event.name.indexOf('lose') == 0) {
-                        if (event.getlx === false || event.position != ui.discardPile) {
-                            return false;
-                        }
-                    } else {
-                        var evt = event.parent;
-                        if (evt.relatedEvent && evt.relatedEvent.name == 'useCard') {
-                            return false;
-                        }
-                    }
-                    return true;
+                    return !['useCard', 'respond', 'equip'].includes(event.parent.name);
                 },
                 async content(event, trigger, player) {
                     if (player.storage.QQQ_taye < 5) {
@@ -6228,7 +6217,7 @@ const skill = {
     },
     QQQ_zhuiyi: {
         trigger: {
-            global: ['loseAfter'],
+            global: ['loseEnd'],
         },
         forced: true,
         mark: true,
@@ -6690,7 +6679,7 @@ const translate1 = {
     QQQ_yaoyi: '妖异',
     QQQ_yaoyi_info: '你可以将【小狐】或非手牌区一张牌当做一张基本牌使用或打出.若以此法使用或打出的牌为【小狐】,则在结算完成后插入牌堆随机位置',
     QQQ_taye: '踏野',
-    QQQ_taye_info: '当你使用一张牌后,你可以从弃牌堆中选择至多[1]张与此牌类型相同的其他牌,将这些牌置于牌堆底,展示牌堆顶等量张牌.将与触发技能的牌类型不同的置入弃牌堆,其余牌由你依次分配给场上角色.<br>当有牌不因使用而进入弃牌堆时,你令下次发动此技能时,方括号内的数字+1,至多加至5',
+    QQQ_taye_info: '当你使用一张牌后,你可以从弃牌堆中选择至多[1]张与此牌类型相同的其他牌,将这些牌置于牌堆底,展示牌堆顶等量张牌.将与触发技能的牌类型不同的置入弃牌堆,其余牌由你依次分配给场上角色.<br>当有牌不因使用而失去时,你令下次发动此技能时,方括号内的数字+1,至多加至5',
     QQQ_yuepu: '乐谱',
     QQQ_yuepu_info: '每回合限5次,每当你使用一张牌后你摸一张牌,根据该牌花色(♥️️️1. 升号(♯):表示升高半音.♠️️️2. 降号(♭):表示降低半音.♣️️️3. 重升号(×):表示升高一个全音.♦️️️4. 重降号(♭♭):表示降低一个全音.这是由两个降记号合在一起而成.🃏:5. 还原号(♮):表示将已升高或降低的音还原,也可以叫本位号.)记录在你的乐谱库中,每当你的乐谱库中符号不小于2时,你可选择移除3个乐谱符,令一名其他角色根据乐谱执行以下效果:升符:依次展示3张牌数递增的牌,否则失去一点体力降符:依次展示3张牌数递减的牌,否则弃置3张牌重升符:展示3张牌这些牌点数和大于其其余牌点数和,否则失去一点体力上限重降符:展示3张牌这些牌点数和小于其其余牌点数和,否则弃置全部装备牌和3张手牌还原符:依次展示3张牌点数相差不大于3的牌,否则令你获得其3张牌并令你获得一张灵芝,你于回合内使用前5张牌无次数距离限制弃牌阶段弃牌后,你可令一名其他角色弃置两张牌,若其中的一个花色牌大于2,你添加该花色对应的乐谱库至你的乐谱库中',
     温柔一刀: `<a href='https://qm.qq.com/q/SsTlU9gc24'><span class=Qmenu>温柔一刀</span></a>`,
@@ -6901,7 +6890,7 @@ const translate1 = {
     神裁: '神裁',
     神裁_info: '游戏开始时,令一名其他角色获得神裁标记',
     QQQ_xipai: '万物源气',
-    QQQ_xipai_info: '当你体力变化/不因使用失去牌/死亡时,取消之,移除牌堆顶X张牌(X为此次事件的数值).牌堆洗牌后,你死亡',
+    QQQ_xipai_info: '当你体力变化/不因使用而失去牌/死亡时,取消之,移除牌堆顶X张牌(X为此次事件的数值).牌堆洗牌后,你死亡',
     御策: '御策',
     御策_info: '你受到伤害后,除非来源弃置三种不同类型的牌,否则你回复一点体力',
     无矩: '无矩',

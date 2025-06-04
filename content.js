@@ -3444,7 +3444,7 @@ const content = async function () {
             };
             lib.skill.nagisa_fuxin = {
                 trigger: {
-                    global: ['gainAfter', 'loseAfter', 'damageEnd'],
+                    global: ['gainAfter', 'loseEnd', 'damageEnd'],
                 },
                 filter(event, player) {
                     return _status.currentPhase && event.player && event.player != _status.currentPhase && !event.getParent('nagisa_fuxin', true);
