@@ -6729,7 +6729,7 @@ const content = async function () {
                     const randomBorderColor = '#' + Math.floor(Math.random() * 16777215).toString(16); // 随机边框颜色
                     player.USE = numberq0(player.USE) + 1;
                     if (game.USE) game.USE.remove();
-                    game.USE = window.document.createElement('div');
+                    game.USE = document.createElement('div');
                     game.USE.style.cssText = `right: 60px; top: 60px; height: 50px; width: 50px; z-index: 999; background-color:${randomBorderColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center;`;
                     game.USE.innerHTML = `<font color='${randomColor}' style='font-size: 40px;'>${player.USE}</font>`;
                     document.body.appendChild(game.USE);
@@ -6748,7 +6748,7 @@ const content = async function () {
                     const randomBorderColor = '#' + Math.floor(Math.random() * 16777215).toString(16); // 随机边框颜色
                     player.ROUND = numberq0(player.ROUND) + 1;
                     if (game.ROUND) game.ROUND.remove();
-                    game.ROUND = window.document.createElement('div');
+                    game.ROUND = document.createElement('div');
                     game.ROUND.style.cssText = `right: 120px; top: 60px; height: 60px; width: 60px; z-index: 999; background-color: ${randomBorderColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center;`;
                     game.ROUND.innerHTML = `<font color='${randomColor}' style='font-size: 40px;'>${player.ROUND}</font>`;
                     document.body.appendChild(game.ROUND);

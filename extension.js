@@ -526,11 +526,11 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                         player.classList.add('Qselectable');
                         player.onclick = function () {
                             const play = this;
-                            const div = window.document.createElement('div');
+                            const div = document.createElement('div');
                             div.id = 'divQ';
                             const JUESELIST = [];
                             //————————————————————————————————————————————————————————确定
-                            const OK = window.document.createElement('div');
+                            const OK = document.createElement('div');
                             OK.className = 'backQ';
                             OK.innerHTML = '确定';
                             OK.onclick = function () {
@@ -550,7 +550,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             //————————————————————————————————————————————————————————搜索
                             const input = document.createElement('input');
                             input.className = 'shuruQ';
-                            const FIND = window.document.createElement('div');
+                            const FIND = document.createElement('div');
                             FIND.className = 'findQ';
                             FIND.innerHTML = '搜索';
                             FIND.onclick = function () {
@@ -559,7 +559,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 }
                                 for (const j in lib.character) {
                                     if (lib.translate[j] && lib.translate[j].includes(input.value) || j.includes(input.value)) {
-                                        const JUESE = window.document.createElement('div');
+                                        const JUESE = document.createElement('div');
                                         JUESE.style.backgroundImage = `url(${game.src(j)})`;
                                         JUESE.className = 'characterQ';
                                         JUESE.innerHTML = get.translation(j);
@@ -580,7 +580,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             document.body.appendChild(input);
                             //————————————————————————————————————————————————————————武将列表
                             for (const i in lib.characterPack) {
-                                const PACK = window.document.createElement('div');
+                                const PACK = document.createElement('div');
                                 PACK.className = 'packQ';
                                 PACK.innerHTML = get.translation(i + '_character_config');
                                 PACK.link = i;
@@ -589,7 +589,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                         x.remove();
                                     }
                                     for (const j in lib.characterPack[this.link]) {
-                                        const JUESE = window.document.createElement('div');
+                                        const JUESE = document.createElement('div');
                                         JUESE.style.backgroundImage = `url(${game.src(j)})`;
                                         JUESE.className = 'characterQ';
                                         JUESE.innerHTML = get.translation(j);
@@ -629,7 +629,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     const input = document.createElement('input');
                     input.className = 'shuruQ';
                     input.placeholder = '输入技能代码名(不是技能名的翻译,如破军是pojun)';
-                    const FIND = window.document.createElement('div');
+                    const FIND = document.createElement('div');
                     FIND.className = 'findQ';
                     FIND.innerHTML = '搜索';
                     const skilllist = [];
@@ -639,7 +639,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                         }
                         for (const j in lib.skill) {
                             if (lib.translate[j]?.includes(input.value) || j.includes(input.value)) {
-                                const skill = window.document.createElement('div');
+                                const skill = document.createElement('div');
                                 skill.className = 'skillQ';
                                 skill.innerHTML = `${lib.translate[j]}(${j}):${lib.translate[`${j}_info`]}`;
                                 skill.link = j;
@@ -725,7 +725,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                         node.appendChild(toggle);
                         page.appendChild(node);
                     }
-                    const backButton = window.document.createElement('div');
+                    const backButton = document.createElement('div');
                     backButton.innerHTML = '返回游戏'; //文字内容
                     backButton.className = 'backQ';
                     backButton.onclick = function () {
