@@ -87,11 +87,15 @@ const content = async function () {
                 forced: true,
                 forceDie: true,
                 silent: true,
-                filter: (event, player) => game.boss == player && player.fuhuo > 0,
+                filter(event, player) {
+                    return game.boss == player && player.fuhuo > 0;
+                },
                 async content(event, trigger, player) {
                     player.fuhuo--;
                     player.storage.boss_chongzheng = 0; //boss不会自动添加重整
-                    player.qrevive();
+                    setTimeout(function () {
+                        player.qrevive();
+                    }, 1000);
                 },
             }; //挑战模式死后减掉复活标记
         }
@@ -8294,16 +8298,16 @@ const content = async function () {
                 linked: true,
                 order: 1000,
             }); //添加杀的属性
-            for (const i of ['gold', 'poison', 'blood', 'snow', 'kami', 'water', 'ice', 'ScarletRot']) {
-                lib.card.sha.ai.tag[i + 'Damage'] = eval(` (card, nature) => {
-                    if (game.hasNature(card, '${i}')) return 1;
-                }`);
-                lib.card.sha.nature.add(i);
-            }
-            for (const i of Array.from(lib.nature.keys())) {
-                var j = 9;
-                while (j--) {
-                    lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), 'sha', i]);
+            for (const nature of Array.from(lib.nature.keys())) {
+                lib.card.sha.ai.tag[nature + 'Damage'] = function (card) {
+                    if (game.hasNature(card, nature)) {
+                        return 1;
+                    }
+                };
+                lib.card.sha.nature.add(nature);
+                let num = 9;
+                while (num--) {
+                    lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), 'sha', nature]);
                 }
             }
             lib.skill._goldsha = {
