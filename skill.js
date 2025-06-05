@@ -3158,7 +3158,7 @@ const skill = {
                     filterCard() {
                         return false;
                     },
-                    precontent() {
+                    async precontent(event, trigger, player) {
                         player.loseHp(0.5);
                     },
                 };
@@ -3812,7 +3812,7 @@ const skill = {
                         number: links[0][1],
                     },
                     ignoreMod: true,
-                    precontent() {
+                    async precontent(event, trigger, player) {
                         game.log('#g【龙威】', event.result.card);
                         player.popup(event.result.card, 'thunder');
                         player.draw();
@@ -3893,7 +3893,7 @@ const skill = {
                                 suit: links[0][0],
                                 number: links[0][1],
                             },
-                            precontent() {
+                            async precontent(event, trigger, player) {
                                 game.log('#g【龙威】', event.result.card);
                                 player.popup(event.result.card, 'thunder');
                             },
@@ -5971,7 +5971,9 @@ const skill = {
                     },
                     ignoreMod: true,
                     async precontent(event, trigger, player) {
-                        event.result.cards = get.cards(); //防没有cards[0]
+                        const cards = get.cards(); //防没有cards[0]
+                        event.result.card.cards = cards;
+                        event.result.cards = cards;
                         player.storage.QQQ_kangzou.add(event.result.card.name);
                         player.storage.QQQ_kangzou.add(event.result.card.nature);
                         player.maxHp++;

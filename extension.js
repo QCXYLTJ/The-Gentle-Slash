@@ -154,8 +154,7 @@ const yuanxing = function () {
     HTMLElement.prototype.BG = function (name) {
         const video = document.createElement('video');
         video.src = `extension/温柔一刀/mp4/${name}.mp4`;
-        video.style = 'bottom: 0%; left: 0%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; position: absolute;';
-        video.style.zIndex = -5;//大于背景图片即可
+        video.style.cssText = 'bottom: 0%; left: 0%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; position: absolute; z-index: -5;';
         video.autoplay = true;
         video.loop = true;
         this.appendChild(video);

@@ -1005,27 +1005,12 @@ const precontent = async function () {
                 const url = `extension/温柔一刀/mp4/${name}.mp4`;
                 const video = window.document.createElement('video');
                 video.src = url;
-                video.style.zIndex = 999;
-                video.style.height = '100%';
-                video.style.width = '100%';
-                video.style.position = 'fixed';
-                video.style.objectFit = 'cover';
-                video.style.left = 0;
-                video.style.right = 0;
+                video.style.cssText = 'z-index: 999; height: 100%; width: 100%; position: fixed; object-fit: cover; left: 0; right: 0; mix-blend-mode: screen; pointer-events: none;';
                 video.autoplay = true;
                 video.loop = false;
-                video.style.mixBlendMode = 'screen';
-                video.style.pointerEvents = 'none';
                 const backButton = window.document.createElement('div');
-                backButton.style.zIndex = 999;
                 backButton.innerHTML = '返回游戏'; //文字内容
-                backButton.style.position = 'absolute'; //绝对定位
-                backButton.style.bottom = '10px';
-                backButton.style.right = '10px';
-                backButton.style.color = 'red'; //文字颜色
-                backButton.style.fontSize = '16px'; //文字大小
-                backButton.style.padding = '5px 10px'; //内边距
-                backButton.style.background = 'rgba(0, 0, 0, 0.3)'; //背景颜色为黑色透明度为0.3
+                backButton.style.cssText = 'z-index: 999; position: absolute; bottom: 10px; right: 10px; color: red; font-size: 16px; padding: 5px 10px; background: rgba(0, 0, 0, 0.3);';
                 backButton.onclick = function () {
                     backButton.remove();
                     video.remove();
@@ -4946,7 +4931,7 @@ const precontent = async function () {
                             },
                             mod: {
                                 cardname(card, player) {
-                                    if (player.storage.QQQ_meiying.includes(card) || (card.storage && card.storage.QQQ_meiying)) {
+                                    if (player.storage.QQQ_meiying.includes(card) || card.storage?.QQQ_meiying) {
                                         return 'ying';
                                     }
                                 },
@@ -4978,14 +4963,15 @@ const precontent = async function () {
                         player.gain(cards0, 'gain2');
                     },
                     ai: {
-                        order: 1,
+                        order(name, player) {
+                            if (player.getCards('h').every((c) => c.storage?.QQQ_meiying)) return 1;
+                            return 20;
+                        },
                         result: {
                             player(player, target, card) {
-                                const num = target.countCards('h') - player.countCards('h') + player.countCards('h', (q) => q.name == 'ying' || (q.storage && q.storage.QQQ_meiying));
-                                return target.countCards('h') - player.countCards('h');
+                                return target.countCards('h') - player.countCards('h') + player.countCards('h', (q) => q.name == 'ying' || q.storage?.QQQ_meiying) + target.countCards('h', (q) => q.name == 'ying' || q.storage?.QQQ_meiying);
                             },
                             target(player, target, card) {
-                                const num = player.countCards('h') - target.countCards('h') + target.countCards('h', (q) => q.name == 'ying' || (q.storage && q.storage.QQQ_meiying));
                                 return player.countCards('h') - target.countCards('h');
                             },
                         },
@@ -4997,14 +4983,16 @@ const precontent = async function () {
                         global: ['loseEnd'],
                     },
                     forced: true,
-                    filter: (event, player) => _status.currentPhase == player && event.cards && event.cards.some((q) => q.name == 'ying' || (q.storage && q.storage.QQQ_meiying)),
+                    filter: (event, player) => _status.currentPhase == player && event.cards && event.cards.some((q) => q.name == 'ying' || q.storage?.QQQ_meiying),
                     async content(event, trigger, player) {
+                        const cards = trigger.cards.filter((q) => q.name == 'ying' || q.storage?.QQQ_meiying);
                         if (trigger.player == player) {
-                            var num = trigger.cards.filter((q) => q.name == 'ying' || (q.storage && q.storage.QQQ_meiying)).length;
-                            while (num-- > 0) {
+                            for (const i of cards) {
+                                game.log(`<span class=Qmenu>祸水:${get.translation(player)}失去${get.translation(i)}</span>`);
                                 await player.chooseUseTarget({ name: 'sha' }, false, false, 'nodistance');
                             }
                         } else {
+                            game.log(`<span class=Qmenu>祸水:${get.translation(trigger.player)}失去${get.translation(cards)}</span>`);
                             await trigger.player.chooseUseTarget({ name: 'sha' }, false, false, 'nodistance');
                         }
                     },
@@ -5316,7 +5304,9 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————董卓
-                //沉势:若弃牌堆里的基本牌数大于弃牌堆里的非基本牌数,你使用<杀>造成的伤害+1,受到<杀>造成的伤害-1
+                // 沉势
+                // 你销毁离开你区域的非基本牌
+                // 若弃牌堆里的基本牌数大于弃牌堆里的非基本牌数,你使用<杀>造成的伤害翻倍,受到<杀>造成的伤害减半
                 QQQ_chenshi: {
                     trigger: {
                         player: ['damageBegin4'],
@@ -5324,19 +5314,43 @@ const precontent = async function () {
                     },
                     forced: true,
                     filter(event, player) {
-                        const num1 = Array.from(ui.discardPile.childNodes).filter((q) => get.type(q) == 'basic').length;
-                        const num = Array.from(ui.discardPile.childNodes).length;
+                        const cards = Array.from(ui.discardPile.childNodes);
+                        const num1 = cards.filter((q) => get.type(q) == 'basic').length;
+                        const num = cards.length;
                         return num < 2 * num1 && event.card && event.card.name == 'sha';
                     },
                     async content(event, trigger, player) {
                         if (trigger.player == player) {
-                            trigger.num--;
+                            trigger.num = Math.floor(trigger.num / 2);
                         } else {
-                            trigger.num++;
+                            trigger.num *= 2;
                         }
                     },
+                    group: ['QQQ_chenshi_1'],
+                    subSkill: {
+                        1: {
+                            trigger: {
+                                player: ['loseEnd'],
+                            },
+                            forced: true,
+                            filter(event, player) {
+                                return event.cards?.length;
+                            },
+                            async content(event, trigger, player) {
+                                for (const i of trigger.cards) {
+                                    if (get.type(i) != 'basic') {
+                                        i.selfDestroy();
+                                    }
+                                }
+                            },
+                        }
+                    }
                 },
-                //贪暴:其他角色准备阶段,你可以弃置x%的牌堆(x为你体力值),并将其中的非基本牌移出游戏.若这些牌中<杀>的数量w大于本局游戏其他角色累计使用杀的次数y,则对其使用其中w-y张杀.否则其对你使用其中y-w张杀,且将y归零
+                // 贪暴
+                // 其他角色准备阶段,你可以获得牌堆顶5*当前体力值张牌
+                // 若这些牌中<杀>的数量w大于本局游戏其他角色累计使用<杀>的次数y,则对其使用其中w-y张<杀>
+                // 否则其对你使用其中y-w张<杀>,且将y归零
+                // 最后弃置剩余的牌
                 QQQ_tanbao: {
                     trigger: {
                         global: ['phaseZhunbeiBegin'],
@@ -5345,20 +5359,23 @@ const precontent = async function () {
                     intro: {
                         content: (storage, player) => `本局游戏其他角色累计使用${player.storage.QQQ_tanbao}次<杀>`,
                     },
-                    init: (player) => (player.storage.QQQ_tanbao = 0),
-                    check: (event, player) => event.player.isEnemiesOf(player),
-                    filter: (event, player) => event.player != player,
+                    init(player) {
+                        player.storage.QQQ_tanbao = 0;
+                    },
+                    check(event, player) {
+                        return event.player.isEnemiesOf(player);
+                    },
+                    filter(event, player) {
+                        return event.player != player;
+                    },
                     async content(event, trigger, player) {
-                        const pile = Array.from(ui.cardPile.childNodes);
-                        const num = Math.ceil((pile.length * player.hp) / 100);
-                        const cards = pile.randomGets(num);
+                        const num = player.hp * 5;
+                        const cards = get.cards(num);
+                        const tiaoguo = player.gain(cards);
+                        tiaoguo._triggered = null;
+                        await tiaoguo;
                         player.showCards(cards);
-                        game.cardsDiscard(cards);
-                        for (const i of cards) {
-                            if (get.type(i) != 'basic') {
-                                i.selfDestroy();
-                            }
-                        }
+                        await player.discard(cards);
                         const cards1 = cards.filter((q) => q.name == 'sha');
                         const w = cards1.length;
                         const y = player.storage.QQQ_tanbao;
@@ -5379,7 +5396,6 @@ const precontent = async function () {
                             }
                         } else {
                             if (y - w > w) {
-                                player.storage.QQQ_tanbao = 0;
                                 for (const i of cards1) {
                                     await trigger.player.useCard(i, player, false);
                                 }
@@ -5388,12 +5404,12 @@ const precontent = async function () {
                                     result: { links },
                                 } = await trigger.player.chooseButton([`使用其中${y - w}张杀`, cards1], y - w, true).set('ai', (button) => get.effect(player, button.link, trigger.player, trigger.player));
                                 if (links && links[0]) {
-                                    player.storage.QQQ_tanbao = 0;
                                     for (const i of links) {
                                         await trigger.player.useCard(i, player, false);
                                     }
                                 }
                             }
+                            player.storage.QQQ_tanbao = 0;
                         }
                     },
                     group: ['QQQ_tanbao_1'],
@@ -5410,7 +5426,9 @@ const precontent = async function () {
                         },
                     },
                 },
-                //骄横:回合限一次,你可以与一名其他角色各摸三张牌,与其连续进行三次拼点,每次拼点结束后,赢的角色视为对输家使用一张杀
+                // 骄横
+                // 回合限一次,你可以与一名其他角色各摸三张牌,与其连续进行三次拼点
+                // 每次拼点结束后,赢家视为对输家使用一张<杀>
                 QQQ_jiaoheng: {
                     enable: 'phaseUse',
                     usable: 1,
@@ -5439,8 +5457,8 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————幽影之火——梅瑟莫
-                //你受到大于x的伤害时,防止超过x的部分(x为你当前体力值的一半,不小于1)
-                //恶之蛇:当你受到伤害后,你获得一个觉醒技或限定技并隐匿(登场后,强制发动该技能)
+                // 恶之蛇
+                // 当你受到伤害后,你获得一个觉醒技或限定技并隐匿(登场后,强制发动该技能)
                 QQQ_ezhishe: {
                     trigger: {
                         player: ['damageEnd'],
@@ -5590,7 +5608,8 @@ const precontent = async function () {
                         }
                     },
                 },
-                //幽影流火:当全场失去♦️️牌后,你将此牌当作火杀对随机敌方角色使用
+                // 幽影流火
+                // 当全场失去♦️️牌后,你将此牌当作火杀对随机敌方角色使用
                 QQQ_liuhuo: {
                     trigger: {
                         global: ['loseEnd'],
@@ -5617,7 +5636,8 @@ const precontent = async function () {
                         }
                     },
                 },
-                //穿刺者之矛:其他角色出牌阶段开始时须将一张牌置于你的武将牌上,称为<刺>.若你的<刺>包含三种类型/四种花色/五种牌名,你获得所有<刺>,对其造成等量伤害
+                // 穿刺者之矛
+                // 其他角色出牌阶段开始时须将一张牌置于你的武将牌上,称为<刺>.若你的<刺>包含三种类型/四种花色/五种牌名,你获得所有<刺>,对其造成等量伤害
                 QQQ_chuanci: {
                     trigger: {
                         global: ['phaseUseBegin'],
@@ -5646,7 +5666,8 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————李靖
-                //托塔:你视为装备【宝塔】
+                // 托塔
+                // 你视为装备【宝塔】
                 QQQ_tuota: {
                     init(player) {
                         const card = game.createCard('QQQ_baota');
@@ -6196,16 +6217,7 @@ const precontent = async function () {
                 QQQ_ronglu: {
                     init(player) {
                         const div = document.createElement('div');
-                        div.style.top = '10%';
-                        div.style.left = '0%';
-                        div.style.width = '30%';
-                        div.style.height = '10%';
-                        div.style.backgroundImage = `url(extension/温柔一刀/image/beijing1.jpg)`;
-                        div.style.backgroundSize = 'cover';
-                        div.style.backgroundPosition = 'center';
-                        div.style.zIndex = 1;
-                        div.style.position = 'absolute';
-                        div.style.display = 'flex';
+                        div.style.cssText = 'top: 10%; left: 0%; width: 30%; height: 10%; background-image: url(extension/温柔一刀/image/beijing1.jpg); background-size: cover; background-position: center; z-index: 1; position: absolute; display: flex;';
                         document.body.appendChild(div);
                         _status.QQQ_ronglu = div;
                         _status.QQQ_ronglu.add = function (cards) {
@@ -6647,7 +6659,6 @@ const precontent = async function () {
                             name: player.name,
                             hp: player.hp,
                             maxHp: player.maxHp,
-                            //storage: player.storage,
                             card: {
                                 h: player.getCards('h').map((q) => q.name),
                                 e: player.getCards('e').map((q) => q.name),
@@ -6744,7 +6755,6 @@ const precontent = async function () {
                                             name: player.name,
                                             hp: player.hp,
                                             maxHp: player.maxHp,
-                                            //storage: player.storage,
                                             card: {
                                                 h: player.getCards('h').map((q) => q.name),
                                                 e: player.getCards('e').map((q) => q.name),
@@ -8374,9 +8384,9 @@ const precontent = async function () {
                 //————————————————————————————————————————————董卓
                 QQQ_dongzhuo: '✫董卓',
                 QQQ_chenshi: '沉势',
-                QQQ_chenshi_info: '若弃牌堆里的基本牌数大于弃牌堆里的非基本牌数,你使用<杀>造成的伤害+1,受到<杀>造成的伤害-1',
+                QQQ_chenshi_info: '你销毁离开你区域的非基本牌<br>若弃牌堆里的基本牌数大于弃牌堆里的非基本牌数,你使用<杀>造成的伤害翻倍,受到<杀>造成的伤害减半',
                 QQQ_tanbao: '贪暴',
-                QQQ_tanbao_info: '其他角色准备阶段,你可以弃置x%的牌堆(x为你体力值),并将其中的非基本牌移出游戏.若这些牌中<杀>的数量w大于本局游戏其他角色累计使用杀的次数y,则对其使用其中w-y张杀.否则其对你使用其中y-w张杀,且将y归零',
+                QQQ_tanbao_info: '其他角色准备阶段,你可以获得牌堆顶5*当前体力值张牌<br>若这些牌中<杀>的数量w大于本局游戏其他角色累计使用<杀>的次数y,则对其使用其中w-y张<杀><br>否则其对你使用其中y-w张<杀>,且将y归零<br>最后弃置剩余的牌',
                 QQQ_jiaoheng: '骄横',
                 QQQ_jiaoheng_info: '回合限一次,你可以与一名其他角色各摸三张牌,与其连续进行三次拼点,每次拼点结束后,赢的角色视为对输家使用一张杀',
                 //————————————————————————————————————————————蒋干

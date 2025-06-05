@@ -6730,16 +6730,7 @@ const content = async function () {
                     player.USE = numberq0(player.USE) + 1;
                     if (game.USE) game.USE.remove();
                     game.USE = window.document.createElement('div');
-                    game.USE.style.right = '60px';
-                    game.USE.style.top = '60px';
-                    game.USE.style.height = '50px';
-                    game.USE.style.width = '50px';
-                    game.USE.style.zIndex = 999;
-                    game.USE.style.backgroundColor = `${randomBorderColor}`;
-                    game.USE.style.borderRadius = '50%';
-                    game.USE.style.display = 'flex';
-                    game.USE.style.justifyContent = 'center';
-                    game.USE.style.alignItems = 'center';
+                    game.USE.style.cssText = `right: 60px; top: 60px; height: 50px; width: 50px; z-index: 999; background-color:${randomBorderColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center;`;
                     game.USE.innerHTML = `<font color='${randomColor}' style='font-size: 40px;'>${player.USE}</font>`;
                     document.body.appendChild(game.USE);
                 },
@@ -6758,16 +6749,7 @@ const content = async function () {
                     player.ROUND = numberq0(player.ROUND) + 1;
                     if (game.ROUND) game.ROUND.remove();
                     game.ROUND = window.document.createElement('div');
-                    game.ROUND.style.right = '120px';
-                    game.ROUND.style.top = '60px';
-                    game.ROUND.style.height = '60px';
-                    game.ROUND.style.width = '60px';
-                    game.ROUND.style.zIndex = 999;
-                    game.ROUND.style.backgroundColor = `${randomBorderColor}`;
-                    game.ROUND.style.borderRadius = '50%';
-                    game.ROUND.style.display = 'flex';
-                    game.ROUND.style.justifyContent = 'center';
-                    game.ROUND.style.alignItems = 'center';
+                    game.ROUND.style.cssText = `right: 120px; top: 60px; height: 60px; width: 60px; z-index: 999; background-color: ${randomBorderColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center;`;
                     game.ROUND.innerHTML = `<font color='${randomColor}' style='font-size: 40px;'>${player.ROUND}</font>`;
                     document.body.appendChild(game.ROUND);
                 },
