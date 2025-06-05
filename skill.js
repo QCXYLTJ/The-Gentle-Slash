@@ -2613,7 +2613,7 @@ const skill = {
         forced: true,
         filter(event, player, name) {
             if (name == 'loseBegin') {
-                return event.getParent(2).name != 'recast' && !['useCard', 'respond', 'equip'].includes(event.parent.name);
+                return !['recast', 'gift'].includes(event.getParent(2).name) && !['useCard', 'respond', 'equip'].includes(event.parent.name);
             }
             if (name == 'changeHpBegin') {
                 return event.num < 0;
