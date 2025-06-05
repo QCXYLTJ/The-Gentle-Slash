@@ -7703,10 +7703,15 @@ const precontent = async function () {
                             },
                             forced: true,
                             filter(event, player, name) {
-                                if (name == 'loseBefore') {
-                                    return !['useCard', 'respond', 'equip'].includes(event.parent.name);
+                                if (player.storage.QQQ_yishoudao.length) {
+                                    if (name == 'loseBefore') {
+                                        return !['useCard', 'respond', 'equip'].includes(event.parent.name);
+                                    }
+                                    if (name == 'changeHpBefore') {
+                                        return event.num < 0;
+                                    }
+                                    return true;
                                 }
-                                return player.storage.QQQ_yishoudao.length;
                             },
                             async content(event, trigger, player) {
                                 trigger.cancel();
