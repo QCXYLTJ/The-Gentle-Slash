@@ -7640,23 +7640,9 @@ const precontent = async function () {
                             player.dataset.position = num;
                             game.log(player, target, '交换位置');
                             game.sort();
-                            let left = [], right = [];
-                            let left2 = player.previous, right2 = player.next;
-                            while (left2 && ![target, player].includes(left2) && right2 && ![target, player].includes(right2)) {
-                                left.push(left2);
-                                right.push(right2);
-                                left2 = left2.previous;
-                                right2 = right2.next;
-                            }
-                            if (target == left2) {
-                                for (const i of left) {
-                                    await i.damage('ScarletRot');
-                                }
-                            }
-                            if (target == right2) {
-                                for (const i of right) {
-                                    await i.damage('ScarletRot');
-                                }
+                            const targets = player.zhongjian(target);
+                            for (const i of targets) {
+                                await i.damage('ScarletRot');
                             }
                             for (const i of _status.globalHistory) {
                                 for (const evt of i.everything) {

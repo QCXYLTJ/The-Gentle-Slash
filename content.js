@@ -1341,23 +1341,6 @@ const content = async function () {
         lib.element.card.HQ = function (tag) {
             return this.qtag && this.qtag.includes(tag);
         }; //检测卡牌标记
-        lib.element.player.D = function () {
-            _status.roundStart = game.me;
-            if (ui.land && ui.land.player == this) {
-                game.addVideo('destroyLand');
-                ui.land.destroy();
-            }
-            game.log(this, '阵亡');
-            this.classList.add('dead');
-            this.node.count.innerHTML = '0';
-            this.node.hp.hide();
-            this.node.equips.hide();
-            this.node.count.hide();
-            this.previous.next = this.next;
-            this.next.previous = this.previous;
-            game.players.remove(this);
-            game.dead.push(this);
-        }; //简化死亡函数
         lib.element.player.fanwei = function (num) {
             const players = [];
             let next = this.next,
@@ -1374,7 +1357,24 @@ const content = async function () {
             }
             return players;
         }; //获取相邻角色以便范围伤害
-        lib.element.content.QQQ = game.kongfunc; //空事件
+        lib.element.player.zhongjian = function (target) {
+            const player = this;
+            const left = [], right = [];
+            let left2 = player.previous, right2 = player.next;
+            while (left2 && ![target, player].includes(left2) && right2 && ![target, player].includes(right2)) {
+                left.push(left2);
+                right.push(right2);
+                left2 = left2.previous;
+                right2 = right2.next;
+            }
+            if (target == left2) {
+                return left;
+            }
+            if (target == right2) {
+                return right;
+            }
+            return [];
+        }; //获取两个角色之间所有角色
         lib.element.player.nengliangtiao = function () {
             const player = this;
             const nengliangtiao = ui.create.div('.nengliangtiao', player);
@@ -3850,6 +3850,20 @@ const content = async function () {
         zhijie();
         //————————————————————————————————————————————————————————————————————————————————————————————————————浅层检测
         const qianceng = function () {
+            if (lib.skill.qinglianxindeng) {
+                lib.skill.qinglianxindeng.filter = function (event, player) {
+                    if (
+                        event.source &&
+                        event.source.hasSkillTag("unequip", false, {
+                            name: event.card ? event.card.name : null,
+                            target: player,
+                            card: event.card,
+                        })
+                    )
+                        return false;
+                    return event.card && get.type(event.card, "trick") == "trick";
+                };
+            }
             if (lib.skill.decadepojun) {
                 lib.skill.decadepojun.ai = {
                     unequip: true,
