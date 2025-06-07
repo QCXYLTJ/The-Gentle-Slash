@@ -151,9 +151,22 @@ const yuanxing = function () {
             artifact();
         }).observe(parent, { childList: true });
     }; //DOM将子元素锁定于父元素上//this是父元素,son子元素
-    HTMLDivElement.prototype.BG = function (name) {
+    HTMLDivElement.prototype.setBackgroundImage = function (src) {
+        if (Array.isArray(src)) {
+            src = src[0];
+        }
+        if (src.includes('.mp4')) {
+            this.style.backgroundImage = 'none';
+            this.setBackgroundMp4(src);
+        }
+        else {
+            this.style.backgroundImage = `url(${src})`;
+        }
+        return this;
+    }; //引入mp4新逻辑
+    HTMLDivElement.prototype.setBackgroundMp4 = function (src) {
         const video = document.createElement('video');
-        video.src = `extension/温柔一刀/mp4/${name}.mp4`;
+        video.src = src;
         video.style.cssText = 'bottom: 0%; left: 0%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; position: absolute; z-index: -5;';
         video.autoplay = true;
         video.loop = true;
@@ -161,7 +174,13 @@ const yuanxing = function () {
         video.addEventListener('error', function () {
             video.remove();
         });
-    };//给父元素添加一个覆盖的背景mp4
+        return video;
+    }; //给父元素添加一个覆盖的背景mp4
+    HTMLDivElement.prototype.BG = function (name) {
+        const src = `extension/温柔一刀/mp4/${name}.mp4`;
+        const video = this.setBackgroundMp4(src);
+        return video;
+    }; //温柔一刀背景mp4
 }
 yuanxing();
 //—————————————————————————————————————————————————————————————————————————————boss模式相关函数,目前改用代理来排序
