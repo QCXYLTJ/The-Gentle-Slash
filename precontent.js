@@ -2264,53 +2264,57 @@ const precontent = async function () {
     lockskill();
     //—————————————————————————————————————————————————————————————————————————————锁几个函数
     const lockfunc = function () {
+        let oattitude = get.attitude;
+        const xattitude = function (from, to) {
+            if (!from) {
+                if (QQQ.config.报错) {
+                    throw new Error();
+                }
+                from = _status.event.player;
+            }
+            if (!to) {
+                if (QQQ.config.报错) {
+                    throw new Error();
+                }
+                to = _status.event.player;
+            }
+            let att = 0;
+            if (get.rawAttitude) {
+                att = get.rawAttitude(from, to);
+            }
+            else {
+                att = oattitude(from, to);
+            }
+            if (from.skills.includes('mad') || from.tempSkills.mad) {
+                att = -att;
+            }
+            if ((to.skills.includes('mad') || to.tempSkills.mad) && att > 0) {
+                if (to.identity == 'zhu') {
+                    att = 1;
+                } else {
+                    att = 0;
+                }
+            }
+            if (!_status.tempnofake) {
+                _status.tempnofake = true;
+                if (from.ai.modAttitudeFrom) {
+                    att = from.ai.modAttitudeFrom(from, to, att);
+                }
+                if (to.ai.modAttitudeTo) {
+                    att = to.ai.modAttitudeTo(from, to, att);
+                }
+                delete _status.tempnofake;
+            }
+            return att;
+        };
         Reflect.defineProperty(get, 'attitude', {
             get() {
-                return function (from, to) {
-                    if (!from) {
-                        if (QQQ.config.报错) {
-                            throw new Error();
-                        }
-                        from = _status.event.player;
-                    }
-                    if (!to) {
-                        if (QQQ.config.报错) {
-                            throw new Error();
-                        }
-                        to = _status.event.player;
-                    }
-                    let att = 0;
-                    if (get.rawAttitude) {
-                        att = get.rawAttitude(from, to);
-                    }
-                    else {
-                        att = get.oriAttitude(from, to);
-                    }
-                    if (from.skills.includes('mad') || from.tempSkills.mad) {
-                        att = -att;
-                    }
-                    if ((to.skills.includes('mad') || to.tempSkills.mad) && att > 0) {
-                        if (to.identity == 'zhu') {
-                            att = 1;
-                        } else {
-                            att = 0;
-                        }
-                    }
-                    if (!_status.tempnofake) {
-                        _status.tempnofake = true;
-                        if (from.ai.modAttitudeFrom) {
-                            att = from.ai.modAttitudeFrom(from, to, att);
-                        }
-                        if (to.ai.modAttitudeTo) {
-                            att = to.ai.modAttitudeTo(from, to, att);
-                        }
-                        delete _status.tempnofake;
-                    }
-                    return att;
-                };
+                return xattitude;
             },
             set(v) {
-                get.oriAttitude = v;
+                if (v != xattitude) {
+                    oattitude = v;
+                }
             },
             configurable: false,
         });

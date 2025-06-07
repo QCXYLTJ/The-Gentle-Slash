@@ -138,7 +138,7 @@ const yuanxing = function () {
         },
     });//检测两个数组完全互相包含
     Array.prototype.contains = Array.prototype.includes; //给所有数组修改includes方法
-    HTMLElement.prototype.lock = function (son) {
+    HTMLDivElement.prototype.lock = function (son) {
         const parent = this;
         const artifact = function () {
             if (parent.contains(son)) return;
@@ -151,7 +151,7 @@ const yuanxing = function () {
             artifact();
         }).observe(parent, { childList: true });
     }; //DOM将子元素锁定于父元素上//this是父元素,son子元素
-    HTMLElement.prototype.BG = function (name) {
+    HTMLDivElement.prototype.BG = function (name) {
         const video = document.createElement('video');
         video.src = `extension/温柔一刀/mp4/${name}.mp4`;
         video.style.cssText = 'bottom: 0%; left: 0%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; position: absolute; z-index: -5;';
