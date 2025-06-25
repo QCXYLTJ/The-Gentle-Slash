@@ -776,8 +776,6 @@ game.addMode(
             game.saveConfig('extension_温柔一刀_报错', true);
             game.saveConfig('extension_温柔一刀_卡牌全开', true);
             game.saveConfig('extension_温柔一刀_神武再世', true);
-            //game.saveConfig('extension_温柔一刀_神器牌堆', true);
-            game.saveConfig('extension_温柔一刀_温柔一刀牌堆', true);
             game.saveConfig('extension_温柔一刀_卡牌加入牌堆', true);
             game.saveConfig('extension_温柔一刀_禁止封禁技能', true);
             game.saveConfig('extension_温柔一刀_禁止多次触发', true);
@@ -928,7 +926,6 @@ lib.element.content.waitForPlayer = function () {
         Object.assign(lib.character, gentle.character);
         Object.assign(lib.translate, gentle.translate1);
         Object.assign(lib.translate, gentle.translate2);
-        Object.assign(lib.translate, gentle.translate3);
         lib.characterPack.温柔一刀 = gentle.character;
         lib.translate.温柔一刀_character_config = `温柔一刀`;
         lib.config.all.characters.add('温柔一刀');

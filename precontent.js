@@ -8281,15 +8281,6 @@ const precontent = async function () {
                 QQQ_shichui: '神之石槌',
                 QQQ_shichui_info: '根据你当前的形态,你始终装备对应的神器石槌',
                 QQQ_shichui_append: '被神持有而具备神性的石槌,玛莉卡用其击碎法环,拉达冈用其修复法环',
-                QQQ_Marikashichui: '玛莉卡石槌',
-                QQQ_Marikashichui_info: '当你使用实体伤害牌指定目标后,根据法环修复度视为敌方角色使用随机x张伤害牌(x为法环修复度除以10)',
-                QQQ_Marikashichui_append: '用来击碎世界秩序化身————法环的武器,全场造成伤害后与失去牌后会增加法环破碎度',
-                QQQ_Radagonshichui: '拉达冈石槌',
-                QQQ_Radagonshichui_info: '当你成为实体非伤害牌的目标后,根据法环破碎度令友方角色回复x点体力(已死亡的角色会因此复活,x为法环破碎度除以10)<br>当法环处于半损状态时,你拒绝死亡',
-                QQQ_Radagonshichui_append: '用来修复世界秩序化身————法环的武器,全场回复体力后与获得牌后会增加法环修复度',
-                QQQ_EldenRing: '艾尔登法环(半损)',
-                QQQ_EldenRing_info: '世界秩序化身,每一次破碎或修复都会带来秩序的剧变<br>当其完全破碎后,玛莉卡将完全取代拉达冈,并踏上登神之路开启破碎战争<br>当其完全修复后,拉达冈将完全取代玛莉卡,装备完整的法环统御天地众生',
-                QQQ_EldenRing_append: '完整的法环会制裁手牌与体力值最多的角色,补偿体力值与手牌最少的角色<br>破碎战争期间,每一个玛莉卡子嗣的死亡,都会推进玛莉卡登神的进度<br>玛莉卡子嗣存在时,玛莉卡拒绝死亡',
                 QQQ_posuizhanzheng: '破碎战争',
                 QQQ_posuizhanzheng_info: '破碎战争期间,每一个玛莉卡子嗣的死亡,都会推进玛莉卡登神的进度<br>玛莉卡子嗣存在时,玛莉卡拒绝死亡',
                 //————————————————————————————————————————————贾南风
@@ -8363,10 +8354,6 @@ const precontent = async function () {
                 QQQ_tuota: '托塔',
                 QQQ_tuota_info: '你视为装备【玲珑宝塔】',
                 QQQ_tuota_append: '玲珑宝塔:每轮游戏开始时,你可以选择一名角色(不能是上次选择的角色),其被镇压于塔内(镇压效果:造成或受到伤害-1,摸牌数-1,跳过回合你令其回复或失去一点体力)',
-                QQQ_baota: '玲珑宝塔',
-                QQQ_baota_info: '每轮游戏开始时,你可以选择一名角色(不能是上次选择的角色),其被镇压于塔内(镇压效果:造成或受到伤害-1,摸牌数-1,跳过回合你令其回复或失去一点体力)',
-                QQQ_baota_1: '宝塔镇压',
-                QQQ_baota_1_info: '造成或受到伤害-1,摸牌数-1,跳过回合宝塔持有者令你回复或失去一点体力',
                 //————————————————————————————————————————————梅瑟莫
                 QQQ_Messmer: '梅瑟莫',
                 QQQ_ezhishe: '恶之蛇',
@@ -8666,6 +8653,12 @@ info.json\license
                 const QQQ = {
                     name: 'QQQQQQ',
                     connect: true,
+                    card: {
+                        
+                    },
+                    translate: {
+                        
+                    },
                 };
                 for (const i in QQQ.card) {
                     const info = QQQ.card[i];
@@ -8686,6 +8679,11 @@ info.json\license
                 lib.translate.QQQQQQ_card_config = 'QQQQQQ';
                 return QQQ;
             });
+                for (const i in QQQ.card) {
+                    if (!QQQ.translate[i] || !QQQ.translate[`${i}_info`]) {
+                        console.warn(i, '没有翻译');
+                    }
+                }
             const card = {
             };
             if (!lib.number) {

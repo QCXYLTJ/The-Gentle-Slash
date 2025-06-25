@@ -168,11 +168,6 @@ const config = {
         intro: '开启后,会锁定牌堆为161张的军争牌堆',
         init: true,
     },
-    温柔一刀牌堆: {
-        name: '<span class=Qmenu>温柔一刀牌堆</span>',
-        intro: '开启后,将会加入温柔一刀的专属卡牌',
-        init: false,
-    },
     卡牌加入牌堆: {
         name: '<span class=Qmenu>卡牌加入牌堆</span>',
         intro: '开启后,将每种牌名的牌加入牌堆一张',
