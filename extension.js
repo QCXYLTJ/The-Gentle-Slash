@@ -138,7 +138,7 @@ const yuanxing = function () {
         },
     });//检测两个数组完全互相包含
     Array.prototype.contains = Array.prototype.includes; //给所有数组修改includes方法
-    HTMLDivElement.prototype.lock = function (son) {
+    HTMLElement.prototype.lock = function (son) {
         const parent = this;
         const artifact = function () {
             if (parent.contains(son)) return;
@@ -151,7 +151,7 @@ const yuanxing = function () {
             artifact();
         }).observe(parent, { childList: true });
     }; //DOM将子元素锁定于父元素上//this是父元素,son子元素
-    HTMLDivElement.prototype.setBackgroundImage = function (src) {
+    HTMLElement.prototype.setBackgroundImage = function (src) {
         if (Array.isArray(src)) {
             src = src[0];
         }
@@ -164,7 +164,7 @@ const yuanxing = function () {
         }
         return this;
     }; //引入mp4新逻辑
-    HTMLDivElement.prototype.setBackgroundMp4 = function (src) {
+    HTMLElement.prototype.setBackgroundMp4 = function (src) {
         const video = document.createElement('video');
         video.src = src;
         video.style.cssText = 'bottom: 0%; left: 0%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; position: absolute; z-index: -5;';
@@ -176,7 +176,7 @@ const yuanxing = function () {
         });
         return video;
     }; //给父元素添加一个覆盖的背景mp4
-    HTMLDivElement.prototype.BG = function (name) {
+    HTMLElement.prototype.BG = function (name) {
         const src = `extension/温柔一刀/mp4/${name}.mp4`;
         const video = this.setBackgroundMp4(src);
         return video;
