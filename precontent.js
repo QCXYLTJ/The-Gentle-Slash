@@ -8490,7 +8490,7 @@ const precontent = async function () {
             const info = yinu.skill[i];
             const trans = yinu.translate[`${i}_info`];
             info.nobracket = true;
-            if (info.forced) {
+            if (info.forced && trans) {
                 yinu.translate[`${i}_info`] = `<span class=Qmenu>锁定技,</span>${trans}`;
             }
             if (!info.audio) {

@@ -6936,7 +6936,7 @@ for (const i in skill) {
     const info = skill[i];
     info.nobracket = true;
     const trans = translate1[`${i}_info`];
-    if (info.forced) {
+    if (info.forced && trans) {
         translate1[`${i}_info`] = `<span class=Qmenu>锁定技,</span>${trans}`;
     }
     if (!info.audio) {
