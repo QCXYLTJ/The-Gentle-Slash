@@ -3864,6 +3864,12 @@ const precontent = async function () {
                     hp: 5,
                     maxHp: 5,
                 },
+                QQQ_HoarahLoux: {
+                    sex: 'male',
+                    skills: ['QQQ_manhuang'],
+                    hp: 5,
+                    maxHp: 5,
+                },
             },
             characterTitle: {
                 QQQ_jinshanshan: `<b style='color: rgb(231, 233, 203); font-size: 25px;'>金闪闪</b>`,
@@ -3877,6 +3883,7 @@ const precontent = async function () {
                 QQQ_Morgott: `<b style='color: rgb(226, 230, 39); font-size: 25px;'>赐福王</b>`,
                 QQQ_菈妮: `<b style='color: rgb(92, 153, 233); font-size: 25px;'>暗月公主</b>`,
                 QQQ_Mohg: `<b style='color: rgb(221, 22, 22); font-size: 25px;'>鲜血君王</b>`,
+                QQQ_HoarahLoux: `<b style='color: rgba(226, 205, 13, 1); font-size: 25px;'>初始艾尔登之王</b>`,
             },
             characterIntro: {
                 QQQ_jinshanshan: '最初古代诸神为了抑制人类过度繁衍之后力量的壮大,将人间王族与女神相结合,创造出众神制约人类的<楔子>——吉尔伽美什.是诞生于神与人之间的英雄,拥有<三分之二为神,三分之一为人>的极高神格(拥有神的智慧及力量,但没有神的寿命)以及神明与人类的双方视点.',
@@ -7720,7 +7727,7 @@ const precontent = async function () {
                     },
                 },
                 // 猩红腐败绽放
-                // 当你进入濒死时,视为对攻击范围内的全部其他角色使用一张猩红腐败杀;恢复此杀结算过程中,场上角色受到伤害值的体力
+                // 当你进入濒死时,视为对攻击范围内的全部其他角色使用一张猩红腐败杀;回复此杀结算过程中,场上角色受到伤害值的体力
                 QQQ_xinghongfubai: {
                     trigger: {
                         player: ['dying'],
@@ -7939,7 +7946,7 @@ const precontent = async function () {
                 // 大荒星陨
                 // 限定技,当你体力值首次降低至2以下时
                 // 若当前回合角色存在且其不是你,你暂时移出游戏.其下一个回合结束后或濒死时,你进入游戏,并对其造成x点伤害(x为全场本回合累计失去过牌的数量).若其因此进入濒死,此技能重置
-                // 否则你恢复体力至上限,且此技能重置
+                // 否则你回复体力至上限,且此技能重置
                 QQQ_dahuangxingyun: {
                     limited: true,
                     trigger: {
@@ -8167,22 +8174,71 @@ const precontent = async function () {
                         }
                     },
                 },
-                // 米凯拉、大蛇
-                //————————————————————————————————————————————葛弗雷 5/5
-                //————————————————————————————————————————————荷莱·露 1/1
+                //————————————————————————————————————————————荷莱·露
                 // 蛮荒
-                // 你造成的伤害进行x次方(底数为2),你的负向体力变化开x次方
-                // 浴血狂战
-                // 你的后x个技能失效,当你进入濒死时,将x永久加一,将体力上限翻倍并回满体力
-                // 什么花里胡哨的机制?都不需要,看俺的数值
-                // 撼地
-                // 你可以弃置任意张装备牌,令所有其他角色选择弃置与这些牌子类型均不同的装备牌或翻面
-                // 繁文缛节
-                // 每轮开始时,你随机使用两张装备牌
-                // 你每轮至多可使用9-X张牌(X为当前技能数)
-                // 摸牌阶段,你额外摸x张牌,手牌上限加x
-                // 王征
-                // 出牌阶段,你可以消耗所有本轮剩余可使用牌次数,视为使用等量次【南蛮入侵】
+                // 每名角色每个不同的体力值与手牌数组合限一次,当你使用牌指定其他角色后,你令其<回复/失去>一点体力并<获得其一张牌/令其摸两张牌>
+                QQQ_manhuang: {
+                    init(player) {
+                        player.storage.QQQ_manhuang = new Map();
+                    },
+                    trigger: {
+                        player: ['useCardToPlayer'],
+                    },
+                    filter(event, player) {
+                        const list = player.storage.QQQ_manhuang.get(event.target);
+                        if (!list) {
+                            return true;
+                        }
+                        if (list.some((arr) => arr[0] == event.target.hp && arr[1] == event.target.countCards('h'))) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    forced: true,
+                    async content(event, trigger, player) {
+                        if (!player.storage.QQQ_manhuang.get(trigger.target)) {
+                            player.storage.QQQ_manhuang.set(trigger.target, []);
+                        }
+                        const list = player.storage.QQQ_manhuang.get(trigger.target);
+                        list.push([trigger.target.hp, trigger.target.countCards('h')]);
+                        const list1 = ['回复一点体力', '失去一点体力'];
+                        const list2 = ['获得其一张牌', '令其摸两张牌'];
+                        const {
+                            result: { links },
+                        } = await player.chooseButton([`令${get.translation(trigger.target)}执行两项`, [list1, 'tdnodes'], [list2, 'tdnodes']], 2)
+                            .set('filterButton', (button) => {
+                                for (const i of [list1, list2]) {
+                                    if (ui.selected.buttons.some((q) => i.includes(q.link)) && i.includes(button.link)) {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            })
+                            .set('ai', (button) => {
+                                if (['回复一点体力', '令其摸两张牌'].includes(button.link)) {
+                                    return get.attitude(player, trigger.target);
+                                }
+                                return -get.attitude(player, trigger.target);
+                            });
+                        if (links && links[0]) {
+                            for (const i of links) {
+                                if (i == '回复一点体力') {
+                                    trigger.target.recover();
+                                }
+                                if (i == '失去一点体力') {
+                                    trigger.target.loseHp();
+                                }
+                                if (i == '获得其一张牌') {
+                                    player.gainPlayerCard(trigger.target, 'hej', true);
+                                }
+                                if (i == '令其摸两张牌') {
+                                    trigger.target.draw(2);
+                                }
+                            }
+                        }
+                    },
+                },
+                // 米凯拉、大蛇
                 //————————————————————————————————————————————安帕赫 3/3
                 // 王朝镰技
                 // 本局游戏限0次,你可以用【杀】抵消其他角色对你使用的牌,且结算后你可以再对使用者使用此【杀】,此【杀】无视防具.
@@ -8221,6 +8277,11 @@ const precontent = async function () {
                 */
             },
             translate: {
+                //————————————————————————————————————————————荷莱·露
+                QQQ_HoarahLoux: '荷莱·露',
+                QQQ_manhuang: '蛮荒',
+                QQQ_manhuang_info: '每名角色每个不同的体力值与手牌数组合限一次,当你使用牌指定其他角色后,你令其<回复/失去>一点体力并<获得其一张牌/令其摸两张牌>',
+                QQQ_manhuang_append: '什么花里胡哨的机制?都不需要,看俺的数值',
                 //————————————————————————————————————————————蒙格 5/5
                 QQQ_Mohg: '蒙格',
                 QQQ_xianxuejixian: '鲜血祭献',
@@ -8248,7 +8309,7 @@ const precontent = async function () {
                 QQQ_zhandoujidian: '战斗祭典',
                 QQQ_zhandoujidian_info: '其他角色回合开始时须选择一项:重铸两张非伤害牌并令你摸一张牌;展示两张伤害牌并摸一张牌;受到1点伤害',
                 QQQ_dahuangxingyun: '大荒星陨',
-                QQQ_dahuangxingyun_info: '限定技,当你体力值首次降低至2以下时<br>若当前回合角色存在且其不是你,你暂时移出游戏.其下一个回合结束后或濒死时,你进入游戏,并对其造成x点伤害(x为全场本回合累计失去过牌的数量).若其因此进入濒死,此技能重置<br>否则你恢复体力至上限,且此技能重置',
+                QQQ_dahuangxingyun_info: '限定技,当你体力值首次降低至2以下时<br>若当前回合角色存在且其不是你,你暂时移出游戏.其下一个回合结束后或濒死时,你进入游戏,并对其造成x点伤害(x为全场本回合累计失去过牌的数量).若其因此进入濒死,此技能重置<br>否则你回复体力至上限,且此技能重置',
                 //————————————————————————————————————————————玛莲妮娅/Malenia
                 QQQ_Malenia: '玛莲妮娅',
                 QQQ_shuiniao: '水鸟乱舞',
@@ -8256,7 +8317,7 @@ const precontent = async function () {
                 QQQ_yishoudao: '女武神的义手刀',
                 QQQ_yishoudao_info: '在你使用牌的结算过程中,你处于无敌状态(免疫体力值扣减/死亡/不因使用而失去牌)',
                 QQQ_xinghongfubai: '猩红腐败绽放',
-                QQQ_xinghongfubai_info: '当你进入濒死时,视为对攻击范围内的全部其他角色使用一张猩红腐败杀;恢复此杀结算过程中,场上角色受到伤害值的体力',
+                QQQ_xinghongfubai_info: '当你进入濒死时,视为对攻击范围内的全部其他角色使用一张猩红腐败杀;回复此杀结算过程中,场上角色受到伤害值的体力',
                 _ScarletRot: '猩红腐败',
                 _ScarletRot_info: '任意回合结束后,流失1点体力并减少一层状态',
                 //————————————————————————————————————————————张郃
