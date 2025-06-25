@@ -151,7 +151,7 @@ const yuanxing = function () {
             artifact();
         }).observe(parent, { childList: true });
     }; //DOM将子元素锁定于父元素上//this是父元素,son子元素
-    HTMLElement.prototype.setBackgroundImage = function (src) {
+    HTMLDivElement.prototype.setBackgroundImage = function (src) {
         if (Array.isArray(src)) {
             src = src[0];
         }
