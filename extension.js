@@ -213,8 +213,8 @@ const boss = function () {
     game.sort = function () {
         const players = game.players.filter(Boolean);
         const deads = game.dead.filter(Boolean);
-        const allPlayers = players.concat(deads);
-        const bool = lib.config.extension_火灵月影_死亡移除;
+        const allPlayers = deads.concat(players);//先移除players后面玩家会前移,再添加入dead需要同排序取前
+        const bool = lib.config.dieremove;
         const playerx = bool ? players : allPlayers;
         ui.arena.setNumber(playerx.length);
         if (bool) {

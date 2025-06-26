@@ -34,6 +34,9 @@ const config = {
         name: '<span class=Qmenu>死亡移除</span>',
         intro: '死亡后移出游戏',
         init: true,
+        onclick(result) {
+            game.saveConfig('dieremove', result);
+        },
     },
     动态背景: {
         name: '<span class=Qmenu>动态背景</span>',
