@@ -1363,8 +1363,10 @@ const content = async function () {
         }; //获取相邻角色以便范围伤害
         lib.element.player.zhongjian = function (target) {
             const player = this;
-            const left = [], right = [];
-            let left2 = player.previous, right2 = player.next;
+            const left = [],
+                right = [];
+            let left2 = player.previous,
+                right2 = player.next;
             while (left2 && ![target, player].includes(left2) && right2 && ![target, player].includes(right2)) {
                 left.push(left2);
                 right.push(right2);
@@ -3858,14 +3860,14 @@ const content = async function () {
                 lib.skill.qinglianxindeng.filter = function (event, player) {
                     if (
                         event.source &&
-                        event.source.hasSkillTag("unequip", false, {
+                        event.source.hasSkillTag('unequip', false, {
                             name: event.card ? event.card.name : null,
                             target: player,
                             card: event.card,
                         })
                     )
                         return false;
-                    return event.card && get.type(event.card, "trick") == "trick";
+                    return event.card && get.type(event.card, 'trick') == 'trick';
                 };
             }
             if (lib.skill.decadepojun) {
@@ -5404,87 +5406,43 @@ const content = async function () {
                 lib.skill.hiroto_huyu_gain.content = game.kongfunc;
             }
             if (lib.skill.spxizhan) {
-                lib.skill.spxizhan.content = async function (event, trigger, player) {
-                    const { result } = await player.chooseToDiscard('he', '嬉战:弃置一张牌或失去1点体力', `根据弃置的牌对${get.translation(trigger.player)}视为使用如下牌:<br>♠️️,其使用【酒】;♥️️,你使用【无中生有】<br>♣️️,对其使用【铁索连环】;♦️️:对其使用火【杀】`).set('ai', function (card) {
-                        var player = _status.event.player,
-                            target = _status.event.getTrigger().player;
-                        var suit = card.suit,
-                            list;
-                        switch (suit) {
-                            case 'spade':
-                                list = [{ name: 'jiu' }, target, target];
-                                break;
-                            case 'heart':
-                                list = [{ name: 'wuzhong' }, player, player];
-                                break;
-                            case 'club':
-                                list = [{ name: 'tiesuo' }, player, target];
-                                break;
-                            case 'diamond':
-                                list = [{ name: 'sha', nature: 'fire' }, player, target];
-                                break;
-                            default:
-                                return 0;
-                        } //QQQ
-                        list[0].isCard = true;
-                        var eff = 0;
-                        if (list[1].canUse(list[0], list[2], false)) eff = get.effect(list[2], list[0], list[1], player);
-                        if (eff >= 0 || suit == 'club') eff = Math.max(eff, 5);
-                        return eff * 1.5 - get.value(card);
-                    });
-                    if (result.cards && result.cards[0]) {
-                        //QQQ
-                        player.addTempSkill('spxizhan_spfangzong');
-                        var target = trigger.player,
-                            card = result.cards[0],
-                            suit = card.suit;
-                        if (!lib.suit.includes(suit) || ((!target || !target.isIn()) && suit != 'heart')) return;
-                        game.broadcastAll(function (suit) {
-                            if (lib.config.background_speak) game.playAudio('skill', 'spxizhan' + [null, 'spade', null, 'heart', 'club', 'diamond'].indexOf(suit));
-                        }, suit);
-                        switch (suit) {
-                            case 'spade':
-                                target.chooseUseTarget('jiu', true);
-                                break;
-                            case 'heart':
-                                player.chooseUseTarget('wuzhong', true);
-                                break;
-                            case 'club':
-                                if (player.canUse('tiesuo', target))
-                                    player.useCard(
-                                        {
-                                            name: 'tiesuo',
-                                        },
-                                        target
-                                    );
-                                break;
-                            case 'diamond':
-                                if (
-                                    player.canUse(
-                                        {
-                                            name: 'sha',
-                                            nature: 'fire',
-                                        },
-                                        target,
-                                        false
-                                    )
-                                )
-                                    player.useCard(
-                                        {
-                                            name: 'sha',
-                                            nature: 'fire',
-                                        },
-                                        target,
-                                        false
-                                    );
-                                break;
-                        }
-                    } else {
-                        game.broadcastAll(function () {
-                            if (lib.config.background_speak) game.playAudio('skill', 'spxizhan2');
-                        });
-                        player.loseHp();
-                    }
+                lib.skill.spxizhan.cost = async function (event, trigger, player) {
+                    const result = await player
+                        .chooseToDiscard('he', '嬉战：弃置一张牌或失去1点体力', '根据弃置的牌对' + get.translation(trigger.player) + '视为使用如下牌：<br>♠，其使用【酒】；♥，你使用【无中生有】<br>♣，对其使用【铁索连环】；♦：对其使用火【杀】')
+                        .set('ai', function (card) {
+                            var player = _status.event.player,
+                                target = _status.event.getTrigger().player;
+                            var suit = get.suit(card, player),
+                                list;
+                            switch (suit) {
+                                case 'spade':
+                                    list = [{ name: 'jiu' }, target, target];
+                                    break;
+                                case 'heart':
+                                    list = [{ name: 'wuzhong' }, player, player];
+                                    break;
+                                case 'club':
+                                    list = [{ name: 'tiesuo' }, player, target];
+                                    break;
+                                case 'diamond':
+                                    list = [{ name: 'sha', nature: 'fire' }, player, target];
+                                    break;
+                                default:
+                                    return 0; //QQQ
+                            }
+                            list[0].isCard = true;
+                            var eff = 0;
+                            if (list[1].canUse(list[0], list[2], false)) eff = get.effect(list[2], list[0], list[1], player);
+                            if (eff >= 0 || suit == 'club') eff = Math.max(eff, 5);
+                            return eff * 1.5 - get.value(card);
+                        })
+                        .set('chooseonly', true)
+                        .forResult();
+                    event.result = {
+                        bool: true,
+                        cards: result.cards || [],
+                        targets: [trigger.player],
+                    };
                 };
             }
             if (lib.skill.clanshengmo) {
