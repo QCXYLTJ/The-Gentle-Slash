@@ -6537,9 +6537,11 @@ const precontent = async function () {
                             skillBlocker(skill) {
                                 const boss = game.players.find((q) => q.skills.includes('QQQ_baixiangl'));
                                 if (boss) {
-                                    return boss == _status.currentPhase && skill != 'QQQ_baixiangl_1';
+                                    const info = lib.skill[skill];
+                                    return boss == _status.currentPhase && info && !info.kangxing;
                                 }
                             },
+                            kangxing: true,
                             mark: true,
                             intro: {
                                 content(storage, player) {
@@ -6785,12 +6787,17 @@ const precontent = async function () {
                 //大同风幕
                 //限定技,出牌阶段你可以失去全部体力值并将失去体力值数十倍的杀加入牌堆,与全部其他角色进入大同风中,直到牌堆洗牌.在此期间:①你每次死亡前, 以移除剩余十分之一牌堆为代价豁免.②全场角色每累计失去三张牌时, 随机一名角色受到一点无来源伤害.③每死亡一名角色, 将五分之一的弃牌堆加入牌堆.④所有锦囊牌均失效
                 QQQ_datongfeng: {
+                    limited: true,
                     enable: 'phaseUse',
+                    usable: 1,
                     limited: true,
                     async content(event, trigger, player) {
                         game.yinshi('历经五十四次劫,劫云依旧漫遮天.胸中魂光压众生,拳里剑气纵北原.时来时去四百载,无死何能生新颜.弃此残躯换清风,卷席苍穹复光年!');
                         player.awakenSkill('QQQ_datongfeng');
-                        _status.datongfeng = player;
+                        if (!_status.datongfeng) {
+                            _status.datongfeng = [];
+                        }
+                        _status.datongfeng.add(player);
                         game.addGlobalSkill('QQQ_datongfeng_1');
                         game.addGlobalSkill('QQQ_datongfeng_2');
                         game.addGlobalSkill('QQQ_datongfeng_3');
@@ -6814,7 +6821,7 @@ const precontent = async function () {
                             },
                             forced: true,
                             async content(event, trigger, player) {
-                                if (_status.datongfeng == player) {
+                                if (_status.datongfeng.includes(player)) {
                                     trigger.cancel();
                                     const pile = Array.from(ui.cardPile.childNodes);
                                     const cards = pile.randomGets(Math.floor(pile.length / 10));
@@ -6900,7 +6907,6 @@ const precontent = async function () {
                         }
                     },
                     ai: {
-                        nohujia: true,
                         unequip: true,
                         effect: {
                             player(card) {

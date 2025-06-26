@@ -1321,7 +1321,10 @@ const content = async function () {
             hookTrigger: {
                 block: (event, player, triggername, skill) => true,
             },
-            skillBlocker: (skill, player) => true,
+            skillBlocker(skill, player) {
+                const info = lib.skill[skill];
+                return info && !info.kangxing;
+            },
         };
     }; //技能相关自创函数
     jineng();
