@@ -337,7 +337,7 @@ const precontent = async function () {
                 }
                 */
                 /*
-                game.me.gain(game.createCard('wuxie'), 'gain2');
+                game.me.gain(game.createCard('sha'), 'gain2');
                 var num = 20;
                 var evt = _status.event;
                 while (num-- > 0) {
