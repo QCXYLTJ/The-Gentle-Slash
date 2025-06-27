@@ -3859,6 +3859,51 @@ const content = async function () {
         zhijie();
         //————————————————————————————————————————————————————————————————————————————————————————————————————浅层检测
         const qianceng = function () {
+            if (lib.skill.dcxiaowu) {
+                lib.skill.dcxiaowu.ai = {
+                    order: 99,//QQQ
+                    result: {
+                        player: 1,
+                    },
+                };
+                lib.skill.dcxiaowu.check = function (card) {
+                    const player = get.player();
+                    if (!player.hasValueTarget(card, null, true)) return 10;
+                    return 6 - get.value(card);
+                };
+            }
+            if (lib.skill.dcbaguan) {
+                lib.skill.dcbaguan.subSkill = {
+                    mark: {
+                        charlotte: true,
+                        trigger: { player: 'useCard' },
+                        forced: true,
+                        popup: false,
+                        firstDo: true,
+                        async content(event, trigger, player) {
+                            if (lib.skill.dcbaguan.getUsed(player, true) && !trigger.dcbaguan) {
+                                player.addTip('dcbaguan', '霸关 可连击');
+                            } else player.removeTip('dcbaguan');
+                        },
+                    },
+                    backup: {
+                        filterCard(card, player) {
+                            return get.itemtype(card) === 'card';
+                        },
+                        filterTarget: lib.filter.filterTarget,
+                        viewAs: {
+                            name: 'sha',
+                            storage: { dcbaguan: true },
+                        },
+                        position: 'hs',
+                        ai1(card) {
+                            if (ui.selected.cards.length) return 0;//QQQ
+                            return 8 - get.value(card);
+                        },
+                        log: false,
+                    },
+                };
+            }
             if (lib.skill.qinglianxindeng) {
                 lib.skill.qinglianxindeng.filter = function (event, player) {
                     if (
@@ -8329,41 +8374,55 @@ const content = async function () {
         if (QQQ.config.收藏武将修改) {
             lib.config.favouriteCharacter = [
                 'wu_zhugeliang',
+                'shen_pangtong',
                 'shen_huangzhong',
                 'dc_zhouxuān',
-                'yue_caiwenji',
-                'shen_zhangfei', //5
+                'yue_caiwenji', //5
                 'wu_luxun',
                 'star_caoren',
+                'shen_zhangfei',
                 'dc_zhangmancheng',
-                'yue_xiaoqiao',
-                'ol_feiyi', //10
+                'yue_xiaoqiao', //10
+                'lvju',
                 'dc_liuye',
+                'ol_feiyi',
                 'caoxian',
-                'dc_zhaoyǎn',
-                'tenggongzhu',
-                'zhoubuyi', //15
-                'chenshi',
+                'dc_zhaoyǎn', //15
+                'zhoubuyi',
                 'dc_huangwudie',
-                'wu_guanyu',
+                'chenshi',
+                'tenggongzhu',
+                'wu_guanyu', //20
+                'zhugejing',
                 'dc_wangjun',
-                'zhugejing', //20
+                'yue_diaochan',
+                'panghong',
+                'clan_zhongyan', //25
                 'dc_sunchen',
                 're_sunyi',
-                'clan_zhongyan',
+                'dc_lingcao',
+                'v_lvbu',
+                'xuelingyun', //30
+                'dc_tengfanglan',
                 're_liuzan',
-                'dc_tengfanglan', //25
                 'wupu',
-                'xuelingyun',
                 'dc_simashi',
+                'niufu', //35
                 'yj_sb_guojia',
-                'mengyou', //30
-                'niufu',
                 'zerong',
+                'mengyou',
+                'yue_miheng',
+                'yue_daqiao', //40
                 'shen_guojia',
-                'yue_daqiao',
-                'yue_miheng', //35
                 'dc_sb_jushou',
+                'lukai',
+                'ruanyu',
+                'v_sunquan', //45
+                'dc_duyu',
+                'qinlang',
+                'zhenghun',
+                'yj_majun',
+                'pot_taishici', //50
                 'QQQ_哦哦',
                 'QQQ_测试',
             ]; //收藏武将修改
