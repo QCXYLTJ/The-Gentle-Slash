@@ -60,7 +60,7 @@ if (QQQ.config.扩展修改) {
 // );
 //—————————————————————————————————————————————————————————————————————————————镇压清瑶
 const sha = function () {
-    if (lib.version.includes('β') || lib.assetURL.includes('qingyao') || lib.assetURL.includes('online.nonamekill.android')) {
+    if (lib.version.includes('β')) {
         alert('朋友,你好');
         alert('我不知道你是怎么拿到这个扩展的……');
         alert('如果你是萌新的话,我想请你知道……');

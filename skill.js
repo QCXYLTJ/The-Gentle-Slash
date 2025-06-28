@@ -2144,17 +2144,6 @@ const skill = {
             },
         },
     },
-    伏诛: {
-        trigger: {
-            global: 'roundStart',
-        },
-        forced: true,
-        async content(event, trigger, player) {
-            while (player.next.isIn()) {
-                await player.next.damage();
-            }
-        },
-    },
     QQQ_摸牌: {
         init(player) {
             if (player.isUnderControl(true)) {
@@ -6819,8 +6808,6 @@ const translate1 = {
     杀杀杀_info: '你用杀造成伤害时,防止此伤害,让目标减少此伤害数值的体力上限',
     五行鹤翎扇: '五行鹤翎扇',
     五行鹤翎扇_info: '你使用杀时,将此杀转为任意属性(冰、火、雷、雪、毒、金、神、血)',
-    伏诛: '伏诛',
-    伏诛_info: '任意角色回合结束时,你可以对其使用牌堆里面所有的杀',
     QQQ_摸牌: '摸牌',
     QQQ_摸牌_info: '你可以在任何时候摸一张牌',
     QQQ_出牌: '出牌',

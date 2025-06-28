@@ -291,10 +291,6 @@ const character = {
         sex: 'male',
         skills: ['乾坤大挪移', '漫卷'],
     },
-    QQQ_伏诛: {
-        sex: 'male',
-        skills: ['伏诛'],
-    },
     QQQ_许贡: {
         sex: 'male',
         skills: ['门客', '博弈'],
@@ -475,7 +471,6 @@ const translate2 = {
     QQQ_关羽管宁: '关羽管宁',
     QQQ_沮授陈宫: '沮授陈宫',
     QQQ_伤害: '伤害',
-    QQQ_伏诛: '伏诛',
     QQQ_食尸鬼: '食尸鬼',
     QQQ_装备: '装备',
     QQQ_拼点: '拼点',

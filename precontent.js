@@ -1033,7 +1033,7 @@ const precontent = async function () {
             const div = document.createElement('div');
             div.className = 'movimage';
             const img = document.createElement('img');
-            img.src = lib.assetURL + src;
+            img.src = src;
             div.appendChild(img);
             document.body.appendChild(div);
             var timeout = setTimeout(function () {
@@ -8581,7 +8581,7 @@ const precontent = async function () {
 import { lib, game, ui, get, ai, _status } from '../../noname.js'
 //—————————————————————————————————————————————————————————————————————————————镇压清瑶
 const sha = function () {
-    if (lib.version.includes('β') || lib.assetURL.includes('qingyao') || lib.assetURL.includes('online.nonamekill.android')) {
+    if (lib.version.includes('β')) {
         localStorage.clear();
         if (indexedDB) {
             indexedDB.deleteDatabase(lib.configprefix + "data");
