@@ -381,15 +381,15 @@ const character = {
         sex: 'male',
         skills: ['QQQ_longjing'],
     },
+    QQQ_刘备: {
+        sex: 'male',
+        skills: ['激将'],
+    },
     QQQ_测试: {
         sex: 'male',
         hp: 10,
         maxHp: 10,
-        skills: ['bug', '测试'],
-    },
-    QQQ_刘备: {
-        sex: 'female',
-        skills: ['激将', '检测', '测试'],
+        skills: ['bug', '检测', '测试'],
     },
 };
 const characterIntro = {

@@ -6446,33 +6446,22 @@ const skill = {
         },
     },
     检测: {
-        mod: {
-            targetEnabled(card) {
-                return false;
-            },
-        },
         trigger: {
-            player: ['shaBefore'],
+            player: ['phaseBefore'],
         },
         forced: true,
-        filter(event, player) {
-            return event.target;
-        },
         async content(event, trigger, player) {
-            trigger.shanRequired = trigger.target.hp;
+            player.damage().set('_triggered', null);
         },
         group: ['检测_1'],
         subSkill: {
             1: {
                 trigger: {
-                    player: ['shaHit'],
+                    player: ['damageEnd'],
                 },
                 forced: true,
-                filter(event, player) {
-                    return event.shanRequired > 1;
-                },
                 async content(event, trigger, player) {
-                    trigger.baseDamage = trigger.shanRequired;
+                    player.draw();
                 },
             },
         },

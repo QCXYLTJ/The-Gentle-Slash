@@ -3347,9 +3347,7 @@ const content = async function () {
                             )
                             .set('prompt', `移动${get.translation(target)}的一张【乐不思蜀】`);
                     } else {
-                        const next = player.useCard({ name: 'lebu' }, target, event.cards);
-                        next.audio = false;
-                        await next;
+                        await player.useCard({ name: 'lebu' }, target, event.cards);
                     }
                 },
             };
