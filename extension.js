@@ -6,6 +6,9 @@ import { config } from './config.js';
 import('./character.js');
 import('./card.js');
 import('./skill.js');
+if (lib.config.connect_nickname == 'QQQ') {
+    QQQ.作者模式 = true;
+}
 if (QQQ.config.扩展导入) {
     game.getFileList('extension', function (fold, file) {
         for (const i of Array.from(fold)) {
@@ -29,7 +32,7 @@ if (QQQ.config.扩展全关) {
         } //扩展全部关闭
     }
 } //扩展全部关闭
-if (QQQ.config.扩展修改) {
+if (QQQ.作者模式) {
     var Q = [
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM',
         '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
@@ -402,7 +405,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
             for (const i in lib.card) {
                 const info = lib.card[i];
                 if (typeof info != 'object') {
-                    if (QQQ.config.报错) {
+                    if (QQQ.作者模式) {
                         alert(i + '没有对应lib.card1');
                     }
                     continue;
@@ -414,7 +417,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     delete info.destroy;
                 } //禁止销毁
                 if (!info.content) continue;
-                if (QQQ.config.报错) {
+                if (QQQ.作者模式) {
                     if (info.enable == 'phaseUse') {
                         alert(i + 'enable有问题');
                     }
@@ -453,7 +456,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
             for (const i in lib.character) {
                 const info = lib.character[i];
                 if (typeof info != 'object') {
-                    if (QQQ.config.报错) {
+                    if (QQQ.作者模式) {
                         alert(i + '没有对应lib.character1');
                     }
                     continue;
@@ -462,7 +465,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     info.isAiForbidden = false; //AI禁用
                     info.isUnseen = false; //隐藏
                 }
-                if (QQQ.config.报错) {
+                if (QQQ.作者模式) {
                     for (const j of info[4]) {
                         if (!j) {
                             alert(i + 'lib.character[4]有问题');
@@ -484,7 +487,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 const name = i[2];
                 const info = lib.card[name];
                 if (!name || !info) {
-                    if (QQQ.config.报错) {
+                    if (QQQ.作者模式) {
                         alert(i + '没有对应lib.card2');
                     }
                     return false;
@@ -776,7 +779,7 @@ game.addMode(
     'QQQ',
     {
         start: async function (event) {
-            game.saveConfig('extension_温柔一刀_报错', true);
+            QQQ.作者模式 = true;
             game.saveConfig('extension_温柔一刀_卡牌全开', true);
             game.saveConfig('extension_温柔一刀_神武再世', true);
             game.saveConfig('extension_温柔一刀_卡牌加入牌堆', true);

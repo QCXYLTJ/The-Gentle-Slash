@@ -5,16 +5,6 @@ const config = {
         name: '<a href="https://qm.qq.com/q/SsTlU9gc24"><span class=Qmenu>【温柔一刀】群聊: 771901025</span></a>',
         clear: true,
     },
-    报错: {
-        name: '<span class=Qmenu>报错</span>',
-        intro: '开启后,会报出很多存在的bug(测试用,勿开)',
-        init: false,
-    },
-    扩展修改: {
-        name: '<span class=Qmenu>扩展修改</span>',
-        intro: '开启后,直接修改游戏存储的扩展(测试用,勿开)',
-        init: false,
-    },
     属性杀: {
         name: '<span class=Qmenu>属性杀</span>',
         intro: '开启后,会启用本扩展火/雷/神/冰/血/金/毒/雪属性,并对这些属性进行加强',
@@ -42,11 +32,6 @@ const config = {
         name: '<span class=Qmenu>动态背景</span>',
         intro: '开启后,会启用温柔一刀专属动态背景',
         init: true,
-    },
-    界面修改: {
-        name: '<span class=Qmenu>界面修改</span>',
-        intro: '开启后,拉长角色立绘以及右置手牌上限标志防止被挡住',
-        init: false,
     },
     文字闪烁: {
         name: '<span class=Qmenu>文字闪烁</span>',
@@ -174,11 +159,6 @@ const config = {
     卡牌加入牌堆: {
         name: '<span class=Qmenu>卡牌加入牌堆</span>',
         intro: '开启后,将每种牌名的牌加入牌堆一张',
-        init: false,
-    },
-    收藏武将修改: {
-        name: '<span class=Qmenu>收藏武将修改</span>',
-        intro: '开启后,修改收藏武将为三服单挑榜前二十五',
         init: false,
     },
     武将全部可选: {

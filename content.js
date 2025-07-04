@@ -267,7 +267,7 @@ const content = async function () {
                 _status.event.clearStepCache();
                 var info = lib.skill[skill];
                 if (!info) {
-                    if (QQQ.config.报错 && get.mode() != 'boss') {
+                    if (QQQ.作者模式 && get.mode() != 'boss') {
                         if (skill) {
                             console.log(skill, '是一个不存在的技能名addskill');
                             alert(skill + '没有对应lib.skill1');
@@ -1034,7 +1034,7 @@ const content = async function () {
                 // @ts-ignore
                 if (item && item[0] && item[0].length) {
                     this.buttons = this.buttons.concat(ui.create.buttons(item[0], item[1], buttons, noclick)); //QQQ
-                } else if (QQQ.config.报错) {
+                } else if (QQQ.作者模式) {
                     console.log(this, item);
                     alert(item + item[0] + '不是合法dialog');
                     throw new Error();
@@ -6740,46 +6740,6 @@ const content = async function () {
             });
             game.saveConfig('game_speed', 'vvfast');
         } //禁止延迟
-        if (QQQ.config.报错) {
-            lib.skill._出牌计数 = {
-                trigger: {
-                    player: 'phaseUseBegin',
-                },
-                silent: true,
-                lastDo: true,
-                filter: (e, p) => p == game.me,
-                async content(event, trigger, player) {
-                    const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
-                    const randomBorderColor = '#' + Math.floor(Math.random() * 16777215).toString(16); // 随机边框颜色
-                    player.USE = numberq0(player.USE) + 1;
-                    if (game.USE) game.USE.remove();
-                    game.USE = document.createElement('div');
-                    game.USE.style.cssText = `right: 60px; top: 60px; height: 50px; width: 50px; z-index: 999; background-color:${randomBorderColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center;`;
-                    game.USE.innerHTML = `<font color='${randomColor}' style='font-size: 40px;'>${player.USE}</font>`;
-                    document.body.appendChild(game.USE);
-                },
-                _priority: -999,
-            }; //出牌计数
-            lib.skill._轮次计数 = {
-                trigger: {
-                    global: 'roundStart',
-                },
-                silent: true,
-                lastDo: true,
-                filter: (e, p) => p == game.me,
-                async content(event, trigger, player) {
-                    const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
-                    const randomBorderColor = '#' + Math.floor(Math.random() * 16777215).toString(16); // 随机边框颜色
-                    player.ROUND = numberq0(player.ROUND) + 1;
-                    if (game.ROUND) game.ROUND.remove();
-                    game.ROUND = document.createElement('div');
-                    game.ROUND.style.cssText = `right: 120px; top: 60px; height: 60px; width: 60px; z-index: 999; background-color: ${randomBorderColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center;`;
-                    game.ROUND.innerHTML = `<font color='${randomColor}' style='font-size: 40px;'>${player.ROUND}</font>`;
-                    document.body.appendChild(game.ROUND);
-                },
-                _priority: -999,
-            }; //轮次计数
-        } //出牌轮次计数
         if (QQQ.config.取消小游戏) {
             lib.skill.chongxu = {
                 enable: 'phaseUse',
@@ -8371,7 +8331,45 @@ const content = async function () {
                 },
             }; //--------神杀/造成伤害前
         } //属性杀全局技能
-        if (QQQ.config.收藏武将修改) {
+        if (QQQ.作者模式) {
+            lib.skill._出牌计数 = {
+                trigger: {
+                    player: 'phaseUseBegin',
+                },
+                silent: true,
+                lastDo: true,
+                filter: (e, p) => p == game.me,
+                async content(event, trigger, player) {
+                    const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                    const randomBorderColor = '#' + Math.floor(Math.random() * 16777215).toString(16); // 随机边框颜色
+                    player.USE = numberq0(player.USE) + 1;
+                    if (game.USE) game.USE.remove();
+                    game.USE = document.createElement('div');
+                    game.USE.style.cssText = `right: 60px; top: 60px; height: 50px; width: 50px; z-index: 999; background-color:${randomBorderColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center;`;
+                    game.USE.innerHTML = `<font color='${randomColor}' style='font-size: 40px;'>${player.USE}</font>`;
+                    document.body.appendChild(game.USE);
+                },
+                _priority: -999,
+            }; //出牌计数
+            lib.skill._轮次计数 = {
+                trigger: {
+                    global: 'roundStart',
+                },
+                silent: true,
+                lastDo: true,
+                filter: (e, p) => p == game.me,
+                async content(event, trigger, player) {
+                    const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                    const randomBorderColor = '#' + Math.floor(Math.random() * 16777215).toString(16); // 随机边框颜色
+                    player.ROUND = numberq0(player.ROUND) + 1;
+                    if (game.ROUND) game.ROUND.remove();
+                    game.ROUND = document.createElement('div');
+                    game.ROUND.style.cssText = `right: 120px; top: 60px; height: 60px; width: 60px; z-index: 999; background-color: ${randomBorderColor}; border-radius: 50%; display: flex; justify-content: center; align-items: center;`;
+                    game.ROUND.innerHTML = `<font color='${randomColor}' style='font-size: 40px;'>${player.ROUND}</font>`;
+                    document.body.appendChild(game.ROUND);
+                },
+                _priority: -999,
+            }; //轮次计数
             lib.config.favouriteCharacter = [
                 'wu_zhugeliang',
                 'shen_pangtong',

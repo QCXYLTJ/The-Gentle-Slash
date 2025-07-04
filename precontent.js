@@ -257,7 +257,7 @@ windowq();
 const precontent = async function () {
     console.time('温柔一刀precontent');
     //—————————————————————————————————————————————————————————————————————————————测试区
-    if (QQQ.config.报错) {
+    if (QQQ.作者模式) {
         const ceshi = '测试局部变量是否正常传递';
         lib.skill._QUANJU = {
             trigger: {
@@ -389,7 +389,7 @@ const precontent = async function () {
         for (const i in lib.skill) {
             const info = lib.skill[i];
             if (typeof info != 'object') {
-                if (QQQ.config.报错) {
+                if (QQQ.作者模式) {
                     alert(i + '没有对应lib.skill3');
                 }
                 continue;
@@ -418,7 +418,7 @@ const precontent = async function () {
                     info.ai.result.player = 1;
                     console1.push(i);
                 }
-                if (QQQ.config.报错) {
+                if (QQQ.作者模式) {
                     const con = info.content;
                     if (con) {
                         const string = con.toString();
@@ -467,7 +467,7 @@ const precontent = async function () {
                     }
                 }
             } //卖血模式
-            if (QQQ.config.报错) {
+            if (QQQ.作者模式) {
                 if (info.round && info.popup == false) {
                     alert(i + 'round与popup共存');
                 }
@@ -537,7 +537,7 @@ const precontent = async function () {
             }
         }
         console.log('修复增加ai', console1);
-        if (QQQ.config.报错) {
+        if (QQQ.作者模式) {
             for (const i in lib.characterSort) {
                 const info = lib.characterSort[i];
                 for (const pack in info) {
@@ -700,11 +700,11 @@ const precontent = async function () {
                 return unchanged;
             }//让许劭可以无视对方mod使用牌
             //game.checkMod(card, player, 0, 'aiEV', player);
-            if (!card && QQQ.config.报错) {
+            if (!card && QQQ.作者模式) {
                 alert('checkMod了不存在的牌');
                 throw new Error();
             }
-            if (typeof card != 'object' && QQQ.config.报错) {
+            if (typeof card != 'object' && QQQ.作者模式) {
                 console.log(card);
                 alert('checkMod的card不是一个对象');
                 throw new Error();
@@ -737,7 +737,7 @@ const precontent = async function () {
             return unchanged;
         }; //mod技能修改,让许劭可以无视mod、无次数限制使用牌
         game.expandSkills = function (skills) {
-            if (!Array.isArray(skills) && QQQ.config.报错) {
+            if (!Array.isArray(skills) && QQQ.作者模式) {
                 alert(skills + '不是数组');
                 throw new Error();
             }
@@ -814,7 +814,7 @@ const precontent = async function () {
                 name = 'sha';
             }
             const info = lib.card[name];
-            if (!info && QQQ.config.报错) {
+            if (!info && QQQ.作者模式) {
                 alert(name + '没有对应lib.card4');
                 name = 'sha';
                 throw new Error();
@@ -979,21 +979,19 @@ const precontent = async function () {
             return list;
         }; //获取本回合失去过的牌
         game.xunshi = function (card) {
-            var card = lib.card[card.name];
-            if (!card) {
-                if (QQQ.config.报错) {
-                    alert(card + card.name + '没有卡牌info');
-                    throw new Error();
-                }
-                card = lib.card['sha'];
+            const name = card.name;
+            const info = lib.card[name];
+            if (!info) {
+                console.warn(name + '没有卡牌info');
+                return false;
             }
-            if (card.notarget || card.selectTarget == undefined) return false;
-            if (Array.isArray(card.selectTarget)) {
-                if (card.selectTarget[0] < 0) return !card.toself;
-                return card.selectTarget[0] != 1 || card.selectTarget[1] != 1;
+            if (info.notarget || info.selectTarget == undefined) return false;
+            if (Array.isArray(info.selectTarget)) {
+                if (info.selectTarget[0] < 0) return !info.toself;
+                return info.selectTarget[0] != 1 || info.selectTarget[1] != 1;
             } else {
-                if (card.selectTarget < 0) return !card.toself;
-                return card.selectTarget != 1;
+                if (info.selectTarget < 0) return !info.toself;
+                return info.selectTarget != 1;
             }
         }; //多目标牌检测
     };
@@ -1877,7 +1875,7 @@ const precontent = async function () {
         }; //是否上装备AI
         get.buttonValue = function (button, player) {
             var card = button.link;
-            if (!card && QQQ.config.报错) {
+            if (!card && QQQ.作者模式) {
                 alert('buttonValue卡牌不存在');
                 throw new Error();
             }
@@ -1943,7 +1941,7 @@ const precontent = async function () {
             if (typeof item == 'string') {
                 //if (item.startsWith('player_when_')) return lib.skill.jiang;//when技能排除掉就会不能发动
                 if (!lib.skill[item]) {
-                    if (QQQ.config.报错 && (get.mode() == 'single' || lib.config.mode == 'QQQ')) {
+                    if (QQQ.作者模式 && (get.mode() == 'single' || lib.config.mode == 'QQQ')) {
                         if (item) {
                             console.log(item, '没有对应lib.skill4');
                             alert(item + '没有对应lib.skill4');
@@ -1956,7 +1954,7 @@ const precontent = async function () {
             }
             if (typeof item == 'object') {
                 if (!lib.card[item.name]) {
-                    if (QQQ.config.报错) {
+                    if (QQQ.作者模式) {
                         if (item.name) {
                             console.log(item, item.name, '没有对应lib.card5');
                             alert(item.name + '没有对应lib.card5');
@@ -1969,7 +1967,7 @@ const precontent = async function () {
                 if (player !== false) name = get.name(item, player);//这里不能换成自带子属性,不然视为牌不能正常使用(神关羽武神)
                 return lib.card[name];
             } else {
-                if (QQQ.config.报错) {
+                if (QQQ.作者模式) {
                     if (item) {
                         console.log(item, '没有对应lib.skill5');
                         alert(item + '没有对应lib.skill5');
@@ -1985,7 +1983,7 @@ const precontent = async function () {
             var name = obj.name;
             if (!lib.card[name]) {
                 if (!name) {
-                    if (QQQ.config.报错) {
+                    if (QQQ.作者模式) {
                         console.log(obj);
                         alert(obj + '没有对应lib.card6');
                         throw new Error();
@@ -2267,13 +2265,13 @@ const precontent = async function () {
         let oattitude = get.attitude;
         const xattitude = function (from, to) {
             if (!from) {
-                if (QQQ.config.报错) {
+                if (QQQ.作者模式) {
                     throw new Error();
                 }
                 from = _status.event.player;
             }
             if (!to) {
-                if (QQQ.config.报错) {
+                if (QQQ.作者模式) {
                     throw new Error();
                 }
                 to = _status.event.player;
@@ -3575,7 +3573,7 @@ const precontent = async function () {
         //—————————————————————————————————————————————————————————————————————————————CSS
         const css = function () {
             lib.init.css('extension/温柔一刀/QQQ.css');
-            if (QQQ.config.界面修改) {
+            if (QQQ.作者模式) {
                 lib.init.css('extension/温柔一刀/QQ.css');
             } //拉长立绘//移动标记//历史记录显示
             if (!(_status.maximumNumberOfPlayers > 32)) {
