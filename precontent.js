@@ -4195,6 +4195,15 @@ const precontent = async function () {
                     ai: {
                         respondSha: true,
                         respondShan: true,
+                        save: true,
+                        skillTagFilter(player, tag, arg) {
+                            if (tag == 'respondShan') {
+                                return player.getCards('x').some((q) => q.name == 'shan');
+                            }
+                            if (tag == 'respondSha') {
+                                return player.getCards('x').some((q) => q.name == 'sha');
+                            }
+                        },
                         order: 10,
                         result: {
                             player(player) {
@@ -5140,6 +5149,20 @@ const precontent = async function () {
                             ai: {
                                 respondSha: true,
                                 respondShan: true,
+                                save: true,
+                                skillTagFilter(player, tag, arg) {
+                                    const boss = game.players.filter((q) => q.hasSkill('QQQ_youyou'));
+                                    const cards = [];
+                                    for (const i of boss) {
+                                        cards.addArray(i.getCards('x'));
+                                    }
+                                    if (tag == 'respondShan') {
+                                        return cards.some((q) => q.name == 'shan');
+                                    }
+                                    if (tag == 'respondSha') {
+                                        return cards.some((q) => q.name == 'sha');
+                                    }
+                                },
                                 order: 10,
                                 result: {
                                     player(player) {
@@ -6209,6 +6232,10 @@ const precontent = async function () {
                     ai: {
                         respondSha: true,
                         respondShan: true,
+                        save: true,
+                        skillTagFilter(player, tag, arg) {
+                            return !_status.jieduan.QQQ_mihuan;
+                        },
                         order: 99,
                         result: {
                             player(player) {
@@ -6394,8 +6421,6 @@ const precontent = async function () {
                             ai: {
                                 fireAttack: true,
                                 save: true,
-                                respondTao: true,
-                                respondwuxie: true,
                                 respondSha: true,
                                 respondShan: true,
                                 order: 1,

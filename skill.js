@@ -816,6 +816,18 @@ const skill = {
             }
         },
         ai: {
+            save: true,
+            respondSha: true,
+            respondShan: true,
+            skillTagFilter(player, tag) {
+                if (tag == 'respondSha') {
+                    return Boolean(player.countCards('hes', { suit: 'diamond' }));
+                }
+                if (tag == 'respondShan') {
+                    return Boolean(player.countCards('hes', { suit: 'club' }));
+                }
+                return Boolean(player.countCards('hes', { color: 'heart' }));
+            },
             order: 15,
             result: {
                 player(player) {
@@ -3746,10 +3758,16 @@ const skill = {
         ai: {
             fireAttack: true,
             save: true,
-            respondTao: true,
-            respondwuxie: true,
             respondSha: true,
             respondShan: true,
+            skillTagFilter(player, tag, arg) {
+                if (tag == 'respondSha') {
+                    return Boolean(player.countCards('he', (q) => get.cardNameLength(q) == 1));
+                }
+                if (tag == 'respondShan') {
+                    return Boolean(player.countCards('he', (q) => get.cardNameLength(q) == 1));
+                }
+            },
             order: 10,
             result: {
                 player(player) {
@@ -3817,6 +3835,14 @@ const skill = {
             respondShan: true,
             respondSha: true,
             save: true,
+            skillTagFilter(player, tag, arg) {
+                if (tag == 'respondSha') {
+                    return Boolean(player.countCards('hes', { type: 'basic' }));
+                }
+                if (tag == 'respondShan') {
+                    return Boolean(player.countCards('hes', { type: 'basic' }));
+                }
+            },
             basic: {
                 useful: 99,
                 value: 99,
@@ -4797,6 +4823,27 @@ const skill = {
             prompt: (links, player) => '视为使用' + get.translation(links[0][2]),
         },
         ai: {
+            save: true,
+            respondSha: true,
+            respondShan: true,
+            skillTagFilter(player, tag) {
+                if (tag == 'respondSha') {
+                    for (var i in player.storage.suit) {
+                        if (player.storage.suit[i][0] == 'sha' && player.storage.suit[i][1] && player.countCards('h', { suit: i })) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                if (tag == 'respondShan') {
+                    for (var i in player.storage.suit) {
+                        if (player.storage.suit[i][0] == 'shan' && player.storage.suit[i][1] && player.countCards('h', { suit: i })) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            },
             order: 10,
             result: {
                 player: 2,
@@ -5151,12 +5198,9 @@ const skill = {
             }
         },
         ai: {
+            respondSha: true,
             result: {
                 player: 1,
-                tag: {
-                    respond: 1,
-                    respondSha: 1,
-                },
             },
         },
     },
@@ -5291,8 +5335,16 @@ const skill = {
             }
         },
         ai: {
+            save: true,
             respondSha: true,
             respondShan: true,
+            skillTagFilter(player, tag, arg) {
+                const list1 = Object.keys(player.storage);
+                if (player.hujia < 1) {
+                    list1.remove('ghujia');
+                }
+                return Boolean(list1.length);
+            },
             order: 10,
             result: {
                 player(player) {
@@ -5783,6 +5835,9 @@ const skill = {
             respondShan: true,
             respondSha: true,
             save: true,
+            skillTagFilter(player, tag, arg) {
+                return Boolean(player.countCards('ejsx') || player.countCards('h', { name: 'ybsl_107xiaohu' }));
+            },
             result: {
                 player(player) {
                     if (_status.event.dying) {
@@ -5980,10 +6035,19 @@ const skill = {
         ai: {
             fireAttack: true,
             save: true,
-            respondTao: true,
-            respondwuxie: true,
             respondSha: true,
             respondShan: true,
+            skillTagFilter(player, tag, arg) {
+                if (numberq0(player.stat[player.stat.length - 1].skill.QQQ_kangzou) >= player.storage.QQQ_maxhp) {
+                    return false;
+                }
+                if (tag == 'respondSha') {
+                    return !player.storage.QQQ_kangzou.includes('sha');
+                }
+                if (tag == 'respondShan') {
+                    return !player.storage.QQQ_kangzou.includes('shan');
+                }
+            },
             order: 1,
             result: {
                 player(player) {
@@ -6315,8 +6379,17 @@ const skill = {
                     }
                 },
                 ai: {
+                    save: true,
                     respondSha: true,
                     respondShan: true,
+                    skillTagFilter(player, tag, arg) {
+                        if (tag == 'respondSha') {
+                            return player.storage.QQQ_zhuiyi.includes('sha');
+                        }
+                        if (tag == 'respondShan') {
+                            return player.storage.QQQ_zhuiyi.includes('shan');
+                        }
+                    },
                     order: 10,
                     result: {
                         player(player) {
