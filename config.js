@@ -191,6 +191,19 @@ const config = {
         intro: '开启后,所有封禁出牌的效果将会无效',
         init: false,
     },
+    补充军争牌堆: {
+        name: '<span class=Qmenu>补充军争牌堆</span>',
+        intro: '按倍数补充军争牌堆',
+        init: '1',
+        item: {
+            1: '<span class=Qmenu>不变</span>',
+            2: '<span class=Qmenu>两倍</span>',
+            5: '<span class=Qmenu>五倍</span>',
+            10: '<span class=Qmenu>十倍</span>',
+            15: '<span class=Qmenu>十五倍</span>',
+            20: '<span class=Qmenu>二十倍</span>',
+        },
+    },
     飞扬跋扈模式: {
         name: '<span class=Qmenu>飞扬跋扈</span>',
         intro: '开启后,将会添加全局性效果:游戏开始时获得两点护甲.按数值增加准备阶段摸牌数、每回合出杀与酒的次数,并减少与其他角色的距离.在判定阶段开始时,可以弃置两张牌,移除判定区的一张牌',

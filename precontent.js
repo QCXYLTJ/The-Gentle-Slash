@@ -3337,177 +3337,185 @@ const precontent = async function () {
                 set() { },
             }); //选将列表修改
         } //武将全部可选
+        const junzhengcard = [
+            ['heart', 10, 'sha'],
+            ['heart', 2, 'shan'],
+            ['diamond', 2, 'shan'],
+            ['diamond', 12, 'fangtian'],
+            ['spade', 9, 'sha'],
+            ['diamond', 6, 'shan'],
+            ['heart', 5, 'chitu'],
+            ['heart', 10, 'sha', 'fire'],
+            ['heart', 8, 'wuzhong'],
+            ['heart', 11, 'shan'],
+            ['spade', 8, 'sha'],
+            ['club', 2, 'bagua'],
+            ['club', 5, 'dilu'],
+            ['heart', 11, 'sha'],
+            ['heart', 13, 'shan'],
+            ['club', 8, 'sha'],
+            ['spade', 1, 'juedou'],
+            ['heart', 4, 'sha', 'fire'],
+            ['club', 6, 'sha'],
+            ['club', 8, 'sha', 'thunder'],
+            ['heart', 6, 'tao'],
+            ['club', 10, 'sha'],
+            ['diamond', 1, 'zhuque'],
+            ['heart', 9, 'tao'],
+            ['spade', 2, 'hanbing'],
+            ['club', 11, 'sha'],
+            ['heart', 1, 'taoyuan'],
+            ['heart', 8, 'shan'],
+            ['club', 4, 'guohe'],
+            ['club', 4, 'bingliang'],
+            ['diamond', 9, 'sha'],
+            ['club', 11, 'sha'],
+            ['heart', 7, 'tao'],
+            ['spade', 12, 'zhangba'],
+            ['spade', 8, 'sha', 'thunder'],
+            ['spade', 4, 'shunshou'],
+            ['heart', 6, 'tao'],
+            ['diamond', 8, 'shan'],
+            ['spade', 2, 'tengjia'],
+            ['heart', 8, 'tao'],
+            ['spade', 6, 'qinggang'],
+            ['spade', 11, 'tiesuo'],
+            ['club', 12, 'wuxie'],
+            ['club', 9, 'sha'],
+            ['spade', 12, 'tiesuo'],
+            ['spade', 3, 'guohe'],
+            ['spade', 7, 'sha', 'thunder'],
+            ['heart', 5, 'qilin'],
+            ['diamond', 12, 'wuxie'],
+            ['spade', 3, 'shunshou'],
+            ['heart', 12, 'shan'],
+            ['diamond', 4, 'shan'],
+            ['heart', 9, 'shan'],
+            ['heart', 10, 'sha'],
+            ['diamond', 8, 'shan'],
+            ['spade', 11, 'wuxie'],
+            ['diamond', 6, 'sha'],
+            ['diamond', 7, 'shan'],
+            ['spade', 6, 'sha', 'thunder'],
+            ['heart', 7, 'sha', 'fire'],
+            ['club', 2, 'renwang'],
+            ['spade', 13, 'dawan'],
+            ['club', 13, 'wuxie'],
+            ['heart', 12, 'tao'],
+            ['diamond', 6, 'shan'],
+            ['club', 9, 'jiu'],
+            ['spade', 6, 'lebu'],
+            ['heart', 7, 'wuzhong'],
+            ['spade', 5, 'qinglong'],
+            ['diamond', 12, 'huogong'],
+            ['spade', 3, 'jiu'],
+            ['diamond', 3, 'tao'],
+            ['diamond', 11, 'shan'],
+            ['diamond', 10, 'sha'],
+            ['diamond', 8, 'sha'],
+            ['spade', 4, 'sha', 'thunder'],
+            ['heart', 2, 'huogong'],
+            ['diamond', 3, 'shunshou'],
+            ['spade', 10, 'bingliang'],
+            ['diamond', 12, 'tao'],
+            ['spade', 12, 'guohe'],
+            ['club', 12, 'tiesuo'],
+            ['diamond', 3, 'shan'],
+            ['heart', 5, 'tao'],
+            ['spade', 13, 'wuxie'],
+            ['spade', 10, 'sha'],
+            ['club', 12, 'jiedao'],
+            ['club', 13, 'tiesuo'],
+            ['spade', 13, 'nanman'],
+            ['diamond', 5, 'guanshi'],
+            ['diamond', 10, 'shan'],
+            ['spade', 7, 'sha'],
+            ['heart', 2, 'shan'],
+            ['club', 7, 'nanman'],
+            ['spade', 1, 'shandian'],
+            ['diamond', 13, 'sha'],
+            ['heart', 1, 'wuxie'],
+            ['club', 3, 'jiu'],
+            ['heart', 12, 'guohe'],
+            ['heart', 6, 'lebu'],
+            ['club', 7, 'sha'],
+            ['diamond', 1, 'zhuge'],
+            ['spade', 1, 'guding'],
+            ['heart', 4, 'wugu'],
+            ['spade', 5, 'jueying'],
+            ['spade', 9, 'jiu'],
+            ['spade', 8, 'sha'],
+            ['heart', 12, 'shandian'],
+            ['club', 3, 'guohe'],
+            ['club', 8, 'sha'],
+            ['diamond', 9, 'jiu'],
+            ['club', 9, 'sha'],
+            ['heart', 3, 'huogong'],
+            ['diamond', 9, 'shan'],
+            ['club', 3, 'sha'],
+            ['club', 1, 'baiyin'],
+            ['club', 1, 'juedou'],
+            ['diamond', 2, 'shan'],
+            ['heart', 13, 'wuxie'],
+            ['heart', 11, 'wuzhong'],
+            ['club', 7, 'sha', 'thunder'],
+            ['heart', 3, 'wugu'],
+            ['spade', 2, 'bagua'],
+            ['club', 6, 'sha', 'thunder'],
+            ['club', 13, 'jiedao'],
+            ['diamond', 1, 'juedou'],
+            ['heart', 1, 'wanjian'],
+            ['spade', 10, 'sha'],
+            ['spade', 9, 'sha'],
+            ['spade', 11, 'shunshou'],
+            ['diamond', 5, 'sha', 'fire'],
+            ['diamond', 7, 'sha'],
+            ['club', 5, 'sha', 'thunder'],
+            ['diamond', 5, 'muniu'],
+            ['club', 2, 'tengjia'],
+            ['spade', 5, 'sha', 'thunder'],
+            ['diamond', 13, 'hualiu'],
+            ['diamond', 4, 'sha', 'fire'],
+            ['heart', 9, 'wuzhong'],
+            ['club', 6, 'lebu'],
+            ['spade', 4, 'guohe'],
+            ['spade', 7, 'nanman'],
+            ['club', 10, 'sha'],
+            ['diamond', 4, 'shunshou'],
+            ['diamond', 11, 'shan'],
+            ['club', 1, 'zhuge'],
+            ['spade', 2, 'cixiong'],
+            ['club', 2, 'sha'],
+            ['diamond', 5, 'shan'],
+            ['diamond', 11, 'shan'],
+            ['diamond', 2, 'tao'],
+            ['club', 5, 'sha'],
+            ['club', 10, 'tiesuo'],
+            ['club', 11, 'tiesuo'],
+            ['diamond', 7, 'shan'],
+            ['heart', 4, 'tao'],
+            ['diamond', 10, 'shan'],
+            ['heart', 13, 'zhuahuang'],
+            ['heart', 3, 'tao'],
+            ['club', 4, 'sha'],
+            ['diamond', 13, 'zixin'],
+        ];
         if (QQQ.config.还原初始牌堆) {
             Reflect.defineProperty(lib.card, 'list', {
                 get() {
-                    return [
-                        ['heart', 10, 'sha'],
-                        ['heart', 2, 'shan'],
-                        ['diamond', 2, 'shan'],
-                        ['diamond', 12, 'fangtian'],
-                        ['spade', 9, 'sha'],
-                        ['diamond', 6, 'shan'],
-                        ['heart', 5, 'chitu'],
-                        ['heart', 10, 'sha', 'fire'],
-                        ['heart', 8, 'wuzhong'],
-                        ['heart', 11, 'shan'],
-                        ['spade', 8, 'sha'],
-                        ['club', 2, 'bagua'],
-                        ['club', 5, 'dilu'],
-                        ['heart', 11, 'sha'],
-                        ['heart', 13, 'shan'],
-                        ['club', 8, 'sha'],
-                        ['spade', 1, 'juedou'],
-                        ['heart', 4, 'sha', 'fire'],
-                        ['club', 6, 'sha'],
-                        ['club', 8, 'sha', 'thunder'],
-                        ['heart', 6, 'tao'],
-                        ['club', 10, 'sha'],
-                        ['diamond', 1, 'zhuque'],
-                        ['heart', 9, 'tao'],
-                        ['spade', 2, 'hanbing'],
-                        ['club', 11, 'sha'],
-                        ['heart', 1, 'taoyuan'],
-                        ['heart', 8, 'shan'],
-                        ['club', 4, 'guohe'],
-                        ['club', 4, 'bingliang'],
-                        ['diamond', 9, 'sha'],
-                        ['club', 11, 'sha'],
-                        ['heart', 7, 'tao'],
-                        ['spade', 12, 'zhangba'],
-                        ['spade', 8, 'sha', 'thunder'],
-                        ['spade', 4, 'shunshou'],
-                        ['heart', 6, 'tao'],
-                        ['diamond', 8, 'shan'],
-                        ['spade', 2, 'tengjia'],
-                        ['heart', 8, 'tao'],
-                        ['spade', 6, 'qinggang'],
-                        ['spade', 11, 'tiesuo'],
-                        ['club', 12, 'wuxie'],
-                        ['club', 9, 'sha'],
-                        ['spade', 12, 'tiesuo'],
-                        ['spade', 3, 'guohe'],
-                        ['spade', 7, 'sha', 'thunder'],
-                        ['heart', 5, 'qilin'],
-                        ['diamond', 12, 'wuxie'],
-                        ['spade', 3, 'shunshou'],
-                        ['heart', 12, 'shan'],
-                        ['diamond', 4, 'shan'],
-                        ['heart', 9, 'shan'],
-                        ['heart', 10, 'sha'],
-                        ['diamond', 8, 'shan'],
-                        ['spade', 11, 'wuxie'],
-                        ['diamond', 6, 'sha'],
-                        ['diamond', 7, 'shan'],
-                        ['spade', 6, 'sha', 'thunder'],
-                        ['heart', 7, 'sha', 'fire'],
-                        ['club', 2, 'renwang'],
-                        ['spade', 13, 'dawan'],
-                        ['club', 13, 'wuxie'],
-                        ['heart', 12, 'tao'],
-                        ['diamond', 6, 'shan'],
-                        ['club', 9, 'jiu'],
-                        ['spade', 6, 'lebu'],
-                        ['heart', 7, 'wuzhong'],
-                        ['spade', 5, 'qinglong'],
-                        ['diamond', 12, 'huogong'],
-                        ['spade', 3, 'jiu'],
-                        ['diamond', 3, 'tao'],
-                        ['diamond', 11, 'shan'],
-                        ['diamond', 10, 'sha'],
-                        ['diamond', 8, 'sha'],
-                        ['spade', 4, 'sha', 'thunder'],
-                        ['heart', 2, 'huogong'],
-                        ['diamond', 3, 'shunshou'],
-                        ['spade', 10, 'bingliang'],
-                        ['diamond', 12, 'tao'],
-                        ['spade', 12, 'guohe'],
-                        ['club', 12, 'tiesuo'],
-                        ['diamond', 3, 'shan'],
-                        ['heart', 5, 'tao'],
-                        ['spade', 13, 'wuxie'],
-                        ['spade', 10, 'sha'],
-                        ['club', 12, 'jiedao'],
-                        ['club', 13, 'tiesuo'],
-                        ['spade', 13, 'nanman'],
-                        ['diamond', 5, 'guanshi'],
-                        ['diamond', 10, 'shan'],
-                        ['spade', 7, 'sha'],
-                        ['heart', 2, 'shan'],
-                        ['club', 7, 'nanman'],
-                        ['spade', 1, 'shandian'],
-                        ['diamond', 13, 'sha'],
-                        ['heart', 1, 'wuxie'],
-                        ['club', 3, 'jiu'],
-                        ['heart', 12, 'guohe'],
-                        ['heart', 6, 'lebu'],
-                        ['club', 7, 'sha'],
-                        ['diamond', 1, 'zhuge'],
-                        ['spade', 1, 'guding'],
-                        ['heart', 4, 'wugu'],
-                        ['spade', 5, 'jueying'],
-                        ['spade', 9, 'jiu'],
-                        ['spade', 8, 'sha'],
-                        ['heart', 12, 'shandian'],
-                        ['club', 3, 'guohe'],
-                        ['club', 8, 'sha'],
-                        ['diamond', 9, 'jiu'],
-                        ['club', 9, 'sha'],
-                        ['heart', 3, 'huogong'],
-                        ['diamond', 9, 'shan'],
-                        ['club', 3, 'sha'],
-                        ['club', 1, 'baiyin'],
-                        ['club', 1, 'juedou'],
-                        ['diamond', 2, 'shan'],
-                        ['heart', 13, 'wuxie'],
-                        ['heart', 11, 'wuzhong'],
-                        ['club', 7, 'sha', 'thunder'],
-                        ['heart', 3, 'wugu'],
-                        ['spade', 2, 'bagua'],
-                        ['club', 6, 'sha', 'thunder'],
-                        ['club', 13, 'jiedao'],
-                        ['diamond', 1, 'juedou'],
-                        ['heart', 1, 'wanjian'],
-                        ['spade', 10, 'sha'],
-                        ['spade', 9, 'sha'],
-                        ['spade', 11, 'shunshou'],
-                        ['diamond', 5, 'sha', 'fire'],
-                        ['diamond', 7, 'sha'],
-                        ['club', 5, 'sha', 'thunder'],
-                        ['diamond', 5, 'muniu'],
-                        ['club', 2, 'tengjia'],
-                        ['spade', 5, 'sha', 'thunder'],
-                        ['diamond', 13, 'hualiu'],
-                        ['diamond', 4, 'sha', 'fire'],
-                        ['heart', 9, 'wuzhong'],
-                        ['club', 6, 'lebu'],
-                        ['spade', 4, 'guohe'],
-                        ['spade', 7, 'nanman'],
-                        ['club', 10, 'sha'],
-                        ['diamond', 4, 'shunshou'],
-                        ['diamond', 11, 'shan'],
-                        ['club', 1, 'zhuge'],
-                        ['spade', 2, 'cixiong'],
-                        ['club', 2, 'sha'],
-                        ['diamond', 5, 'shan'],
-                        ['diamond', 11, 'shan'],
-                        ['diamond', 2, 'tao'],
-                        ['club', 5, 'sha'],
-                        ['club', 10, 'tiesuo'],
-                        ['club', 11, 'tiesuo'],
-                        ['diamond', 7, 'shan'],
-                        ['heart', 4, 'tao'],
-                        ['diamond', 10, 'shan'],
-                        ['heart', 13, 'zhuahuang'],
-                        ['heart', 3, 'tao'],
-                        ['club', 4, 'sha'],
-                        ['diamond', 13, 'zixin'],
-                    ].randomSort();
+                    return junzhengcard.randomSort();
                 },
                 configurable: false,
                 set() { },
             });
         } //还原初始牌堆
+        let beishu = Number(QQQ.config.补充军争牌堆) - 1;
+        while (beishu-- > 0) {
+            const list = junzhengcard.randomSort();
+            for (const i of list) {
+                lib.card.list.push(i);
+            }
+        }
         if (QQQ.config.神武再世) {
             game.loadModeAsync('boss', function (mode) {
                 for (const i in mode.translate) {
@@ -3576,10 +3584,11 @@ const precontent = async function () {
             if (QQQ.作者模式) {
                 lib.init.css('extension/温柔一刀/QQ.css');
             } //拉长立绘//移动标记//历史记录显示
-            if (!(_status.maximumNumberOfPlayers > 32)) {
-                _status.maximumNumberOfPlayers = 32;
+            const maxnum = 100;
+            if (!(_status.maximumNumberOfPlayers > maxnum)) {
+                _status.maximumNumberOfPlayers = maxnum;
             }
-            for (let num = 9; num < 33; num++) {
+            for (let num = 9; num < (maxnum + 1); num++) {
                 const list = [];
                 const fan = Math.ceil(num * 0.4);
                 const nei = Math.ceil(num * 0.2);
@@ -3602,49 +3611,49 @@ const precontent = async function () {
                         style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                     top:calc(${50 - (40 / num) * pos}%)!important;
                                     left:calc(${45 + (200 / num) * pos}%)!important;
-                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                    transform: scale(${1 - 0.008 * num})!important;
                                     }`;
                     }
                     else if (pos == num / 4) {
                         style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                     top:calc(25%)!important;
                                     left:calc(92%)!important;
-                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                    transform: scale(${1 - 0.008 * num})!important;
                                     }`;
                     }
                     else if (pos < num / 2) {
                         style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                         top:calc(${15 - (40 / num) * pos}%)!important;
                                         left:calc(${145 - (200 / num) * pos}%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        transform: scale(${1 - 0.008 * num})!important;
                                         }`;
                     }
                     else if (pos == num / 2) {
                         style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                         top:calc(-5%)!important;
                                         left:calc(45%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        transform: scale(${1 - 0.008 * num})!important;
                                         }`;
                     }
                     else if (pos < 0.75 * num) {
                         style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                         top:calc(${(40 / num) * pos - 25}%)!important;
                                         left:calc(${145 - (200 / num) * pos}%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        transform: scale(${1 - 0.008 * num})!important;
                                         }`;
                     }
                     else if (pos == 0.75 * num) {
                         style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                         top:calc(25%)!important;
                                         left:calc(-2%)!important;
-                                        transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                        transform: scale(${1 - 0.008 * num})!important;
                                         }`;
                     }
                     else {
                         style.innerHTML += `#arena[data-number='${num}']>.player[data-position='${pos}']{
                                     top:calc(${10 + (40 / num) * pos}%)!important;
                                     left:calc(${-155 + (200 / num) * pos}%)!important;
-                                    transform: scale(${Math.max(0.55, 1 - num / 70)})!important;
+                                    transform: scale(${1 - 0.008 * num})!important;
                                     }`;
                     }
                 }
