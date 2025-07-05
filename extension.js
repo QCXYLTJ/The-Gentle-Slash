@@ -10,6 +10,7 @@ if (lib.config.connect_nickname == 'QQQ') {
     QQQ.作者模式 = true;
 }
 if (QQQ.config.扩展导入) {
+    lib.config.extensions = [];
     game.getFileList('extension', function (fold, file) {
         for (const i of Array.from(fold)) {
             if (['coin', 'boss', 'wuxing', 'cardpile'].includes(i)) continue;

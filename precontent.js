@@ -3503,7 +3503,7 @@ const precontent = async function () {
         if (QQQ.config.还原初始牌堆) {
             Reflect.defineProperty(lib.card, 'list', {
                 get() {
-                    return junzhengcard.randomSort();
+                    return junzhengcard.randomSort().slice();//每次生成新数组,不加slice的话每次都是原数组,修改会被映射进去
                 },
                 configurable: false,
                 set() { },
