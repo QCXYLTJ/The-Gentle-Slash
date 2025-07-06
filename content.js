@@ -1661,7 +1661,7 @@ const content = async function () {
             fixed: true,
             charlotte: true,
             filter(event, player) {
-                if (event.cards?.length + player.countCards('h') >= Number(QQQ.config.平衡)) {
+                if (event.cards?.length + player.countCards('h') >= Number(QQQ.config.手牌数限制)) {
                     event.cancel();
                 }
                 if (!QQQ.cardList) {

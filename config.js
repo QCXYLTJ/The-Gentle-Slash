@@ -218,8 +218,8 @@ const config = {
             6: '<span class=Qmenu>6</span>',
         },
     },
-    平衡: {
-        name: '<span class=Qmenu>全场手牌上限</span>',
+    手牌数限制: {
+        name: '<span class=Qmenu>手牌数限制</span>',
         init: 999,
         intro: '手牌超出预设上限则禁止获得牌',
         item: {
