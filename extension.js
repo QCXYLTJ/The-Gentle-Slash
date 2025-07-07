@@ -532,7 +532,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 game.saveConfig('characters', characters);
                 game.saveConfig('defaultcharacters', characters);
             } //扩展武将全部打开
-            const GFchar = ['jiange', 'boss', 'mtg', 'yxs', 'ow', 'xianjian', 'gwent', 'gujian', 'hearth', 'swd', 'standard', 'shenhua', 'yijiang', 'extra', 'refresh', 'sp2', 'newjiang', 'clan', 'ddd', 'sb', 'sixiang', 'yingbian', 'key', 'collab', 'old', 'sp', 'tw', 'huicui', 'shiji', 'onlyOL', 'mobile', 'offline', 'diy', 'jsrg', 'xianding'];
+            const GFchar = ['jiange', 'boss', 'mtg', 'yxs', 'ow', 'xianjian', 'gwent', 'gujian', 'hearth', 'swd', 'standard', 'shenhua', 'yijiang', 'extra', 'refresh', 'sp2', 'newjiang', 'clan', 'ddd', 'sb', 'sixiang', 'yingbian', 'key', 'collab', 'old', 'sp', 'tw', 'huicui', 'shiji', 'onlyOL', 'mobile', 'offline', 'diy', 'jsrg', 'xianding', 'sxrm'];
             if (QQQ.config.联机禁官服将) {
                 game.saveConfig('connect_characters', GFchar);
             }
@@ -544,7 +544,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 game.saveConfig('characters', characters);
                 game.saveConfig('defaultcharacters', characters);
             }
-            const GFcard = ['standard', 'guozhan', 'extra', 'yingbian', 'yongjian', 'sp', 'yunchou', 'zhulu', 'kaiheiji', 'zhenfa', 'swd', 'gujian', 'hearth', 'mtg', 'gwent', 'xianxia', 'huanlekapai'];
+            const GFcard = ['standard', 'guozhan', 'extra', 'yingbian', 'yongjian', 'sp', 'yunchou', 'zhulu', 'kaiheiji', 'zhenfa', 'swd', 'gujian', 'hearth', 'mtg', 'gwent', 'xianxia', 'huanlekapai', 'huodong'];
             ui.create.system(
                 '换将',
                 function () {

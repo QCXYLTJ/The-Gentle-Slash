@@ -381,15 +381,11 @@ const character = {
         sex: 'male',
         skills: ['QQQ_longjing'],
     },
-    QQQ_刘备: {
-        sex: 'male',
-        skills: ['激将'],
-    },
     QQQ_测试: {
         sex: 'male',
         hp: 10,
         maxHp: 10,
-        skills: ['bug', '检测', '测试'],
+        skills: ['bug', '检测', '测试', 'SG_qingnang', 'SG_qingming'],
     },
 };
 const characterIntro = {
@@ -458,7 +454,6 @@ const translate2 = {
     QQQ_祢衡: '祢衡',
     QQQ_诗寇蒂: '诗寇蒂',
     QQQ_biaoji: '标记',
-    QQQ_刘备: '刘备',
     QQQ_祝融: '祝融',
     QQQ_影火: '影火',
     QQQ_花招: '花招',
@@ -532,7 +527,7 @@ const translate2 = {
     QQQ_许贡: '许贡',
 };
 const sort = {
-    技能堆叠: ['QQQ_冯方女', 'QQQ_神吕布', 'QQQ_距离掌控者', 'QQQ_装备', 'QQQ_反面', 'QQQ_体力上限', 'QQQ_体力游戏', 'QQQ_天妒', 'QQQ_黄盖', 'QQQ_黄盖1', 'QQQ_拼点', 'QQQ_南蛮', 'QQQ_判定', 'QQQ_吴懿关张', 'QQQ_孟获', 'QQQ_食尸鬼', 'QQQ_势力', 'QQQ_董白', 'QQQ_诸葛亮', 'QQQ_关张刘焉', 'QQQ_驭衡', 'QQQ_全装备', 'QQQ_不疑曹轶', 'QQQ_天师马师', 'QQQ_伤逝约俭', 'QQQ_贾诩王凌', 'QQQ_灵毓陈宫', 'QQQ_满宠芳兰', 'QQQ_太后朱然', 'QQQ_花鬘张飞', 'QQQ_关羽管宁', 'QQQ_笮融陈宫', 'QQQ_卢弈辛毗', 'QQQ_沮授陈宫', 'QQQ_摸与杀', 'QQQ_潜水的火', 'QQQ_qianbian'],
+    技能堆叠: ['QQQ_距离掌控者', 'QQQ_装备', 'QQQ_反面', 'QQQ_体力上限', 'QQQ_体力游戏', 'QQQ_天妒', 'QQQ_拼点', 'QQQ_南蛮', 'QQQ_判定', 'QQQ_吴懿关张', 'QQQ_食尸鬼', 'QQQ_势力', 'QQQ_关张刘焉', 'QQQ_驭衡', 'QQQ_全装备', 'QQQ_不疑曹轶', 'QQQ_天师马师', 'QQQ_伤逝约俭', 'QQQ_贾诩王凌', 'QQQ_灵毓陈宫', 'QQQ_满宠芳兰', 'QQQ_太后朱然', 'QQQ_花鬘张飞', 'QQQ_关羽管宁', 'QQQ_笮融陈宫', 'QQQ_卢弈辛毗', 'QQQ_沮授陈宫', 'QQQ_摸与杀', 'QQQ_潜水的火', 'QQQ_qianbian'],
     惊艳一枪: [],
     温柔一刀: [],
     伤心一箭: [],

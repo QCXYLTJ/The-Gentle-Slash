@@ -5168,42 +5168,6 @@ const skill = {
             },
         },
     },
-    激将: {
-        audio: 'jijiang1',
-        audioname: ['liushan', 're_liubei', 're_liushan', 'ol_liushan'],
-        forced: true,
-        enable: ['chooseToUse', 'chooseToRespond'],
-        usable: 5, //QQQ
-        filter: (event, player) => game.countPlayer((Q) => Q.countCards('h', { name: 'sha' }) && Q.group == 'shu') && player.filterCard('sha', true), //QQQ
-        async content(event, trigger, player) {
-            var evt = event.getParent(2);
-            for (const i of game.players) {
-                if (i == player) {
-                    continue;
-                }
-                if (i.countCards('h', { name: 'sha' }) && i.group == 'shu') {
-                    const { result } = await i.chooseToRespond(`替${get.translation(player)}打出一张杀`, true, { name: 'sha' });
-                    if (result.cards && result.cards[0]) {
-                        if (evt.name == 'chooseToUse') {
-                            player.when('useCard').then(() => trigger.directHit.addArray(game.players));
-                            await player.chooseUseTarget('sha', true, false, 'nodistance');
-                        } else {
-                            evt.untrigger();
-                            evt.set('responded', true);
-                            evt.result = { bool: true, card: { name: 'sha' }, cards: [] };
-                            evt.redo();
-                        }
-                    }
-                }
-            }
-        },
-        ai: {
-            respondSha: true,
-            result: {
-                player: 1,
-            },
-        },
-    },
     QQQ_biaoji: {
         enable: ['chooseToUse', 'chooseToRespond'],
         forced: true,
@@ -6597,10 +6561,15 @@ const skill = {
                 },
                 set() { },
             });
-            game.bug = window.ceshiskill.unique().filter((Q) => Q != 'jjxsddpx_bukenengnan' && Q != 'fg_wangzhicaibao');//改用这个直接获取技能
-            game.log(`当前武将包有${game.bug.length}个技能`);
+            if (window.ceshiskill) {
+                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'jjxsddpx_bukenengnan' && Q != 'fg_wangzhicaibao');//改用这个直接获取技能
+                game.log(`当前武将包有${game.bug.length}个技能`);
+            }
         },
         _priority: 9,
+        filter(event, player) {
+            return game.bug;
+        },
         async content(event, trigger, player) {
             var Q = game.bug.slice(200, 300); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
@@ -6740,8 +6709,6 @@ const translate1 = {
     诗寇蒂的剪刀_info: '回合开始时,你可以永久裁剪掉自己的任意个阶段,并将其赋予任意角色,且可以插入任意位置.回合开始时,你摸当前缺失阶段数量的牌',
     QQQ_biaoji: '标记',
     QQQ_biaoji_info: '你可以将你的标记当作任意一张牌使用与打出,当你的标记数变化,你摸一张牌',
-    激将: '激将',
-    激将_info: '当你需要砍人时,你可令一名有杀的蜀势力角色替你使用与打出',
     武绝: '武绝',
     武绝_info: '五轮限一次,你可以将一名其他角色置入你的装备区三回合',
     影火: `<a href='https://qm.qq.com/q/SsTlU9gc24'><span class=Qmenu>影火</span></a>`,
