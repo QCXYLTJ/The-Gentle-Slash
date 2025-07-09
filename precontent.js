@@ -907,10 +907,7 @@ const precontent = async function () {
                 });
             }
         };//删除次数限制//filter决定有无次数距离限制//viewAs的技能会修改chooseToUse事件的filterCard
-        game.qcard = (player, type, filter, range) => {
-            if (range !== false) {
-                range = true;
-            }
+        lib.element.player.qcard = function (type, filter, range) {
             const list = [];
             for (const i in lib.card) {
                 const info = lib.card[i];
@@ -927,6 +924,10 @@ const precontent = async function () {
                     continue;
                 }
                 if (filter !== false) {
+                    const player = this;
+                    if (range !== false) {
+                        range = true;
+                    }
                     if (!player.filterCard(i, range)) {
                         continue;
                     }
@@ -979,7 +980,7 @@ const precontent = async function () {
             return list;
         }; //获取本回合失去过的牌
         game.xunshi = function (card) {
-            const name = card.name;
+            const name = (typeof card == 'string') ? card : card.name;
             const info = lib.card[name];
             if (!info) {
                 console.warn(name + '没有卡牌info');
@@ -6181,7 +6182,7 @@ const precontent = async function () {
                             for (const i of moved[0]) {
                                 ui.cardPile.insertBefore(i, ui.cardPile.firstChild);
                             }
-                            const vcard = game.qcard(player, false, true, false).filter((x) => black.some((q) => x[2] == q.name));
+                            const vcard = player.qcard(false, true, false).filter((x) => black.some((q) => x[2] == q.name));
                             if (vcard.length) {
                                 const evt = event.getParent(2);
                                 const {
@@ -7557,7 +7558,11 @@ const precontent = async function () {
                                 trigger.cancel();
                                 const card = trigger.cards[0];
                                 if (card) {
-                                    player.vcardsMap?.equips.push(new lib.element.VCard(card));
+                                    const vcard = new lib.element.VCard(card);
+                                    const cardSymbol = Symbol('card');
+                                    card.cardSymbol = cardSymbol;
+                                    card[cardSymbol] = vcard;
+                                    player.vcardsMap?.equips.push(vcard);
                                     player.node.equips.appendChild(card);
                                     card.style.transform = '';
                                     card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number} ${get.translation(card.name)}`;
@@ -8849,9 +8854,9 @@ addbossfellow(
 game\.addFellow\(.+,(.+)\)
 game.addPlayerQ($1)
 game.changeBossQ\(([^,]*),.+\)
-game.addFellowQ($1)
+game.boss.addFellow($1)
 game\.addBossFellow\(.+,(.+)\)
-game.addFellowQ($1)
+game.boss.addFellow($1)
 var dead = game.dead.slice(0);
 i.hp = i.maxHp;
 if (i.hp < 3) i.hp = 3;

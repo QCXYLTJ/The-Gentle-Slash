@@ -1613,10 +1613,7 @@ const skill = {
                 forced: true,
                 audio: 'ext:温柔一刀/audio:3',
                 filter(event, player) {
-                    if (event.card.name != 'sha') {
-                        return false;
-                    }
-                    return event.target.countMark('寒') > 0;
+                    return event.card.name == 'sha' && event.target.countMark('寒') > 0;
                 },
                 async content(event, trigger, player) {
                     trigger.parent.effectCount += trigger.target.countMark('寒');
@@ -2025,11 +2022,11 @@ const skill = {
         usable: 1,
         filter(event, player) {
             const boss = game.players.find((q) => q.countMark('赌'));
-            return boss && boss != player && game.qcard(player).length;
+            return boss && boss != player && player.qcard().length;
         },
         chooseButton: {
             dialog(event, player) {
-                const list = game.qcard(player);
+                const list = player.qcard();
                 return ui.create.dialog('赌2', [list, 'vcard']);
             },
             check(button) {
@@ -3359,7 +3356,7 @@ const skill = {
         async content(event, trigger, player) {
             const { result } = await player.chooseTarget(get.prompt2('QQQ_三刀'), lib.filter.notMe).set('ai', (target) => -get.attitude(target, player));
             if (result.targets && result.targets[0]) {
-                const list = game.qcard(player, 'trick', false).filter((q) => lib.card[q[2]].selectTarget == 1);
+                const list = player.qcard('trick', false).filter((q) => lib.card[q[2]].selectTarget == 1);
                 if (list.length) {
                     let count = 3;
                     while (count-- > 0) {
@@ -3660,7 +3657,7 @@ const skill = {
     QQQ_longjing: {
         enable: ['chooseToUse', 'chooseToRespond'],
         filter(event, player) {
-            return game.qcard(player, false, true, false).some((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
+            return player.qcard(false, true, false).some((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
         },
         hiddenCard(player, name) {
             return player.countCards('he', (q) => get.cardNameLength(name) == get.cardNameLength(q));
@@ -3683,7 +3680,7 @@ const skill = {
             if (evt.name == '_wuxie') {
                 list.push([lib.suits.randomGet(), lib.number.randomGet(), 'wuxie']);
             } else {
-                list = game.qcard(player, false, true, false).filter((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
+                list = player.qcard(false, true, false).filter((q) => player.countCards('he', (i) => get.cardNameLength(i) == get.cardNameLength(q[2])));
             }
             if (list.length) {
                 const {
@@ -3782,14 +3779,14 @@ const skill = {
     龙威: {
         enable: ['chooseToUse', 'chooseToRespond'],
         filter(event, player) {
-            return game.qcard(player, 'basic').length && player.countCards('hes', { type: 'basic' });
+            return player.qcard('basic').length && player.countCards('hes', { type: 'basic' });
         },
         hiddenCard(player, name) {
             return lib.card[name].type == 'basic' && player.countCards('hes', { type: 'basic' });
         },
         chooseButton: {
             dialog(event, player) {
-                return ui.create.dialog('龙威', [game.qcard(player, 'basic'), 'vcard'], 'hidden');
+                return ui.create.dialog('龙威', [player.qcard('basic'), 'vcard'], 'hidden');
             },
             check(button) {
                 const num = _status.event.player.getUseValue(
@@ -3871,11 +3868,11 @@ const skill = {
                 },
                 enable: ['chooseToUse', 'chooseToRespond'],
                 filter(event, player) {
-                    return game.qcard(player, 'trick').length && player.countCards('hes', { type: 'trick' });
+                    return player.qcard('trick').length && player.countCards('hes', { type: 'trick' });
                 },
                 chooseButton: {
                     dialog(event, player) {
-                        return ui.create.dialog('龙威', [game.qcard(player, 'trick'), 'vcard']);
+                        return ui.create.dialog('龙威', [player.qcard('trick'), 'vcard']);
                     },
                     check(button) {
                         if (button.link[2] == 'wuxie') {
@@ -5228,7 +5225,7 @@ const skill = {
                     if (evt.name == '_wuxie') {
                         list.push(['trick', '', 'wuxie']);
                     } else {
-                        list = game.qcard(player, false, true, false); //不限类型,限制filtercard,不限距离
+                        list = player.qcard(false, true, false); //不限类型,限制filtercard,不限距离
                     }
                     if (list.length) {
                         const {
@@ -5740,7 +5737,7 @@ const skill = {
     QQQ_yaoyi: {
         enable: ['chooseToUse', 'chooseToRespond'],
         filter(event, player) {
-            return game.qcard(player, 'basic', true, false).length && (player.countCards('ejsx') || player.countCards('h', { name: 'ybsl_107xiaohu' }));
+            return player.qcard('basic', true, false).length && (player.countCards('ejsx') || player.countCards('h', { name: 'ybsl_107xiaohu' }));
         },
         hiddenCard: (player, name) => lib.card[name].type == 'basic',
         mod: {
@@ -5766,7 +5763,7 @@ const skill = {
             if (cards[0]) {
                 const { result } = await player.chooseButton(['将【小狐】或非手牌区一张牌当做一张基本牌使用或打出', cards]);
                 if (result.links && result.links[0]) {
-                    const list = game.qcard(player, 'basic', true, false);
+                    const list = player.qcard('basic', true, false);
                     const { result: result1 } = await player.chooseButton(['使用或打出一张基本牌', [list, 'vcard']]);
                     if (result1.links && result1.links[0]) {
                         if (evt.name == 'chooseToUse' && result1.links[0][2] != 'shan') {
@@ -5948,11 +5945,11 @@ const skill = {
             if (numberq0(player.stat[player.stat.length - 1].skill.QQQ_kangzou) >= player.storage.QQQ_maxhp) {
                 return false;
             }
-            return game.qcard(player).some((q) => !player.storage.QQQ_kangzou.includes(q[2]));
+            return player.qcard().some((q) => !player.storage.QQQ_kangzou.includes(q[2]));
         },
         chooseButton: {
             dialog(event, player) {
-                const list = game.qcard(player).filter((q) => !player.storage.QQQ_kangzou.includes(q[2]));
+                const list = player.qcard().filter((q) => !player.storage.QQQ_kangzou.includes(q[2]));
                 return ui.create.dialog('抗揍', [list, 'vcard']);
             },
             check(button) {
@@ -6274,7 +6271,7 @@ const skill = {
                 enable: ['chooseToUse', 'chooseToRespond'],
                 forced: true,
                 filter(event, player) {
-                    return game.qcard(player, false, true, false).some((q) => player.storage.QQQ_zhuiyi.includes(q[2]));
+                    return player.qcard(false, true, false).some((q) => player.storage.QQQ_zhuiyi.includes(q[2]));
                 },
                 async content(event, trigger, player) {
                     //event是技能名,event.parent是useskill,parent2是chooseToUse
@@ -6285,7 +6282,7 @@ const skill = {
                             list.push(['trick', '', 'wuxie']);
                         }
                     } else {
-                        list = game.qcard(player, false, true, false).filter((q) => player.storage.QQQ_zhuiyi.includes(q[2]));
+                        list = player.qcard(false, true, false).filter((q) => player.storage.QQQ_zhuiyi.includes(q[2]));
                     }
                     if (list.length) {
                         const {

@@ -363,7 +363,7 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                 },
                 selectTarget: 1,
                 async content(event, trigger, player) {
-                    const list = game.qcard(player, false, false).filter((q) => get.tag({ name: q[2] }, 'damage'));
+                    const list = player.qcard(false, false).filter((q) => get.tag({ name: q[2] }, 'damage'));
                     const card = list.randomGet();
                     player.useCard({ name: card[2], nature: card[3] }, event.target, false);
                 },

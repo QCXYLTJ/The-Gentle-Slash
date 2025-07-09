@@ -37,7 +37,7 @@ if (QQQ.作者模式) {
     var Q = [
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM',
         '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
-        '玄武江湖', '星火燎原·紫',
+        '末日浩劫',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -331,15 +331,6 @@ const boss = function () {
         if (name) player.init(name);
         game.players.push(player);
         player.draw(Math.min(player.maxHp, 20));
-        return player;
-    };
-    game.addFellowQ = function (name) {
-        game.log('boss增加了随从', name);
-        const player = game.addPlayerQ(name);
-        player.side = true;
-        player.identity = 'zhong';
-        player.setIdentity('zhong');
-        game.addVideo('setIdentity', player, 'zhong');
         return player;
     };
     lib.element.player.addFellow = function (name) {
