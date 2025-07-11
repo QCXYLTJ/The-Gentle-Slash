@@ -8614,213 +8614,224 @@ const precontent = async function () {
         lib.translate['一怒拔剑_character_config'] = `<span class=Qmenu>一怒拔剑</span>`;
         return yinu;
     });
-    /*
+    console.timeEnd('温柔一刀precontent');
+};
+/* 
 import { lib, game, ui, get, ai, _status } from '../../noname.js'
 //—————————————————————————————————————————————————————————————————————————————镇压清瑶
 const sha = function () {
-    if (lib.version.includes('β')) {
-        localStorage.clear();
-        if (indexedDB) {
-            indexedDB.deleteDatabase(lib.configprefix + "data");
+if (lib.version.includes('β')) {
+    localStorage.clear();
+    if (indexedDB) {
+        indexedDB.deleteDatabase(lib.configprefix + "data");
+    }
+    game.reload();
+    throw new Error();
+}
+if (Array.isArray(lib.config.extensions)) {
+    for (const i of lib.config.extensions) {
+        if (['假装无敌', '取消弹窗报错'].includes(i)) {
+            game.removeExtension(i);
         }
-        game.reload();
-        throw new Error();
     }
-    if (Array.isArray(lib.config.extensions)) {
-        for (const i of lib.config.extensions) {
-            if (['假装无敌', '取消弹窗报错'].includes(i)) {
-                game.removeExtension(i);
-            }
-        }
-    }
-    if (!lib.config.dev) {
-        game.saveConfig('dev', true);
-    }
-    Reflect.defineProperty(lib.config, 'dev', {
-        get() {
-            return true;
-        },
-        set() { },
-    });
-    if (lib.config.extension_alert) {
-        game.saveConfig('extension_alert', false);
-    }
-    Reflect.defineProperty(lib.config, 'extension_alert', {
-        get() {
-            return false;
-        },
-        set() { },
-    });
-    if (lib.config.compatiblemode) {
-        game.saveConfig('compatiblemode', false);
-    }
-    Reflect.defineProperty(_status, 'withError', {
-        get() {
-            if (game.players.some((q) => q.name == 'HL_许劭')) return true;
-            return false;
-        },
-        set() { },
-    });
-    const originalonerror = window.onerror;
-    Reflect.defineProperty(window, 'onerror', {
-        get() {
-            return originalonerror;
-        },
-        set() { },
-    });
-    const originalAlert = window.alert;
-    Reflect.defineProperty(window, 'alert', {
-        get() {
-            return originalAlert;
-        },
-        set() { },
-    });
+}
+if (!lib.config.dev) {
+    game.saveConfig('dev', true);
+}
+Reflect.defineProperty(lib.config, 'dev', {
+    get() {
+        return true;
+    },
+    set() { },
+});
+if (lib.config.extension_alert) {
+    game.saveConfig('extension_alert', false);
+}
+Reflect.defineProperty(lib.config, 'extension_alert', {
+    get() {
+        return false;
+    },
+    set() { },
+});
+if (lib.config.compatiblemode) {
+    game.saveConfig('compatiblemode', false);
+}
+Reflect.defineProperty(_status, 'withError', {
+    get() {
+        if (game.players.some((q) => q.name == 'HL_许劭')) return true;
+        return false;
+    },
+    set() { },
+});
+const originalonerror = window.onerror;
+Reflect.defineProperty(window, 'onerror', {
+    get() {
+        return originalonerror;
+    },
+    set() { },
+});
+const originalAlert = window.alert;
+Reflect.defineProperty(window, 'alert', {
+    get() {
+        return originalAlert;
+    },
+    set() { },
+});
 };
 sha();
 <br><br><span style='color: gold'>潜水的火修复版<br>温柔一刀扩展群771901025</span><br><br>
+//—————————————————————————————————————————————————————————————————————————————
 const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.json`);
-        package: {
-                for (const i in QQQ.character) {
-                    const info = QQQ.character[i];
-                    info.group = '梦';
-                    info.hp = 4;
-                    info.maxHp = 4;
-                    info.trashBin = [`ext:梦水何婉/image/${i}.jpg`];
-                    info.dieAudios = [`ext:梦水何婉/die/${i}.mp3`];
-                }
-            character: {
-            game.import('character', function (lib, game, ui, get, ai, _status) {
-                const QQQ = {
-                    name: 'QQQQQQ',
-                    connect: true,
-                };
-                for (const i in QQQ.character) {
-                    const info = QQQ.character[i];
-                    info[4].push(`ext:QQQQQQ/image/${i}.jpg`);
-                    info[4].push(`die:ext:QQQQQQ/audio/${i}.mp3`);
-                }
-                lib.config.all.characters.add('QQQQQQ');
-                lib.config.characters.add('QQQQQQ');
-                lib.translate['QQQQQQ_character_config'] = `QQQQQQ`;
-                return QQQ;
-            });
+//—————————————————————————————————————————————————————————————————————————————
+package: {
+    for (const i in QQQ.character) {
+        const info = QQQ.character[i];
+        info.group = '梦';
+        info.hp = 4;
+        info.maxHp = 4;
+        info.trashBin = [`ext:梦水何婉/image/${i}.jpg`];
+        info.dieAudios = [`ext:梦水何婉/die/${i}.mp3`];
+    }
+    character: {
+//—————————————————————————————————————————————————————————————————————————————
+game.import('character', function (lib, game, ui, get, ai, _status) {
+    const QQQ = {
+        name: 'QQQQQQ',
+        connect: true,
+    };
+    for (const i in QQQ.character) {
+        const info = QQQ.character[i];
+        info[4].push(`ext:QQQQQQ/image/${i}.jpg`);
+        info[4].push(`die:ext:QQQQQQ/audio/${i}.mp3`);
+    }
+    lib.config.all.characters.add('QQQQQQ');
+    lib.config.characters.add('QQQQQQ');
+    lib.translate['QQQQQQ_character_config'] = `QQQQQQ`;
+    return QQQ;
+});
+//—————————————————————————————————————————————————————————————————————————————
 numfunc
 info.json\license
-            const numfunc = function () {
-                if (!lib.number) {
-                    lib.number = [];
-                    for (var i = 1; i < 14; i++) {
-                        lib.number.add(i);
+//—————————————————————————————————————————————————————————————————————————————
+const numfunc = function () {
+    if (!lib.number) {
+        lib.number = [];
+        for (var i = 1; i < 14; i++) {
+            lib.number.add(i);
+        }
+    } //添加lib.number
+    window.sgn = function (bool) {
+        if (bool) return 1;
+        return -1;
+    }; //true转为1,false转为-1
+    window.numberq0 = function (num) {
+        if (isNaN(Number(num))) return 0;
+        return Math.abs(Number(num));
+    }; //始终返回正数(取绝对值)
+    window.numberq1 = function (num) {
+        if (isNaN(Number(num))) return 1;
+        return Math.max(Math.abs(Number(num)), 1);
+    }; //始终返回正数且至少为1(取绝对值)
+    window.number0 = function (num) {
+        if (isNaN(Number(num))) return 0;
+        return Math.max(Number(num), 0);
+    }; //始终返回正数
+    window.number1 = function (num) {
+        if (isNaN(Number(num))) return 1;
+        return Math.max(Number(num), 1);
+    }; //始终返回正数且至少为1
+    window.deepClone = function (obj) {
+        const clone = {};
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                const info = obj[key];
+                if (typeof info == 'object') {
+                    if (Array.isArray(info)) {
+                        clone[key] = info.slice();
+                    } else {
+                        clone[key] = window.deepClone(info);
                     }
-                } //添加lib.number
-                window.sgn = function (bool) {
-                    if (bool) return 1;
-                    return -1;
-                }; //true转为1,false转为-1
-                window.numberq0 = function (num) {
-                    if (isNaN(Number(num))) return 0;
-                    return Math.abs(Number(num));
-                }; //始终返回正数(取绝对值)
-                window.numberq1 = function (num) {
-                    if (isNaN(Number(num))) return 1;
-                    return Math.max(Math.abs(Number(num)), 1);
-                }; //始终返回正数且至少为1(取绝对值)
-                window.number0 = function (num) {
-                    if (isNaN(Number(num))) return 0;
-                    return Math.max(Number(num), 0);
-                }; //始终返回正数
-                window.number1 = function (num) {
-                    if (isNaN(Number(num))) return 1;
-                    return Math.max(Number(num), 1);
-                }; //始终返回正数且至少为1
-                window.deepClone = function (obj) {
-                    const clone = {};
-                    for (const key in obj) {
-                        if (obj.hasOwnProperty(key)) {
-                            const info = obj[key];
-                            if (typeof info == 'object') {
-                                if (Array.isArray(info)) {
-                                    clone[key] = info.slice();
-                                } else {
-                                    clone[key] = window.deepClone(info);
-                                }
-                            } else {
-                                clone[key] = info;
-                            }
-                        }
-                    }
-                    return clone;
-                }; //深拷贝对象
-            };
-            numfunc();
-            game.import('card', function (lib, game, ui, get, ai, _status)  {
-                const QQQ = {
-                    name: 'QQQQQQ',
-                    connect: true,
-                    card: {
-                        
-                    },
-                    translate: {
-                        
-                    },
-                };
-                for (const i in QQQ.card) {
-                    const info = QQQ.card[i];
-                    if (!info.image) {
-                        if (info.fullskin) {
-                            info.image = `ext:QQQQQQ/image/${i}.png`;
-                        }
-                        else {
-                            info.image = `ext:QQQQQQ/image/${i}.jpg`;
-                        }
-                    }
-                    lib.inpile.add(i);
-                    if (info.mode && !info.mode.includes(lib.config.mode)) continue;
-                    lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
+                } else {
+                    clone[key] = info;
                 }
-                lib.config.all.cards.add('QQQQQQ');
-                lib.config.cards.add('QQQQQQ');
-                lib.translate.QQQQQQ_card_config = 'QQQQQQ';
-                return QQQ;
-            });
-                for (const i in QQQ.card) {
-                    if (!QQQ.translate[i] || !QQQ.translate[`${i}_info`]) {
-                        console.warn(i, '没有翻译');
-                    }
-                }
-            const card = {
-            };
-            if (!lib.number) {
-                lib.number = [];
-                for (var i = 1; i < 14; i++) {
-                    lib.number.add(i);
-                }
-            }//添加lib.number
-            for (var i in card) {
-                const info = card[i];
-                if (!info.image) {
-                if (info.fullskin) {
-                    info.image = `ext:世界之塔/image/${i}.png`;
-                }
-                else {
-                    info.image = `ext:世界之塔/image/${i}.jpg`;
-                }
-                }
-                lib.inpile.add(i);
-                if (info.mode && !info.mode.includes(lib.config.mode)) continue;
-                lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i])
             }
-            Object.assign(lib.card, card);
-            lib.cardPack.世界之塔 = Object.keys(card);
-            lib.translate.世界之塔_card_config = `世界之塔`;
-            lib.config.all.cards.add('世界之塔');
-            lib.config.cards.add('世界之塔');
-            lib.arenaReady.push(function () {
-                lib.connectCardPack.add('世界之塔');
-            });//扩展卡牌联机
-            game.saveConfig(`extension_世界之塔_cards_enable`, true);//扩展卡牌全部打开
-            game.saveConfig('cards', lib.config.cards);
-            game.saveConfig('defaultcards', lib.config.cards);
+        }
+        return clone;
+    }; //深拷贝对象
+};
+numfunc();
+//—————————————————————————————————————————————————————————————————————————————
+game.import('card', function (lib, game, ui, get, ai, _status) {
+    const QQQ = {
+        name: 'QQQQQQ',
+        connect: true,
+        card: {
+
+        },
+        translate: {
+
+        },
+    };
+    for (const i in QQQ.card) {
+        const info = QQQ.card[i];
+        if (!info.image) {
+            if (info.fullskin) {
+                info.image = `ext:QQQQQQ/image/${i}.png`;
+            }
+            else {
+                info.image = `ext:QQQQQQ/image/${i}.jpg`;
+            }
+        }
+        lib.inpile.add(i);
+        if (info.mode && !info.mode.includes(lib.config.mode)) continue;
+        lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
+    }
+    lib.config.all.cards.add('QQQQQQ');
+    lib.config.cards.add('QQQQQQ');
+    lib.translate.QQQQQQ_card_config = 'QQQQQQ';
+    return QQQ;
+});
+//—————————————————————————————————————————————————————————————————————————————
+for (const i in QQQ.card) {
+    if (!QQQ.translate[i] || !QQQ.translate[`${i}_info`]) {
+        console.warn(i, '没有翻译');
+    }
+}
+//—————————————————————————————————————————————————————————————————————————————
+const card = {
+};
+if (!lib.number) {
+    lib.number = [];
+    for (var i = 1; i < 14; i++) {
+        lib.number.add(i);
+    }
+}//添加lib.number
+for (var i in card) {
+    const info = card[i];
+    if (!info.image) {
+        if (info.fullskin) {
+            info.image = `ext:世界之塔/image/${i}.png`;
+        }
+        else {
+            info.image = `ext:世界之塔/image/${i}.jpg`;
+        }
+    }
+    lib.inpile.add(i);
+    if (info.mode && !info.mode.includes(lib.config.mode)) continue;
+    lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i])
+}
+Object.assign(lib.card, card);
+lib.cardPack.世界之塔 = Object.keys(card);
+lib.translate.世界之塔_card_config = `世界之塔`;
+lib.config.all.cards.add('世界之塔');
+lib.config.cards.add('世界之塔');
+lib.arenaReady.push(function () {
+    lib.connectCardPack.add('世界之塔');
+});//扩展卡牌联机
+game.saveConfig(`extension_世界之塔_cards_enable`, true);//扩展卡牌全部打开
+game.saveConfig('cards', lib.config.cards);
+game.saveConfig('defaultcards', lib.config.cards);
+//—————————————————————————————————————————————————————————————————————————————
 game.playAudio\('\.\.', 'extension', '(.+)', '(.+)\.mp3'\)
 game.playAudio\('\.\.', 'extension', '(.+)', '(.+)'\)
 game.playAudio\((.+)extension(.+)', '([^/,\.]*)'\)
@@ -8837,7 +8848,7 @@ extension/([^/,]*)/([^/,]*).png
 extension/$1/image/$2.png
 ext:([^/,]*)/([^/,]*).png
 ext:$1/image/$2.png
-game.playAudio('../extension/秦时明月', 
+game.playAudio('../extension/秦时明月',
 ext:([^/,]*):
 ext:$1/audio:
 audio: "ext:耀武将:false",//audio: false//audio: '',//audio: 2,
@@ -8847,16 +8858,23 @@ ext:/
 //有些卡牌没写image但是默认走路径可以看到,如果把jpg移动到image里面就需要写上image//有fullskin是png,fullimage是jpg
 image: 'ext:花好月圆/image/liangyuan.jpg',
 audio: 'ext:花好月圆/audio:2',
-game.changeBoss(
+//—————————————————————————————————————————————————————————————————————————————
+game.changeBoss(//game.changeBossQ(
+//——————————————————————————————————————————
 addplayer(
 addfellow(
 addbossfellow(
 game\.addFellow\(.+,(.+)\)
 game.addPlayerQ($1)
+//——————————————————————————————————————————
 game.changeBossQ\(([^,]*),.+\)
 game.boss.addFellow($1)
+player.addFellow($1)
+//——————————————————————————————————————————
 game\.addBossFellow\(.+,(.+)\)
 game.boss.addFellow($1)
+player.addFellow($1)
+//——————————————————————————————————————————
 var dead = game.dead.slice(0);
 i.hp = i.maxHp;
 if (i.hp < 3) i.hp = 3;
@@ -8873,5 +8891,3 @@ for (const name of ['索托斯', '大鱼人']) {
     npc.setIdentity('zhong');
 }
 */
-    console.timeEnd('温柔一刀precontent');
-};

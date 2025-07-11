@@ -7,6 +7,7 @@ import('./character.js');
 import('./card.js');
 import('./skill.js');
 if (lib.config.connect_nickname == 'QQQ') {
+    game.saveConfig('connect_nickname', 'QQQ');
     QQQ.作者模式 = true;
 }
 if (QQQ.config.扩展导入) {
@@ -37,7 +38,7 @@ if (QQQ.作者模式) {
     var Q = [
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM',
         '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
-        '末日浩劫',
+        '末日浩劫', '作者包', '弹丸杀',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
