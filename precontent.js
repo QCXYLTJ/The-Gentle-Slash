@@ -108,7 +108,10 @@ countCards\('(?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)')[^'"]*'\)
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
-
+i of arguments//...args//i of args
+Object.defineProperties
+respondtao
+respondwuxie
 switch (cards[0].//switch (cards[0]?.
 identityList[i]
 updateMark
@@ -177,6 +180,7 @@ lutou//qhly
 */
 import { updateActiveCard, setUpdateActiveCard, menux, menuxpages, clickToggle, createConfig } from '../../noname/ui/create/menu/index.js'; //UI.create.cardPackMenu相关参数
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
+import { save } from '../../noname/util/config.js';
 export { precontent };
 _status.gentle = {};
 const windowq = function () {
@@ -849,6 +853,30 @@ const precontent = async function () {
             card.storage.vanish = true;
             return card.init([suit, number, name, nature]);
         };
+        game.saveConfig = function (key, value, local, callback) {
+            if (_status.reloading) {
+                return;
+            }
+            if (local) {
+                let localmode = typeof local == 'string' ? local : lib.config.mode;
+                if (!lib.config.mode_config[localmode]) {
+                    lib.config.mode_config[localmode] = {};
+                }
+                if (typeof value == 'undefined') {
+                    delete lib.config.mode_config[localmode][key];
+                } else {
+                    lib.config.mode_config[localmode][key] = value;
+                }
+                save('mode_config', 'config', lib.config.mode_config).then(callback);
+            } else {
+                if (typeof value == 'undefined') {
+                    delete lib.config[key];
+                } else {
+                    lib.config[key] = value;
+                }
+                save(key, 'config', value).then(callback);
+            }
+        };//mode_config保存bug修复
     } //game相关本体函数
     gameq();
     //—————————————————————————————————————————————————————————————————————————————视为转化虚拟牌相关自创函数
