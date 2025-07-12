@@ -36,7 +36,7 @@ if (QQQ.config.扩展全关) {
 } //扩展全部关闭
 if (QQQ.作者模式) {
     var Q = [
-        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', 'BGM',
+        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花',
         '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
@@ -672,9 +672,9 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             }
                         }
                     };
-                    const ok = document.createElement('button');
+                    const ok = document.createElement('div');
                     ok.className = 'backQ';
-                    ok.textContent = '确认';
+                    ok.textContent = '确定';
                     ok.addEventListener('click', async function () {
                         div.remove();
                         if (div.log && lib.skill[div.log.link]) {
@@ -743,7 +743,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                         page.appendChild(node);
                     }
                     const backButton = document.createElement('div');
-                    backButton.innerHTML = '返回游戏'; //文字内容
+                    backButton.innerHTML = '返回'; //文字内容
                     backButton.className = 'backQ';
                     backButton.onclick = function () {
                         if (intro) {

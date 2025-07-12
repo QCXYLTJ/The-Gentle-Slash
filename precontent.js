@@ -1056,22 +1056,6 @@ const precontent = async function () {
                 });
             });
         }; //播放mp4
-        game.movimage = function (src) {
-            const div = document.createElement('div');
-            div.className = 'movimage';
-            const img = document.createElement('img');
-            img.src = src;
-            div.appendChild(img);
-            document.body.appendChild(div);
-            var timeout = setTimeout(function () {
-                div.remove();
-            }, 2000);
-            img.addEventListener('error', function () {
-                clearTimeout(timeout);
-                div.remove();
-            });
-            return img;
-        }; //从右侧切入图片动画
         game.src = function (name) {
             let extimage = null,
                 nameinfo = get.character(name),
