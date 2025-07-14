@@ -136,6 +136,11 @@ const config = {
         intro: '开启后,取消小游戏评才、冲虚、御风、整经',
         init: true,
     },
+    禁止抢回合: {
+        name: '<span class=Qmenu>禁止抢回合</span>',
+        intro: '开启后,所有角色每轮只能进行一个回合,无法获得额外回合',
+        init: false,
+    },
     武将卡牌加强: {
         name: '<span class=Qmenu>武将卡牌加强</span>',
         intro: '开启后,加强部分武将与部分卡牌',

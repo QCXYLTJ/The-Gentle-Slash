@@ -6559,7 +6559,7 @@ const skill = {
                 set() { },
             });
             if (window.ceshiskill) {
-                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'qx_xuwu' && Q != 'fg_wangzhicaibao');//改用这个直接获取技能
+                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'qx_xuwu' && Q != 'qqwz_迅疾2');//改用这个直接获取技能
                 game.log(`当前武将包有${game.bug.length}个技能`);
             }//window.ceshiskill = Object.keys(QQQ.skill);
         },
@@ -6568,7 +6568,7 @@ const skill = {
             return game.bug;
         },
         async content(event, trigger, player) {
-            var Q = game.bug.slice(0, 70); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(320, 390); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
             const {
                 result: { bool },
@@ -6637,32 +6637,15 @@ const skill = {
                         } //用牌击穿
                     }
                     if (trigger.name == 'phase') {
-                        if (player.storage.phase > game.roundNumber) {
-                            trigger.cancel();
-                            if (!_status.lastPhasedPlayer || player.seatNum < _status.lastPhasedPlayer.seatNum) {
-                                delete _status.roundSkipped;
-                                game.roundNumber++;
-                                event._roundStart = true;
-                                game.updateRoundNumber();
-                                for (const i of game.players) {
-                                    if (i.isOut() && i.outCount > 0) {
-                                        i.outCount--;
-                                        if (i.outCount == 0 && !i.outSkills) {
-                                            i.in();
-                                        }
-                                    }
-                                }
-                                event.trigger('roundStart');
-                            }
-                            _status.lastPhasedPlayer = player;
-                        } else {
-                            player.storage.phase++;
+                        if (trigger.parent.name == 'phaseLoop') {
                             Reflect.defineProperty(trigger, 'finished', {
                                 get() {
                                     return trigger.step > 12;
                                 },
                                 set() { },
                             });
+                        } else {
+                            trigger.cancel();//抢的回合取消就不需要更新轮数了
                         }
                     } //phaseBefore取消无法更新轮数
                 },

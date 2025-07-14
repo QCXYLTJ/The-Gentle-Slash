@@ -385,7 +385,7 @@ const character = {
         sex: 'male',
         hp: 10,
         maxHp: 10,
-        skills: ['bug', '检测', '测试', 'SG_qingnang', 'SG_qingming'],
+        skills: ['bug', '检测', '测试'],
     },
 };
 const characterIntro = {

@@ -140,8 +140,6 @@ hasSkill('')
 ai.shown
 player.addExpose
 timeout:
-(result.links[0][2])
-({ name: result.links[0] })
 card.selfDestroy====>cards?.forEach(q => q.selfDestroy(event));
 lib.nature.//Array.from(lib.nature.keys())
 event.result.cards = []//delete event.result.skill
@@ -171,7 +169,7 @@ decade//十周年UI//tenui
 selectTarget() {返回数组而不是数字
 .canAddJudge(//输入字符串导致checkmod报错
 return 8.5 - get.equipValue(card, player) / 20;//value = get.value(current, player);
-button.link[0][2]是字符button.link[0]才是字符串//backup内的check参数是card//backup外的check参数是button
+button.link[0][2]//{ name: button.link }//{ name: result.links[0] }//backup内的check参数是card//backup外的check参数是button
 event.logged
 cards[0].
 player.name == //全局不杀//音效图片不杀//current.name ==
@@ -8691,6 +8689,7 @@ Reflect.defineProperty(window, 'alert', {
 });
 };
 sha();
+//—————————————————————————————————————————————————————————————————————————————
 <br><br><span style='color: gold'>潜水的火修复版<br>温柔一刀扩展群771901025</span><br><br>
 //—————————————————————————————————————————————————————————————————————————————
 const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.json`);

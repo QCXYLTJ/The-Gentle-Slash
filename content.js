@@ -7246,6 +7246,22 @@ const content = async function () {
                 return null;
             }; //禁止循环触发
         } //禁止循环触发
+        if (QQQ.config.禁止抢回合) {
+            lib.skill._phaseban = {
+                trigger: {
+                    player: ['phaseBefore'],
+                },
+                forced: true,
+                firstDo: true,
+                filter(event, player) {
+                    return event.parent.name != 'phaseLoop';
+                },
+                async content(event, trigger, player) {
+                    game.log(player, '被禁止进行额外回合');
+                    trigger.cancel();//抢的回合取消就不需要更新轮数了
+                },
+            };
+        }
         if (QQQ.config.右键简介) {
             get.nodeintro = function (node, simple, evt) {
                 var uiintro = ui.create.dialog('hidden', 'notouchscroll');
