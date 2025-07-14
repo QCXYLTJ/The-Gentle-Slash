@@ -6568,7 +6568,7 @@ const skill = {
             return game.bug;
         },
         async content(event, trigger, player) {
-            var Q = game.bug.slice(320, 390); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(100, 200); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
             const {
                 result: { bool },
@@ -6595,6 +6595,7 @@ const skill = {
                 },
                 async content(event, trigger, player) {
                     if (['phaseUse', 'damage'].includes(trigger.name)) {
+                        trigger.cancel = game.kongfunc;
                         Reflect.defineProperty(trigger, 'finished', {
                             get() {
                                 return trigger.step > 5;
@@ -6609,6 +6610,7 @@ const skill = {
                         });
                     }
                     if (trigger.name == 'useCard') {
+                        trigger.cancel = game.kongfunc;
                         Reflect.defineProperty(trigger, 'finished', {
                             get() {
                                 return trigger.step > 16;
@@ -6638,6 +6640,7 @@ const skill = {
                     }
                     if (trigger.name == 'phase') {
                         if (trigger.parent.name == 'phaseLoop') {
+                            trigger.cancel = game.kongfunc;
                             Reflect.defineProperty(trigger, 'finished', {
                                 get() {
                                     return trigger.step > 12;

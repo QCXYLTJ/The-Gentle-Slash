@@ -2,7 +2,7 @@ import { lib, game, ui, get, ai, _status } from '../../noname.js';
 export { config };
 const config = {
     群聊: {
-        name: '<a href="https://qm.qq.com/q/SsTlU9gc24"><span class=Qmenu>【温柔一刀】群聊: 771901025</span></a>',
+        name: '<a href="https://qm.qq.com/q/SsTlU9gc24"><span class=Qmenu>『无名杀扩展大全群』: 771901025</span></a>',
         clear: true,
     },
     属性杀: {

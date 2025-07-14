@@ -206,56 +206,56 @@ const windowq = function () {
             QQQ.config[key.slice(15)] = lib.config[key];
         }
     }
-    //—————————————————————————————————————————————————————————————————————————————数据操作相关自定义函数
-    const numfunc = function () {
-        if (!lib.number) {
-            lib.number = [];
-            for (var i = 1; i < 14; i++) {
-                lib.number.add(i);
-            }
-        } //添加lib.number
-        window.sgn = function (bool) {
-            if (bool) return 1;
-            return -1;
-        };//true转为1,false转为-1
-        window.numberq0 = function (num) {
-            if (isNaN(Number(num))) return 0;
-            return Math.abs(Number(num));
-        };//始终返回正数(取绝对值)
-        window.numberq1 = function (num) {
-            if (isNaN(Number(num))) return 1;
-            return Math.max(Math.abs(Number(num)), 1);
-        };//始终返回正数且至少为1(取绝对值)
-        window.number0 = function (num) {
-            if (isNaN(Number(num))) return 0;
-            return Math.max(Number(num), 0);
-        };//始终返回正数
-        window.number1 = function (num) {
-            if (isNaN(Number(num))) return 1;
-            return Math.max(Number(num), 1);
-        };//始终返回正数且至少为1
-        window.deepClone = function (obj) {
-            const clone = {};
-            for (const key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    const info = obj[key];
-                    if (typeof info == 'object') {
-                        if (Array.isArray(info)) {
-                            clone[key] = info.slice();
-                        } else {
-                            clone[key] = window.deepClone(info);
-                        }
-                    } else {
-                        clone[key] = info;
-                    }
-                }
-            }
-            return clone;
-        }; //深拷贝对象
-    };
-    numfunc();
 }
 windowq();
+//—————————————————————————————————————————————————————————————————————————————数据操作相关自定义函数
+const numfunc = function () {
+    if (!lib.number) {
+        lib.number = [];
+        for (var i = 1; i < 14; i++) {
+            lib.number.add(i);
+        }
+    } //添加lib.number
+    window.sgn = function (bool) {
+        if (bool) return 1;
+        return -1;
+    };//true转为1,false转为-1
+    window.numberq0 = function (num) {
+        if (isNaN(Number(num))) return 0;
+        return Math.abs(Number(num));
+    };//始终返回正数(取绝对值)
+    window.numberq1 = function (num) {
+        if (isNaN(Number(num))) return 1;
+        return Math.max(Math.abs(Number(num)), 1);
+    };//始终返回正数且至少为1(取绝对值)
+    window.number0 = function (num) {
+        if (isNaN(Number(num))) return 0;
+        return Math.max(Number(num), 0);
+    };//始终返回正数
+    window.number1 = function (num) {
+        if (isNaN(Number(num))) return 1;
+        return Math.max(Number(num), 1);
+    };//始终返回正数且至少为1
+    window.deepClone = function (obj) {
+        const clone = {};
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                const info = obj[key];
+                if (typeof info == 'object') {
+                    if (Array.isArray(info)) {
+                        clone[key] = info.slice();
+                    } else {
+                        clone[key] = window.deepClone(info);
+                    }
+                } else {
+                    clone[key] = info;
+                }
+            }
+        }
+        return clone;
+    }; //深拷贝对象
+};
+numfunc();
 const precontent = async function () {
     console.time('温柔一刀precontent');
     //—————————————————————————————————————————————————————————————————————————————测试区
@@ -1023,9 +1023,61 @@ const precontent = async function () {
         }; //多目标牌检测
     };
     cardfunc();
-    //—————————————————————————————————————————————————————————————————————————————game相关自创函数
-    const gamex = function () {
-        game.VIDEO = async function (name) {
+    //—————————————————————————————————————————————————————————————————————————————播放视频与背景图片相关函数
+    const video = function () {
+        HTMLDivElement.prototype.setBackgroundImage = function (src) {
+            if (Array.isArray(src)) {
+                src = src[0];
+            }
+            if (src.includes('.mp4')) {
+                this.style.backgroundImage = 'none';
+                this.setBackgroundMp4(src);
+            }
+            else {
+                this.style.backgroundImage = `url(${src})`;
+            }
+            return this;
+        }; //引入mp4新逻辑
+        HTMLElement.prototype.setBackgroundMp4 = function (src) {
+            const video = document.createElement('video');
+            video.src = src;
+            video.style.cssText = 'bottom: 0%; left: 0%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; position: absolute; z-index: -5;';
+            video.autoplay = true;
+            video.loop = true;
+            this.appendChild(video);
+            video.addEventListener('error', function () {
+                video.remove();
+            });
+            return video;
+        }; //给父元素添加一个覆盖的背景mp4
+        game.src = function (name) {
+            let extimage = null,
+                nameinfo = get.character(name),
+                imgPrefixUrl;
+            if (nameinfo && nameinfo.trashBin) {
+                for (const value of nameinfo.trashBin) {
+                    if (value.startsWith('img:')) {
+                        imgPrefixUrl = value.slice(4);
+                        break;
+                    } else if (value.startsWith('ext:')) {
+                        extimage = value;
+                        break;
+                    } else if (value.startsWith('character:')) {
+                        name = value.slice(10);
+                        break;
+                    }
+                }
+            }
+            if (imgPrefixUrl) return imgPrefixUrl;
+            else if (extimage) return extimage.replace(/^ext:/, 'extension/');
+            return `image/character/${name}.jpg`;
+        }; //获取武将名对应立绘路径
+        HTMLElement.prototype.gentle_BG = function (name) {
+            const src = `extension/温柔一刀/mp4/${name}.mp4`;
+            const video = this.setBackgroundMp4(src);
+            return video;
+        }; //温柔一刀背景mp4
+        game.gentle_mp4 = async function (name) {
             return new Promise((resolve) => {
                 const video = document.createElement('video');
                 video.src = `extension/温柔一刀/mp4/${name}.mp4`;
@@ -1054,28 +1106,10 @@ const precontent = async function () {
                 });
             });
         }; //播放mp4
-        game.src = function (name) {
-            let extimage = null,
-                nameinfo = get.character(name),
-                imgPrefixUrl;
-            if (nameinfo && nameinfo.trashBin) {
-                for (const value of nameinfo.trashBin) {
-                    if (value.startsWith('img:')) {
-                        imgPrefixUrl = value.slice(4);
-                        break;
-                    } else if (value.startsWith('ext:')) {
-                        extimage = value;
-                        break;
-                    } else if (value.startsWith('character:')) {
-                        name = value.slice(10);
-                        break;
-                    }
-                }
-            }
-            if (imgPrefixUrl) return imgPrefixUrl;
-            else if (extimage) return extimage.replace(/^ext:/, 'extension/');
-            return `image/character/${name}.jpg`;
-        }; //获取武将名对应立绘路径
+    };
+    video();
+    //—————————————————————————————————————————————————————————————————————————————game相关自创函数
+    const gamex = function () {
         game.yinshi = function (str) {
             //当时年少掷春光,花马踏蹄酒溅香.爱恨情仇随浪来,夏蝉歌醒夜未央.光阴长河种红莲,韶光重回泪已干.今刻沧桑登舞榭,万灵且待命无缰!
             // 创建诗歌容器
@@ -3710,7 +3744,7 @@ const precontent = async function () {
         }; //火焰前缀以及作者名
         css();
         if (QQQ.config.动态背景) {
-            document.body.BG('wow');
+            document.body.gentle_BG('wow');
         } //动态背景
     };
     config();
@@ -4644,7 +4678,7 @@ const precontent = async function () {
                                 }
                                 player.$skill('使命失败');
                                 player.node.avatar.style.backgroundImage = `url(extension/温柔一刀/image/Melina_dianhuo.jpg)`;
-                                document.body.BG('癫火之王');
+                                document.body.gentle_BG('癫火之王');
                                 trigger.cancel();
                                 player.awakenSkill('QQQ_huozhong');
                                 player.addSkill('QQQ_mingsi');
@@ -4705,7 +4739,7 @@ const precontent = async function () {
                         } else {
                             game.playAudio('../extension/温柔一刀/audio/伴火同进者,终有一天会遇见命定之死.mp3');
                         }
-                        await game.VIDEO('燃烧黄金树');
+                        await game.gentle_mp4('燃烧黄金树');
                         player.awakenSkill('QQQ_fenjin');
                         for (const i of game.players.filter((q) => q != player)) {
                             if (player.storage.QQQ_fenjin[i.playerid] >= lib.character[i.name]?.hp) {
@@ -4784,7 +4818,7 @@ const precontent = async function () {
                             check: (event, player) => event.player.isEnemiesOf(player),
                             async content(event, trigger, player) {
                                 game.playAudio('../extension/温柔一刀/audio/为你献上,命定之死.mp3');
-                                await game.VIDEO('命定之死');
+                                await game.gentle_mp4('命定之死');
                                 player.storage.QQQ_mingsi--;
                                 trigger.cancel();
                                 trigger.player.useCard({ name: 'sha', nature: 'kami' }, trigger.player, trigger.cards);
@@ -5807,7 +5841,7 @@ const precontent = async function () {
                                 if (!info.notarget && info.content && info.selectTarget && info.enable) {
                                     await q.useCard(card0, player, false);
                                 } else {
-                                    await game.VIDEO('火凤燎原');
+                                    await game.gentle_mp4('火凤燎原');
                                 }
                             }
                         } else {
@@ -8690,20 +8724,10 @@ Reflect.defineProperty(window, 'alert', {
 };
 sha();
 //—————————————————————————————————————————————————————————————————————————————
-<br><br><span style='color: gold'>潜水的火修复版<br>温柔一刀扩展群771901025</span><br><br>
+<br><br><span style='color: gold'>潜水的火修复版<br>『无名杀扩展大全群』:771901025</span><br><br>
 //—————————————————————————————————————————————————————————————————————————————
 const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.json`);
-//—————————————————————————————————————————————————————————————————————————————
-package: {
-    for (const i in QQQ.character) {
-        const info = QQQ.character[i];
-        info.group = '梦';
-        info.hp = 4;
-        info.maxHp = 4;
-        info.trashBin = [`ext:梦水何婉/image/${i}.jpg`];
-        info.dieAudios = [`ext:梦水何婉/die/${i}.mp3`];
-    }
-    character: {
+info.json\license
 //—————————————————————————————————————————————————————————————————————————————
 game.import('character', function (lib, game, ui, get, ai, _status) {
     const QQQ = {
@@ -8720,10 +8744,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
     lib.translate['QQQQQQ_character_config'] = `QQQQQQ`;
     return QQQ;
 });
-//—————————————————————————————————————————————————————————————————————————————
-numfunc
-info.json\license
-//—————————————————————————————————————————————————————————————————————————————
+//—————————————————————————————————————————————————————————————————————————————数据操作相关自定义函数
 const numfunc = function () {
     if (!lib.number) {
         lib.number = [];
@@ -8808,37 +8829,6 @@ for (const i in QQQ.card) {
         console.warn(i, '没有翻译');
     }
 }
-//—————————————————————————————————————————————————————————————————————————————
-const card = {
-};
-if (!lib.number) {
-    lib.number = [];
-    for (var i = 1; i < 14; i++) {
-        lib.number.add(i);
-    }
-}//添加lib.number
-for (var i in card) {
-    const info = card[i];
-    if (!info.image) {
-        if (info.fullskin) {
-            info.image = `ext:世界之塔/image/${i}.png`;
-        }
-        else {
-            info.image = `ext:世界之塔/image/${i}.jpg`;
-        }
-    }
-    lib.inpile.add(i);
-    if (info.mode && !info.mode.includes(lib.config.mode)) continue;
-    lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i])
-}
-Object.assign(lib.card, card);
-lib.cardPack.世界之塔 = Object.keys(card);
-lib.translate.世界之塔_card_config = `世界之塔`;
-lib.config.all.cards.add('世界之塔');
-lib.config.cards.add('世界之塔');
-game.saveConfig(`extension_世界之塔_cards_enable`, true);//扩展卡牌全部打开
-game.saveConfig('cards', lib.config.cards);
-game.saveConfig('defaultcards', lib.config.cards);
 //—————————————————————————————————————————————————————————————————————————————
 game.playAudio\('\.\.', 'extension', '(.+)', '(.+)\.mp3'\)
 game.playAudio\('\.\.', 'extension', '(.+)', '(.+)'\)

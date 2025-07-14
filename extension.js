@@ -37,8 +37,9 @@ if (QQQ.config.扩展全关) {
 if (QQQ.作者模式) {
     var Q = [
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花',
-        '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
+        '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS', '太虚幻境',
         '千秋万载', 'FateEternity', '三国无双', '雷金阴洪石', '群星荟萃',
+
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -157,36 +158,6 @@ const yuanxing = function () {
             artifact();
         }).observe(parent, { childList: true });
     }; //DOM将子元素锁定于父元素上//this是父元素,son子元素
-    HTMLDivElement.prototype.setBackgroundImage = function (src) {
-        if (Array.isArray(src)) {
-            src = src[0];
-        }
-        if (src.includes('.mp4')) {
-            this.style.backgroundImage = 'none';
-            this.setBackgroundMp4(src);
-        }
-        else {
-            this.style.backgroundImage = `url(${src})`;
-        }
-        return this;
-    }; //引入mp4新逻辑
-    HTMLElement.prototype.setBackgroundMp4 = function (src) {
-        const video = document.createElement('video');
-        video.src = src;
-        video.style.cssText = 'bottom: 0%; left: 0%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; position: absolute; z-index: -5;';
-        video.autoplay = true;
-        video.loop = true;
-        this.appendChild(video);
-        video.addEventListener('error', function () {
-            video.remove();
-        });
-        return video;
-    }; //给父元素添加一个覆盖的背景mp4
-    HTMLElement.prototype.BG = function (name) {
-        const src = `extension/温柔一刀/mp4/${name}.mp4`;
-        const video = this.setBackgroundMp4(src);
-        return video;
-    }; //温柔一刀背景mp4
 }
 yuanxing();
 //—————————————————————————————————————————————————————————————————————————————boss模式相关函数,目前改用代理来排序

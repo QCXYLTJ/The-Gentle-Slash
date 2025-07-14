@@ -263,6 +263,7 @@ const content = async function () {
                     this.addSkill(skill[i]);
                 }
             } else {
+                console.log(this, 'addSkill', skill);//QQQ
                 if (this.skills.includes(skill)) return;
                 _status.event.clearStepCache();
                 var info = lib.skill[skill];
