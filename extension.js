@@ -38,6 +38,7 @@ if (QQQ.作者模式) {
     var Q = [
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花',
         '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
+        '千秋万载', 'FateEternity', '三国无双', '雷金阴洪石', '群星荟萃',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -442,9 +443,6 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
             } //卡牌加入牌堆
             console.log(console2, '没有装备技能');
             console.log(console3, '没有subtype');
-            lib.config.all.characters.add('温柔一刀');
-            lib.connectCardPack.add('温柔一刀');
-            lib.connectCharacterPack.add('温柔一刀');
             for (const i in lib.character) {
                 const info = lib.character[i];
                 if (typeof info != 'object') {
@@ -781,16 +779,20 @@ game.addMode(
             lib.config.mode = 'QQQ';
             _status.mode = 'QQQ';
             game.prepareArena(2);
-            for (const i of game.players) {
-                i.getId();
-            }
             game.me.identity = 'zhu';
+            game.me.side = true;
             game.me.next.identity = 'fan';
-            game.me.showIdentity();
-            game.me.next.showIdentity();
+            game.me.next.side = false;
+            game.zhu = game.me;
             lib.init.onfree();
-            game.me.init('QQQ_测试');
-            game.me.next.init('QQQ_刘备');
+            for (const npc of game.players) {
+                npc.getId();
+                npc.node.identity.classList.remove('guessing');
+                npc.identityShown = true;
+                npc.ai.shown = 1;
+                npc.setIdentity();
+                npc.init('QQQ_测试');
+            }
             event.trigger('gameStart');
             game.gameDraw(game.zhu, () => 4);
             game.phaseLoop(game.zhu);
@@ -798,8 +800,6 @@ game.addMode(
             _status.auto = true;
         },
         game: {
-            canReplaceViewpoint: () => true,
-            showIdentity() { },
             checkResult() {
                 game.over((game.me._trueMe || game.me).isAlive());
             },
@@ -807,32 +807,10 @@ game.addMode(
         element: {
             player: {
                 dieAfter() {
-                    if (game.players.length < 2) game.checkResult();
                 },
-                showIdentity() {
-                    game.broadcastAll(
-                        function (player, identity) {
-                            player.identity = identity;
-                            game[identity] = player;
-                            player.side = identity == 'zhu';
-                            player.node.identity.classList.remove('guessing');
-                            player.identityShown = true;
-                            player.ai.shown = 1;
-                            player.setIdentity();
-                            if (player.identity == 'zhu') {
-                                player.isZhu = true;
-                            }
-                            if (_status.clickingidentity) {
-                                for (var i = 0; i < _status.clickingidentity[1].length; i++) {
-                                    _status.clickingidentity[1][i].delete();
-                                    _status.clickingidentity[1][i].style.transform = '';
-                                }
-                                delete _status.clickingidentity;
-                            }
-                        },
-                        this,
-                        this.identity
-                    );
+            },
+            content: {
+                die() {
                 },
             },
         },

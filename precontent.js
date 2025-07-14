@@ -73,7 +73,7 @@ setInterval常量计算会被删掉
 */
 /*
 //------------------------------------------------脚本替换
-\),\n\s*\(====;\n
+\),\n\s*\(============;\n
 .i
 for (var i =
 [,//, ,//,]//,)
@@ -155,7 +155,7 @@ storage.disableEquip.remove//enableEquip
 event.getParent(2).filterCard
 if (lib.device || lib.node)
 left2 = left2.previous;
-= game.addPlayer//gain事件找不到owner.lose就是因为加的随从没有getId
+= game.addPlayer//player2.getId();
 while (true)
 countDiscardableCards('//countgainableCards('
 lib.filter.characterDisabled =
@@ -8837,9 +8837,6 @@ lib.cardPack.世界之塔 = Object.keys(card);
 lib.translate.世界之塔_card_config = `世界之塔`;
 lib.config.all.cards.add('世界之塔');
 lib.config.cards.add('世界之塔');
-lib.arenaReady.push(function () {
-    lib.connectCardPack.add('世界之塔');
-});//扩展卡牌联机
 game.saveConfig(`extension_世界之塔_cards_enable`, true);//扩展卡牌全部打开
 game.saveConfig('cards', lib.config.cards);
 game.saveConfig('defaultcards', lib.config.cards);

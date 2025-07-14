@@ -6559,16 +6559,16 @@ const skill = {
                 set() { },
             });
             if (window.ceshiskill) {
-                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'jjxsddpx_bukenengnan' && Q != 'fg_wangzhicaibao');//改用这个直接获取技能
+                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'qx_xuwu' && Q != 'fg_wangzhicaibao');//改用这个直接获取技能
                 game.log(`当前武将包有${game.bug.length}个技能`);
-            }
+            }//window.ceshiskill = Object.keys(QQQ.skill);
         },
         _priority: 9,
         filter(event, player) {
             return game.bug;
         },
         async content(event, trigger, player) {
-            var Q = game.bug.slice(200, 300); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(0, 70); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
             const {
                 result: { bool },
