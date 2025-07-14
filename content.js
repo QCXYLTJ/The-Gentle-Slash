@@ -46,9 +46,6 @@ const content = async function () {
             for (const i of QQQ.boss) {
                 lib.boss[i] = {
                     chongzheng: false, //所有人死后几轮复活,填0不会复活//boss不会自动添加重整
-                    loopFirst() {
-                        return game.boss;
-                    }, //每轮第一个回合是谁的
                     checkResult(player) {
                         if (player == game.boss && player.fuhuo > 0) {
                             return false;
@@ -66,7 +63,7 @@ const content = async function () {
                     global: ['gameStart'],
                 },
                 forced: true,
-                silent: true,
+                popup: false,
                 filter: (event, player) => game.boss == player && player.fuhuo,
                 async content(event, trigger, player) {
                     for (const npc of game.players) {
@@ -82,13 +79,14 @@ const content = async function () {
             lib.skill._qboss1 = {
                 mode: ['boss'],
                 trigger: {
-                    player: ['dieEnd'],
+                    global: ['phaseBegin'],
+                    player: ['die'],
                 },
                 forced: true,
                 forceDie: true,
-                silent: true,
+                popup: false,
                 filter(event, player) {
-                    return game.boss == player && player.fuhuo > 0;
+                    return game.boss == player && player.fuhuo > 0 && !game.players.includes(player);
                 },
                 async content(event, trigger, player) {
                     player.fuhuo--;
