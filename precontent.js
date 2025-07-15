@@ -3922,20 +3922,25 @@ const precontent = async function () {
                     hp: 5,
                     maxHp: 5,
                 },
+                QQQ_Miquella: {
+                    sex: 'female',
+                    skills: ['QQQ_sheqi'],
+                },
             },
             characterTitle: {
                 QQQ_jinshanshan: `<b style='color: rgb(231, 233, 203); font-size: 25px;'>金闪闪</b>`,
+                QQQ_hongting: `<b style='color: rgb(221, 22, 22); font-size: 25px;'>红莲魔尊</b>`,
+                QQQ_CosmicStarfish: `<b style='color: rgb(22, 85, 221); font-size: 25px;'>群星与苍穹之上的梦</b>`,
                 QQQ_Messmer: `<b style='color: rgb(221, 22, 22); font-size: 25px;'>幽影之火</b>`,
                 QQQ_Godwyn: `<b style='color: rgb(22, 4, 70); font-size: 25px;'>死王子</b>`,
                 QQQ_Melina: `<b style='color: rgb(231, 111, 12); font-size: 25px;'>火种少女</b>`,
-                QQQ_hongting: `<b style='color: rgb(221, 22, 22); font-size: 25px;'>红莲魔尊</b>`,
-                QQQ_CosmicStarfish: `<b style='color: rgb(22, 85, 221); font-size: 25px;'>群星与苍穹之上的梦</b>`,
                 QQQ_Malenia: `<b style='color: rgb(165, 15, 224); font-size: 25px;'>女武神</b>`,
                 QQQ_Radahn: `<b style='color: rgb(74, 8, 161); font-size: 25px;'>碎星将军</b>`,
                 QQQ_Morgott: `<b style='color: rgb(226, 230, 39); font-size: 25px;'>赐福王</b>`,
                 QQQ_菈妮: `<b style='color: rgb(92, 153, 233); font-size: 25px;'>暗月公主</b>`,
                 QQQ_Mohg: `<b style='color: rgb(221, 22, 22); font-size: 25px;'>鲜血君王</b>`,
                 QQQ_HoarahLoux: `<b style='color: rgba(226, 205, 13, 1); font-size: 25px;'>初始艾尔登之王</b>`,
+                QQQ_Miquella: `<b style='color: rgba(226, 205, 13, 1); font-size: 25px;'>年幼的神人</b>`,
             },
             characterIntro: {
                 QQQ_jinshanshan: '最初古代诸神为了抑制人类过度繁衍之后力量的壮大,将人间王族与女神相结合,创造出众神制约人类的<楔子>——吉尔伽美什.是诞生于神与人之间的英雄,拥有<三分之二为神,三分之一为人>的极高神格(拥有神的智慧及力量,但没有神的寿命)以及神明与人类的双方视点.',
@@ -7293,6 +7298,7 @@ const precontent = async function () {
                                     game.addGlobalSkill('QQQ_posuizhanzheng_1');
                                     player.offspring = [];
                                     for (const i of [
+                                        'QQQ_HoarahLoux',
                                         'QQQ_Godwyn', 'QQQ_Morgott', 'QQQ_Mohg',
                                         'QQQ_Radahn', 'QQQ_菈妮',
                                         'QQQ_Messmer', 'QQQ_Melina',
@@ -8325,7 +8331,43 @@ const precontent = async function () {
                         }
                     },
                 },
-                // 米凯拉、大蛇
+                //————————————————————————————————————————————米凯拉
+                // 舍弃神躯
+                // 出牌阶段,若你牌数不小于x,你可以摸x张牌弃置2x张牌,使用弃置牌中可使用的牌(x为此技能本回合发动次数)
+                QQQ_sheqi: {
+                    enable: 'phaseUse',
+                    filter(event, player) {
+                        const stat = player.stat;
+                        const statskill = stat[stat.length - 1].skill;
+                        return player.countCards('he') > numberq0(statskill.QQQ_sheqi);
+                    },
+                    async content(event, trigger, player) {
+                        const stat = player.stat;
+                        const statskill = stat[stat.length - 1].skill;
+                        const num = numberq0(statskill.QQQ_sheqi);
+                        await player.draw(num);
+                        const {
+                            result: { cards },
+                        } = await player.chooseToDiscard('he', true, 2 * num);
+                        if (cards && cards[0]) {
+                            for (const card of cards) {
+                                await player.chooseUseTarget(card, true, false, 'nodistance');
+                            }
+                        }
+                    },
+                    ai: {
+                        order: 40,
+                        result: {
+                            player: 2,
+                        },
+                    },
+                },
+
+
+
+
+
+                // 大蛇
                 //————————————————————————————————————————————安帕赫 3/3
                 // 王朝镰技
                 // 本局游戏限0次,你可以用【杀】抵消其他角色对你使用的牌,且结算后你可以再对使用者使用此【杀】,此【杀】无视防具.
@@ -8364,6 +8406,10 @@ const precontent = async function () {
                 */
             },
             translate: {
+                //————————————————————————————————————————————米凯拉
+                QQQ_Miquella: '米凯拉',
+                QQQ_sheqi: '舍弃神躯',
+                QQQ_sheqi_info: '出牌阶段,若你牌数不小于x,你可以摸x张牌弃置2x张牌,使用弃置牌中可使用的牌(x为此技能本回合发动次数)',
                 //————————————————————————————————————————————荷莱·露
                 QQQ_HoarahLoux: '荷莱·露',
                 QQQ_manhuang: '蛮荒',
