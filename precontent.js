@@ -103,8 +103,8 @@ game\.delayx\(.*\);
 PlayerCard\(.+set\('ai', function \(card\)//PlayerCard\(.+\n\s*\.set\('ai', function \(card\)
 lib.nature.add\('(.+)'\)//lib.nature.set('$1',90)
 card.fix\(\);\n\s*card.remove\(\);
-countCards\('(?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)')[^'"]*'\)
-.hasCard\('([^'"]*)'\)
+countCards\('(?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)')[^']*'\)
+.hasCard\('([^']*)'\)
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
@@ -339,7 +339,7 @@ const precontent = async function () {
                 }
                 */
                 /*
-                game.me.gain(game.createCard('sha'), 'gain2');
+                game.me.gain(game.createCard('shuidan'), 'gain2');
                 var num = 20;
                 var evt = _status.event;
                 while (num-- > 0) {

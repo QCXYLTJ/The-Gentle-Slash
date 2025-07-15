@@ -6528,10 +6528,6 @@ const skill = {
             global: ['gameStart'],
         },
         forced: true,
-        get usable() {
-            return 2;
-        }, //只读
-        set usable(v) { },
         init(player) {
             game.over = game.kongfunc;
             console.log(Object.keys(lib.characterPack));

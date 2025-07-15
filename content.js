@@ -2819,27 +2819,8 @@ const content = async function () {
                         return -1.5;
                     },
                     target: -1.5,
-                    player(player) {
-                        if (
-                            game.countPlayer(function (Q) {
-                                return Q != player && Q.isFriendsOf(player);
-                            }) <
-                            game.countPlayer(function (Q) {
-                                return Q.isEnemiesOf(player);
-                            })
-                        ) {
-                            return 0.5;
-                        }
-                        if (
-                            game.countPlayer(function (Q) {
-                                return Q != player && Q.isFriendsOf(player);
-                            }) >=
-                            game.countPlayer(function (Q) {
-                                return Q.isEnemiesOf(player);
-                            })
-                        ) {
-                            return 0;
-                        }
+                    player(player, target, card) {
+                        return player.getEnemies().length - player.getFriends().length;
                     },
                 }; //南蛮AI修改
             }
@@ -2849,27 +2830,8 @@ const content = async function () {
                         return -1.5;
                     },
                     target: -1.5,
-                    player(player) {
-                        if (
-                            game.countPlayer(function (Q) {
-                                return Q != player && Q.isFriendsOf(player);
-                            }) <
-                            game.countPlayer(function (Q) {
-                                return Q.isEnemiesOf(player);
-                            })
-                        ) {
-                            return 0.5;
-                        }
-                        if (
-                            game.countPlayer(function (Q) {
-                                return Q != player && Q.isFriendsOf(player);
-                            }) >=
-                            game.countPlayer(function (Q) {
-                                return Q.isEnemiesOf(player);
-                            })
-                        ) {
-                            return 0;
-                        }
+                    player(player, target, card) {
+                        return player.getEnemies().length - player.getFriends().length;
                     },
                 }; //万箭AI修改
             }
