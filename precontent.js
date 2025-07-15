@@ -7302,7 +7302,7 @@ const precontent = async function () {
                                         'QQQ_Godwyn', 'QQQ_Morgott', 'QQQ_Mohg',
                                         'QQQ_Radahn', 'QQQ_菈妮',
                                         'QQQ_Messmer', 'QQQ_Melina',
-                                        'QQQ_Malenia', 'QQQ_Trina'
+                                        'QQQ_Miquella', 'QQQ_Trina', 'QQQ_Malenia',
                                     ]) {
                                         const npc = player.addFellow(i);
                                         player.offspring.push(npc);
