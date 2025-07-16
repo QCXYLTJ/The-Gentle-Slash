@@ -255,16 +255,17 @@ const content = async function () {
             return destroyed;
         }; //card.destroyed是默认的undefined,lib.skill里面又存在undefined键名,无论怎么摸牌都会销毁
         lib.element.player.addSkill = async function (skill, checkConflict, nobroadcast, addToSkills) {
+            const player = this;
             if (Array.isArray(skill)) {
                 _status.event.clearStepCache();
                 for (var i = 0; i < skill.length; i++) {
-                    this.addSkill(skill[i]);
+                    player.addSkill(skill[i]);
                 }
             } else {
-                console.log(this, 'addSkill', skill);//QQQ
-                if (this.skills.includes(skill)) return;
+                console.log(player, 'addSkill', skill); //QQQ
+                if (player.skills.includes(skill)) return;
                 _status.event.clearStepCache();
-                var info = lib.skill[skill];
+                const info = lib.skill[skill];
                 if (!info) {
                     if (QQQ.作者模式 && get.mode() != 'boss') {
                         if (skill) {
@@ -276,93 +277,123 @@ const content = async function () {
                     return;
                 }
                 if (!addToSkills) {
-                    this.skills.add(skill);
+                    player.skills.add(skill);
                     if (!nobroadcast) {
                         game.broadcast(
                             function (player, skill) {
                                 player.skills.add(skill);
                             },
-                            this,
+                            player,
                             skill
                         );
                     }
                 }
-                if (this.playerid) {
-                    this.addSkillTrigger(skill); //加入钩子时候才init,要在这之后运行entergame的content //bosslist时候就不必init和加全局了
-                    if (this.awakenedSkills.includes(skill)) {
-                        this.awakenSkill(skill);
+                if (player.playerid) {
+                    player.addSkillTrigger(skill); //加入钩子时候才init,要在这之后运行entergame的content //bosslist时候就不必init和加全局了
+                    if (player.awakenedSkills.includes(skill)) {
+                        player.awakenSkill(skill);
                         return;
                     }
                     if (info.init2 && !_status.video) {
-                        info.init2(this, skill);
+                        info.init2(player, skill);
                     } //加入钩子时候才init,要在这之后运行entergame的content
                     if (info.mark) {
-                        if (info.mark == 'card' && get.itemtype(this.storage[skill]) == 'card') {
-                            this.markSkill(skill, null, this.storage[skill], nobroadcast);
-                        } else if (info.mark == 'card' && get.itemtype(this.storage[skill]) == 'cards') {
-                            this.markSkill(skill, null, this.storage[skill][0], nobroadcast);
+                        if (info.mark == 'card' && get.itemtype(player.storage[skill]) == 'card') {
+                            player.markSkill(skill, null, player.storage[skill], nobroadcast);
+                        } else if (info.mark == 'card' && get.itemtype(player.storage[skill]) == 'cards') {
+                            player.markSkill(skill, null, player.storage[skill][0], nobroadcast);
                         } else if (info.mark == 'image') {
-                            this.markSkill(skill, null, ui.create.card(null, 'noclick').init([null, null, skill]), nobroadcast);
+                            player.markSkill(skill, null, ui.create.card(null, 'noclick').init([null, null, skill]), nobroadcast);
                         } else if (info.mark == 'character') {
                             var intro = info.intro.content;
                             if (typeof intro == 'function') {
-                                intro = intro(this.storage[skill], this);
+                                intro = intro(player.storage[skill], player);
                             } else if (typeof intro == 'string') {
-                                intro = intro.replace(/#/g, this.storage[skill]);
-                                intro = intro.replace(/&/g, get.cnNumber(this.storage[skill]));
-                                intro = intro.replace(/\$/g, get.translation(this.storage[skill]));
+                                intro = intro.replace(/#/g, player.storage[skill]);
+                                intro = intro.replace(/&/g, get.cnNumber(player.storage[skill]));
+                                intro = intro.replace(/\$/g, get.translation(player.storage[skill]));
                             }
                             var caption;
                             if (typeof info.intro.name == 'function') {
-                                caption = info.intro.name(this.storage[skill], this);
+                                caption = info.intro.name(player.storage[skill], player);
                             } else if (typeof info.intro.name == 'string') {
                                 caption = info.name;
                             } else {
                                 caption = get.translation(skill);
                             }
-                            if (!this.storage[skill]) {
+                            if (!player.storage[skill]) {
                             }
-                            this.markSkillCharacter(skill, this.storage[skill], caption, intro, nobroadcast);
+                            player.markSkillCharacter(skill, player.storage[skill], caption, intro, nobroadcast);
                         } else {
-                            this.markSkill(skill, null, null, nobroadcast);
+                            player.markSkill(skill, null, null, nobroadcast);
                         }
                     } //bosslist时候就不必加标记
                     if (_status.roundStart && _status.currentPhase) {
-                        var Q = [];
-                        if (lib.skill[skill].group) {
-                            if (Array.isArray(lib.skill[skill].group)) Q = lib.skill[skill].group.slice();
-                            else Q.push(lib.skill[skill].group);
-                        }
-                        Q.push(skill);
-                        for (const i of Q) {
-                            if (!lib.skill[i] || !lib.skill[i].trigger || !lib.skill[i].trigger.player) continue;
-                            if (lib.skill[i].trigger.player == 'enterGame' || (Array.isArray(lib.skill[i].trigger.player) && lib.skill[i].trigger.player.includes('enterGame'))) {
-                                if (!this.游戏开始技能) this.游戏开始技能 = [];
-                                if (!this.游戏开始技能.includes(i)) {
-                                    this.游戏开始技能.push(i);
-                                    game.log(i + '是游戏开始时技能');
-                                    if (typeof lib.skill[i].cost === 'function') {
-                                        const next = game.createEvent(`${i}_cost`, false);
-                                        next.player = this;
-                                        next._trigger = _status.event;
-                                        next.skill = i;
-                                        const result1 = await next.setContent(lib.skill[i].cost).forResult();
-                                        if (result1.bool) {
-                                            var next1 = game.createEvent(i, false);
-                                            next1.skill = i;
-                                            next1.player = this;
-                                            next1._trigger = _status.event;
-                                            if (result1.targets) next1.targets = result1.targets;
-                                            if (result1.cards) next1.cards = result1.cards;
-                                            if (result1.cost_data) next1.cost_data = result1.cost_data;
-                                            await next1.setContent(lib.skill[i].content);
+                        const start = game.expandSkills([skill]);
+                        for (const skillx of start) {
+                            const infox = lib.skill[skillx];
+                            if (infox?.trigger?.player) {
+                                if (typeof infox.trigger.player == 'string') {
+                                    infox.trigger.player = [infox.trigger.player];
+                                }
+                                if (['enterGame', 'gameStart'].some((tri) => infox.trigger.player.includes(tri))) {
+                                    if (!player.startskills) {
+                                        player.startskills = [];
+                                    }
+                                    if (!player.startskills.includes(skillx)) {
+                                        player.startskills.push(skillx);
+                                        game.log(skillx + '是游戏开始时技能');
+                                        if (infox.init) {
+                                            infox.init(player, skillx);
                                         }
-                                    } else {
-                                        var next = game.createEvent(i, false);
-                                        next.skill = i;
-                                        next.player = this;
+                                        let indexedData, targets;
+                                        if (typeof infox.getIndex === 'function') {
+                                            indexedData = infox.getIndex(_status.event, player, 'gameStart');
+                                        }
+                                        if (typeof infox.logTarget === 'string') {
+                                            targets = _status.event[infox.logTarget];
+                                        } else if (typeof infox.logTarget === 'function') {
+                                            targets = infox.logTarget(_status.event, player, 'gameStart', indexedData);
+                                        }
+                                        if (get.itemtype(targets) === 'player') {
+                                            targets = [targets];
+                                        }
+                                        let result;
+                                        if (typeof infox.cost === 'function') {
+                                            const next = game.createEvent(`${skillx}_cost`, false);
+                                            next.skill = skillx;
+                                            next.player = player;
+                                            next._trigger = _status.event;
+                                            next.triggername = 'gameStart';
+                                            result = await next.setContent(infox.cost).forResult();
+                                            if (result && result.bool) {
+                                            } else {
+                                                continue;
+                                            } //cost没通过就返回
+                                        }
+                                        const next = game.createEvent(skillx, false);
+                                        next.skill = skillx;
+                                        next.player = player;
                                         next._trigger = _status.event;
-                                        await next.setContent(lib.skill[i].content);
+                                        next.triggername = 'gameStart';
+                                        if (targets) {
+                                            next.targets = targets;
+                                        }//先logtarget
+                                        if (indexedData) {
+                                            next.indexedData = indexedData;
+                                        }
+                                        if (result && result.bool) {
+                                            if (result.cards) {
+                                                next.cards = result.cards;
+                                            }
+                                            if (result.targets && result.targets[0]) {
+                                                next.targets = result.targets;
+                                            }
+                                            if (result.cost_data) {
+                                                next.cost_data = result.cost_data;
+                                            }
+                                        }//再载入cost的结果
+                                        await next.setContent(infox.content);
                                     }
                                 }
                             }
@@ -370,7 +401,7 @@ const content = async function () {
                     } //运行进入游戏时机的content
                 }
             }
-            if (checkConflict) this.checkConflict();
+            if (checkConflict) player.checkConflict();
             return skill;
         }; //运行进入游戏时机的content
         lib.element.player.removeVirtualEquip = function (VCard) {
@@ -3820,7 +3851,7 @@ const content = async function () {
         const qianceng = function () {
             if (lib.skill.dcxiaowu) {
                 lib.skill.dcxiaowu.ai = {
-                    order: 99,//QQQ
+                    order: 99, //QQQ
                     result: {
                         player: 1,
                     },
@@ -3856,7 +3887,7 @@ const content = async function () {
                         },
                         position: 'hs',
                         ai1(card) {
-                            if (ui.selected.cards.length) return 0;//QQQ
+                            if (ui.selected.cards.length) return 0; //QQQ
                             return 8 - get.value(card);
                         },
                         log: false,
@@ -7040,10 +7071,10 @@ const content = async function () {
                 return game.cardsGotoPile(cards, 'triggeronly', 'washCard', ['shuffleNumber', game.shuffleNumber]);
             }; //洗牌修改
             lib.element.player.drawTo = function (num, args) {
+                let next;
                 var num2 = Math.floor(num - this.countCards('h'));
                 if (num2) {
-                    //QQQ
-                    var next = this.draw(num2);
+                    next = this.draw(num2);
                     if (Array.isArray(args)) {
                         for (var i = 0; i < args.length; i++) {
                             if (get.itemtype(args[i]) == 'player') {
@@ -7062,7 +7093,9 @@ const content = async function () {
                             }
                         }
                     }
-                } else var next = ui.cardPile.firstChild;
+                } else {
+                    next = get.cards()[0];
+                }
                 return next;
             }; //防止空摸
         } //修复摸非整数牌平局
@@ -7219,7 +7252,7 @@ const content = async function () {
                 },
                 async content(event, trigger, player) {
                     game.log(player, '被禁止进行额外回合');
-                    trigger.cancel();//抢的回合取消就不需要更新轮数了
+                    trigger.cancel(); //抢的回合取消就不需要更新轮数了
                 },
             };
         }

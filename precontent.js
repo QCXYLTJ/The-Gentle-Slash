@@ -5603,7 +5603,7 @@ const precontent = async function () {
                                         trigger.cards = [ui.cardPile.firstChild];
                                     }
                                     if (!trigger.card) {
-                                        trigger.card = ui.cardPile.firstChild;
+                                        trigger.card = get.cards()[0];
                                     }
                                     if (!trigger.num) {
                                         trigger.num = 1;
@@ -5840,7 +5840,7 @@ const precontent = async function () {
                             player.gain(card, 'gain2');
                             var num = 2;
                             while (num-- > 0) {
-                                const card0 = ui.cardPile.firstChild;
+                                const card0 = get.cards()[0];
                                 const q = game.players.filter((q) => q != player).randomGet();
                                 const info = lib.card[card0.name];
                                 if (!info.notarget && info.content && info.selectTarget && info.enable) {

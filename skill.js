@@ -1982,7 +1982,7 @@ const skill = {
         // 其他角色出牌阶段,其可以移去一个赌,视为使用一张任意牌
         async content(event, trigger, player) {
             const { result } = await player.chooseControl('red', 'black').set('prompt', '赌:猜测下一张牌的颜色');
-            const card = ui.cardPile.firstChild;
+            const card = get.cards()[0];
             player.showCards(card);
             player.gain(card, 'gain2');
             if (get.color(card) == result.control) {
