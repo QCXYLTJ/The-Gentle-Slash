@@ -3924,7 +3924,7 @@ const precontent = async function () {
                 },
                 QQQ_Miquella: {
                     sex: 'female',
-                    skills: ['QQQ_sheqi'],
+                    skills: ['QQQ_sheqi', 'QQQ_zuzhouzhimei'],
                 },
             },
             characterTitle: {
@@ -8362,7 +8362,28 @@ const precontent = async function () {
                         },
                     },
                 },
-
+                // 诅咒之魅
+                // 当前回合角色使用手牌指定目标时,若不包括你,你随机获得本回合进入弃牌堆的x+1张牌
+                // 与你距离为x的角色依次将牌堆顶的一张牌视为【杀】对你使用(x为你本回合发动此技能的次数)
+                QQQ_zuzhouzhimei: {
+                    trigger: {
+                        global: ['useCardBefore'],
+                    },
+                    filter(event, player) {
+                        return event.player == _status.currentPhase && event.targets && !event.targets.includes(player) && event.cards && event.cards.some((c) => event.player.getCards('h').includes(c)) && game.center().length;
+                    },
+                    forced: true,
+                    async content(event, trigger, player) {
+                        const his = player.actionHistory;
+                        const evt = his[his.length - 1];
+                        const num = evt.useSkill.filter((c) => c.skill == 'QQQ_zuzhouzhimei').length;
+                        await player.gain(game.center().randomGets(num), 'gain2');
+                        const targets = game.players.filter((q) => get.distance(q, player) == num);
+                        for (const npc of targets) {
+                            await npc.useCard({ name: 'sha' }, get.cards(), player, false);
+                        }
+                    },
+                },
 
 
 
@@ -8410,6 +8431,8 @@ const precontent = async function () {
                 QQQ_Miquella: '米凯拉',
                 QQQ_sheqi: '舍弃神躯',
                 QQQ_sheqi_info: '出牌阶段,若你牌数不小于x,你可以摸x张牌弃置2x张牌,使用弃置牌中可使用的牌(x为此技能本回合发动次数)',
+                QQQ_zuzhouzhimei: '诅咒之魅',
+                QQQ_zuzhouzhimei_info: '当前回合角色使用手牌指定目标时,若不包括你,你随机获得本回合进入弃牌堆的x+1张牌<br>与你距离为x的角色依次将牌堆顶的一张牌视为【杀】对你使用(x为你本回合发动此技能的次数)',
                 //————————————————————————————————————————————荷莱·露
                 QQQ_HoarahLoux: '荷莱·露',
                 QQQ_manhuang: '蛮荒',
