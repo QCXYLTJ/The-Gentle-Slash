@@ -1050,27 +1050,42 @@ const precontent = async function () {
             });
             return video;
         }; //给父元素添加一个覆盖的背景mp4
-        game.src = function (name) {
-            let extimage = null,
-                nameinfo = get.character(name),
-                imgPrefixUrl;
-            if (nameinfo && nameinfo.trashBin) {
-                for (const value of nameinfo.trashBin) {
+        game.charactersrc = function (name) {
+            const info = lib.character[name];
+            if (info && info.trashBin) {
+                for (const value of info.trashBin) {
                     if (value.startsWith('img:')) {
-                        imgPrefixUrl = value.slice(4);
-                        break;
-                    } else if (value.startsWith('ext:')) {
-                        extimage = value;
-                        break;
-                    } else if (value.startsWith('character:')) {
+                        return value.slice(4);
+                    }
+                    if (value.startsWith('ext:')) {
+                        return value.replace(/^ext:/, 'extension/');
+                    }
+                    if (value.startsWith('character:')) {
                         name = value.slice(10);
                         break;
                     }
                 }
             }
-            if (imgPrefixUrl) return imgPrefixUrl;
-            else if (extimage) return extimage.replace(/^ext:/, 'extension/');
             return `image/character/${name}.jpg`;
+        }; //获取武将名对应立绘路径
+        game.cardsrc = function (name) {
+            const info = lib.card[name];
+            if (info) {
+                if (info.image) {
+                    if (info.image.startsWith('ext:')) {
+                        return info.image.replace(/^ext:/, 'extension/');
+                    }
+                    return info.image;
+                }
+                const ext = info.fullskin ? 'png' : 'jpg';
+                if (info.modeimage) {
+                    return `image/mode/${info.modeimage}/card/${name}.${ext}`;
+                }
+                if (info.cardimage) {
+                    name = info.cardimage;
+                }
+                return `image/card/${name}.${ext}`;
+            }
         }; //获取武将名对应立绘路径
         HTMLElement.prototype.gentle_BG = function (name) {
             const src = `extension/温柔一刀/mp4/${name}.mp4`;
@@ -6869,7 +6884,6 @@ const precontent = async function () {
                 //大同风幕
                 //限定技,出牌阶段你可以失去全部体力值并将失去体力值数十倍的杀加入牌堆,与全部其他角色进入大同风中,直到牌堆洗牌.在此期间:①你每次死亡前, 以移除剩余十分之一牌堆为代价豁免.②全场角色每累计失去三张牌时, 随机一名角色受到一点无来源伤害.③每死亡一名角色, 将五分之一的弃牌堆加入牌堆.④所有锦囊牌均失效
                 QQQ_datongfeng: {
-                    limited: true,
                     enable: 'phaseUse',
                     usable: 1,
                     limited: true,
@@ -8041,11 +8055,11 @@ const precontent = async function () {
                 // 若当前回合角色存在且其不是你,你暂时移出游戏.其下一个回合结束后或濒死时,你进入游戏,并对其造成x点伤害(x为全场本回合累计失去过牌的数量).若其因此进入濒死,此技能重置
                 // 否则你回复体力至上限,且此技能重置
                 QQQ_dahuangxingyun: {
-                    limited: true,
                     trigger: {
                         player: ['changeHp'],
                     },
                     forced: true,
+                    limited: true,
                     filter(event, player) {
                         return player.hp < 2;
                     },
@@ -8378,7 +8392,7 @@ const precontent = async function () {
                         const evt = his[his.length - 1];
                         const num = evt.useSkill.filter((c) => c.skill == 'QQQ_zuzhouzhimei').length;
                         await player.gain(game.center().randomGets(num), 'gain2');
-                        const targets = game.players.filter((q) => get.distance(q, player) == num);
+                        const targets = game.players.filter((q) => get.distance(q, player) == (num - 1));
                         for (const npc of targets) {
                             await npc.useCard({ name: 'sha' }, get.cards(), player, false);
                         }

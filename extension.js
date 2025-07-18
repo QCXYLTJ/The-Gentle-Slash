@@ -39,7 +39,7 @@ if (QQQ.作者模式) {
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', '小镜子',
         '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS', '太虚幻境',
         '千秋万载', 'FateEternity', '三国无双', '雷金阴洪石', '群星荟萃',
-        '蒸蒸日上',
+        '蒸蒸日上', 'ACGN',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -514,7 +514,6 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             const play = this;
                             const div = document.createElement('div');
                             div.id = 'divQ';
-                            const JUESELIST = [];
                             //————————————————————————————————————————————————————————确定
                             const OK = document.createElement('div');
                             OK.className = 'backQ';
@@ -540,13 +539,14 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             FIND.className = 'findQ';
                             FIND.innerHTML = '搜索';
                             FIND.onclick = function () {
-                                for (const x of JUESELIST) {
-                                    x.remove();
+                                while (div.firstChild) {
+                                    div.firstChild.remove();
                                 }
                                 for (const j in lib.character) {
                                     if (lib.translate[j] && lib.translate[j].includes(input.value) || j.includes(input.value)) {
                                         const JUESE = document.createElement('div');
-                                        JUESE.style.backgroundImage = `url(${game.src(j)})`;
+                                        div.appendChild(JUESE);
+                                        JUESE.setBackground(j, 'character');
                                         JUESE.className = 'characterQ';
                                         JUESE.innerHTML = get.translation(j);
                                         JUESE.link = j;
@@ -557,8 +557,6 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                             div.log = this;
                                             this.classList.add('selected');
                                         };
-                                        JUESELIST.push(JUESE);
-                                        div.appendChild(JUESE);
                                     }
                                 }
                             };
@@ -571,12 +569,13 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 PACK.innerHTML = get.translation(i + '_character_config');
                                 PACK.link = i;
                                 PACK.onclick = function () {
-                                    for (const x of JUESELIST) {
-                                        x.remove();
+                                    while (div.firstChild) {
+                                        div.firstChild.remove();
                                     }
                                     for (const j in lib.characterPack[this.link]) {
                                         const JUESE = document.createElement('div');
-                                        JUESE.style.backgroundImage = `url(${game.src(j)})`;
+                                        div.appendChild(JUESE);
+                                        JUESE.setBackground(j, 'character');
                                         JUESE.className = 'characterQ';
                                         JUESE.innerHTML = get.translation(j);
                                         JUESE.link = j;
@@ -587,8 +586,6 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                             div.log = this;
                                             this.classList.add('selected');
                                         };
-                                        JUESELIST.push(JUESE);
-                                        div.appendChild(JUESE);
                                     }
                                 };
                                 div.appendChild(PACK);

@@ -7321,7 +7321,9 @@ const content = async function () {
                     for (const skill of skills) {
                         const info = lib.skill[skill];
                         if (!info) {
-                            alert(skill + '没有info');
+                            if (QQQ.作者模式) {
+                                alert(skill + '没有info');
+                            }
                             continue;
                         } //QQQ
                         if (lib.translate[skill + '_ab']) {

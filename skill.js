@@ -289,7 +289,6 @@ const skill = {
         },
     },
     炼妖壶: {
-        limited: true,
         mark: true,
         intro: {
             content(storage, player) {
@@ -649,7 +648,6 @@ const skill = {
         },
     },
     伏羲琴: {
-        limited: true,
         equipSkill: true,
         enable: 'phaseUse',
         usable: 1,
