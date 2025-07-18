@@ -4498,10 +4498,10 @@ const precontent = async function () {
                                 return true;
                             }
                         });
-                        player.gain(uniqueList.randomGets(8), 'gain2');
+                        await player.gain(uniqueList.randomGets(8), 'gain2');
                         player.hp = player.maxHp;
                         player.qreinit('QQQ_mengwanqing');
-                        player.phase();
+                        player.phaseUse();
                     },
                 },
                 //————————————————————————————————————————————梅琳娜
@@ -4651,7 +4651,7 @@ const precontent = async function () {
                                         game.playAudio('../extension/温柔一刀/audio/嗨,另一个你.mp3');
                                     }
                                     player.QQQ_huozhong++;
-                                    await player.phase();
+                                    await player.phase().set('skill', 'nodelay');
                                 } else {
                                     player.QQQ_huozhong = 0;
                                 }
@@ -5955,8 +5955,8 @@ const precontent = async function () {
                                 player.hp = player.storage.QQQ_jieming.hp;
                                 await player.discard(player.getCards('h'));
                                 await player.gain(player.storage.QQQ_jieming.card, 'gain2');
-                                player.discard(discard);
-                                player.phase();
+                                await player.discard(discard);
+                                player.phase().set('skill', 'nodelay');
                             }
                         }
                     },

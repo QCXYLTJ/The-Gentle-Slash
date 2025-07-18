@@ -4017,7 +4017,7 @@ const skill = {
         },
         forced: true,
         async content(event, trigger, player) {
-            player.insertPhase();
+            player.phase().set('skill', 'nodelay');
         },
         group: ['神临_1'],
         subSkill: {

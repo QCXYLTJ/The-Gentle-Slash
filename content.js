@@ -7248,7 +7248,7 @@ const content = async function () {
                 forced: true,
                 firstDo: true,
                 filter(event, player) {
-                    return event.parent.name != 'phaseLoop';
+                    return event.parent.name != 'phaseLoop' || event.skill;
                 },
                 async content(event, trigger, player) {
                     game.log(player, '被禁止进行额外回合');
