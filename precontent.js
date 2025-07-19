@@ -1557,7 +1557,7 @@ const precontent = async function () {
                                 this.firstChild.innerHTML = '卡牌包将在重启后隐藏';
                                 lib.config.hiddenCardPack.add(mode);
                                 if (!lib.config.prompt_hidepack) {
-                                    alert('隐藏的扩展包可通过选项-其他-重置隐藏内容恢复');
+                                    alert('隐藏的扩展包可通过选项-其他-重置隐藏内容回复');
                                     game.saveConfig('prompt_hidepack', true);
                                 }
                             } else {
@@ -1875,7 +1875,7 @@ const precontent = async function () {
                     game.saveConfig('cards', lib.config.all.cards);
                     updateNodes();
                 });
-                var node2 = ui.create.div('.lefttext', '恢复默认', start.firstChild, function () {
+                var node2 = ui.create.div('.lefttext', '回复默认', start.firstChild, function () {
                     game.saveConfig('cards', lib.config.defaultcards);
                     updateNodes();
                 });
@@ -6915,15 +6915,15 @@ const precontent = async function () {
                 //大同风幕
                 //限定技,出牌阶段你可以失去全部体力值并将失去体力值数十倍的杀加入牌堆,与全部其他角色进入大同风中,直到牌堆洗牌.在此期间:①你每次死亡前, 以移除剩余十分之一牌堆为代价豁免.②全场角色每累计失去三张牌时, 随机一名角色受到一点无来源伤害.③每死亡一名角色, 将五分之一的弃牌堆加入牌堆.④所有锦囊牌均失效
                 QQQ_datongfeng: {
+                    init(player) {
+                        _status.datongfeng = [];
+                    },
                     enable: 'phaseUse',
                     usable: 1,
                     limited: true,
                     async content(event, trigger, player) {
                         game.yinshi('历经五十四次劫,劫云依旧漫遮天.胸中魂光压众生,拳里剑气纵北原.时来时去四百载,无死何能生新颜.弃此残躯换清风,卷席苍穹复光年!');
                         player.awakenSkill('QQQ_datongfeng');
-                        if (!_status.datongfeng) {
-                            _status.datongfeng = [];
-                        }
                         _status.datongfeng.add(player);
                         game.addGlobalSkill('QQQ_datongfeng_1');
                         game.addGlobalSkill('QQQ_datongfeng_2');
@@ -6997,6 +6997,7 @@ const precontent = async function () {
                             },
                             forced: true,
                             async content(event, trigger, player) {
+                                _status.datongfeng = [];
                                 game.removeGlobalSkill('QQQ_datongfeng_1');
                                 game.removeGlobalSkill('QQQ_datongfeng_2');
                                 game.removeGlobalSkill('QQQ_datongfeng_3');

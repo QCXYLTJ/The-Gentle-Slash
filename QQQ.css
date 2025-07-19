@@ -316,7 +316,7 @@
 .show {
 	opacity: 1;
 	transform: scale(1);
-	/* 恢复缩放 */
+	/* 回复缩放 */
 }
 
 /* 吟诗 */
