@@ -268,7 +268,8 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                     },
                 },
             },
-            //毒爆:将全场所有角色随机一半牌变成毒,弃置所有毒
+            // 毒爆
+            // 将全场所有角色随机一半牌变成毒,弃置所有毒
             QQQ_dubao: {
                 type: 'trick',
                 filterTarget(card, player, target) {
@@ -315,8 +316,7 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                 async content(event, trigger, player) {
                     const {
                         result: { links },
-                    } = await player.chooseButton(['将一名已死亡的角色炸掉', game.dead])
-                        .set('ai', (button) => 20 - get.attitude(player, button.link));
+                    } = await event.target.chooseButton(['将一名已死亡的角色炸掉', game.dead]).set('ai', (button) => 20 - get.attitude(event.target, button.link));
                     if (links && links[0]) {
                         const next = links[0].next;
                         const previous = links[0].previous;
@@ -355,7 +355,8 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                     },
                 },
             },
-            //我就打你: 普通伤害锦囊牌,视为对目标使用随机一张伤害牌
+            // 我就打你
+            // 普通伤害锦囊牌,视为对目标使用随机一张伤害牌
             QQQ_wodani: {
                 type: 'trick',
                 filterTarget(card, player, target) {
@@ -443,7 +444,7 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
             QQQ_dubao: '毒爆',
             QQQ_dubao_info: '将全场所有角色随机一半牌变成毒,弃置所有毒',
             QQQ_shibao: '尸爆',
-            QQQ_shibao_info: '对一名已死亡的角色使用,将其炸掉,对其相邻角色造成一点伤害',
+            QQQ_shibao_info: '出牌阶段对自己使用,目标将一名已死亡的角色炸掉,对其相邻角色造成一点伤害',
             QQQ_灵芝: '灵芝',
             QQQ_灵芝_info: '出牌阶段对一名角色使用,其增加一点体力上限回复全部体力',
         },
@@ -496,7 +497,7 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                                 get() {
                                     equips.addArray(player.artifact);
                                     return equips;
-                                },//不需要取消代理就没必要重赋值数组,会导致加减元素出点问题
+                                }, //不需要取消代理就没必要重赋值数组,会导致加减元素出点问题
                                 configurable: false,
                                 set(value) {
                                     equips = value;
@@ -535,12 +536,11 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                     }
                 };
                 info.ai.result = {
-                    keepAI: true,//防止result被本体替换
+                    keepAI: true, //防止result被本体替换
                     player: 99,
                     target: 99,
                 };
-            }
-            else {
+            } else {
                 info.content = async function (event, trigger, player) {
                     if (event.cards.length) {
                         event.target.equip(event.cards[0]);
