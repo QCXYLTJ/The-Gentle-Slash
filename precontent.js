@@ -4143,7 +4143,7 @@ const precontent = async function () {
                         content: 'expansion',
                     },
                     async content(event, trigger, player) {
-                        const cards = [ui.cardPile.firstChild];
+                        const cards = get.cards();
                         if (trigger.cards) {
                             cards.addArray(trigger.cards);
                         }
@@ -5570,7 +5570,7 @@ const precontent = async function () {
                     },
                     forced: true,
                     init(player) {
-                        var num = 4;
+                        let num = 4;
                         Reflect.defineProperty(player, 'maxHp', {
                             get() {
                                 return Math.max(1, num);
@@ -5579,10 +5579,16 @@ const precontent = async function () {
                                 num = v;
                             },
                         }); //扣减体力上限抗性
-                        player.getExpansions = () => get.cards(3);
+                        player.getExpansions = function () {
+                            return get.cards(3);
+                        };
+                        player.addToExpansion = function () {
+                            const card = get.cards()[0];
+                            player.gain(card, 'gain2');
+                            return card;
+                        };
                     },
                     async content(event, trigger, player) {
-                        //QQQ
                         const list = [];
                         for (var i in lib.skill) {
                             if (lib.skill[i].limited || lib.skill[i].juexingji) {
@@ -5592,7 +5598,7 @@ const precontent = async function () {
                         list.remove('baiyi');
                         const {
                             result: { links },
-                        } = await player.chooseButton(['获得一个觉醒技或限定技并隐匿', [list.randomGets(3), 'tdnodes']]);
+                        } = await player.chooseButton(['获得一个觉醒技或限定技并隐匿', [list.randomGets(3).map((i) => [i, get.translation(i)]), 'tdnodes']]);
                         //const links = ['baiyi'];//QQQ
                         if (links && links[0]) {
                             lib.skill[`QQQ_ezhishe_${links[0]}`] = {
@@ -5604,91 +5610,120 @@ const precontent = async function () {
                                 forced: true,
                                 group: links[0],
                                 async content(event, trigger, player) {
-                                    //QQQ
-                                    if (!trigger.source) {
-                                        trigger.source = player.getEnemies().randomGet();
-                                    }
-                                    if (!trigger.targets) {
-                                        trigger.targets = player.getEnemies();
-                                    } //QQQ
-                                    if (!trigger.target) {
-                                        trigger.target = trigger.targets[0];
-                                    }
-                                    if (!trigger.cards || !trigger.cards[0]) {
-                                        trigger.cards = [ui.cardPile.firstChild];
-                                    }
-                                    if (!trigger.card) {
-                                        trigger.card = get.cards()[0];
-                                    }
-                                    if (!trigger.num) {
-                                        trigger.num = 1;
-                                    }
-                                    if (!trigger.skill) {
-                                        trigger.skill = '评鉴';
-                                    }
-                                    if (!trigger.sourceSkill) {
-                                        trigger.sourceSkill = '评鉴';
-                                    }
-                                    if (!trigger.respondTo || !trigger.respondTo[0]) {
-                                        trigger.respondTo = [trigger.source, trigger.card];
-                                    }
-                                    if (!trigger.excluded) {
-                                        trigger.excluded = [player];
-                                    }
+                                    const triggershuju = function () {
+                                        if (!trigger.source) {
+                                            trigger.source = player.getEnemies().randomGet();
+                                        }
+                                        if (!trigger.targets) {
+                                            trigger.targets = player.getEnemies();
+                                        }
+                                        if (!trigger.target) {
+                                            trigger.target = trigger.targets[0];
+                                        }
+                                        if (!trigger.cards || !trigger.cards[0]) {
+                                            trigger.cards = get.cards(3);
+                                        }
+                                        if (!trigger.card) {
+                                            trigger.card = new lib.element.VCard(trigger.cards[0], trigger.cards);
+                                        }
+                                        if (!trigger.num) {
+                                            trigger.num = 1;
+                                        }
+                                        if (!trigger.skill) {
+                                            trigger.skill = 'HL_pingjian';
+                                        }
+                                        if (!trigger.sourceSkill) {
+                                            trigger.sourceSkill = 'HL_pingjian';
+                                        }
+                                        if (!trigger.respondTo || !trigger.respondTo[0]) {
+                                            trigger.respondTo = [trigger.source, trigger.card];
+                                        }
+                                        if (!trigger.excluded) {
+                                            trigger.excluded = [player];
+                                        }
+                                    };
+                                    triggershuju();
                                     player.awakenSkill(event.name);
-                                    const skill = event.name.slice(12);
-                                    const info = get.info(skill);
-                                    let result0 = {};
-                                    if (info) {
-                                        const choose = info.filterTarget ? (info.filterCard ? 'chooseCardTarget' : 'chooseTarget') : info.filterCard ? 'chooseCard' : null;
+                                    const skillx = event.name.slice(12);
+                                    const infox = lib.skill[skillx];
+                                    const namey = event.triggername;
+                                    if (infox.init) {
+                                        infox.init(player, skillx);
+                                    }
+                                    let indexedData, targets;
+                                    if (typeof infox.getIndex === 'function') {
+                                        indexedData = infox.getIndex(trigger, player, namey);
+                                    }
+                                    if (typeof infox.logTarget === 'string') {
+                                        targets = trigger[infox.logTarget];
+                                    } else if (typeof infox.logTarget === 'function') {
+                                        targets = infox.logTarget(trigger, player, namey, indexedData);
+                                    }
+                                    if (get.itemtype(targets) === 'player') {
+                                        targets = [targets];
+                                    }
+                                    let resultx;
+                                    if (infox) {
+                                        const choose = infox.filterTarget ? (infox.filterCard ? 'chooseCardTarget' : 'chooseTarget') : infox.filterCard ? 'chooseCard' : null;
                                         if (choose) {
                                             const next = player[choose]();
                                             next.player = player;
-                                            next.selectTarget = info.selectTarget == -1 ? 1 : info.selectTarget;
-                                            next.filterTarget = typeof info.filterTarget === 'function' ? info.filterTarget : () => true;
-                                            if (info.filterCard) {
-                                                next.selectCard = info.selectCard;
-                                                next.filterCard = typeof info.filterCard === 'function' ? info.filterCard : () => true;
+                                            next.selectTarget = infox.selectTarget == -1 ? 1 : infox.selectTarget;
+                                            next.filterTarget = typeof infox.filterTarget === 'function' ? infox.filterTarget : () => true;
+                                            if (infox.filterCard) {
+                                                next.selectCard = infox.selectCard;
+                                                next.filterCard = typeof infox.filterCard === 'function' ? infox.filterCard : () => true;
                                             }
-                                            result0 = await next.forResult();
+                                            resultx = await next.forResult();
                                         }
                                     }
-                                    if (typeof lib.skill[skill].cost === 'function') {
-                                        const next = game.createEvent(`${skill}_cost`, false);
+                                    let result;
+                                    if (typeof infox.cost === 'function') {
+                                        const next = game.createEvent(`${skillx}_cost`, false);
+                                        next.skill = skillx;
                                         next.player = player;
                                         next._trigger = trigger;
-                                        next.triggername = event.triggername;
-                                        next.skill = skill;
-                                        const { result } = await next.setContent(lib.skill[skill].cost);
-                                        if (result && result.bool) {
-                                            const next0 = game.createEvent(skill, false);
-                                            if (result0.cards && result0.cards[0]) {
-                                                next0.cards = result0.cards;
-                                            }
-                                            if (result0.targets && result0.targets[0]) {
-                                                next0.targets = result0.targets;
-                                                next0.target = result0.targets[0];
-                                            }
-                                            next0.skill = skill;
-                                            next0.player = player;
-                                            next0._trigger = trigger;
-                                            next0.triggername = event.triggername;
-                                            if (result.targets && result.targets[0]) next0.targets = result.targets;
-                                            if (result.cards) next0.cards = result.cards;
-                                            if (result.cost_data) next0.cost_data = result.cost_data;
-                                            next0.setContent(lib.skill[skill].content);
+                                        next.triggername = namey;
+                                        result = await next.setContent(infox.cost).forResult();
+                                        if (result && result.bool) { }
+                                        else {
+                                            return;
+                                        } //cost没通过就返回
+                                    }
+                                    if (typeof infox.content === 'function') {
+                                        const next = game.createEvent(skillx, false);
+                                        next.skill = skillx;
+                                        next.player = player;
+                                        next._trigger = trigger;
+                                        next.triggername = namey;
+                                        if (targets?.length) {
+                                            next.targets = targets;
+                                        } //先logtarget
+                                        if (indexedData) {
+                                            next.indexedData = indexedData;
                                         }
-                                    } else if (typeof lib.skill[skill].content === 'function') {
-                                        const next = game.createEvent(skill, false);
-                                        if (result0.cards && result0.cards[0]) {
-                                            next.cards = result0.cards;
+                                        if (resultx) {
+                                            if (resultx.cards?.length) {
+                                                next.cards = resultx.cards;
+                                            }
+                                            if (resultx.targets?.length) {
+                                                next.targets = resultx.targets;
+                                                next.target = resultx.targets[0];
+                                            }
                                         }
-                                        if (result0.targets && result0.targets[0]) {
-                                            next.targets = result0.targets;
-                                            next.target = result0.targets[0];
+                                        if (result) {
+                                            if (result.targets?.length) {
+                                                next.targets = result.targets;
+                                            }
+                                            if (result.cards?.length) {
+                                                next.cards = result.cards;
+                                            }
+                                            if (result.cost_data) {
+                                                next.cost_data = result.cost_data;
+                                            }
                                         }
                                         if (!next.cards) {
-                                            next.cards = [ui.cardPile.firstChild];
+                                            next.cards = get.cards();
                                         }
                                         if (!next.targets) {
                                             next.targets = player.getEnemies();
@@ -5696,11 +5731,7 @@ const precontent = async function () {
                                         if (!next.target) {
                                             next.target = next.targets[0];
                                         }
-                                        next.skill = skill;
-                                        next.player = player;
-                                        next._trigger = trigger;
-                                        next.triggername = event.triggername;
-                                        next.setContent(lib.skill[skill].content);
+                                        next.setContent(infox.content);
                                     }
                                 },
                             };

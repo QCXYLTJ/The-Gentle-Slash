@@ -330,6 +330,7 @@ const content = async function () {
                     } //bosslist时候就不必加标记
                     if (_status.roundStart && _status.currentPhase) {
                         const start = game.expandSkills([skill]);
+                        const namey = 'gameStart';
                         for (const skillx of start) {
                             const infox = lib.skill[skillx];
                             if (infox?.trigger?.player) {
@@ -348,12 +349,12 @@ const content = async function () {
                                         }
                                         let indexedData, targets;
                                         if (typeof infox.getIndex === 'function') {
-                                            indexedData = infox.getIndex(_status.event, player, 'gameStart');
+                                            indexedData = infox.getIndex(_status.event, player, namey);
                                         }
                                         if (typeof infox.logTarget === 'string') {
                                             targets = _status.event[infox.logTarget];
                                         } else if (typeof infox.logTarget === 'function') {
-                                            targets = infox.logTarget(_status.event, player, 'gameStart', indexedData);
+                                            targets = infox.logTarget(_status.event, player, namey, indexedData);
                                         }
                                         if (get.itemtype(targets) === 'player') {
                                             targets = [targets];
@@ -364,7 +365,7 @@ const content = async function () {
                                             next.skill = skillx;
                                             next.player = player;
                                             next._trigger = _status.event;
-                                            next.triggername = 'gameStart';
+                                            next.triggername = namey;
                                             result = await next.setContent(infox.cost).forResult();
                                             if (result && result.bool) {
                                             } else {
@@ -375,7 +376,7 @@ const content = async function () {
                                         next.skill = skillx;
                                         next.player = player;
                                         next._trigger = _status.event;
-                                        next.triggername = 'gameStart';
+                                        next.triggername = namey;
                                         if (targets) {
                                             next.targets = targets;
                                         }//先logtarget
@@ -385,8 +386,8 @@ const content = async function () {
                                         if (result && result.bool) {
                                             if (result.cards) {
                                                 next.cards = result.cards;
-                                            }
-                                            if (result.targets && result.targets[0]) {
+                                            }//无需补齐变量
+                                            if (result.targets) {
                                                 next.targets = result.targets;
                                             }
                                             if (result.cost_data) {
