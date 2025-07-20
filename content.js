@@ -1219,38 +1219,41 @@ const content = async function () {
     //—————————————————————————————————————————————————————————————————————————————技能相关自创函数
     const jineng = function () {
         lib.element.player.GS = function () {
-            const skills = this.skills.slice();
-            for (const i of Array.from(this.node.equips.childNodes)) {
+            const player = this;
+            const skills = player.skills.slice();
+            for (const i of Array.from(player.node.equips.childNodes)) {
                 if (Array.isArray(lib.card[i.name].skills)) {
                     skills.addArray(lib.card[i.name].skills);
                 }
             }
-            for (const i in this.additionalSkills) {
-                if (Array.isArray(this.additionalSkills[i])) {
-                    skills.addArray(this.additionalSkills[i]);
-                } else if (typeof this.additionalSkills[i] == 'string') {
-                    skills.add(this.additionalSkills[i]);
+            for (const i in player.additionalSkills) {
+                if (Array.isArray(player.additionalSkills[i])) {
+                    skills.addArray(player.additionalSkills[i]);
+                } else if (typeof player.additionalSkills[i] == 'string') {
+                    skills.add(player.additionalSkills[i]);
                 }
             }
-            skills.addArray(Object.keys(this.tempSkills));
-            skills.addArray(this.hiddenSkills);
-            skills.addArray(this.invisibleSkills);
+            skills.addArray(Object.keys(player.tempSkills));
+            skills.addArray(player.hiddenSkills);
+            skills.addArray(player.invisibleSkills);
             return skills;
         }; //获取武将所有技能函数
         lib.element.player.GAS = function () {
-            const skills = this.skills.slice();
-            for (const i in this.additionalSkills) {
-                if (Array.isArray(this.additionalSkills[i])) {
-                    skills.addArray(this.additionalSkills[i]);
-                } else if (typeof this.additionalSkills[i] == 'string') {
-                    skills.add(this.additionalSkills[i]);
+            const player = this;
+            const skills = player.skills.slice();
+            for (const i in player.additionalSkills) {
+                if (Array.isArray(player.additionalSkills[i])) {
+                    skills.addArray(player.additionalSkills[i]);
+                } else if (typeof player.additionalSkills[i] == 'string') {
+                    skills.add(player.additionalSkills[i]);
                 }
             }
             return skills;
         }; //获取武将的武将牌上技能函数
         lib.element.player.GES = function () {
+            const player = this;
             const skills = [];
-            for (const i of Array.from(this.node.equips.childNodes)) {
+            for (const i of Array.from(player.node.equips.childNodes)) {
                 if (Array.isArray(lib.card[i.name].skills)) {
                     skills.addArray(lib.card[i.name].skills);
                 }
@@ -1258,40 +1261,45 @@ const content = async function () {
             return skills;
         }; //获取武将装备技能函数
         lib.element.player.GTS = function () {
-            return Object.keys(this.tempSkills);
+            const player = this;
+            return Object.keys(player.tempSkills);
         }; //获取武将临时技能函数
-        lib.element.player.RS = function (Q) {
-            if (Array.isArray(Q)) {
-                for (const i of Q) {
-                    this.RS(i);
+        lib.element.player.RS = function (skillx) {
+            const player = this;
+            if (Array.isArray(skillx)) {
+                for (const i of skillx) {
+                    player.RS(i);
                 }
             } else {
-                this.skills.remove(Q);
-                this.hiddenSkills.remove(Q);
-                this.invisibleSkills.remove(Q);
-                delete this.tempSkills[Q];
-                for (var i in this.additionalSkills) {
-                    this.additionalSkills[i].remove(Q);
+                player.skills.remove(skillx);
+                player.hiddenSkills.remove(skillx);
+                player.invisibleSkills.remove(skillx);
+                delete player.tempSkills[skillx];
+                for (var i in player.additionalSkills) {
+                    player.additionalSkills[i].remove(skillx);
                 }
-                this.checkConflict(Q);
-                this.RST(Q);
-                if (lib.skill.global.includes(Q)) {
-                    lib.skill.global.remove(Q);
-                    delete lib.skill.globalmap[Q];
+                player.checkConflict(skillx);
+                player.RST(skillx);
+                if (lib.skill.global.includes(skillx)) {
+                    lib.skill.global.remove(skillx);
+                    delete lib.skill.globalmap[skillx];
                     for (var i in lib.hook.globalskill) {
-                        lib.hook.globalskill[i].remove(Q);
+                        lib.hook.globalskill[i].remove(skillx);
                     }
                 }
             }
-            return Q;
+            return player;
         }; //移除技能函数
         lib.element.player.RST = function (skills) {
-            if (typeof skills == 'string') skills = [skills];
+            const player = this;
+            if (typeof skills == 'string') {
+                skills = [skills];
+            }
             game.expandSkills(skills);
-            for (const Q of skills) {
-                this.initedSkills.remove(Q);
+            for (const skillx of skills) {
+                player.initedSkills.remove(skillx);
                 for (var i in lib.hook) {
-                    if (Array.isArray(lib.hook[i]) && lib.hook[i].includes(Q)) {
+                    if (Array.isArray(lib.hook[i]) && lib.hook[i].includes(skillx)) {
                         try {
                             delete lib.hook[i];
                         } catch (e) {
@@ -1300,27 +1308,28 @@ const content = async function () {
                     }
                 }
                 for (var i in lib.hook.globalskill) {
-                    if (lib.hook.globalskill[i].includes(Q)) {
-                        lib.hook.globalskill[i].remove(Q);
+                    if (lib.hook.globalskill[i].includes(skillx)) {
+                        lib.hook.globalskill[i].remove(skillx);
                         if (lib.hook.globalskill[i].length == 0) {
                             delete lib.hook.globalskill[i];
                         }
                     }
                 }
             }
-            return this;
+            return player;
         }; //移除技能时机函数
         lib.element.player.CS = function () {
-            const skill = this.GS();
+            const player = this;
+            const skill = player.GS();
             game.expandSkills(skill);
-            this.skills = [];
-            this.tempSkills = {};
-            this.initedSkills = [];
-            this.invisibleSkills = [];
-            this.hiddenSkills = [];
-            this.additionalSkills = {};
+            player.skills = [];
+            player.tempSkills = {};
+            player.initedSkills = [];
+            player.invisibleSkills = [];
+            player.hiddenSkills = [];
+            player.additionalSkills = {};
             for (const key in lib.hook) {
-                if (key.startsWith(this.playerid)) {
+                if (key.startsWith(player.playerid)) {
                     try {
                         delete lib.hook[key];
                     } catch (e) {
@@ -1335,18 +1344,19 @@ const content = async function () {
                     }
                 }
             }
-            return this.skills;
+            return player;
         }; //清空所有技能函数
         lib.element.player.DS = function () {
-            const skill = this.GS();
+            const player = this;
+            const skill = player.GS();
             game.expandSkills(skill);
-            this._hookTrigger = ['QQQ_fengjin'];
-            this.storage.skill_blocker = ['QQQ_fengjin'];
+            player._hookTrigger = ['QQQ_fengjin'];
+            player.storage.skill_blocker = ['QQQ_fengjin'];
             for (const i of skill) {
-                this.disabledSkills[i] = 'QQQ';
-                this.storage[`temp_ban_${i}`] = true;
+                player.disabledSkills[i] = 'QQQ';
+                player.storage[`temp_ban_${i}`] = true;
             }
-            return this.skills;
+            return player;
         }; //失效所有技能函数
         lib.skill.QQQ_fengjin = {
             hookTrigger: {
