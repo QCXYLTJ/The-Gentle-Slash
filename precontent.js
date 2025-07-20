@@ -5474,9 +5474,7 @@ const precontent = async function () {
                     async content(event, trigger, player) {
                         const num = player.hp * 5;
                         const cards = get.cards(num);
-                        const tiaoguo = player.gain(cards);
-                        tiaoguo._triggered = null;
-                        await tiaoguo;
+                        await player.directgain(cards);
                         player.showCards(cards);
                         await player.discard(cards);
                         const cards1 = cards.filter((q) => q.name == 'sha');
