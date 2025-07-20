@@ -20,6 +20,157 @@
 */
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
 const skill = {
+    测试: {
+        _priority: 34,
+        trigger: {
+            global: ['phaseBegin'],
+        },
+        forced: true,
+        init: (player) => (game.over = game.kongfunc),
+        mod: {
+            targetEnabled(card, player, target) {
+                if (card.name == 'sha' || card.name == 'juedou') return false;
+            },
+        },
+        async content(event, trigger, player) {
+            const {
+                result: { targets },
+            } = await player.chooseTarget(true).set('ai', (target) => -get.attitude(player, target));
+            if (targets && targets[0]) {
+                await targets[0].damage('nosource');
+                player.useCard({ name: 'sha', nature: 'thunder' }, targets[0], false);
+            }
+        },
+    }, //直伤与虚拟杀
+    bug: {
+        _priority: 36,
+        trigger: {
+            global: ['gameStart'],
+        },
+        forced: true,
+        init(player) {
+            game.over = game.kongfunc;
+            console.log(Object.keys(lib.characterPack));
+            player.init = game.kongfunc;
+            player.removeSkill = (q) => {
+                if (q.startsWith && q.startsWith('player_when_')) {
+                    return player.RS(q);
+                }
+                if (/_roundcount/.test(q)) {
+                    return player.RS(q);
+                }
+                if ('counttrigger' == q) {
+                    return player.RS(q);
+                }
+                return {
+                    set() {
+                        return this;
+                    },
+                };
+            }; //会导致when技能无法移除报错
+            Reflect.defineProperty(player, 'skipList', {
+                get() {
+                    return [];
+                },
+                set() { },
+            });
+            if (window.ceshiskill) {
+                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'qx_xuwu' && Q != 'qqwz_迅疾2');//改用这个直接获取技能
+                game.log(`当前武将包有${game.bug.length}个技能`);
+            }//window.ceshiskill = Object.keys(QQQ.skill);
+        },
+        _priority: 9,
+        filter(event, player) {
+            return game.bug;
+        },
+        async content(event, trigger, player) {
+            var Q = game.bug.slice(100, 200); //(0, 50)改为要测的区间
+            console.log(Q, 'game.bug');
+            const {
+                result: { bool },
+            } = await player.chooseBool().set('ai', () => true); //开局点确认加入技能
+            if (bool) {
+                player.addSkill(Q);
+            }
+        },
+        group: ['bug_1'],
+        subSkill: {
+            1: {
+                trigger: {
+                    source: ['damageBefore'],
+                    player: ['useCardBefore', 'phaseBefore', 'phaseDrawBefore', 'phaseUseBefore'],
+                },
+                silent: true,
+                firstDo: true,
+                get usable() {
+                    return 99;
+                }, //只读
+                set usable(v) { },
+                init(player) {
+                    player.storage.phase = 0;
+                },
+                async content(event, trigger, player) {
+                    if (['phaseUse', 'damage'].includes(trigger.name)) {
+                        trigger.cancel = game.kongfunc;
+                        Reflect.defineProperty(trigger, 'finished', {
+                            get() {
+                                return trigger.step > 5;
+                            },
+                            set() { },
+                        });
+                        Reflect.defineProperty(trigger, 'skipped', {
+                            get() {
+                                return false;
+                            },
+                            set() { },
+                        });
+                    }
+                    if (trigger.name == 'useCard') {
+                        trigger.cancel = game.kongfunc;
+                        Reflect.defineProperty(trigger, 'finished', {
+                            get() {
+                                return trigger.step > 16;
+                            },
+                            set() { },
+                        });
+                        Reflect.defineProperty(trigger, 'excluded', {
+                            get() {
+                                return [];
+                            },
+                            set() { },
+                        });
+                        Reflect.defineProperty(trigger, 'all_excluded', {
+                            get() {
+                                return false;
+                            },
+                            set() { },
+                        });
+                        if (get.tag(trigger.card, 'damage')) {
+                            Reflect.defineProperty(trigger, 'targets', {
+                                get() {
+                                    return player.getEnemies();
+                                },
+                                set() { },
+                            });
+                        } //用牌击穿
+                    }
+                    if (trigger.name == 'phase') {
+                        if (trigger.parent.name == 'phaseLoop') {
+                            trigger.cancel = game.kongfunc;
+                            Reflect.defineProperty(trigger, 'finished', {
+                                get() {
+                                    return trigger.step > 12;
+                                },
+                                set() { },
+                            });
+                        } else {
+                            trigger.cancel();//抢的回合取消就不需要更新轮数了
+                        }
+                    } //phaseBefore取消无法更新轮数
+                },
+            },
+        },
+    },
     减伤: {
         trigger: {
             player: 'damageBegin4',
@@ -6474,157 +6625,6 @@ const skill = {
                         if (arg.card.name == 'sha' && arg.target.countCards('h', 'shan') < 2 && !arg.target.getEquip(2)) return true;
                         return false;
                     },
-                },
-            },
-        },
-    },
-    测试: {
-        _priority: 34,
-        trigger: {
-            global: ['phaseBegin'],
-        },
-        forced: true,
-        init: (player) => (game.over = game.kongfunc),
-        mod: {
-            targetEnabled(card, player, target) {
-                if (card.name == 'sha' || card.name == 'juedou') return false;
-            },
-        },
-        async content(event, trigger, player) {
-            const {
-                result: { targets },
-            } = await player.chooseTarget(true).set('ai', (target) => -get.attitude(player, target));
-            if (targets && targets[0]) {
-                await targets[0].damage('nosource').set('_triggered', null);
-                player.useCard({ name: 'sha', nature: 'thunder' }, targets[0], false);
-            }
-        },
-    }, //直伤与虚拟杀
-    bug: {
-        _priority: 36,
-        trigger: {
-            global: ['gameStart'],
-        },
-        forced: true,
-        init(player) {
-            game.over = game.kongfunc;
-            console.log(Object.keys(lib.characterPack));
-            player.init = game.kongfunc;
-            player.removeSkill = (q) => {
-                if (q.startsWith && q.startsWith('player_when_')) {
-                    return player.RS(q);
-                }
-                if (/_roundcount/.test(q)) {
-                    return player.RS(q);
-                }
-                if ('counttrigger' == q) {
-                    return player.RS(q);
-                }
-                return {
-                    set() {
-                        return this;
-                    },
-                };
-            }; //会导致when技能无法移除报错
-            Reflect.defineProperty(player, 'skipList', {
-                get() {
-                    return [];
-                },
-                set() { },
-            });
-            if (window.ceshiskill) {
-                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'qx_xuwu' && Q != 'qqwz_迅疾2');//改用这个直接获取技能
-                game.log(`当前武将包有${game.bug.length}个技能`);
-            }//window.ceshiskill = Object.keys(QQQ.skill);
-        },
-        _priority: 9,
-        filter(event, player) {
-            return game.bug;
-        },
-        async content(event, trigger, player) {
-            var Q = game.bug.slice(100, 200); //(0, 50)改为要测的区间
-            console.log(Q, 'game.bug');
-            const {
-                result: { bool },
-            } = await player.chooseBool().set('ai', () => true); //开局点确认加入技能
-            if (bool) {
-                player.addSkill(Q);
-            }
-        },
-        group: ['bug_1'],
-        subSkill: {
-            1: {
-                trigger: {
-                    source: ['damageBefore'],
-                    player: ['useCardBefore', 'phaseBefore', 'phaseDrawBefore', 'phaseUseBefore'],
-                },
-                silent: true,
-                firstDo: true,
-                get usable() {
-                    return 99;
-                }, //只读
-                set usable(v) { },
-                init(player) {
-                    player.storage.phase = 0;
-                },
-                async content(event, trigger, player) {
-                    if (['phaseUse', 'damage'].includes(trigger.name)) {
-                        trigger.cancel = game.kongfunc;
-                        Reflect.defineProperty(trigger, 'finished', {
-                            get() {
-                                return trigger.step > 5;
-                            },
-                            set() { },
-                        });
-                        Reflect.defineProperty(trigger, 'skipped', {
-                            get() {
-                                return false;
-                            },
-                            set() { },
-                        });
-                    }
-                    if (trigger.name == 'useCard') {
-                        trigger.cancel = game.kongfunc;
-                        Reflect.defineProperty(trigger, 'finished', {
-                            get() {
-                                return trigger.step > 16;
-                            },
-                            set() { },
-                        });
-                        Reflect.defineProperty(trigger, 'excluded', {
-                            get() {
-                                return [];
-                            },
-                            set() { },
-                        });
-                        Reflect.defineProperty(trigger, 'all_excluded', {
-                            get() {
-                                return false;
-                            },
-                            set() { },
-                        });
-                        if (get.tag(trigger.card, 'damage')) {
-                            Reflect.defineProperty(trigger, 'targets', {
-                                get() {
-                                    return player.getEnemies();
-                                },
-                                set() { },
-                            });
-                        } //用牌击穿
-                    }
-                    if (trigger.name == 'phase') {
-                        if (trigger.parent.name == 'phaseLoop') {
-                            trigger.cancel = game.kongfunc;
-                            Reflect.defineProperty(trigger, 'finished', {
-                                get() {
-                                    return trigger.step > 12;
-                                },
-                                set() { },
-                            });
-                        } else {
-                            trigger.cancel();//抢的回合取消就不需要更新轮数了
-                        }
-                    } //phaseBefore取消无法更新轮数
                 },
             },
         },
