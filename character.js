@@ -20,6 +20,12 @@
 */
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
 const character = {
+    QQQ_测试: {
+        sex: 'male',
+        hp: 10,
+        maxHp: 10,
+        skills: ['bug', '测试', 'yinyueqiang'],
+    },
     QQQ_距离掌控者: {
         sex: 'male',
         skills: ['olzhuiji', 'xinkuanggu', 'reduanbing', 'reanjian', 'xinbenxi', 'kaikang', '义从', '避乱'],
@@ -380,12 +386,6 @@ const character = {
     QQQ_longjing: {
         sex: 'male',
         skills: ['QQQ_longjing'],
-    },
-    QQQ_测试: {
-        sex: 'male',
-        hp: 10,
-        maxHp: 10,
-        skills: ['bug', '检测', '测试'],
     },
 };
 const characterIntro = {

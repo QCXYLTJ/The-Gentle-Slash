@@ -762,6 +762,9 @@ game.addMode(
                 npc.init('QQQ_测试');
             }
             event.trigger('gameStart');
+            for (const npc of game.players) {
+                await game.triggerEnter(npc);
+            }
             game.gameDraw(game.zhu, () => 4);
             game.phaseLoop(game.zhu);
             game.countPlayer((current) => current.showGiveup(), true);

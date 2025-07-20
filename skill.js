@@ -155,40 +155,40 @@ const skill = {
     东皇钟: {
         mark: true,
         intro: {
-            content(player, storage) {
-                _status.东皇钟 = '';
+            content(storage, player) {
+                let str = '';
                 game.countPlayer(function (current) {
-                    if (current.storage.东皇钟) {
-                        _status.东皇钟 = get.translation(current) + '被镇压技能:' + get.translation(current.storage.东皇钟);
+                    if (current.storage.东皇钟?.length) {
+                        str = get.translation(current) + '被镇压技能:' + get.translation(current.storage.东皇钟);
                     }
                 });
-                _status.东皇钟 += `<br><li><span class='texiaotext' style='color: #FF0000'>已鸣钟${game.me.storage.鸣钟}次</span>`;
-                return _status.东皇钟;
+                str += `<br><li><span class='texiaotext' style='color: #FF0000'>已鸣钟${player.storage.鸣钟}次</span>`;
+                return str;
             },
         },
         equipSkill: true,
         usable: 1,
         enable: 'phaseUse',
-        content() {
-            'step 0';
-            player.chooseCard('he', '重铸一张牌', true, lib.filter.cardRecastable).set('ai', function (card) {
-                return 8 - get.value(card);
-            });
-            ('step 1');
-            player.recast(result.cards);
-            player
-                .chooseTarget('令一名其他角色技能失效', true, function (card, player, target) {
-                    return player != target;
-                })
-                .set('ai', function (target) {
-                    return -get.attitude(player, target);
-                });
-            ('step 2');
-            if (result && result.targets && result.targets[0]) {
-                result.targets[0].storage.东皇钟 = result.targets[0].GAS();
-                result.targets[0].CS();
-                player.storage.鸣钟 = 0;
-                player.markSkill('东皇钟');
+        async content(event, trigger, player) {
+            const {
+                result: { cards },
+            } = await player.chooseCard('he', '重铸一张牌', lib.filter.cardRecastable).set('ai', (card) => 8 - get.value(card));
+            if (cards?.length) {
+                await player.recast(cards);
+                const {
+                    result: { targets },
+                } = await player
+                    .chooseTarget('令一名其他角色失去所有技能直到你的下回合开始', (card, player, target) => player != target)
+                    .set('ai', (target) => -get.attitude(player, target));
+                if (targets?.length) {
+                    if (!targets[0].storage.东皇钟) {
+                        targets[0].storage.东皇钟 = [];
+                    }
+                    targets[0].storage.东皇钟.addArray(targets[0].GAS());
+                    targets[0].CS();
+                    player.storage.鸣钟 = 0;
+                    player.markSkill('东皇钟');
+                }
             }
         },
         ai: {
@@ -205,12 +205,12 @@ const skill = {
                 },
                 forced: true,
                 content() {
-                    game.countPlayer(function (current) {
-                        if (current.storage.东皇钟) {
+                    for (const current of game.players) {
+                        if (current.storage.东皇钟?.length) {
                             current.addSkill(current.storage.东皇钟);
-                            delete current.storage.东皇钟;
+                            current.storage.东皇钟 = [];
                         }
-                    });
+                    }
                 },
             },
             2: {
@@ -219,7 +219,7 @@ const skill = {
                 },
                 forced: true,
                 filter(event, player) {
-                    return event.source && event.source.storage.东皇钟;
+                    return event.source && event.source.storage.东皇钟?.length;
                 },
                 content() {
                     if (!player.storage.鸣钟) {
@@ -229,7 +229,7 @@ const skill = {
                     if (player.storage.鸣钟 > 2) {
                         player.draw(trigger.source.storage.东皇钟.length);
                         trigger.source.addSkill(trigger.source.storage.东皇钟);
-                        delete trigger.source.storage.东皇钟;
+                        trigger.source.storage.东皇钟 = [];
                     }
                 },
             },
@@ -2863,7 +2863,7 @@ const skill = {
             content: 'mark',
         },
         async content(event, trigger, player) {
-            let count = numberq1(trigger.num);
+            let count = Math.min(numberq1(trigger.num), 9);
             player.gainMaxHp(count);
             while (count-- > 0) {
                 const card = get.cards()[0];
@@ -4010,7 +4010,7 @@ const skill = {
         },
     },
     // 每当你结束回合后,立刻进入新的回合
-    // 当你杀死角色/牌堆洗牌,失去此技能
+    // 当你击杀角色/牌堆洗牌,失去此技能
     神临: {
         trigger: {
             player: ['phaseAfter'],
@@ -5165,6 +5165,7 @@ const skill = {
     },
     QQQ_biaoji: {
         enable: ['chooseToUse', 'chooseToRespond'],
+        usable: 20,
         forced: true,
         init(player) {
             player.storage = new Proxy(player.storage, {
@@ -5417,7 +5418,7 @@ const skill = {
         fixed: true,
         charlotte: true,
         async content(event, trigger, player) {
-            let count = numberq1(trigger.num);
+            let count = Math.min(numberq1(trigger.num), 9);
             while (count-- > 0) {
                 game.log('#g【魔翼开始】');
                 while (true) {
@@ -6477,27 +6478,6 @@ const skill = {
             },
         },
     },
-    检测: {
-        trigger: {
-            player: ['phaseBefore'],
-        },
-        forced: true,
-        async content(event, trigger, player) {
-            player.damage().set('_triggered', null);
-        },
-        group: ['检测_1'],
-        subSkill: {
-            1: {
-                trigger: {
-                    player: ['damageEnd'],
-                },
-                forced: true,
-                async content(event, trigger, player) {
-                    player.draw();
-                },
-            },
-        },
-    },
     测试: {
         _priority: 34,
         trigger: {
@@ -6515,7 +6495,7 @@ const skill = {
                 result: { targets },
             } = await player.chooseTarget(true).set('ai', (target) => -get.attitude(player, target));
             if (targets && targets[0]) {
-                targets[0].damage('nosource');
+                await targets[0].damage('nosource').set('_triggered', null);
                 player.useCard({ name: 'sha', nature: 'thunder' }, targets[0], false);
             }
         },
@@ -6721,7 +6701,7 @@ const translate1 = {
     博弈: '博弈',
     博弈_info: '回合限一次.你选择一张手牌并使全部其他角色猜测该牌的类型.若猜对:你可令你与该角色各摸一张牌:若猜错:你可令你与该角色各弃置一张牌',
     门客: '门客',
-    门客_info: '你死亡后,令杀死你的角色进入门客秘境(其他角色暂时移出游戏,进入门客秘境的人需要面对三名门客的夹击,直至一方全部阵亡)',
+    门客_info: '你死亡后,令击杀你的角色进入门客秘境(其他角色暂时移出游戏,进入门客秘境的人需要面对三名门客的夹击,直至一方全部阵亡)',
     减伤: '减伤',
     减伤_info: '当你受到伤害时,此伤害减去你已损体力值',
     避乱: '避乱',
@@ -6791,7 +6771,7 @@ const translate1 = {
     天谴: '天谴',
     天谴_info: '你已被天谴',
     战陨: '战陨',
-    战陨_info: '杀死你的角色:废除装备区,翻面并横置,体力值修改为1,弃置所有牌,立刻结束出牌阶段(不是出牌阶段则结束当前回合),不能对自己使用牌,判定牌永远视为♠️️五,手牌上限为0',
+    战陨_info: '击杀你的角色:废除装备区,翻面并横置,体力值修改为1,弃置所有牌,立刻结束出牌阶段(不是出牌阶段则结束当前回合),不能对自己使用牌,判定牌永远视为♠️️五,手牌上限为0',
     武德: '武德',
     武德_info: '当你成为杀的目标时,获得一枚<武德>标记.当你的<武德>标记数大于等于你的体力值时,无属性伤害对你无效.你的手牌上限+X(X为你的<武德>标记数)',
     大意: '大意',
@@ -6886,8 +6866,6 @@ const translate1 = {
     星陨_info: '每轮开始时,随机对场上其他角色造成九点雷电伤害',
     测试: '测试',
     测试_info: '测试',
-    检测: '检测',
-    检测_info: '检测',
     摸与杀: '摸与杀',
     摸与杀_info: '回合开始时随机获得四个有描述的技能,回合结束时选择失去三分之一的技能(向上取整)',
     普通卖血: '普通卖血',
@@ -6907,7 +6885,7 @@ const translate1 = {
     乾明: '乾明',
     乾明_info: '回合限一次.阳:出牌阶段,你可以弃置所有牌<br>阴:出牌阶段,你可以获得<神临>',
     神临: '神临',
-    神临_info: '每当你结束回合后,立刻进入新的回合<br>当你杀死角色/牌堆洗牌,失去此技能',
+    神临_info: '每当你结束回合后,立刻进入新的回合<br>当你击杀角色/牌堆洗牌,失去此技能',
     静气: '静气',
     静气_info: '离开你区域的牌对你始终可见,你每使用一张牌,随机获得一半静气牌',
     连锁: '连锁',

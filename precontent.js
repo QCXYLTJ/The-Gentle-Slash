@@ -317,8 +317,6 @@ const precontent = async function () {
             },
             silent: true,
             async content(event, trigger, player) {
-                debugger;
-                //QQQ
                 /*
                 lib.card.list.some((q)=>q[2]=='火链')
                 const { result: { control } } = await player.chooseControl('获得', '替换')
@@ -5262,7 +5260,7 @@ const precontent = async function () {
                     },
                     filter: (event, player) => event.num <= 0,
                     async content(event, trigger, player) {
-                        var num = numberq1(trigger.num);
+                        var num = Math.min(numberq1(trigger.num), 9);
                         while (num-- > 0) {
                             const cards1 = get.cards(2);
                             player.showCards(cards1);
@@ -7574,7 +7572,7 @@ const precontent = async function () {
                             _priority: 23,
                             async content(event, trigger, player) {
                                 game.yinshi('三百万年转瞬封,半为天意半为空.算尽天下穷心力,逆转宿命显神通.红莲涅火焚天下,天魔无相乱中州.气贯五域天地阔,重振天庭舞清风.');
-                                let count = numberq1(trigger.num);
+                                let count = Math.min(numberq1(trigger.num), 9);
                                 while (count-- > 0) {
                                     const cards = [];
                                     while (cards.map((q) => q.suit).unique().length < 2) {
@@ -7652,23 +7650,7 @@ const precontent = async function () {
                             forced: true,
                             async content(event, trigger, player) {
                                 trigger.cancel();
-                                const card = trigger.cards[0];
-                                if (card) {
-                                    const vcard = new lib.element.VCard(card);
-                                    const cardSymbol = Symbol('card');
-                                    card.cardSymbol = cardSymbol;
-                                    card[cardSymbol] = vcard;
-                                    player.vcardsMap?.equips.push(vcard);
-                                    player.node.equips.appendChild(card);
-                                    card.style.transform = '';
-                                    card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number} ${get.translation(card.name)}`;
-                                }
-                                const info = get.info(card, false);
-                                if (info.skills) {
-                                    for (const i of info.skills) {
-                                        player.addSkillTrigger(i);
-                                    }
-                                }
+                                player.qequip(trigger.cards);
                             },
                         },
                     },
@@ -8304,7 +8286,7 @@ const precontent = async function () {
                         }
                         else {
                             player.hp = player.maxHp;
-                            player.storage.QQQ_zhenshizhimu = player.GS();
+                            player.storage.QQQ_zhenshizhimu.addArray(player.GS());
                             player.CS();
                             player.when({ global: 'phaseAfter' }).then(() => {
                                 player.addSkill(player.storage.QQQ_zhenshizhimu);

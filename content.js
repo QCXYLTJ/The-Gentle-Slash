@@ -1426,8 +1426,9 @@ const content = async function () {
     //—————————————————————————————————————————————————————————————————————————————解构魔改本体函数
     const mogai = function () {
         lib.element.player.dyingResult = async function () {
-            game.log(this, '濒死');
-            _status.dying.unshift(this);
+            const player = this;
+            game.log(player, '濒死');
+            _status.dying.unshift(player);
             for (const i of game.players) {
                 const { result } = await i.chooseToUse({
                     filterCard: (card, player, event) => lib.filter.cardSavable(card, player, _status.dying[0]),
@@ -1453,62 +1454,65 @@ const content = async function () {
                     dying: _status.dying[0],
                 });
                 if (result?.bool) {
-                    _status.dying.remove(this);
+                    _status.dying.remove(player);
                     break;
                 }
             }
-            if (_status.dying.includes(this)) {
-                await this.die();
+            if (_status.dying.includes(player)) {
+                await player.die();
             }
-            return this;
+            return player;
         }; //濒死结算
         lib.element.player.yinni = function () {
-            const name = this.name;
-            this.storage.rawHp = this.hp;
-            this.storage.rawMaxHp = this.maxHp;
+            const player = this;
+            const name = player.name;
+            player.storage.rawHp = player.hp;
+            player.storage.rawMaxHp = player.maxHp;
             if (name && lib.character[name]) {
                 const skill = lib.character[name][3];
-                if (!this.hiddenSkills) {
-                    this.hiddenSkills = [];
+                if (!player.hiddenSkills) {
+                    player.hiddenSkills = [];
                 }
                 if (skill[0]) {
                     for (const i of skill) {
-                        this.removeSkill(i);
+                        player.removeSkill(i);
                     }
-                    this.hiddenSkills.addArray(skill);
+                    player.hiddenSkills.addArray(skill);
                 }
             }
-            this.classList.add('unseen');
-            this.name = 'unknown';
-            this.sex = 'male';
-            this.storage.nohp = true;
-            this.node.hp.hide();
-            this.addSkill('g_hidden_ai');
-            this.hp = 1;
-            this.maxHp = 1;
-            this.update();
+            player.classList.add('unseen');
+            player.name = 'unknown';
+            player.sex = 'male';
+            player.storage.nohp = true;
+            player.node.hp.hide();
+            player.addSkill('g_hidden_ai');
+            player.hp = 1;
+            player.maxHp = 1;
+            player.update();
+            return player;
         }; //隐匿函数
         lib.element.player.qreinit = function (name) {
+            const player = this;
             const info = lib.character[name];
-            this.name1 = name;
-            this.name = name;
-            this.sex = info.sex;
-            this.changeGroup(info.group, false);
+            player.name1 = name;
+            player.name = name;
+            player.sex = info.sex;
+            player.changeGroup(info.group, false);
             for (const i of info.skills) {
-                this.addSkill(i);
+                player.addSkill(i);
             }
-            this.maxHp = get.infoMaxHp(info.maxHp);
-            this.hp = this.maxHp;
-            game.addVideo('reinit3', this, {
+            player.maxHp = get.infoMaxHp(info.maxHp);
+            player.hp = player.maxHp;
+            game.addVideo('reinit3', player, {
                 name: name,
-                hp: this.maxHp,
-                avatar2: this.name2 == name,
+                hp: player.maxHp,
+                avatar2: player.name2 == name,
             });
-            this.smoothAvatar(false);
-            this.node.avatar.setBackground(name, 'character');
-            this.node.name.innerHTML = get.translation(name);
-            this.update();
-            return this;
+            player.smoothAvatar(false);
+            player.node.avatar.setBackground(name, 'character');
+            player.node.name.innerHTML = get.translation(name);
+            player.update();
+            return player;
         }; //变身
         lib.element.player.quseCard = async function (card, targets, cards) {
             const player = this;
@@ -1596,29 +1600,31 @@ const content = async function () {
                 next.forceDie = true;
                 await next.setContent(info.contentAfter);
             }
+            return player;
         }; //解构用牌
         lib.element.player.qrevive = function () {
-            if (this.parentNode != ui.arena) {
-                ui.arena.appendChild(this);
+            const player = this;
+            if (player.parentNode != ui.arena) {
+                ui.arena.appendChild(player);
             } //防止被移除节点
-            this.classList.remove('removing');
-            this.classList.remove('hidden');
-            this.classList.remove('dead');
-            game.log(this, '复活');
-            if (this.maxHp < 1) this.maxHp = 1;
-            this.hp = this.maxHp;
-            game.addVideo('revive', this);
-            this.removeAttribute('style');
-            this.node.avatar.style.transform = '';
-            this.node.avatar2.style.transform = '';
-            this.node.hp.show();
-            this.node.equips.show();
-            this.node.count.show();
-            this.update();
-            game.players.add(this);
-            game.dead.remove(this);
-            this.draw(Math.min(this.maxHp, 20));
-            return this;
+            player.classList.remove('removing');
+            player.classList.remove('hidden');
+            player.classList.remove('dead');
+            game.log(player, '复活');
+            if (player.maxHp < 1) player.maxHp = 1;
+            player.hp = player.maxHp;
+            game.addVideo('revive', player);
+            player.removeAttribute('style');
+            player.node.avatar.style.transform = '';
+            player.node.avatar2.style.transform = '';
+            player.node.hp.show();
+            player.node.equips.show();
+            player.node.count.show();
+            player.update();
+            game.players.add(player);
+            game.dead.remove(player);
+            player.draw(Math.min(player.maxHp, 20));
+            return player;
         }; //复活函数
         lib.element.player.zhenshang = function (num, source, nature) {
             const player = this;
@@ -1667,7 +1673,33 @@ const content = async function () {
             if (player.hp <= 0 && player.isAlive()) {
                 player.dying({ source: source });
             }
+            return player;
         }; //真实伤害
+        lib.element.player.qequip = function (card) {
+            const player = this;
+            if (Array.isArray(card)) {
+                for (const i of card) {
+                    player.qequip(i);
+                }
+            }
+            else if (card) {
+                const vcard = new lib.element.VCard(card);
+                const cardSymbol = Symbol('card');
+                card.cardSymbol = cardSymbol;
+                card[cardSymbol] = vcard;
+                player.vcardsMap?.equips.push(vcard);
+                player.node.equips.appendChild(card);
+                card.style.transform = '';
+                card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number} ${get.translation(card.name)}`;
+                const info = lib.card[card];
+                if (info && info.skills) {
+                    for (const i of info.skills) {
+                        player.addSkillTrigger(i);
+                    }
+                }
+            }
+            return player;
+        };
     }; //解构魔改本体函数
     mogai();
     //—————————————————————————————————————————————————————————————————————————————一些全局技能
