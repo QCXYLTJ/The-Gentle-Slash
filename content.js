@@ -1475,19 +1475,15 @@ const content = async function () {
         }; //濒死结算
         lib.element.player.yinni = function () {
             const player = this;
-            const name = player.name;
             player.storage.rawHp = player.hp;
             player.storage.rawMaxHp = player.maxHp;
-            if (name && lib.character[name]) {
-                const skill = lib.character[name][3];
+            if (player.skills.length) {
                 if (!player.hiddenSkills) {
                     player.hiddenSkills = [];
                 }
-                if (skill[0]) {
-                    for (const i of skill) {
-                        player.removeSkill(i);
-                    }
-                    player.hiddenSkills.addArray(skill);
+                for (const i of player.skills.slice()) {
+                    player.removeSkill(i);
+                    player.hiddenSkills.add(i);
                 }
             }
             player.classList.add('unseen');
