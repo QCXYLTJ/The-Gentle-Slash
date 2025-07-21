@@ -3277,66 +3277,58 @@ const content = async function () {
                 },
                 forced: true,
                 async content(event, trigger, player) {
-                    const Q = [];
+                    const list = new Map();
                     let num = 4;
                     while (num > 0) {
-                        const result = await player
-                            .chooseTarget(get.prompt('dcluochong'), `弃置任意名角色区域内的4张牌`, (card, player, target) => {
-                                return target.hasCard((T) => {
-                                    const discarded = Q.find((item) => item[0] == target);
-                                    if (discarded && discarded[1].includes(T)) return false;
-                                    return lib.filter.canBeDiscarded(T, player, target, 'dcluochong');
+                        const {
+                            result: { targets },
+                        } = await player
+                            .chooseTarget(`弃置任意名角色区域内的${num}张牌`, (card, player, target) => {
+                                return target.hasCard((c) => {
+                                    const discarded = list.get(target);
+                                    if (discarded?.includes(c)) return false;
+                                    return lib.filter.canBeDiscarded(c, player, target, 'dcluochong');
                                 }, 'hej');
                             })
                             .set('ai', (target) => {
-                                const discarded = Q.find((item) => item[0] == target);
-                                if (target == player && ui.cardPile.childNodes.length > 80 && player.hasSkill('dcaichen') && !discarded) return 20;
-                                if (discarded && discarded[1].length >= target.countCards('he')) return 0;
-                                if (discarded && discarded[1].length > 1 && player.getEnemies().length >= 2) return 0;
+                                const discarded = list.get(target);
+                                if (target == player && ui.cardPile.childNodes.length > 80 && player.hasSkill('dcaichen') && !discarded) return 50;
+                                if (discarded?.length >= target.countCards('he')) return 0;
+                                if (discarded?.length > 1 && player.getEnemies().length >= 2) return 0;
                                 return get.effect(target, { name: 'guohe' }, player, player);
-                            })
-                            .forResult();
-                        if (result.bool) {
-                            const target = result.targets[0];
-                            const cards = await player
-                                .choosePlayerCard(target, true, 'hej', [1, num], `选择弃置${get.translation(target)}区域内的牌`)
+                            });
+                        if (targets?.length) {
+                            const {
+                                result: { cards },
+                            } = await player
+                                .choosePlayerCard(targets[0], true, 'hej', [1, num], `选择弃置${get.translation(targets[0])}区域内的牌`)
                                 .set('filterButton', (button) => {
-                                    const card = button.link, player = get.player();
-                                    const discarded = Q.find((item) => item[0] == target);
-                                    if (discarded && discarded[1].includes(card)) return false;
-                                    return lib.filter.canBeDiscarded(card, player, target, 'dcluochong');
+                                    const discarded = list.get(targets[0]);
+                                    if (discarded?.includes(button.link)) return false;
+                                    return lib.filter.canBeDiscarded(button.link, player, targets[0], 'dcluochong');
                                 })
                                 .set('ai', (button) => {
-                                    if (ui.selected.buttons.length) return false;
-                                    var val = get.value(button.link, target);
-                                    if (get.attitude(player, target) > 0) return -val;
-                                    return val;
-                                })
-                                .forResultCards();
-                            num -= cards.length;
-                            const index = Q.find((item) => item[0] == target);
-                            if (!index) {
-                                Q.push([target, cards]);
-                            } else {
-                                index[1].addArray(cards);
+                                    if (ui.selected.buttons.length > 0) {
+                                        return false;
+                                    }//一次进行一张牌的ai计算
+                                    return get.value(button.link, targets[0]) * -get.attitude(player, targets[0]);
+                                });
+                            if (cards?.length) {
+                                num -= cards.length;
+                                const discarded = list.get(targets[0]);
+                                if (!discarded) {
+                                    list.set(targets[0], cards);
+                                } else {
+                                    discarded.addArray(cards);
+                                }
                             }
                         } else {
                             break;
                         }
                     }
-                    if (Q.length) {
-                        lib.tempSortSeat = trigger.player;
-                        Q.sort((a, b) => {
-                            return lib.sort.seat(a[0], b[0]);
-                        });
-                        delete lib.tempSortSeat;
-                        if (Q[0].length == 1) {
-                            Q[0][0].discard(Q[0][1]);
-                        } else {
-                            game.loseAsync({
-                                lose_list: Q,
-                                discarder: player,
-                            }).setContent('discardMultiple');
+                    if (list.size) {
+                        for (const [target, cards] of list) {
+                            await target.discard(cards);
                         }
                     }
                 },

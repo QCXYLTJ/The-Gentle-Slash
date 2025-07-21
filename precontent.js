@@ -1912,8 +1912,7 @@ const precontent = async function () {
                 let value;
                 if (info.ai.equipValue) {
                     value = info.ai.equipValue;
-                }
-                else if (info.ai.basic?.equipValue) {
+                } else if (info.ai.basic?.equipValue) {
                     value = info.ai.basic.equipValue;
                 }
                 if (typeof value == 'number') {
@@ -1926,7 +1925,7 @@ const precontent = async function () {
             return 0;
         }; //装备价值修改
         get.equipResult = function (player, target, card) {
-            const name = (typeof card.name == 'string') ? card.name : card;
+            const name = typeof card.name == 'string' ? card.name : card;
             if (target.getEquip(lib.card[name].subtype)) {
                 return get.equipValue({ name: name }, target) - get.equipValue(target.getEquip({ name: name }), target); //不能装备但是还没装备就会出错
             }
@@ -1949,7 +1948,9 @@ const precontent = async function () {
                 alert('value卡牌不存在');
                 throw new Error();
             }
-            player = player ?? _status.event.player;
+            if (!player || get.itemtype(player) != 'player') {
+                player = _status.event.player;
+            }
             if (get.position(card) == 'j') {
                 const name = card.viewAs ? card.viewAs : card.name;
                 const info = lib.card[name];
@@ -1961,7 +1962,7 @@ const precontent = async function () {
                     return result;
                 }
                 return 0;
-            } //QQQ
+            } //判定区牌视为负价值
             if (card._modValue) {
                 return card._modValue(player, method);
             }
