@@ -3283,38 +3283,33 @@ const content = async function () {
                         const result = await player
                             .chooseTarget(get.prompt('dcluochong'), `弃置任意名角色区域内的4张牌`, (card, player, target) => {
                                 return target.hasCard((T) => {
-                                    const discarded = _status.event.Q.find((item) => item[0] == target);
+                                    const discarded = Q.find((item) => item[0] == target);
                                     if (discarded && discarded[1].includes(T)) return false;
                                     return lib.filter.canBeDiscarded(T, player, target, 'dcluochong');
                                 }, 'hej');
                             })
                             .set('ai', (target) => {
-                                const player = _status.event.player,
-                                    discarded = _status.event.Q.find((item) => item[0] == target);
+                                const discarded = Q.find((item) => item[0] == target);
                                 if (target == player && ui.cardPile.childNodes.length > 80 && player.hasSkill('dcaichen') && !discarded) return 20;
                                 if (discarded && discarded[1].length >= target.countCards('he')) return 0;
                                 if (discarded && discarded[1].length > 1 && player.getEnemies().length >= 2) return 0;
                                 return get.effect(target, { name: 'guohe' }, player, player);
                             })
-                            .set('Q', Q)
                             .forResult();
                         if (result.bool) {
                             const target = result.targets[0];
                             const cards = await player
                                 .choosePlayerCard(target, true, 'hej', [1, num], `选择弃置${get.translation(target)}区域内的牌`)
                                 .set('filterButton', (button) => {
-                                    const card = button.link,
-                                        target = _status.event.target,
-                                        player = get.player();
-                                    const discarded = _status.event.Q.find((item) => item[0] == target);
+                                    const card = button.link, player = get.player();
+                                    const discarded = Q.find((item) => item[0] == target);
                                     if (discarded && discarded[1].includes(card)) return false;
                                     return lib.filter.canBeDiscarded(card, player, target, 'dcluochong');
                                 })
-                                .set('Q', Q)
                                 .set('ai', (button) => {
                                     if (ui.selected.buttons.length) return false;
-                                    var val = get.buttonValue(button, _status.event.target);
-                                    if (get.attitude(_status.event.player, _status.event.target) > 0) return -val;
+                                    var val = get.value(button.link, target);
+                                    if (get.attitude(player, target) > 0) return -val;
                                     return val;
                                 })
                                 .forResultCards();

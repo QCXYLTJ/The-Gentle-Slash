@@ -1906,7 +1906,7 @@ const precontent = async function () {
         };
         get.equipValue = function (card, player) {
             if (!card) return 0;
-            player = player ?? get.owner(card) ?? get.player();
+            player = player ?? get.owner(card) ?? _status.event.player;
             const info = lib.card[card.name];
             if (info?.ai) {
                 let value;
@@ -1932,13 +1932,8 @@ const precontent = async function () {
             }
             return get.equipValue({ name: name }, target);
         }; //是否上装备AI
-        get.buttonValue = function (button, player) {
-            const card = button.link;
-            if (!card && QQQ.作者模式) {
-                alert('buttonValue卡牌不存在');
-                throw new Error();
-            }
-            return get.value(card, player) / 3;
+        get.buttonValue = function (button) {
+            return get.value(button.link);
         }; //选牌AI修改,判定区牌视为负价值
         get.value = function (card, player, method) {
             let value;
@@ -1954,7 +1949,7 @@ const precontent = async function () {
                 alert('value卡牌不存在');
                 throw new Error();
             }
-            player = player ?? get.player();
+            player = player ?? _status.event.player;
             if (get.position(card) == 'j') {
                 const name = card.viewAs ? card.viewAs : card.name;
                 const info = lib.card[name];
