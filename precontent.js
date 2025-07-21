@@ -2512,7 +2512,7 @@ const precontent = async function () {
             game.log(player, str);
             const stat = player.stat;
             const statx = stat[stat.length - 1];
-            if (!statx.damage) {
+            if (!statx.damaged) {
                 statx.damaged = num;
             } else {
                 statx.damaged += num;
