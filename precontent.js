@@ -20,6 +20,7 @@
 */
 //-------------------------------------------------------备忘录0
 /*
+game.me.gain(game.createCard('shuidan'), 'gain2');
 MaxHp
 武将改名图片也要改,技能改名语音也要改
 mod里面的card是vcard
@@ -126,7 +127,6 @@ lib.config.cards.push
 lib.config.all.cards.remove
 lib.config.all.cards.push
 game.saveConfig('cards', 
-addCharacterPack
 die_audio
 url("
 url('
@@ -8722,7 +8722,7 @@ const precontent = async function () {
             }
             info.isZhugong = true;
             info.trashBin = [`ext:温柔一刀/image/${i}.jpg`];
-            info.dieAudios = [`ext:温柔一刀/die/${i}.mp3`];
+            info.dieAudios = [`ext:温柔一刀/audio/${i}.mp3`];
             yinu.translate[i] = `<span class="flame">火</span>${yinu.translate[i]}`;
             if (QQQ.config.AI禁用) {
                 lib.config.forbidai.add(i); //将包仅点将可用
@@ -8824,6 +8824,7 @@ sha();
 const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.json`);
 info.json\license
 //—————————————————————————————————————————————————————————————————————————————
+addCharacterPack
 game.import('character', function (lib, game, ui, get, ai, _status) {
     const QQQ = {
         name: 'QQQQQQ',

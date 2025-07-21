@@ -570,7 +570,7 @@ for (const i in character) {
     }
     info.isZhugong = true;
     info.trashBin = [`ext:温柔一刀/image/${i}.jpg`];
-    info.dieAudios = [`ext:温柔一刀/die/${i}.mp3`];
+    info.dieAudios = [`ext:温柔一刀/audio/${i}.mp3`];
     translate2[i] = `<span class="flame">火</span>${translate2[i]}`;
     if (QQQ.config.AI禁用) {
         lib.config.forbidai.add(i); //将包仅点将可用

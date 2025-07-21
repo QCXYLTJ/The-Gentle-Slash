@@ -39,7 +39,7 @@ if (QQQ.作者模式) {
         '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', '小镜子',
         '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS', '太虚幻境',
         '千秋万载', 'FateEternity', '三国无双', '雷金阴洪石', '群星荟萃',
-        '蒸蒸日上', 'ACGN',
+        '蒸蒸日上', 'ACGN', '综漫季刊拾壹',
     ].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
@@ -736,10 +736,11 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
 game.addMode(
     'QQQ',
     {
-        start: async function (event) {
+        async start(event) {
             QQQ.作者模式 = true;
             game.saveConfig('extension_温柔一刀_卡牌全开', true);
             game.saveConfig('extension_温柔一刀_神武再世', true);
+            game.saveConfig('extension_温柔一刀_禁止抢回合', true);
             game.saveConfig('extension_温柔一刀_卡牌加入牌堆', true);
             game.saveConfig('extension_温柔一刀_禁止封禁技能', true);
             game.saveConfig('extension_温柔一刀_禁止多次触发', true);
@@ -761,14 +762,18 @@ game.addMode(
                 npc.setIdentity();
                 npc.init('QQQ_测试');
             }
-            event.trigger('gameStart');
+            _status.auto = true;
+            game.countPlayer((current) => current.showGiveup(), true);
+            game.log(`<b style='color:rgb(228, 17, 28);'>游戏开始</b>`);
+            await event.trigger('gameStart');
             for (const npc of game.players) {
+                game.log(`<b style='color:rgb(228, 17, 28);'>${get.translation(npc)}进入游戏</b>`);
                 await game.triggerEnter(npc);
             }
-            game.gameDraw(game.zhu, () => 4);
-            game.phaseLoop(game.zhu);
-            game.countPlayer((current) => current.showGiveup(), true);
-            _status.auto = true;
+            game.log(`<b style='color:rgb(228, 17, 28);'>发牌开始</b>`);
+            await game.gameDraw(game.zhu, () => 4);
+            game.log(`<b style='color:rgb(228, 17, 28);'>轮次开始</b>`);
+            await game.phaseLoop(game.zhu);
         },
         game: {
             checkResult() {
