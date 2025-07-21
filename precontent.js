@@ -379,13 +379,235 @@ const precontent = async function () {
     //—————————————————————————————————————————————————————————————————————————————lib.onfree
     lib.onfree.push(function () {
         console.time('温柔一刀onfree');
+        //—————————————————————————————————————————————————————————————————————————————boss技能替换
+        const skilltihuan = function () {
+            lib.skill.jiwu = {
+                mod: {
+                    aiOrder(player, card, num) {
+                        if (get.type(card) == 'equip' && !player.getEquips(get.subtype(card)).length) return 15;
+                        if (get.type(card) == 'equip' && player.getEquips(get.subtype(card)).length) return 1;
+                    },
+                },
+                derivation: ['qiangxix', 'retieji', 'olxuanfeng', 'rewansha'],
+                audio: 2,
+                enable: 'phaseUse',
+                filter(event, player) {
+                    if (player.countCards('he') == 0) return false;
+                    if (player.hasSkill('qiangxix') && player.hasSkill('retieji') && player.hasSkill('olxuanfeng') && player.hasSkill('rewansha')) return false;
+                    return true;
+                },
+                filterCard: true,
+                position: 'he',
+                check(card, player) {
+                    player = _status.event.player;
+                    if (get.subtype(card) == 'equip1') return (6 - get.value(card)) / 6;
+                    if (get.position(card) == 'e' && player.hasSkill('olxuanfeng') && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) return 70 - get.value(card);
+                    if (get.type(card) == 'equip') return (6 - get.value(card)) / 6;
+                    if (card.name == 'sha' && player.countCards('h', { name: 'sha' }) < 3) return (6 - get.value(card)) / 6;
+                    return 9 - get.value(card);
+                },
+                content() {
+                    'step 0';
+                    var list = [];
+                    if (!player.hasSkill('qiangxix')) list.push('qiangxix');
+                    if (!player.hasSkill('retieji')) list.push('retieji');
+                    if (!player.hasSkill('olxuanfeng')) list.push('olxuanfeng');
+                    if (!player.hasSkill('rewansha')) list.push('rewansha');
+                    if (list.length == 1) {
+                        player.addTempSkills(list[0]);
+                        event.finish();
+                    } else {
+                        player
+                            .chooseControl(list, function () {
+                                if (list.includes('olxuanfeng') && player.countCards('he', { type: 'equip' }) && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) return 'olxuanfeng';
+                                if (list.includes('qiangxix') && (game.hasPlayer((Q) => player.hp > Q.hp && Q.isEnemiesOf(player)) || player.countCards('he', { subtype: 'equip1' }))) return 'qiangxix';
+                                if (list.includes('retieji') && player.hasSha()) return 'retieji';
+                                if (list.includes('rewansha') && player.getEnemies().length >= 2) return 'rewansha';
+                            })
+                            .set('prompt', '选择获得一项技能直到回合结束');
+                    }
+                    ('step 1');
+                    player.addTempSkills(result.control);
+                },
+                ai: {
+                    order(name, player) {
+                        if (player.countCards('he', { type: 'equip' }) && !player.hasSkill('olxuanfeng')) return 99;
+                        if (player.countCards('e') && !player.hasSkill('retieji')) return 13;
+                        if (player.countCards('e') && !player.hasSkill('qiangxix')) return 13;
+                        if (player.countCards('e') && !player.hasSkill('rewansha')) return 13;
+                        return 10;
+                    },
+                    result: {
+                        player(player) {
+                            if (player.countCards('he', { type: 'equip' }) && !player.hasSkill('olxuanfeng') && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) return 1;
+                            if (!player.hasSkill('qiangxix') && (game.hasPlayer((Q) => player.hp > Q.hp && Q.isEnemiesOf(player)) || player.countCards('he', { subtype: 'equip1' }))) return 1;
+                            if (!player.hasSkill('retieji') && player.hasSha()) return 1;
+                            if (!player.hasSkill('rewansha') && player.getEnemies().length >= 2) return 1;
+                            return 0;
+                        },
+                    },
+                },
+            }; //极武AI优化
+            lib.skill.boss_zhangwu = {
+                global: 'boss_zhangwu_ai',
+                trigger: { player: 'damageEnd' },
+                check(event, player) {
+                    return event.source && event.source.isIn() && get.damageEffect(event.source, player, player) > 0;
+                },
+                filter(event, player) {
+                    return event.source && event.source.isAlive();
+                },
+                forced: true,
+                logTarget: 'source',
+                content() {
+                    'step 0';
+                    player.chooseToDiscard(get.prompt('boss_zhangwu', trigger.source), 'he', [1, Infinity]).set('ai', function (card) {
+                        if (get.attitude(player, trigger.source) < 0) return 8 - get.value(card);
+                        return 0;
+                    })('step 1');
+                    if (result.bool) {
+                        var num = result.cards.length;
+                        var cnum = get.cnNumber(num);
+                        event.num = num;
+                        trigger.source.chooseToDiscard('he', `章武:弃置${cnum}张牌,或取消并受到${cnum}点伤害`, num).set('ai', function (card) {
+                            if (!trigger.source.hasSkillTag('nodamage')) return 10 - get.value(card);
+                            return 0;
+                        });
+                    } else {
+                        event.finish();
+                    }
+                    ('step 2');
+                    if (!result.bool) {
+                        trigger.source.damage(event.num);
+                    }
+                },
+                ai: {
+                    maixie: true,
+                    maixie_hp: true,
+                    effect: {
+                        target(card, player, target) {
+                            if (get.tag(card, 'damage') && get.attitude(target, player) < 0 && player.countCards('he') < target.countCards('he')) {
+                                return [0, 2];
+                            }
+                        },
+                    },
+                },
+            }; //章武AI优化
+            lib.skill.boss_biantian = {
+                trigger: { player: 'phaseBegin' },
+                forced: true,
+                group: 'boss_biantian4',
+                content() {
+                    'step 0';
+                    for (var i = 0; i < game.players.length; i++) {
+                        if (game.players[i].hasSkill('boss_biantian3')) {
+                            game.players[i].removeSkill('boss_biantian3');
+                            game.players[i].popup('boss_biantian3');
+                        }
+                        if (game.players[i].hasSkill('boss_biantian2')) {
+                            game.players[i].removeSkill('boss_biantian2');
+                            game.players[i].popup('boss_biantian2');
+                        }
+                    }
+                    player.judge(function (card) {
+                        var color = get.color(card);
+                        if (color == 'black') return 1;
+                        if (color == 'red') return 0;
+                        return -1;
+                    });
+                    ('step 1');
+                    var targets = [],
+                        players = game.players;
+                    if (result.color == 'red') {
+                        for (var i = 0; i < players.length; i++) {
+                            if (players[i].isEnemiesOf(player)) {
+                                players[i].addSkill('boss_biantian3');
+                                players[i].popup('kuangfeng');
+                                targets.push(players[i]);
+                            }
+                        }
+                    } else if (result.color == 'black') {
+                        for (var i = 0; i < players.length; i++) {
+                            if (players[i].isFriendsOf(player)) {
+                                players[i].addSkill('boss_biantian2');
+                                players[i].popup('dawu');
+                                targets.push(players[i]);
+                            }
+                        }
+                    }
+                },
+                ai: {
+                    threaten: 1.6,
+                },
+            };
+            lib.skill.xiangxing = {
+                init(player) {
+                    player.storage.xiangxing = 7;
+                    player.storage.xiangxing_count = 0;
+                },
+                mark: true,
+                intro: {
+                    content: '当前有#枚星',
+                },
+                trigger: { player: ['damageEnd', 'loseHpEnd'] },
+                forced: true,
+                popup: false,
+                content() {
+                    'step 0';
+                    var num = trigger.num;
+                    if (num > 0) {
+                        player.storage.xiangxing_count += num;
+                    }
+                    if (player.storage.xiangxing_count >= 7) {
+                        if (player.hasSkill('yueyin') && lib.skill.yueyin.skipDamage[`x${player.storage.xiangxing}`](player, trigger)) {
+                            event.goto(3);
+                        }
+                        player.storage.xiangxing--;
+                        player.storage.xiangxing_count = 0;
+                        if (!player.storage.xiangxing) {
+                            player.awakenSkill('xiangxing');
+                        }
+                        player.popup('xiangxing');
+                        game.log(player, '失去了一枚星');
+                    } else {
+                        event.finish();
+                    }
+                    ('step 1');
+                    var list = game.players;
+                    list.remove(player);
+                    list.sort(lib.sort.seat);
+                    var list2 = [];
+                    for (var i = 0; i < list.length; i++) {
+                        list2.push(0);
+                    }
+                    for (var i = 0; i < 7; i++) {
+                        list2[Math.floor(Math.random() * list2.length)]++;
+                    }
+                    event.list = list;
+                    event.list2 = list2;
+                    ('step 2');
+                    if (event.list.length) {
+                        var target = event.list.shift();
+                        target.damage(event.list2.shift(), 'thunder');
+                        player.line(target, 'thunder');
+                        event.redo();
+                    }
+                    ('step 3');
+                    if (player.storage.xiangxing == 0) {
+                        player.maxHp = 3;
+                        player.update();
+                    }
+                },
+            };
+        };
+        skilltihuan();
+        //—————————————————————————————————————————————————————————————————————————————子技能与全局技能载入
         console.log(Object.keys(lib.skill).length, 'lib.onfree', 'skill');
         console.log(Object.keys(lib.card).length, 'card');
         console.log(Object.keys(lib.character).length, 'character');
         game.finishCards();
+        //—————————————————————————————————————————————————————————————————————————————lib.skill遍历
         const console1 = [];
-        const console2 = [];
-        const console3 = [];
         for (const i in lib.skill) {
             const info = lib.skill[i];
             if (typeof info != 'object') {
@@ -536,6 +758,7 @@ const precontent = async function () {
             }
         }
         console.log('修复增加ai', console1);
+        //—————————————————————————————————————————————————————————————————————————————lib.characterSort遍历
         if (QQQ.作者模式) {
             for (const i in lib.characterSort) {
                 const info = lib.characterSort[i];
@@ -546,44 +769,48 @@ const precontent = async function () {
                 }
             }
         }
-        game.BGM = [];
-        game.getFileList('extension/温柔一刀/BGM', (folders, files) => {
-            if (files && files.length) {
-                files.forEach((n) => {
-                    if (n.includes('.mp3')) {
-                        game.BGM.add(`extension/温柔一刀/BGM/${n}`);
-                    }
-                });
-            }
-        });
-        game.getFileList('audio/background', (folders, files) => {
-            if (files && files.length) {
-                files.forEach((n) => {
-                    if (n.includes('.mp3')) {
-                        game.BGM.add(`audio/background/${n}`);
-                    }
-                });
-            }
-        });
-        if (!lib.config.gentle_BGM) {
-            game.saveConfig('gentle_BGM', game.BGM.randomGet());
-        }
-        ui.backgroundMusic.src = lib.config.gentle_BGM;
-        ui.backgroundMusic.loop = true;
-        ui.create.system(
-            '换歌',
-            function () {
-                const name = game.BGM.randomGet();
-                if (name) {
-                    game.saveConfig('gentle_BGM', name);
-                    ui.backgroundMusic.src = name;
-                } else {
-                    ui.backgroundMusic.src = `extension/温柔一刀/BGM/望乡曲.mp3`;
+        //—————————————————————————————————————————————————————————————————————————————bgm
+        const bgm = function () {
+            game.BGM = [];
+            game.getFileList('extension/温柔一刀/BGM', (folders, files) => {
+                if (files && files.length) {
+                    files.forEach((n) => {
+                        if (n.includes('.mp3')) {
+                            game.BGM.add(`extension/温柔一刀/BGM/${n}`);
+                        }
+                    });
                 }
-                ui.backgroundMusic.loop = true;
-            },
-            true
-        ); //BGM
+            });
+            game.getFileList('audio/background', (folders, files) => {
+                if (files && files.length) {
+                    files.forEach((n) => {
+                        if (n.includes('.mp3')) {
+                            game.BGM.add(`audio/background/${n}`);
+                        }
+                    });
+                }
+            });
+            if (!lib.config.gentle_BGM) {
+                game.saveConfig('gentle_BGM', game.BGM.randomGet());
+            }
+            ui.backgroundMusic.src = lib.config.gentle_BGM;
+            ui.backgroundMusic.loop = true;
+            ui.create.system(
+                '换歌',
+                function () {
+                    const name = game.BGM.randomGet();
+                    if (name) {
+                        game.saveConfig('gentle_BGM', name);
+                        ui.backgroundMusic.src = name;
+                    } else {
+                        ui.backgroundMusic.src = `extension/温柔一刀/BGM/望乡曲.mp3`;
+                    }
+                    ui.backgroundMusic.loop = true;
+                },
+                true
+            ); //BGM
+        };
+        bgm();
         console.timeEnd('温柔一刀onfree');
     }); //需要晚的时机的
     //—————————————————————————————————————————————————————————————————————————————lib.onover
@@ -2063,248 +2290,6 @@ const precontent = async function () {
         get.vcardInfo = function (card) { }; //卡牌storage里面存了DOM元素会循环引用导致不能JSON.stringify
     }; //get相关本体函数
     getq();
-    //—————————————————————————————————————————————————————————————————————————————锁几个技能
-    const lockskill = function () {
-        Reflect.defineProperty(lib.skill, 'jiwu', {
-            get() {
-                return {
-                    mod: {
-                        aiOrder(player, card, num) {
-                            if (get.type(card) == 'equip' && !player.getEquips(get.subtype(card)).length) return 15;
-                            if (get.type(card) == 'equip' && player.getEquips(get.subtype(card)).length) return 1;
-                        },
-                    },
-                    derivation: ['qiangxix', 'retieji', 'olxuanfeng', 'rewansha'],
-                    audio: 2,
-                    enable: 'phaseUse',
-                    filter(event, player) {
-                        if (player.countCards('he') == 0) return false;
-                        if (player.hasSkill('qiangxix') && player.hasSkill('retieji') && player.hasSkill('olxuanfeng') && player.hasSkill('rewansha')) return false;
-                        return true;
-                    },
-                    filterCard: true,
-                    position: 'he',
-                    check(card, player) {
-                        player = _status.event.player;
-                        if (get.subtype(card) == 'equip1') return (6 - get.value(card)) / 6;
-                        if (get.position(card) == 'e' && player.hasSkill('olxuanfeng') && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) return 70 - get.value(card);
-                        if (get.type(card) == 'equip') return (6 - get.value(card)) / 6;
-                        if (card.name == 'sha' && player.countCards('h', { name: 'sha' }) < 3) return (6 - get.value(card)) / 6;
-                        return 9 - get.value(card);
-                    },
-                    content() {
-                        'step 0';
-                        var list = [];
-                        if (!player.hasSkill('qiangxix')) list.push('qiangxix');
-                        if (!player.hasSkill('retieji')) list.push('retieji');
-                        if (!player.hasSkill('olxuanfeng')) list.push('olxuanfeng');
-                        if (!player.hasSkill('rewansha')) list.push('rewansha');
-                        if (list.length == 1) {
-                            player.addTempSkills(list[0]);
-                            event.finish();
-                        } else {
-                            player
-                                .chooseControl(list, function () {
-                                    if (list.includes('olxuanfeng') && player.countCards('he', { type: 'equip' }) && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) return 'olxuanfeng';
-                                    if (list.includes('qiangxix') && (game.hasPlayer((Q) => player.hp > Q.hp && Q.isEnemiesOf(player)) || player.countCards('he', { subtype: 'equip1' }))) return 'qiangxix';
-                                    if (list.includes('retieji') && player.hasSha()) return 'retieji';
-                                    if (list.includes('rewansha') && player.getEnemies().length >= 2) return 'rewansha';
-                                })
-                                .set('prompt', '选择获得一项技能直到回合结束');
-                        }
-                        ('step 1');
-                        player.addTempSkills(result.control);
-                    },
-                    ai: {
-                        order(name, player) {
-                            if (player.countCards('he', { type: 'equip' }) && !player.hasSkill('olxuanfeng')) return 99;
-                            if (player.countCards('e') && !player.hasSkill('retieji')) return 13;
-                            if (player.countCards('e') && !player.hasSkill('qiangxix')) return 13;
-                            if (player.countCards('e') && !player.hasSkill('rewansha')) return 13;
-                            return 10;
-                        },
-                        result: {
-                            player(player) {
-                                if (player.countCards('he', { type: 'equip' }) && !player.hasSkill('olxuanfeng') && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) return 1;
-                                if (!player.hasSkill('qiangxix') && (game.hasPlayer((Q) => player.hp > Q.hp && Q.isEnemiesOf(player)) || player.countCards('he', { subtype: 'equip1' }))) return 1;
-                                if (!player.hasSkill('retieji') && player.hasSha()) return 1;
-                                if (!player.hasSkill('rewansha') && player.getEnemies().length >= 2) return 1;
-                                return 0;
-                            },
-                        },
-                    },
-                };
-            },
-            set() { },
-        }); //极武AI优化
-        Reflect.defineProperty(lib.skill, 'boss_zhangwu', {
-            get() {
-                return {
-                    global: 'boss_zhangwu_ai',
-                    trigger: { player: 'damageEnd' },
-                    check(event, player) {
-                        return event.source && event.source.isIn() && get.damageEffect(event.source, player, player) > 0;
-                    },
-                    filter(event, player) {
-                        return event.source && event.source.isAlive();
-                    },
-                    forced: true,
-                    logTarget: 'source',
-                    content() {
-                        'step 0';
-                        player.chooseToDiscard(get.prompt('boss_zhangwu', trigger.source), 'he', [1, Infinity]).set('ai', function (card) {
-                            if (get.attitude(player, trigger.source) < 0) return 8 - get.value(card);
-                            return 0;
-                        })('step 1');
-                        if (result.bool) {
-                            var num = result.cards.length;
-                            var cnum = get.cnNumber(num);
-                            event.num = num;
-                            trigger.source.chooseToDiscard('he', `章武:弃置${cnum}张牌,或取消并受到${cnum}点伤害`, num).set('ai', function (card) {
-                                if (!trigger.source.hasSkillTag('nodamage')) return 10 - get.value(card);
-                                return 0;
-                            });
-                        } else {
-                            event.finish();
-                        }
-                        ('step 2');
-                        if (!result.bool) {
-                            trigger.source.damage(event.num);
-                        }
-                    },
-                    ai: {
-                        maixie: true,
-                        maixie_hp: true,
-                        effect: {
-                            target(card, player, target) {
-                                if (get.tag(card, 'damage') && get.attitude(target, player) < 0 && player.countCards('he') < target.countCards('he')) {
-                                    return [0, 2];
-                                }
-                            },
-                        },
-                    },
-                };
-            },
-            set() { },
-        }); //章武AI优化
-        Reflect.defineProperty(lib.skill, 'boss_biantian', {
-            get() {
-                return {
-                    trigger: { player: 'phaseBegin' },
-                    forced: true,
-                    group: 'boss_biantian4',
-                    content() {
-                        'step 0';
-                        for (var i = 0; i < game.players.length; i++) {
-                            if (game.players[i].hasSkill('boss_biantian3')) {
-                                game.players[i].removeSkill('boss_biantian3');
-                                game.players[i].popup('boss_biantian3');
-                            }
-                            if (game.players[i].hasSkill('boss_biantian2')) {
-                                game.players[i].removeSkill('boss_biantian2');
-                                game.players[i].popup('boss_biantian2');
-                            }
-                        }
-                        player.judge(function (card) {
-                            var color = get.color(card);
-                            if (color == 'black') return 1;
-                            if (color == 'red') return 0;
-                            return -1;
-                        });
-                        ('step 1');
-                        var targets = [],
-                            players = game.players;
-                        if (result.color == 'red') {
-                            for (var i = 0; i < players.length; i++) {
-                                if (players[i].isEnemiesOf(player)) {
-                                    players[i].addSkill('boss_biantian3');
-                                    players[i].popup('kuangfeng');
-                                    targets.push(players[i]);
-                                }
-                            }
-                        } else if (result.color == 'black') {
-                            for (var i = 0; i < players.length; i++) {
-                                if (players[i].isFriendsOf(player)) {
-                                    players[i].addSkill('boss_biantian2');
-                                    players[i].popup('dawu');
-                                    targets.push(players[i]);
-                                }
-                            }
-                        }
-                    },
-                    ai: {
-                        threaten: 1.6,
-                    },
-                };
-            },
-            set() { },
-        });
-        Reflect.defineProperty(lib.skill, 'xiangxing', {
-            get() {
-                return {
-                    init(player) {
-                        player.storage.xiangxing = 7;
-                        player.storage.xiangxing_count = 0;
-                    },
-                    mark: true,
-                    intro: {
-                        content: '当前有#枚星',
-                    },
-                    trigger: { player: ['damageEnd', 'loseHpEnd'] },
-                    forced: true,
-                    popup: false,
-                    content() {
-                        'step 0';
-                        var num = trigger.num;
-                        if (num > 0) {
-                            player.storage.xiangxing_count += num;
-                        }
-                        if (player.storage.xiangxing_count >= 7) {
-                            if (player.hasSkill('yueyin') && lib.skill.yueyin.skipDamage[`x${player.storage.xiangxing}`](player, trigger)) {
-                                event.goto(3);
-                            }
-                            player.storage.xiangxing--;
-                            player.storage.xiangxing_count = 0;
-                            if (!player.storage.xiangxing) {
-                                player.awakenSkill('xiangxing');
-                            }
-                            player.popup('xiangxing');
-                            game.log(player, '失去了一枚星');
-                        } else {
-                            event.finish();
-                        }
-                        ('step 1');
-                        var list = game.players;
-                        list.remove(player);
-                        list.sort(lib.sort.seat);
-                        var list2 = [];
-                        for (var i = 0; i < list.length; i++) {
-                            list2.push(0);
-                        }
-                        for (var i = 0; i < 7; i++) {
-                            list2[Math.floor(Math.random() * list2.length)]++;
-                        }
-                        event.list = list;
-                        event.list2 = list2;
-                        ('step 2');
-                        if (event.list.length) {
-                            var target = event.list.shift();
-                            target.damage(event.list2.shift(), 'thunder');
-                            player.line(target, 'thunder');
-                            event.redo();
-                        }
-                        ('step 3');
-                        if (player.storage.xiangxing == 0) {
-                            player.maxHp = 3;
-                            player.update();
-                        }
-                    },
-                };
-            },
-            set() { },
-        });
-    }; //锁几个技能玩玩
-    lockskill();
     //—————————————————————————————————————————————————————————————————————————————锁几个函数
     const lockfunc = function () {
         let oattitude = get.attitude;
