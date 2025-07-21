@@ -486,7 +486,7 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                                 set() { },
                                 configurable: false,
                             });
-                            card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number} ${get.translation(card.name)}`;
+                            card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number} ${get.translation(name)}`;
                             const vcard = new lib.element.VCard(card);
                             if (!player.artifact) {
                                 player.artifact = [];
@@ -504,8 +504,8 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                                 },
                             });
                             if (player.playerid) {
-                                if (lib.card[card.name].skills) {
-                                    const skill = lib.card[card.name].skills.slice();
+                                if (lib.card[name].skills) {
+                                    const skill = lib.card[name].skills.slice();
                                     game.expandSkills(skill);
                                     for (const x of skill) {
                                         const trigger = lib.skill[x].trigger;

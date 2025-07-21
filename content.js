@@ -1648,16 +1648,20 @@ const content = async function () {
             }
             str += '伤害';
             game.log(player, str);
-            if (player.stat[player.stat.length - 1].damaged == undefined) {
-                player.stat[player.stat.length - 1].damaged = num;
+            const stat = player.stat;
+            const statx = stat[stat.length - 1];
+            if (!statx.damage) {
+                statx.damaged = num;
             } else {
-                player.stat[player.stat.length - 1].damaged += num;
+                statx.damaged += num;
             }
             if (source) {
-                if (source.stat[source.stat.length - 1].damage == undefined) {
-                    source.stat[source.stat.length - 1].damage = num;
+                const stat = source.stat;
+                const statx = stat[stat.length - 1];
+                if (!statx.damage) {
+                    statx.damage = num;
                 } else {
-                    source.stat[source.stat.length - 1].damage += num;
+                    statx.damage += num;
                 }
             }
             player.hp -= num;
