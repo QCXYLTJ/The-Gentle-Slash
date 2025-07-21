@@ -84,7 +84,7 @@ const skill = {
             return game.bug;
         },
         async content(event, trigger, player) {
-            var Q = game.bug.slice(0, 50); //(0, 50)改为要测的区间
+            var Q = game.bug.slice(400, 500); //(0, 50)改为要测的区间
             console.log(Q, 'game.bug');
             const {
                 result: { bool },
