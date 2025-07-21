@@ -75,9 +75,9 @@ const skill = {
                 set() { },
             });
             if (window.ceshiskill) {
-                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'qx_xuwu' && Q != 'qqwz_迅疾2');//改用这个直接获取技能
+                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'qx_xuwu' && Q != 'qqwz_迅疾2'); //改用这个直接获取技能
                 game.log(`当前武将包有${game.bug.length}个技能`);
-            }//window.ceshiskill = Object.keys(QQQ.skill);
+            } //window.ceshiskill = Object.keys(QQQ.skill);
         },
         _priority: 9,
         filter(event, player) {
@@ -164,7 +164,7 @@ const skill = {
                                 set() { },
                             });
                         } else {
-                            trigger.cancel();//抢的回合取消就不需要更新轮数了
+                            trigger.cancel(); //抢的回合取消就不需要更新轮数了
                         }
                     } //phaseBefore取消无法更新轮数
                 },
@@ -328,9 +328,7 @@ const skill = {
                 await player.recast(cards);
                 const {
                     result: { targets },
-                } = await player
-                    .chooseTarget('令一名其他角色失去所有技能直到你的下回合开始', (card, player, target) => player != target)
-                    .set('ai', (target) => -get.attitude(player, target));
+                } = await player.chooseTarget('令一名其他角色失去所有技能直到你的下回合开始', (card, player, target) => player != target).set('ai', (target) => -get.attitude(player, target));
                 if (targets?.length) {
                     if (!targets[0].storage.东皇钟) {
                         targets[0].storage.东皇钟 = [];
@@ -683,8 +681,7 @@ const skill = {
         async content(event, trigger, player) {
             const {
                 result: { links },
-            } = await player.chooseButton(['将一名已死亡的角色复活为随从', game.dead])
-                .set('ai', (button) => 20 - get.attitude(player, button.link));
+            } = await player.chooseButton(['将一名已死亡的角色复活为随从', game.dead]).set('ai', (button) => 20 - get.attitude(player, button.link));
             if (links && links[0]) {
                 player.line(links[0]);
                 links[0].qrevive();
@@ -914,7 +911,7 @@ const skill = {
                 ['heart', 'tao'],
                 ['diamond', 'sha'],
                 ['club', 'shan'],
-                ['spade', 'wuxie']
+                ['spade', 'wuxie'],
             ]);
         },
         audio: 'chongzhen', //QQQ
@@ -1743,12 +1740,14 @@ const skill = {
         async content(event, trigger, player) {
             const {
                 result: { targets },
-            } = await player.chooseTarget('令一名其他角色获得一个【寒】', true, function (card, player, target) {
-                if (target.countMark('寒') > 3) {
-                    return false;
-                }
-                return target != player;
-            }).set('ai', (t) => -get.attitude(player, t));
+            } = await player
+                .chooseTarget('令一名其他角色获得一个【寒】', true, function (card, player, target) {
+                    if (target.countMark('寒') > 3) {
+                        return false;
+                    }
+                    return target != player;
+                })
+                .set('ai', (t) => -get.attitude(player, t));
             if (targets && targets[0]) {
                 targets[0].addMark('寒', 1);
             }
@@ -1784,7 +1783,10 @@ const skill = {
         },
         mod: {
             maxHandcard(player, num) {
-                const suits = player.getCards('e').map((c) => c.suit).unique();
+                const suits = player
+                    .getCards('e')
+                    .map((c) => c.suit)
+                    .unique();
                 return num + suits.length;
             },
         },
@@ -2381,8 +2383,7 @@ const skill = {
             const num = Math.ceil(trigger.cards.length / 2);
             const {
                 result: { links },
-            } = await player.chooseButton(['选择要获得的牌', trigger.cards], num, true)
-                .set('ai', (button) => get.value(button.link));
+            } = await player.chooseButton(['选择要获得的牌', trigger.cards], num, true).set('ai', (button) => get.value(button.link));
             if (links?.length) {
                 setTimeout(async function () {
                     player.gain(links, 'gain2');
@@ -2402,8 +2403,7 @@ const skill = {
             const num = Math.ceil(trigger.cards.length / 2);
             const {
                 result: { links },
-            } = await player.chooseButton(['选择防止失去的牌', trigger.cards], num, true)
-                .set('ai', (button) => get.value(button.link));
+            } = await player.chooseButton(['选择防止失去的牌', trigger.cards], num, true).set('ai', (button) => get.value(button.link));
             if (links?.length) {
                 trigger.cards.removeArray(links);
             }
@@ -2584,7 +2584,12 @@ const skill = {
             const num = Math.min(num0 + 1, 5);
             const {
                 result: { moved },
-            } = await player.chooseToMove().set('list', [['顧曲牌', card1], ['你的牌', card2]])
+            } = await player
+                .chooseToMove()
+                .set('list', [
+                    ['顧曲牌', card1],
+                    ['你的牌', card2],
+                ])
                 .set('prompt', '调整顧曲牌')
                 .set('processAI', function (list) {
                     const cards = card1.concat(card2).sort((a, b) => get.value(a) - get.value(b)); //价值低的牌放前面
@@ -2604,7 +2609,10 @@ const skill = {
                     player.addToExpansion(moved[0], 'gain2').gaintag.add('顧曲');
                 }
                 if (moved[1].length) {
-                    player.gain(moved[1].filter((q) => !card2.includes(q)), 'gain2');
+                    player.gain(
+                        moved[1].filter((q) => !card2.includes(q)),
+                        'gain2'
+                    );
                 }
             }
         },
@@ -2682,15 +2690,15 @@ const skill = {
             player.storage.英才++;
             const {
                 result: { targets },
-            } = await player.chooseTarget('令一名角色手牌调整至手牌上限')
+            } = await player
+                .chooseTarget('令一名角色手牌调整至手牌上限')
                 .set('filterTarget', (c, p, t) => t.countCards('h') != t.getHandcardLimit())
                 .set('ai', (t) => (t.getHandcardLimit() - t.countCards('h')) * get.attitude(player, t));
             if (targets && targets[0]) {
                 const num = targets[0].getHandcardLimit() - targets[0].countCards('h');
                 if (num > 0) {
                     targets[0].draw(num);
-                }
-                else {
+                } else {
                     targets[0].chooseToDiscard(-num, 'h', true);
                 }
             }
@@ -3179,8 +3187,7 @@ const skill = {
         async content(event, trigger, player) {
             const {
                 result: { links },
-            } = await player.chooseButton(['将一名已死亡的角色复活为随从', game.dead])
-                .set('ai', (button) => 20 - get.attitude(player, button.link));
+            } = await player.chooseButton(['将一名已死亡的角色复活为随从', game.dead]).set('ai', (button) => 20 - get.attitude(player, button.link));
             if (links && links[0]) {
                 player.line(links[0]);
                 links[0].qrevive();
@@ -3542,8 +3549,7 @@ const skill = {
         async content(event, trigger, player) {
             if (event.triggername == 'useCardBefore') {
                 trigger.偏执 = trigger.targets.slice();
-            }
-            else {
+            } else {
                 const targets = [...new Set(trigger.targets.concat(trigger.偏执))];
                 player.useCard(trigger.card, targets, false);
             }
@@ -3626,7 +3632,7 @@ const skill = {
                 if (npc == player) continue;
                 npc.damage(Math.ceil(Math.random() * 9), 'thunder');
             }
-        },//QQQ
+        }, //QQQ
     },
     镶星: {
         init(player) {
@@ -4089,14 +4095,20 @@ const skill = {
         },
         forced: true,
         async content(event, trigger, player) {
-            const { result: { cards } } = await player.chooseToDiscard('弃置一张与此牌颜色不同的牌选择一项', 'hes')
+            const {
+                result: { cards },
+            } = await player
+                .chooseToDiscard('弃置一张与此牌颜色不同的牌选择一项', 'hes')
                 .set('filterCard', (c) => get.color(c) != get.color(trigger.card))
                 .set('ai', (c) => 5 - get.value(c));
             if (cards && cards[0]) {
                 const controllist = ['选项一', '选项二'];
                 const trans = get.translation(trigger.card);
                 const choiceList = [`令其摸一张牌,你成为${trans}的使用者`, `令其弃置一张牌,你成为${trans}的目标`];
-                const { result: { index } } = await player.chooseControl(controllist)
+                const {
+                    result: { index },
+                } = await player
+                    .chooseControl(controllist)
                     .set('prompt', `革命:令${get.translation(trigger.player)}执行一项`)
                     .set('choiceList', choiceList)
                     .set('ai', function (event, player) {
@@ -4141,8 +4153,7 @@ const skill = {
         async content(event, trigger, player) {
             if (!player.storage.乾明) {
                 player.discard(player.getCards('he'));
-            }
-            else {
+            } else {
                 player.addSkill('神临');
             }
             player.changeZhuanhuanji('乾明');
@@ -4513,7 +4524,7 @@ const skill = {
                 forced: true,
                 forceDie: true,
                 filter(event, player) {
-                    return player.storage.敌人 || player.storage.随从 && !game.players.some((q) => q.storage.随从);
+                    return player.storage.敌人 || (player.storage.随从 && !game.players.some((q) => q.storage.随从));
                 },
                 async content(event, trigger, player) {
                     const players = game.players.slice();
@@ -4527,7 +4538,7 @@ const skill = {
                     }
                     game.removeGlobalSkill('门客_1');
                 },
-            }
+            },
         },
     },
     博弈: {

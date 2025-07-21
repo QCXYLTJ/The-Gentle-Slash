@@ -379,21 +379,21 @@ const content = async function () {
                                         next.triggername = namey;
                                         if (targets) {
                                             next.targets = targets;
-                                        }//先logtarget
+                                        } //先logtarget
                                         if (indexedData) {
                                             next.indexedData = indexedData;
                                         }
                                         if (result && result.bool) {
                                             if (result.cards) {
                                                 next.cards = result.cards;
-                                            }//无需补齐变量
+                                            } //无需补齐变量
                                             if (result.targets) {
                                                 next.targets = result.targets;
                                             }
                                             if (result.cost_data) {
                                                 next.cost_data = result.cost_data;
                                             }
-                                        }//再载入cost的结果
+                                        } //再载入cost的结果
                                         await next.setContent(infox.content);
                                     }
                                 }
@@ -1691,8 +1691,7 @@ const content = async function () {
                 for (const i of card) {
                     player.qequip(i);
                 }
-            }
-            else if (card) {
+            } else if (card) {
                 const vcard = new lib.element.VCard(card);
                 const cardSymbol = Symbol('card');
                 card.cardSymbol = cardSymbol;

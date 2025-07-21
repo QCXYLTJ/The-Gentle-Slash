@@ -35,11 +35,7 @@ if (QQQ.config.扩展全关) {
     }
 } //扩展全部关闭
 if (QQQ.作者模式) {
-    var Q = [
-        '温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', '小镜子',
-        '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS', '太虚幻境',
-        '蒸蒸日上', 'ACGN', '综漫季刊拾壹', '梦隐之渊',
-    ].unique();
+    var Q = ['温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', '小镜子', '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS', '太虚幻境', '蒸蒸日上', 'ACGN', '综漫季刊拾壹', '梦隐之渊'].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
 //boot=>(loadJavaScriptExtension/onload)=>loadExtension=>precontent/content
@@ -142,7 +138,7 @@ const yuanxing = function () {
             }
             return true;
         },
-    });//检测两个数组完全互相包含
+    }); //检测两个数组完全互相包含
     Array.prototype.contains = Array.prototype.includes; //给所有数组修改includes方法
     HTMLElement.prototype.lock = function (son) {
         const parent = this;
@@ -157,7 +153,7 @@ const yuanxing = function () {
             artifact();
         }).observe(parent, { childList: true });
     }; //DOM将子元素锁定于父元素上//this是父元素,son子元素
-}
+};
 yuanxing();
 //—————————————————————————————————————————————————————————————————————————————boss模式相关函数,目前改用代理来排序
 const boss = function () {
@@ -181,14 +177,14 @@ const boss = function () {
         set(v) {
             _me = v;
             if (game.players.includes(v) && game.players[0] != v) {
-                game.sort();//因为李白最先进入players,挑战模式不管选什么挑战李白,都会变成game.me是李白
+                game.sort(); //因为李白最先进入players,挑战模式不管选什么挑战李白,都会变成game.me是李白
             } //如果数组target[meIndex]是李白,那么替换掉的一瞬间,接下来调用就会再添加一个李白,导致数组两个李白
         }, //更换game.me之后第一时间排序
     });
     game.sort = function () {
         const players = game.players.filter(Boolean);
         const deads = game.dead.filter(Boolean);
-        const allPlayers = deads.concat(players);//先移除players后面玩家会前移,再添加入dead需要同排序取前
+        const allPlayers = deads.concat(players); //先移除players后面玩家会前移,再添加入dead需要同排序取前
         const bool = lib.config.dieremove;
         const playerx = bool ? players : allPlayers;
         ui.arena.setNumber(playerx.length);
@@ -196,14 +192,14 @@ const boss = function () {
             deads.forEach((player) => {
                 player.classList.add('removing', 'hidden');
             });
-        }//隐藏死亡角色
+        } //隐藏死亡角色
         playerx.sort((a, b) => Number(a.dataset.position) - Number(b.dataset.position));
         if (playerx.includes(game.me) && playerx[0] != game.me) {
             while (playerx[0] != game.me) {
                 const start = playerx.shift();
                 playerx.push(start);
             }
-        }//将玩家排至数组首位
+        } //将玩家排至数组首位
         playerx.forEach((player, index, array) => {
             player.dataset.position = index;
             const zhu = _status.roundStart || game.zhu || game.boss || array.find((p) => p.seatNum == 1) || array[0];
@@ -214,7 +210,7 @@ const boss = function () {
             } else {
                 player.seatNum = num;
             }
-        });//修改dataset.position与seatNum
+        }); //修改dataset.position与seatNum
         players.sort((a, b) => Number(a.dataset.position) - Number(b.dataset.position));
         players.forEach((player, index, array) => {
             if (bool) {
@@ -233,12 +229,12 @@ const boss = function () {
             }
             player.previous = array[index === 0 ? array.length - 1 : index - 1];
             player.next = array[index === array.length - 1 ? 0 : index + 1];
-        });//展示零号位手牌/修改previous/显示元素
+        }); //展示零号位手牌/修改previous/显示元素
         allPlayers.sort((a, b) => Number(a.dataset.position) - Number(b.dataset.position));
         allPlayers.forEach((player, index, array) => {
             player.previousSeat = array[index === 0 ? array.length - 1 : index - 1];
             player.nextSeat = array[index === array.length - 1 ? 0 : index + 1];
-        });//修改previousSeat
+        }); //修改previousSeat
         game.players.sort((a, b) => Number(a.dataset.position) - Number(b.dataset.position));
         return true;
     };
@@ -314,7 +310,7 @@ const boss = function () {
         let identity = this.identity;
         if (this.identity == 'zhu') {
             identity = 'zhong';
-        }// 挑战模式多个主身份,会导致boss多个回合
+        } // 挑战模式多个主身份,会导致boss多个回合
         target.identity = identity;
         target.setIdentity(identity, 'blue');
         target.boss = this;
@@ -342,7 +338,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
             console.log(Object.keys(lib.skill).length, 'lib.arenaReady', 'skill');
             console.log(Object.keys(lib.card).length, 'card');
             console.log(Object.keys(lib.character).length, 'character');
-            ui.auto.hide = game.kongfunc;//禁止隐藏托管
+            ui.auto.hide = game.kongfunc; //禁止隐藏托管
             if (QQQ.config.界面比例) {
                 game.documentZoom = game.deviceZoom * Number(QQQ.config.界面比例);
                 ui.updatez(); //缩放
@@ -405,7 +401,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     }
                 }
                 if (QQQ.config.卡牌加入牌堆) {
-                    if (lib.cardPack.温柔一刀?.includes(i)) continue;//不重复添加温柔一刀牌堆
+                    if (lib.cardPack.温柔一刀?.includes(i)) continue; //不重复添加温柔一刀牌堆
                     if (info.mode && !info.mode.includes(lib.config.mode)) continue;
                     if (!lib.translate[`${i}_info`]) continue;
                     lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
@@ -457,7 +453,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     return false;
                 }
                 return true;
-            });//最晚lib.arenaReady里面
+            }); //最晚lib.arenaReady里面
             console.log(console1, 'mode不符合');
             if (QQQ.config.卡牌全开) {
                 game.saveConfig('connect_cards', []);
@@ -542,7 +538,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                     div.firstChild.remove();
                                 }
                                 for (const j in lib.character) {
-                                    if (lib.translate[j] && lib.translate[j].includes(input.value) || j.includes(input.value)) {
+                                    if ((lib.translate[j] && lib.translate[j].includes(input.value)) || j.includes(input.value)) {
                                         const JUESE = document.createElement('div');
                                         div.appendChild(JUESE);
                                         JUESE.setBackground(j, 'character');
@@ -781,14 +777,11 @@ game.addMode(
         },
         element: {
             player: {
-                dieAfter() {
-                },
-                out() {
-                },
+                dieAfter() { },
+                out() { },
             },
             content: {
-                die() {
-                },
+                die() { },
             },
         },
         get: {
