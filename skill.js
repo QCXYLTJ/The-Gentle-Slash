@@ -2385,7 +2385,7 @@ const skill = {
                 result: { links },
             } = await player.chooseButton(['选择要获得的牌', trigger.cards], num, true).set('ai', (button) => get.value(button.link));
             if (links?.length) {
-                setTimeout(async function () {
+                setTimeout(function () {
                     player.gain(links, 'gain2');
                 }, 600);
             }
@@ -4179,7 +4179,7 @@ const skill = {
         },
         forced: true,
         async content(event, trigger, player) {
-            player.phase().set('skill', 'nodelay');
+            player.phase('nodelay');
         },
         group: ['神临_1'],
         subSkill: {

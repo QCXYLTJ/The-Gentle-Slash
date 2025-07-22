@@ -4618,7 +4618,7 @@ const precontent = async function () {
                                         game.playAudio('../extension/温柔一刀/audio/嗨,另一个你.mp3');
                                     }
                                     player.QQQ_huozhong++;
-                                    await player.phase().set('skill', 'nodelay');
+                                    await player.phase('nodelay');
                                 } else {
                                     player.QQQ_huozhong = 0;
                                 }
@@ -5952,7 +5952,7 @@ const precontent = async function () {
                                 await player.discard(player.getCards('h'));
                                 await player.gain(player.storage.QQQ_jieming.card, 'gain2');
                                 await player.discard(discard);
-                                player.phase().set('skill', 'nodelay');
+                                player.phase('nodelay');
                             }
                         }
                     },
