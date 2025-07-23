@@ -1,5 +1,5 @@
 /* 标记mark背景图 */
-.markimg {
+body>#window>#arena>.player>.marks>.mark>.skillmark>.markimg {
 	width: 24px;
 	height: 24px;
 	top: 0;
@@ -15,38 +15,43 @@
 	left: 5px;
 	text-align: left;
 	color: gold;
-	text-shadow: gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 2px, gold 0 0 1px;
+	text-shadow:
+		gold 0 0 2px,
+		gold 0 0 2px,
+		gold 0 0 2px,
+		gold 0 0 2px,
+		gold 0 0 1px;
 }
 
 /* 换将选中角色蓝色描边 */
-#arena .player.Qselectable {
+body>#window>#arena>.player.Qselectable {
 	box-shadow:
 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
 		rgb(16, 33, 217) 0 0 10px 5px,
-		rgb(16, 33, 217) 0 0 20px 10px !important;
+		rgb(16, 33, 217) 0 0 20px 10px;
 	z-index: 99;
 }
 
 /* 换将选中角色蓝色描边 */
-#arena .player.Qselectable:not(.selectable):not(.selected).glow_phase {
+body>#window>#arena>.player.Qselectable:not(.selectable):not(.selected).glow_phase {
 	box-shadow:
 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
 		rgb(16, 33, 217) 0 0 10px 5px,
-		rgb(16, 33, 217) 0 0 20px 10px !important;
+		rgb(16, 33, 217) 0 0 20px 10px;
 	z-index: 99;
 }
 
 /* 换将选中角色蓝色描边 */
-#arena:not(.chess) .player[data-position="0"].Qselectable:not(.selected):not(.selectedx):not(.selectable):not(.glow) {
+body>#window>#arena:not(.chess)>.player[data-position='0'].Qselectable:not(.selected):not(.selectedx):not(.selectable):not(.glow) {
 	box-shadow:
 		rgba(0, 0, 0, 0.3) 0 0 0 2px,
 		rgb(16, 33, 217) 0 0 10px 5px,
-		rgb(16, 33, 217) 0 0 20px 10px !important;
+		rgb(16, 33, 217) 0 0 20px 10px;
 	z-index: 99;
 }
 
 /* 基础div */
-#divQ {
+body>#divQ {
 	display: grid;
 	grid-template-columns: repeat(8, 1fr);
 	gap: 10px;
@@ -63,7 +68,7 @@
 }
 
 /* 瞬发技按钮 */
-.buttonQ {
+body>.buttonQ {
 	width: 5%;
 	height: 10%;
 	background-image: url(./image/QQQ_Q.jpg);
@@ -75,7 +80,7 @@
 }
 
 /* 武将包按钮 */
-.packQ {
+body>#divQ>.packQ {
 	width: 80%;
 	height: 40%;
 	min-height: 20px;
@@ -89,7 +94,7 @@
 }
 
 /* 武将图片 */
-.characterQ {
+body>#divQ>.characterQ {
 	background-size: cover;
 	background-position: center;
 	text-align: center;
@@ -106,7 +111,7 @@
 }
 
 /* 技能列表 */
-#skilllist {
+body>#skilllist {
 	z-index: 99;
 	right: 10%;
 	left: 10%;
@@ -116,7 +121,7 @@
 }
 
 /* 技能及翻译按钮 */
-.skillQ {
+body>#skilllist>.skillQ {
 	position: relative;
 	width: 90%;
 	height: 10%;
@@ -128,7 +133,7 @@
 }
 
 /* 技能及翻译按钮 */
-.introQ {
+body>.introQ {
 	position: relative;
 	width: 60%;
 	height: 5%;
@@ -140,9 +145,8 @@
 	color: rgb(35, 21, 221);
 }
 
-
 /* 输入框 */
-.shuruQ {
+body>.shuruQ {
 	height: 5%;
 	width: 30%;
 	z-index: 9999;
@@ -170,7 +174,7 @@
 }
 
 /* 重置按钮 */
-.chongzhiQ {
+body>.chongzhiQ {
 	top: 5%;
 	right: 20%;
 	height: 50px;
@@ -188,7 +192,7 @@
 }
 
 /* 搜索按钮 */
-.findQ {
+body>.findQ {
 	top: 5%;
 	right: 30%;
 	height: 50px;
@@ -206,7 +210,7 @@
 }
 
 /* 温柔一刀菜单按钮 */
-.configQ.on {
+body>#divQ>.configQ.on {
 	white-space: nowrap;
 	text-align: center;
 	width: 90%;
@@ -217,7 +221,7 @@
 }
 
 /* 温柔一刀菜单按钮 */
-.configQ:not(.on) {
+body>#divQ>.configQ:not(.on) {
 	white-space: nowrap;
 	text-align: center;
 	width: 90%;
@@ -228,7 +232,7 @@
 }
 
 /* 温柔一刀菜单按钮 */
-.configQ.on>.toggleQ {
+body>#divQ>.configQ.on>.toggleQ {
 	width: 30%;
 	height: 100%;
 	right: -15%;
@@ -238,7 +242,7 @@
 }
 
 /* 温柔一刀菜单按钮 */
-.configQ:not(.on)>.toggleQ {
+body>#divQ>.configQ:not(.on)>.toggleQ {
 	width: 30%;
 	height: 100%;
 	left: -15%;
@@ -264,9 +268,9 @@
 }
 
 /* 挑战模式BOSS滚动条 */
-#bosslist {
+body>#window>#bosslist {
 	width: 100%;
-	height: 350px !important;
+	height: 350px;
 	text-align: center;
 	top: 60px;
 	z-index: 1;
@@ -300,12 +304,17 @@
 /* 吟诗 */
 .poem-char {
 	opacity: 0;
-	transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+	transition:
+		opacity 0.5s ease-in-out,
+		transform 0.5s ease-in-out;
 	margin-bottom: 20px;
 	/* 增大字符之间的间距 */
 	font-size: 24px;
 	color: #8d1d09;
-	text-shadow: 0 0 10px #8d1d09, 0 0 20px #8d1d09, 0 0 30px #8d1d09;
+	text-shadow:
+		0 0 10px #8d1d09,
+		0 0 20px #8d1d09,
+		0 0 30px #8d1d09;
 	filter: url(#fireFilter);
 	/* 应用SVG滤镜 */
 	transform: scale(0);
