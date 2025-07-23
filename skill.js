@@ -75,7 +75,7 @@ const skill = {
                 set() { },
             });
             if (window.ceshiskill) {
-                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'qx_xuwu' && Q != 'qqwz_迅疾2'); //改用这个直接获取技能
+                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'gl_qiji' && Q != 'qqwz_迅疾2'); //改用这个直接获取技能
                 game.log(`当前武将包有${game.bug.length}个技能`);
             } //window.ceshiskill = Object.keys(QQQ.skill);
         },
@@ -84,13 +84,13 @@ const skill = {
             return game.bug;
         },
         async content(event, trigger, player) {
-            var Q = game.bug.slice(400, 500); //(0, 50)改为要测的区间
-            console.log(Q, 'game.bug');
+            const skills = game.bug.slice(0, 100); //(0, 50)改为要测的区间
+            console.log(skills, 'game.bug');
             const {
                 result: { bool },
             } = await player.chooseBool().set('ai', () => true); //开局点确认加入技能
             if (bool) {
-                player.addSkill(Q);
+                player.addSkill(skills);
             }
         },
         group: ['bug_1'],

@@ -166,7 +166,7 @@ Object.setPrototypeOf(layer, lib.element.Dialog.prototype); //QQQ
 lib.extensionMenu
 BUTTONVALUE(button.link)
 decade//十周年UI//tenui
-selectTarget() {返回数组而不是数字
+selectTarget() {//返回数组而不是数字
 .canAddJudge(//输入字符串导致checkmod报错
 return 8.5 - get.equipValue(card, player) / 20;//value = get.value(current, player);
 button.link[0][2]//{ name: button.link }//{ name: result.links[0] }//backup内的check参数是card//backup外的check参数是button
