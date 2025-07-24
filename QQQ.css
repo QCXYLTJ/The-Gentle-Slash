@@ -1,12 +1,3 @@
-/* 标记mark背景图 */
-body>#window>#arena>.player>.marks>.mark>.skillmark>.markimg {
-	width: 24px;
-	height: 24px;
-	top: 0;
-	left: 0;
-	position: fixed;
-}
-
 /* 卡牌永久标记 */
 .card>.qtag {
 	position: relative;

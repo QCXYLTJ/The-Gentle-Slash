@@ -10,21 +10,21 @@ body>#window>#arena>.player:not(.minskin):not(*[data-position='0']) {
 }
 
 /* 角色头像图片拉长 */
-body>#window>#arena>.player:not(.minskin):not(*[data-position='0']):not(.fakeme) .avatar {
+body>#window>#arena>.player:not(.minskin):not(*[data-position='0']):not(.fakeme)>.avatar {
 	width: calc(100% - 10px);
 	height: calc(100% - 10px);
 	background-position: 50%;
 }
 
 /* 玩家头像图片拉长 */
-body>#window>#arena:not(.chess) .player[data-position='0']:not(.minskin)>.avatar {
+body>#window>#arena:not(.chess)>.player[data-position='0']:not(.minskin)>.avatar {
 	width: 135px;
 	height: 250px;
 	top: calc(100% - 250px);
 }
 
 /* 角色手牌数右移 */
-body>#window>#arena>.player:not([data-position='0']) .count {
+body>#window>#arena>.player:not([data-position='0'])>.count {
 	line-height: 10px;
 	height: 10px;
 	width: 10px;
