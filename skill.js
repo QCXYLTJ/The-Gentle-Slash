@@ -2177,8 +2177,7 @@ const skill = {
         },
         chooseButton: {
             dialog(event, player) {
-                const list = player.qcard();
-                return ui.create.dialog('赌2', [list, 'vcard']);
+                return ui.create.dialog('赌', [player.qcard(), 'vcard']);
             },
             check(button) {
                 const num = _status.event.player.getUseValue(
@@ -2190,9 +2189,6 @@ const skill = {
                     true
                 );
                 return number0(num) + 10;
-            },
-            filter(button, player) {
-                return player.filterCard(button.link[2], true);
             },
             backup(links, player) {
                 return {

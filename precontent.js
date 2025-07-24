@@ -1199,11 +1199,11 @@ const precontent = async function () {
         game.isxuni = function (event) {
             if (!event.cards) {
                 return false;
-            }
+            }//虚拟牌
             if (event.cards.length == 1 && event.cards[0].name == event.card.name) {
                 return true;
-            }
-            return null;
+            }//真牌
+            return null;//转化牌
         }; //事件卡牌是否为虚拟牌或转化牌
         game.center = function () {
             const list = [];
