@@ -263,6 +263,11 @@ const config = {
         intro: '开启后,会增加右键武将详细信息内容,显示子技能和临时技能和各种buff',
         init: true,
     },
+    右上角菜单: {
+        name: '<span class=Qmenu>右上角菜单</span>',
+        intro: '开启后,右上角会增加换将/重启/添加技能/温柔一刀的全局菜单按钮',
+        init: true,
+    },
     取消小游戏: {
         name: '<span class=Qmenu>取消小游戏</span>',
         intro: '开启后,取消小游戏评才、冲虚、御风、整经',
