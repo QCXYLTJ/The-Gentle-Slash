@@ -236,7 +236,7 @@ const config = {
     卖血模式: {
         name: '<span class=Qmenu>卖血模式</span>',
         intro: '开启后,所有卖血武将的桃酒都不会被弃置和获得,卖血武将吸收所有友方角色的伤害牌',
-        init: true,
+        init: false,
     },
     主公加强: {
         name: '<span class=Qmenu>主公加强</span>',
@@ -286,7 +286,7 @@ const config = {
     单机禁官服将: {
         name: '<span class=Qmenu>单机禁官服将</span>',
         intro: '开启后,单机时候禁用全部官服将',
-        init: true,
+        init: false,
     },
     联机禁官服将: {
         name: '<span class=Qmenu>联机禁官服将</span>',
