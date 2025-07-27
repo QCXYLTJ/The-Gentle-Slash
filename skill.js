@@ -1807,7 +1807,7 @@ const skill = {
             await card.init([card.suit, card.number, name, card.nature]);
             if (card.cardSymbol) {
                 delete card.cardSymbol;
-            }
+            }//如果不删除这个,装备时候就会认为这是转化装备牌,将card.isViewAsCard置为真
             player.equip(card);
         },
         ai: {

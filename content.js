@@ -38,8 +38,10 @@ const content = async function () {
         });
         if (['single', 'QQQ'].includes(lib.config.mode)) {
             game.checkResult = function () {
-                if (game.players.length > 1) return;
-                game.over((game.me._trueMe || game.me).isAlive());
+                if (game.players.map((q) => q.side).unique().length > 1) {
+                    return;
+                }
+                game.over(game.players[0]?.side == game.me.side);
             };
         }
         if (lib.boss) {
@@ -428,6 +430,7 @@ const content = async function () {
         }; //防止NL标记的装备丢失
         lib.element.player.addVirtualEquip = function (card, cards) {
             if (card.node) {
+                console.log(card, 'addVirtualEquip');
                 card = new lib.element.VCard(card);
                 throw new Error();
             } //防止直接装备卡牌节点
@@ -1214,6 +1217,30 @@ const content = async function () {
                 }, 500);
             }
         }; //录像播放修复
+        game.videoContent.addVirtualEquip = function (player, map) {
+            if (map && map[0]) {
+                const card = get.infoVCard(map[0]),
+                    cards = get.infoCards(map[1]);
+                player.addVirtualEquip(card, cards);
+            }
+        }; //录像播放修复
+        game.videoContent.addVirtualJudge = function (player, map) {
+            if (map && map[0]) {
+                const card = get.infoVCard(map[0]),
+                    cards = get.infoCards(map[1]);
+                player.addVirtualJudge(card, cards);
+            }
+        }; //录像播放修复
+        game.videoContent.removeVirtualEquip = function (player, card) {
+            if (!card) return;
+            card = get.infoVCard(card);
+            player.removeVirtualEquip(card);
+        }; //录像播放修复
+        game.videoContent.removeVirtualJudge = function (player, card) {
+            if (!card) return;
+            card = get.infoVCard(card);
+            player.removeVirtualJudge(card);
+        }; //录像播放修复
     }; //修复本体函数
     xiufu();
     //—————————————————————————————————————————————————————————————————————————————技能相关自创函数
@@ -1692,11 +1719,20 @@ const content = async function () {
                     player.qequip(i);
                 }
             } else if (card) {
-                const vcard = new lib.element.VCard(card);
-                const cardSymbol = Symbol('card');
-                card.cardSymbol = cardSymbol;
-                card[cardSymbol] = vcard;
-                player.vcardsMap?.equips.push(vcard);
+                if (card[card.cardSymbol]) {
+                    const owner = get.owner(card);
+                    const vcard = card[card.cardSymbol];
+                    if (owner) {
+                        owner.vcardsMap?.equips.remove(vcard);
+                    }
+                    player.vcardsMap?.equips.add(vcard);
+                } else {
+                    const vcard = new lib.element.VCard(card);
+                    const cardSymbol = Symbol('card');
+                    card.cardSymbol = cardSymbol;
+                    card[cardSymbol] = vcard;
+                    player.vcardsMap?.equips.push(vcard);
+                }
                 player.node.equips.appendChild(card);
                 card.style.transform = '';
                 card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number} ${get.translation(card.name)}`;
@@ -1967,6 +2003,24 @@ const content = async function () {
                 },
             }; //全体触发
         }
+        lib.skill._加血限 = {
+            trigger: {
+                global: ['gameStart'],
+            },
+            forced: true,
+            filter(event, player) {
+                if (player == game.me) {
+                    return Number(QQQ.config.玩家加血限);
+                }
+                return Number(QQQ.config.非玩家加血限);
+            },
+            async content(event, trigger, player) {
+                const num = player == game.me ? Number(QQQ.config.玩家加血限) : Number(QQQ.config.非玩家加血限);
+                player.maxHp += num;
+                player.hp += num;
+                player.update();
+            },
+        };
     }; //全局技能
     quanju();
     //—————————————————————————————————————————————————————————————————————————————卡牌AI修改
