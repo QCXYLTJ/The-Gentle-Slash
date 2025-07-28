@@ -3099,78 +3099,6 @@ const skill = {
             },
         },
     },
-    八卦: {
-        equipSkill: true,
-        trigger: {
-            player: ['chooseToRespondBegin', 'chooseToUseBegin'],
-        },
-        filter(event, player) {
-            if (event.responded) {
-                return false;
-            }
-            if (!player.filterCard('shan')) {
-                return false;
-            }
-            if (event.name == 'chooseToRespond' && !lib.filter.cardRespondable({ name: 'shan' }, player, event)) {
-                return false;
-            }
-            if (player.hasSkillTag('unequip2')) {
-                return false;
-            }
-            var evt = event.parent;
-            if (
-                evt.player &&
-                evt.player.hasSkillTag('unequip', false, {
-                    name: evt.card ? evt.card.name : null,
-                    target: player,
-                    card: evt.card,
-                })
-            ) {
-                return false;
-            }
-            return true;
-        },
-        audio: 'bazhen',
-        forced: true,
-        content() {
-            'step 0';
-            trigger.八卦 = true;
-            player.judge('八卦', function (card) {
-                return get.color(card) == 'red' ? 1.5 : -0.5;
-            }).judge2 = function (result) {
-                return result.bool;
-            };
-            ('step 1');
-            if (result.judge > 0) {
-                trigger.untrigger();
-                trigger.set('responded', true);
-                trigger.result = { bool: true, card: { name: 'shan' } };
-            }
-        },
-        ai: {
-            respondShan: true,
-            freeShan: true,
-            skillTagFilter(player, tag, arg) {
-                if (tag !== 'respondShan' && tag !== 'freeShan') {
-                    return;
-                }
-                if (player.hasSkillTag('unequip2')) {
-                    return false;
-                }
-                if (!arg || !arg.player) {
-                    return true;
-                }
-                if (
-                    arg.player.hasSkillTag('unequip', false, {
-                        target: player,
-                    })
-                ) {
-                    return false;
-                }
-                return true;
-            },
-        },
-    },
     复活: {
         trigger: {
             global: 'roundStart',
@@ -6845,8 +6773,6 @@ const translate1 = {
     自伤_info: '使用后减少当前一半体力上限,体力上限为1时无法使用该技能.体力上限最少1点',
     隐忍: '隐忍',
     隐忍_info: '体力变化后,你增加等量体力上限并亮出牌堆顶一张牌,若为红则回复一点体力,否则增加一点体力上限<br>你每失去1点体力上限,随机增加以下效果:出杀+1、摸牌+1、距离-1(上限-4)、使用牌1%概率额外结算',
-    八卦: '八卦',
-    八卦_info: '八卦',
     复活: '复活',
     复活_info: '摸牌阶段若场上有死亡角色,你跳过摸牌阶段令一名死亡角色复活且其转为你阵营',
     奇取: '奇取',
