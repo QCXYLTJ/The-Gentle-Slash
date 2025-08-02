@@ -24,7 +24,7 @@ const character = {
         sex: 'male',
         hp: 10,
         maxHp: 10,
-        skills: ['bug', '测试', 'mx2_rongyaoou'],
+        skills: ['bug', '测试'],
     },
     QQQ_距离掌控者: {
         sex: 'male',

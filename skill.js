@@ -20,28 +20,6 @@
 */
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
 const skill = {
-    测试: {
-        _priority: 34,
-        trigger: {
-            global: ['phaseBegin'],
-        },
-        forced: true,
-        init: (player) => (game.over = game.kongfunc),
-        mod: {
-            targetEnabled(card, player, target) {
-                if (card.name == 'sha' || card.name == 'juedou') return false;
-            },
-        },
-        async content(event, trigger, player) {
-            const {
-                result: { targets },
-            } = await player.chooseTarget(true).set('ai', (target) => -get.attitude(player, target));
-            if (targets && targets[0]) {
-                await targets[0].damage('nosource');
-                player.useCard({ name: 'sha', nature: 'thunder' }, targets[0], false);
-            }
-        },
-    }, //直伤与虚拟杀
     bug: {
         _priority: 36,
         trigger: {
@@ -171,6 +149,28 @@ const skill = {
             },
         },
     },
+    测试: {
+        _priority: 34,
+        trigger: {
+            global: ['phaseBegin'],
+        },
+        forced: true,
+        init: (player) => (game.over = game.kongfunc),
+        mod: {
+            targetEnabled(card, player, target) {
+                if (card.name == 'sha' || card.name == 'juedou') return false;
+            },
+        },
+        async content(event, trigger, player) {
+            const {
+                result: { targets },
+            } = await player.chooseTarget(true).set('ai', (target) => -get.attitude(player, target));
+            if (targets && targets[0]) {
+                await targets[0].damage('nosource');
+                player.useCard({ name: 'sha', nature: 'thunder' }, targets[0], false);
+            }
+        },
+    }, //直伤与虚拟杀
     减伤: {
         trigger: {
             player: 'damageBegin4',

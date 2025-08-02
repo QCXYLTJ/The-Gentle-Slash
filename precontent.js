@@ -63,6 +63,7 @@ changeboss\((.+),.+\)
 changeboss($1)
 while卡死,
 换图片路径之后除了卡牌包、武将包以及技能语音路径要修改,可能有其他直接写路径的调用,可能遗漏
+onequip只有event.card没有event.cards
 */
 //------------------------------------------------先查询是否最新版
 //------------------------------------------------解混淆
@@ -109,8 +110,10 @@ countCards\('(?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)')[^']*'\)
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
+marktext: '<img//markimage:
+if (!info.audioname2) info.audioname2 = {};
 i of arguments//...args//i of args
-Object.defineProperties
+Object.definePropert
 respondtao
 respondwuxie
 switch (cards[0].//switch (cards[0]?.
@@ -164,12 +167,11 @@ if (evt)//phaseLoop//_status.event =
 Object.setPrototypeOf(next, lib.element.Button.prototype);//QQQ
 Object.setPrototypeOf(layer, lib.element.Dialog.prototype); //QQQ
 lib.extensionMenu
-BUTTONVALUE(button.link)
 decade//十周年UI//tenui
 selectTarget() {//返回数组而不是数字
 .canAddJudge(//输入字符串导致checkmod报错
 return 8.5 - get.equipValue(card, player) / 20;//value = get.value(current, player);
-button.link[0][2]//{ name: button.link }//{ name: result.links[0] }//backup内的check参数是card//backup外的check参数是button
+BUTTONVALUE(button.link)//button.link[0][2]//{ name: button.link }//{ name: result.links[0] }//backup内的check参数是card//backup外的check参数是button
 event.logged
 cards[0].
 player.name == //全局不杀//音效图片不杀//current.name ==
@@ -254,6 +256,28 @@ const numfunc = function () {
         }
         return clone;
     }; //深拷贝对象
+    window.factorial = function (num) {
+        num = Math.round(num);
+        if (num < 0) {
+            return 0;
+        }
+        if (num < 2) {
+            return 1;
+        }
+        let result = 1;
+        for (let i = 2; i <= num; i++) {
+            result *= i;
+        }
+        return result;
+    }; //阶乘
+    window.isPrime = function (num) {
+        if (num === 2 || num === 3) return true;
+        if (num < 2 || num % 2 === 0 || num % 3 === 0) return false;
+        for (let i = 5; i * i <= num; i += 6) {
+            if (num % i === 0 || num % (i + 2) === 0) return false;
+        }
+        return true;
+    }; // 质数
 };
 numfunc();
 const precontent = async function () {
@@ -1197,7 +1221,7 @@ const precontent = async function () {
     //—————————————————————————————————————————————————————————————————————————————获取卡牌历史相关自创函数
     const cardfunc = function () {
         game.isxuni = function (event) {
-            if (!event.cards) {
+            if (!event.cards || !event.card) {
                 return false;
             }//虚拟牌
             if (event.cards.length == 1 && event.cards[0].name == event.card.name) {
@@ -3976,11 +4000,7 @@ const precontent = async function () {
                     },
                     async content(event, trigger, player) {
                         player.storage.QQQ_黄金律法--;
-                        lib.element.player.revive.apply(player);
-                        const num = lib.character[player.name]?.maxHp || 4;
-                        player.maxHp = num;
-                        player.hp = num;
-                        player.draw(num);
+                        player.qrevive();
                         player.markSkill('QQQ_黄金律法');
                         if (player.storage.QQQ_黄金律法 <= 0) {
                             player.$skill('赐福消逝');
@@ -8799,8 +8819,8 @@ sha();
 //—————————————————————————————————————————————————————————————————————————————
 const extensionInfo = await lib.init.promises.json(`extension/雪月风花/info.json`);
 info.json\license
-//—————————————————————————————————————————————————————————————————————————————
 addCharacterPack
+//—————————————————————————————————————————————————————————————————————————————武将包
 game.import('character', function (lib, game, ui, get, ai, _status) {
     const QQQ = {
         name: 'QQQQQQ',
@@ -8862,9 +8882,31 @@ const numfunc = function () {
         }
         return clone;
     }; //深拷贝对象
+                window.factorial = function (num) {
+                    num = Math.round(num);
+                    if (num < 0) {
+                        return 0;
+                    }
+                    if (num < 2) {
+                        return 1;
+                    }
+                    let result = 1;
+                    for (let i = 2; i <= num; i++) {
+                        result *= i;
+                    }
+                    return result;
+                }; //阶乘
+                window.isPrime = function (num) {
+                    if (num === 2 || num === 3) return true;
+                    if (num < 2 || num % 2 === 0 || num % 3 === 0) return false;
+                    for (let i = 5; i * i <= num; i += 6) {
+                        if (num % i === 0 || num % (i + 2) === 0) return false;
+                    }
+                    return true;
+                }; // 质数
 };
 numfunc();
-//—————————————————————————————————————————————————————————————————————————————
+//—————————————————————————————————————————————————————————————————————————————卡牌包
 game.import('card', function (lib, game, ui, get, ai, _status) {
     const QQQ = {
         name: 'QQQQQQ',

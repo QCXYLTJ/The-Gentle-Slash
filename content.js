@@ -1640,11 +1640,9 @@ const content = async function () {
             if (player.parentNode != ui.arena) {
                 ui.arena.appendChild(player);
             } //防止被移除节点
-            player.classList.remove('removing');
-            player.classList.remove('hidden');
-            player.classList.remove('dead');
+            player.classList.remove('removing', 'hidden', 'dead');
             game.log(player, '复活');
-            if (player.maxHp < 1) player.maxHp = 1;
+            player.maxHp = Math.max(lib.character[player.name]?.maxHp || 0, player.maxHp || 0);
             player.hp = player.maxHp;
             game.addVideo('revive', player);
             player.removeAttribute('style');
