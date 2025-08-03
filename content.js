@@ -432,7 +432,9 @@ const content = async function () {
             if (card.node) {
                 console.log(card, 'addVirtualEquip');
                 card = new lib.element.VCard(card);
-                throw new Error();
+                if (QQQ.作者模式) {
+                    throw new Error();
+                }
             } //防止直接装备卡牌节点
             card.initID();
             const player = this;
@@ -1245,6 +1247,10 @@ const content = async function () {
     xiufu();
     //—————————————————————————————————————————————————————————————————————————————技能相关自创函数
     const jineng = function () {
+        lib.element.player.qhasSkill = function (s) {
+            const player = this;
+            return player.GS().includes(s);
+        };//武将是否拥有某技能
         lib.element.player.GS = function () {
             const player = this;
             const skills = player.skills.slice();

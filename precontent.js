@@ -105,8 +105,8 @@ game\.delayx\(.*\);
 PlayerCard\(.+set\('ai', function \(card\)//PlayerCard\(.+\n\s*\.set\('ai', function \(card\)
 lib.nature.add\('(.+)'\)//lib.nature.set('$1',90)
 card.fix\(\);\n\s*card.remove\(\);
-countCards\('(?!(h|he|e|j|ej|hej|hs|x|s|hes|hse)')[^']*'\)
-.hasCard\('([^']*)'\)
+countCards\('(?!(h|he|hj|e|j|ej|hej|hs|x|s|xs|hes|hejs)')[^']*'//countCards(fun//countCards((
+\.hasCard\('([^']*)'\)//\.hasCard\('[hejsx]
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
@@ -163,7 +163,6 @@ lib.filter.characterDisabled =
 game.notMe//game.swapcontrol//ui.click.auto();
 lib.character[i][4].indexOf(//lib.character[i][4].push
 if (evt)//phaseLoop//_status.event =
-.hasCard('h
 Object.setPrototypeOf(next, lib.element.Button.prototype);//QQQ
 Object.setPrototypeOf(layer, lib.element.Dialog.prototype); //QQQ
 lib.extensionMenu
@@ -239,22 +238,20 @@ const numfunc = function () {
         return Math.max(Number(num), 1);
     }; //始终返回正数且至少为1
     window.deepClone = function (obj) {
-        const clone = {};
-        for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                const info = obj[key];
-                if (typeof info == 'object') {
-                    if (Array.isArray(info)) {
-                        clone[key] = info.slice();
-                    } else {
-                        clone[key] = window.deepClone(info);
-                    }
-                } else {
-                    clone[key] = info;
+        if (obj === null || typeof obj !== 'object') {
+            return obj;
+        }
+        if (Array.isArray(obj)) {
+            return obj.map(item => deepClone(item));
+        } else {
+            const clonedObj = {};
+            for (let key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    clonedObj[key] = deepClone(obj[key]);
                 }
             }
+            return clonedObj;
         }
-        return clone;
     }; //深拷贝对象
     window.factorial = function (num) {
         num = Math.round(num);
@@ -360,8 +357,16 @@ const precontent = async function () {
                 if (links && links[0]) {
                 }
                 */
+                game.me.gain(
+                    game.createCard({
+                        name: 'sha',
+                        suit: 'none',
+                        number: 3,
+                        nature: 'gold',
+                    }),
+                    'gain2'
+                );
                 /*
-                game.me.gain(game.createCard('shuidan'), 'gain2');
                 var num = 20;
                 var evt = _status.event;
                 while (num-- > 0) {
@@ -1223,11 +1228,11 @@ const precontent = async function () {
         game.isxuni = function (event) {
             if (!event.cards || !event.card) {
                 return false;
-            }//虚拟牌
+            } //虚拟牌
             if (event.cards.length == 1 && event.cards[0].name == event.card.name) {
                 return true;
-            }//真牌
-            return null;//转化牌
+            } //真牌
+            return null; //转化牌
         }; //事件卡牌是否为虚拟牌或转化牌
         game.center = function () {
             const list = [];
@@ -8864,24 +8869,22 @@ const numfunc = function () {
         if (isNaN(Number(num))) return 1;
         return Math.max(Number(num), 1);
     }; //始终返回正数且至少为1
-    window.deepClone = function (obj) {
-        const clone = {};
-        for (const key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                const info = obj[key];
-                if (typeof info == 'object') {
-                    if (Array.isArray(info)) {
-                        clone[key] = info.slice();
-                    } else {
-                        clone[key] = window.deepClone(info);
+                window.deepClone = function (obj) {
+                    if (obj === null || typeof obj !== 'object') {
+                        return obj;
                     }
-                } else {
-                    clone[key] = info;
-                }
-            }
-        }
-        return clone;
-    }; //深拷贝对象
+                    if (Array.isArray(obj)) {
+                        return obj.map(item => deepClone(item));
+                    } else {
+                        const clonedObj = {};
+                        for (let key in obj) {
+                            if (obj.hasOwnProperty(key)) {
+                                clonedObj[key] = deepClone(obj[key]);
+                            }
+                        }
+                        return clonedObj;
+                    }
+                }; //深拷贝对象
                 window.factorial = function (num) {
                     num = Math.round(num);
                     if (num < 0) {
