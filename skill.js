@@ -6473,21 +6473,16 @@ const skill = {
             if (result.cards && result.cards[0]) {
                 const { result: result1 } = await player.chooseTarget(`与你距离为${num}的角色使用杀`, [1, game.players.length], (c, p, t) => get.distance(player, t) == num).set('ai', (t) => 20 - get.attitude(player, t));
                 if (result1.targets && result1.targets[0]) {
-                    // const sha = player.useCard({ name: 'sha', cards: result.cards }, result1.targets, result.cards, false);
-                    // player.when({ source: 'damageEnd' })
-                    //     .filter((evt) => evt.getParent((q) => q == sha).name)
-                    //     .then(() => player.draw(num))
-                    //     .vars({ num: num });//vard只能声明then里面的,filter可以访问外部变量
                     const sha = player.useCard({ name: 'sha', cards: result.cards }, result1.targets, result.cards, false);
                     await sha;
                     for (const i of _status.globalHistory) {
                         for (const evt of i.everything) {
-                            if (evt.name == 'damage' && evt.getParent((q) => q == sha).name) {
+                            if (evt.name == 'damage' && evt.getParent((q) => q == sha, true)) {
                                 player.draw(num);
                             }
                         }
                     } //用历史写法就得等usecard结束,when写法就是要多加技能
-                }
+                }//vard只能声明then里面的,filter可以访问外部变量
             }
         },
         ai: {

@@ -110,6 +110,7 @@ countCards\('(?!(h|he|hj|e|j|ej|hej|hs|x|s|xs|hes|hejs)')[^']*'//countCards(fun/
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
+.setContent('die//lib.element.player.die.//.setContent(lib.element.content.die
 marktext: '<img//markimage:
 if (!info.audioname2) info.audioname2 = {};
 i of arguments//...args//i of args
@@ -242,7 +243,7 @@ const numfunc = function () {
             return obj;
         }
         if (Array.isArray(obj)) {
-            return obj.map(item => deepClone(item));
+            return obj.map((item) => deepClone(item));
         } else {
             const clonedObj = {};
             for (let key in obj) {
@@ -4443,7 +4444,8 @@ const precontent = async function () {
                         },
                     },
                 },
-                //乞討:一名角色摸牌阶段结束后,若手牌数为全场最多,其选择一项①交给你x张牌②视为你对其使用x张杀,若此杀造成伤害执行①选项(x为手牌数减手牌上限)
+                //乞討
+                // 一名角色摸牌阶段结束后,若手牌数为全场最多,其选择一项①交给你x张牌②视为你对其使用x张杀,若此杀造成伤害执行①选项(x为手牌数减手牌上限)
                 QQQ_qitao: {
                     trigger: {
                         global: ['phaseDrawAfter'],
@@ -4466,7 +4468,7 @@ const precontent = async function () {
                             while (num1-- > 0) {
                                 const sha = player.useCard({ name: 'sha' }, trigger.player);
                                 await sha;
-                                if (trigger.player.getHistory('damage', (q) => q.getParent((x) => x == sha)).length > 0) {
+                                if (trigger.player.getHistory('damage', (q) => q.getParent((x) => x == sha, true)).length > 0) {
                                     await trigger.player.chooseToGive(player, 'he', num, true);
                                 }
                             }
@@ -6577,17 +6579,10 @@ const precontent = async function () {
                             const dani = trigger.player.useCard({ name: 'QQQ_wodani' }, player);
                             await dani;
                             let bool = true;
-                            // for (const i of _status.globalHistory) {
-                            //     for (const evt of i.everything) {
-                            //         if (evt.name == 'damage' && evt.getParent((q) => q == dani).name) {
-                            //             bool = false;
-                            //         }
-                            //     }
-                            // }
                             for (var j of player.actionHistory) {
                                 if (j.damage.length) {
                                     for (const evt of j.damage) {
-                                        if (evt.getParent((q) => q == dani).name) {
+                                        if (evt.getParent((q) => q == dani, true)) {
                                             bool = false;
                                         }
                                     }
@@ -8114,7 +8109,7 @@ const precontent = async function () {
                                 await sha;
                                 for (const i of _status.globalHistory) {
                                     for (const evt of i.everything) {
-                                        if (evt.name == 'dying' && evt.getParent((e) => e == sha)) {
+                                        if (evt.name == 'dying' && evt.getParent((e) => e == sha, true)) {
                                             boss.restoreSkill('QQQ_dahuangxingyun');
                                         }
                                     }
