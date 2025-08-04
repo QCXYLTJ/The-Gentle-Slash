@@ -2794,11 +2794,7 @@ const skill = {
                 },
                 forced: true,
                 async content(event, trigger, player) {
-                    const next = game.createEvent('diex', false);
-                    next.source = player;
-                    next.player = player;
-                    next._triggered = null;
-                    next.setContent(lib.element.content.die);
+                    player.qdie(player);
                 },
             },
         },
