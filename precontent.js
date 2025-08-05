@@ -799,48 +799,10 @@ const precontent = async function () {
                 }
             }
         }
-        //—————————————————————————————————————————————————————————————————————————————bgm
-        const bgm = function () {
-            game.BGM = [];
-            game.getFileList('extension/温柔一刀/BGM', (folders, files) => {
-                if (files && files.length) {
-                    files.forEach((n) => {
-                        if (n.includes('.mp3')) {
-                            game.BGM.add(`extension/温柔一刀/BGM/${n}`);
-                        }
-                    });
-                }
-            });
-            game.getFileList('audio/background', (folders, files) => {
-                if (files && files.length) {
-                    files.forEach((n) => {
-                        if (n.includes('.mp3')) {
-                            game.BGM.add(`audio/background/${n}`);
-                        }
-                    });
-                }
-            });
-            if (!lib.config.gentle_BGM) {
-                game.saveConfig('gentle_BGM', game.BGM.randomGet());
-            }
-            ui.backgroundMusic.src = lib.config.gentle_BGM;
+        if (QQQ.config.BGM && QQQ.config.BGM != '默认音乐') {
+            ui.backgroundMusic.src = `extension/温柔一刀/BGM/${QQQ.config.BGM}.mp3`;
             ui.backgroundMusic.loop = true;
-            ui.create.system(
-                '换歌',
-                function () {
-                    const name = game.BGM.randomGet();
-                    if (name) {
-                        game.saveConfig('gentle_BGM', name);
-                        ui.backgroundMusic.src = name;
-                    } else {
-                        ui.backgroundMusic.src = `extension/温柔一刀/BGM/望乡曲.mp3`;
-                    }
-                    ui.backgroundMusic.loop = true;
-                },
-                true
-            ); //BGM
-        };
-        bgm();
+        }
         console.timeEnd('温柔一刀onfree');
     }); //需要晚的时机的
     //—————————————————————————————————————————————————————————————————————————————lib.onover

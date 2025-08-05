@@ -1751,18 +1751,23 @@ const content = async function () {
         };
         lib.element.player.qdie = async function (source) {
             const player = this;
-            await player.qdie1();
-            await player.qdie2();
+            await player.qdie1(source);
+            await player.qdie2(source);
+            await player.qdie3(source);
             return player;
         };//可以触发死亡相关时机,但是死亡无法避免
         lib.element.player.qdie1 = async function (source) {
             const player = this;
-            const next = game.createEvent('die');
+            const next = game.createEvent('die', false);
             next.source = source;
             next.player = player;
-            await next.setContent(function () { });
+            next._triggered = null;
+            await next.setContent(async function (event, trigger, player) {
+                await event.trigger('dieBefore');
+                await event.trigger('dieBegin');
+            });
             return player;
-        };//触发死亡相关时机
+        };//触发死亡前相关时机
         lib.element.player.qdie2 = async function (source) {
             const player = this;
             const next = game.createEvent('diex', false);
@@ -1772,6 +1777,18 @@ const content = async function () {
             await next.setContent(lib.element.content.die);
             return player;
         };//斩杀
+        lib.element.player.qdie3 = async function (source) {
+            const player = this;
+            const next = game.createEvent('die', false);
+            next.source = source;
+            next.player = player;
+            next._triggered = null;
+            await next.setContent(async function (event, trigger, player) {
+                await event.trigger('dieEnd');
+                await event.trigger('dieAfter');
+            });
+            return player;
+        };//触发死亡后相关时机
     }; //解构魔改本体函数
     mogai();
     //—————————————————————————————————————————————————————————————————————————————一些全局技能

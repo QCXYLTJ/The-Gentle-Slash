@@ -5,6 +5,26 @@ const config = {
         name: '<a href="https://qm.qq.com/q/SsTlU9gc24"><span class=Qmenu>『无名杀扩展大全群』: 771901025</span></a>',
         clear: true,
     },
+    BGM: {
+        name: '<span class=Qmenu>背景音乐</span>',
+        intro: '背景音乐：可随意点播、切换优质动听的背景音乐',
+        init: '默认音乐',
+        item: {
+            默认音乐: '<span class=Qmenu>默认音乐</span>',
+            望乡曲: '<span class=Qmenu>望乡曲</span>',
+        },
+        onclick(item) {
+            game.saveConfig('extension_温柔一刀_BGM', item);
+            ui.backgroundMusic.src = `extension/温柔一刀/BGM/${item}.mp3`;
+            ui.backgroundMusic.loop = true;
+        },
+        visualMenu(node, link) {
+            node.style.height = node.offsetWidth * 0.83 + 'px';
+            node.style.backgroundSize = '100% 100%';
+            node.className = 'skmusicname';
+            node.setBackgroundImage('extension/温柔一刀/image/' + link + '.jpg');
+        },
+    },
     玩家加血限: {
         name: '<span class=Qmenu>玩家加血限</span>',
         intro: '增加玩家角色的体力上限',
