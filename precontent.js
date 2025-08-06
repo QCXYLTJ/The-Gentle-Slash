@@ -110,7 +110,7 @@ countCards\('(?!(h|he|hj|e|j|ej|hej|hs|x|s|xs|hes|hejs)')[^']*'//countCards(fun/
 .set\('ai', function \(.+,
 .ai = function \(.+,
 //-------------------------------------------------------普通替换
-.setContent('die//lib.element.player.die.//.setContent(lib.element.content.die
+.setContent('die//lib.element.player.die.//.setContent(lib.element.content.die//die()._triggered = null
 marktext: '<img//markimage:
 if (!info.audioname2) info.audioname2 = {};
 i of arguments//...args//i of args

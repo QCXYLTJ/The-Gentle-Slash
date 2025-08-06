@@ -21,8 +21,7 @@ const config = {
         visualMenu(node, link) {
             node.style.height = node.offsetWidth * 0.83 + 'px';
             node.style.backgroundSize = '100% 100%';
-            node.className = 'skmusicname';
-            node.setBackgroundImage('extension/温柔一刀/image/' + link + '.jpg');
+            node.setBackgroundImage(`extension/温柔一刀/image/${link}.jpg`);
         },
     },
     玩家加血限: {

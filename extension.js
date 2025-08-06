@@ -302,30 +302,30 @@ const boss = function () {
         return player;
     };
     lib.element.player.addFellow = function (name) {
+        const player = this;
         const npc = game.addPlayerQ(name);
-        this.guhuo(npc);
+        player.guhuo(npc);
         return npc;
     }; //添加随从
     lib.element.player.guhuo = function (target) {
-        target.side = this.side;
-        let identity = this.identity;
-        if (this.identity == 'zhu') {
+        const player = this;
+        target.side = player.side;
+        let identity = player.identity;
+        if (player.identity == 'zhu') {
             identity = 'zhong';
         } // 挑战模式多个主身份,会导致boss多个回合
         target.identity = identity;
         target.setIdentity(identity, 'blue');
-        target.boss = this;
+        target.boss = player;
         target.ai.modAttitudeFrom = function (from, to, att) {
-            //这里from是本人
             if (to == from.boss) return 99;
             return att;
-        };
+        }; //这里from是本人
         target.ai.modAttitudeTo = function (from, to, att) {
-            //这里to是本人
             if (to.boss == from) return 99;
             return att;
-        };
-        return target;
+        }; //这里to是本人
+        return player;
     }; //令一名角色服从你
 };
 boss();
