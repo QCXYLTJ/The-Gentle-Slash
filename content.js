@@ -1758,7 +1758,7 @@ const content = async function () {
         }; //可以触发死亡相关时机,但是死亡无法避免
         lib.element.player.qdie1 = function (source) {
             const player = this;
-            const next = game.createEvent('die', false);
+            const next = game.createEvent('diex', false);
             next.source = source;
             next.player = player;
             next._triggered = null;
@@ -1779,7 +1779,7 @@ const content = async function () {
         }; //斩杀
         lib.element.player.qdie3 = function (source) {
             const player = this;
-            const next = game.createEvent('die', false);
+            const next = game.createEvent('diex', false);
             next.source = source;
             next.player = player;
             next._triggered = null;

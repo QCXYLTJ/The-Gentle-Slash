@@ -1248,7 +1248,7 @@ const precontent = async function () {
             if (Array.isArray(src)) {
                 src = src[0];
             }
-            if (src.includes('.mp4')) {
+            if (['.mp4', '.webm'].some((q) => src.includes(q))) {
                 this.style.backgroundImage = 'none';
                 this.setBackgroundMp4(src);
             } else {
