@@ -1755,40 +1755,40 @@ const content = async function () {
             await player.qdie2(source);
             await player.qdie3(source);
             return player;
-        };//可以触发死亡相关时机,但是死亡无法避免
-        lib.element.player.qdie1 = async function (source) {
+        }; //可以触发死亡相关时机,但是死亡无法避免
+        lib.element.player.qdie1 = function (source) {
             const player = this;
             const next = game.createEvent('die', false);
             next.source = source;
             next.player = player;
             next._triggered = null;
-            await next.setContent(async function (event, trigger, player) {
+            next.setContent(async function (event, trigger, player) {
                 await event.trigger('dieBefore');
                 await event.trigger('dieBegin');
             });
-            return player;
-        };//触发死亡前相关时机
-        lib.element.player.qdie2 = async function (source) {
+            return next;
+        }; //触发死亡前相关时机
+        lib.element.player.qdie2 = function (source) {
             const player = this;
             const next = game.createEvent('diex', false);
             next.source = source;
             next.player = player;
             next._triggered = null;
-            await next.setContent(lib.element.content.die);
-            return player;
-        };//斩杀
-        lib.element.player.qdie3 = async function (source) {
+            next.setContent(lib.element.content.die);
+            return next;
+        }; //斩杀
+        lib.element.player.qdie3 = function (source) {
             const player = this;
             const next = game.createEvent('die', false);
             next.source = source;
             next.player = player;
             next._triggered = null;
-            await next.setContent(async function (event, trigger, player) {
+            next.setContent(async function (event, trigger, player) {
                 await event.trigger('dieEnd');
                 await event.trigger('dieAfter');
             });
-            return player;
-        };//触发死亡后相关时机
+            return next;
+        }; //触发死亡后相关时机
     }; //解构魔改本体函数
     mogai();
     //—————————————————————————————————————————————————————————————————————————————一些全局技能

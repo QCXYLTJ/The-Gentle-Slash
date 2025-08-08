@@ -1066,30 +1066,32 @@ const precontent = async function () {
             card.storage.vanish = true;
             return card.init([suit, number, name, nature]);
         };
-        game.saveConfig = function (key, value, local, callback) {
-            if (_status.reloading) {
-                return;
-            }
-            if (local) {
-                let localmode = typeof local == 'string' ? local : lib.config.mode;
-                if (!lib.config.mode_config[localmode]) {
-                    lib.config.mode_config[localmode] = {};
+        if (QQQ.作者模式) {
+            game.saveConfig = function (key, value, local, callback) {
+                if (_status.reloading) {
+                    return;
                 }
-                if (typeof value == 'undefined') {
-                    delete lib.config.mode_config[localmode][key];
+                if (local) {
+                    let localmode = typeof local == 'string' ? local : lib.config.mode;
+                    if (!lib.config.mode_config[localmode]) {
+                        lib.config.mode_config[localmode] = {};
+                    }
+                    if (typeof value == 'undefined') {
+                        delete lib.config.mode_config[localmode][key];
+                    } else {
+                        lib.config.mode_config[localmode][key] = value;
+                    }
+                    save('mode_config', 'config', lib.config.mode_config).then(callback);
                 } else {
-                    lib.config.mode_config[localmode][key] = value;
+                    if (typeof value == 'undefined') {
+                        delete lib.config[key];
+                    } else {
+                        lib.config[key] = value;
+                    }
+                    save(key, 'config', value).then(callback);
                 }
-                save('mode_config', 'config', lib.config.mode_config).then(callback);
-            } else {
-                if (typeof value == 'undefined') {
-                    delete lib.config[key];
-                } else {
-                    lib.config[key] = value;
-                }
-                save(key, 'config', value).then(callback);
-            }
-        }; //mode_config保存bug修复
+            }; //mode_config保存bug修复
+        }
     }; //game相关本体函数
     gameq();
     //—————————————————————————————————————————————————————————————————————————————视为转化虚拟牌相关自创函数
