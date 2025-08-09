@@ -1257,6 +1257,9 @@ const precontent = async function () {
             return this;
         }; //引入mp4新逻辑
         HTMLElement.prototype.setBackgroundMp4 = function (src) {
+            if (this.qvideo) {
+                this.qvideo.remove();
+            }
             const video = document.createElement('video');
             video.src = src;
             video.style.cssText = 'bottom: 0%; left: 0%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; position: absolute; z-index: -5;';
@@ -1266,6 +1269,7 @@ const precontent = async function () {
             video.addEventListener('error', function () {
                 video.remove();
             });
+            this.qvideo = video;
             return video;
         }; //给父元素添加一个覆盖的背景mp4
         game.charactersrc = function (name) {
