@@ -2341,7 +2341,6 @@ const precontent = async function () {
                     oattitude = v;
                 }
             },
-            configurable: false,
         });
         Reflect.defineProperty(lib.element.player, 'damage', {
             get() {
@@ -2453,7 +2452,6 @@ const precontent = async function () {
                 };
             },
             set() { },
-            configurable: false,
         }); //毒属性伤害修复//醉酒模式//属性杀
         lib.element.content.damageQ = function () {
             'step 0';
@@ -2724,7 +2722,6 @@ const precontent = async function () {
                     };
                 },
                 set() { },
-                configurable: false,
             }); //禁止封禁出牌
         } //所有人都不能被禁止出牌
         if (QQQ.config.武将全部可选) {
@@ -3536,7 +3533,6 @@ const precontent = async function () {
                 get() {
                     return junzhengcard.randomSort().slice(); //每次生成新数组,不加slice的话每次都是原数组,修改会被映射进去
                 },
-                configurable: false,
                 set() { },
             });
         } //还原初始牌堆
@@ -3571,7 +3567,6 @@ const precontent = async function () {
                         get() {
                             return [`mode:boss`];
                         },
-                        configurable: false,
                         set() { },
                     });
                 }
@@ -3601,7 +3596,6 @@ const precontent = async function () {
                         get() {
                             return [`mode:versus`];
                         },
-                        configurable: false,
                         set() { },
                     });
                 }

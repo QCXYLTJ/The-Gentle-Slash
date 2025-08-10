@@ -198,15 +198,19 @@ const config = {
             game.saveConfig(cfg._name, result);
             if (result) {
                 Reflect.defineProperty(game, 'delay', {
-                    get: () => () => true,
+                    get() {
+                        return function () {
+                            return true;
+                        };
+                    },
                     set() { },
-                    configurable: false,
                 });
                 lib.configMenu.general.config.game_speed.item = 'vvfast';
                 Reflect.defineProperty(lib.config, 'game_speed', {
-                    get: () => 'vvfast',
+                    get() {
+                        return 'vvfast';
+                    },
                     set() { },
-                    configurable: false,
                 });
                 game.saveConfig('game_speed', 'vvfast');
             }

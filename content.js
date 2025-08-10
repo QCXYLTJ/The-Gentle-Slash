@@ -6152,7 +6152,6 @@ const content = async function () {
                     };
                 },
                 set() { },
-                configurable: false,
             }); //血量可以超上限
             lib.element.content.recoverQ = function () {
                 if (lib.config.background_audio) {
@@ -6798,10 +6797,11 @@ const content = async function () {
             }); //取消限制结算速度
             Reflect.defineProperty(game, 'delay', {
                 get() {
-                    return () => true;
+                    return function () {
+                        return true;
+                    };
                 },
                 set() { },
-                configurable: false,
             });
             lib.configMenu.general.config.game_speed.item = 'vvfast';
             Reflect.defineProperty(lib.config, 'game_speed', {
@@ -6809,7 +6809,6 @@ const content = async function () {
                     return 'vvfast';
                 },
                 set() { },
-                configurable: false,
             });
             game.saveConfig('game_speed', 'vvfast');
         } //禁止延迟
@@ -8523,7 +8522,6 @@ const content = async function () {
                     return 'ol_bg';
                 },
                 set() { },
-                configurable: false,
             });
             game.saveConfig('image_background', 'ol_bg');
             Reflect.defineProperty(lib.config, 'theme', {
@@ -8531,7 +8529,6 @@ const content = async function () {
                     return 'simple';
                 },
                 set() { },
-                configurable: false,
             });
             game.saveConfig('theme', 'simple');
             Reflect.defineProperty(lib.config, 'recent_character_number', {
@@ -8539,7 +8536,6 @@ const content = async function () {
                     return '30';
                 },
                 set() { },
-                configurable: false,
             });
             game.saveConfig('recent_character_number', '30');
             game.saveConfig('connect_avatar', 'QQQ_jiananfeng');
@@ -8548,7 +8544,6 @@ const content = async function () {
                     return 'left';
                 },
                 set() { },
-                configurable: false,
             });
             game.saveConfig('show_log', 'left');
             Reflect.defineProperty(lib.config, 'layout', {
@@ -8556,7 +8551,6 @@ const content = async function () {
                     return 'mobile';
                 },
                 set() { },
-                configurable: false,
             });
             game.saveConfig('layout', 'mobile');
         } //收藏武将修改

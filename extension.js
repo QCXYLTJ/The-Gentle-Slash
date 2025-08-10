@@ -36,16 +36,10 @@ if (QQQ.config.扩展全关) {
 } //扩展全部关闭
 if (QQQ.作者模式) {
     var Q = ['温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', '小镜子', '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
-        '圣杯战争', '格林笔记', '极略', '寰宇兴衰', '诸神寰宇', '末日浩劫'].unique();
+        '太古天庭', '圣歼之战', '真火无敌', '寰宇兴衰', '诸神寰宇', '末日浩劫'].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
 //boot=>(loadJavaScriptExtension/onload)=>loadExtension=>precontent/content
-// const oriinit = lib.element.card.$init;
-// Reflect.defineProperty(lib.element.card, '$init', {
-//     get: () => oriinit,
-//     set() { },
-//     configurable: false,
-// });//十周年ui兼容
 // game.readFile('extension/温柔一刀/ceshi.js', q => {
 //     game.writeFile(`game[\`${String(q)}\`] = () => '[native code]';`, "extension/温柔一刀", 'ceshi.js', () => { });
 // }, () => { });
