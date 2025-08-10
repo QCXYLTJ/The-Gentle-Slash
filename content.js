@@ -1749,16 +1749,16 @@ const content = async function () {
             }
             return player;
         };
-        lib.element.player.qdie = async function (source) {
+        lib.element.player.qdie = function (source) {
             const player = this;
-            await player.qdie1(source);
-            await player.qdie2(source);
-            await player.qdie3(source);
+            player.qdie1(source);
+            player.qdie2(source);
+            player.qdie3(source);
             return player;
-        }; //可以触发死亡相关时机,但是死亡无法避免
+        }; //可以触发死亡相关时机,但是死亡无法避免//直接正常堆叠事件即可.如果await每个qdie123事件,那么外部就必须await qdie了,否则就卡掉
         lib.element.player.qdie1 = function (source) {
             const player = this;
-            const next = game.createEvent('diex', false);
+            const next = game.createEvent('diex1', false);
             next.source = source;
             next.player = player;
             next._triggered = null;
@@ -1767,10 +1767,10 @@ const content = async function () {
                 await event.trigger('dieBegin');
             });
             return next;
-        }; //触发死亡前相关时机
+        }; //触发死亡前相关时机//不能用async,不然会卡掉后续事件,不能await那个setcontent
         lib.element.player.qdie2 = function (source) {
             const player = this;
-            const next = game.createEvent('diex', false);
+            const next = game.createEvent('diex2', false);
             next.source = source;
             next.player = player;
             next._triggered = null;
@@ -1779,7 +1779,7 @@ const content = async function () {
         }; //斩杀
         lib.element.player.qdie3 = function (source) {
             const player = this;
-            const next = game.createEvent('diex', false);
+            const next = game.createEvent('diex3', false);
             next.source = source;
             next.player = player;
             next._triggered = null;

@@ -36,7 +36,7 @@ if (QQQ.config.扩展全关) {
 } //扩展全部关闭
 if (QQQ.作者模式) {
     var Q = ['温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', '小镜子', '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
-        '太古天庭', '圣歼之战', '真火无敌', '寰宇兴衰', '诸神寰宇', '末日浩劫'].unique();
+        '太古天庭', '圣歼之战', '真火无敌', '寰宇兴衰', '诸神寰宇', '末日浩劫', '碧蓝航线Q'].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
 //boot=>(loadJavaScriptExtension/onload)=>loadExtension=>precontent/content
