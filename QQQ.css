@@ -131,7 +131,7 @@ body>#skilllist {
 
 /* 技能及翻译 */
 body>#skilllist>.skillQ {
-	display: block;
+	position: relative;
 	width: 90%;
 	height: 10%;
 	top: 10%;
