@@ -630,17 +630,21 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     '添加技能',
                     async function () {
                         const div = document.createElement('div');
+                        document.body.appendChild(div);
                         div.id = 'skilllist';
+                        //——————————————————————————————————————————————————————输入
                         const input = document.createElement('input');
+                        document.body.appendChild(input);
                         input.className = 'shuruQ';
                         input.placeholder = '输入技能代码名(不是技能名的翻译,如破军是pojun)';
+                        //——————————————————————————————————————————————————————搜索
                         const FIND = document.createElement('div');
+                        document.body.appendChild(FIND);
                         FIND.className = 'findQ';
                         FIND.innerHTML = '搜索';
-                        const skilllist = [];
                         FIND.onclick = function () {
-                            for (const x of skilllist) {
-                                x.remove();
+                            while (div.firstChild) {
+                                div.firstChild.remove();
                             }
                             for (const j in lib.skill) {
                                 if (lib.translate[j]?.includes(input.value) || j.includes(input.value)) {
@@ -655,16 +659,20 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                         div.log = this;
                                         this.classList.add('selected');
                                     };
-                                    skilllist.push(skill);
                                     div.appendChild(skill);
                                 }
                             }
                         };
+                        //——————————————————————————————————————————————————————确定
                         const ok = document.createElement('div');
+                        document.body.appendChild(ok);
                         ok.className = 'backQ';
                         ok.textContent = '确定';
                         ok.addEventListener('click', async function () {
+                            input.remove();
+                            FIND.remove();
                             div.remove();
+                            ok.remove();
                             if (div.log && lib.skill[div.log.link]) {
                                 for (const player of game.players) {
                                     player.classList.add('Qselectable');
@@ -679,10 +687,6 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 }
                             }
                         });
-                        div.appendChild(FIND);
-                        div.appendChild(input);
-                        div.appendChild(ok);
-                        document.body.appendChild(div);
                     },
                     true
                 ); //添加技能
