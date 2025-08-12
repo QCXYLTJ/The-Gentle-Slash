@@ -335,8 +335,6 @@ const content = async function () {
                             } else {
                                 caption = get.translation(skill);
                             }
-                            if (!player.storage[skill]) {
-                            }
                             player.markSkillCharacter(skill, player.storage[skill], caption, intro, nobroadcast);
                         } else {
                             player.markSkill(skill, null, null, nobroadcast);
@@ -600,8 +598,8 @@ const content = async function () {
                 const ok = game.check();
                 if (ok) {
                     ui.click.ok();
-                } else if (ai.basic.chooseCard(event.ai1) || forced) {
-                    if ((ai.basic.chooseTarget(event.ai2) || forced) && (!event.filterOk || event.filterOk())) {
+                } else if (ai.basic.chooseCard(event.ai1) || event.forced) {
+                    if ((ai.basic.chooseTarget(event.ai2) || event.forced) && (!event.filterOk || event.filterOk())) {
                         ui.click.ok();
                         event._aiexcludeclear = true;
                     } else {
@@ -643,8 +641,6 @@ const content = async function () {
                 } //skill是jsrgzhendan_viewas_backup,sourceskill是jsrgzhendan,_aiexclude没有加入jsrgzhendan_viewas,导致所有在子技能的backup里面转化牌的都会概率卡死
                 else {
                     ui.click.cancel();
-                }
-                if (event.aidelay && event.result && event.result.bool) {
                 }
             } //转化牌的概率卡死修复
             ('step 2');
@@ -842,8 +838,8 @@ const content = async function () {
                 const ok = game.check();
                 if (ok) {
                     ui.click.ok();
-                } else if (ai.basic.chooseCard(event.ai1 || event.ai) || forced) {
-                    if ((ai.basic.chooseTarget(event.ai2) || forced) && (!event.filterOk || event.filterOk())) {
+                } else if (ai.basic.chooseCard(event.ai1 || event.ai) || event.forced) {
+                    if ((ai.basic.chooseTarget(event.ai2) || event.forced) && (!event.filterOk || event.filterOk())) {
                         ui.click.ok();
                         event._aiexcludeclear = true;
                     } else {
@@ -887,8 +883,6 @@ const content = async function () {
                 } //转化牌的概率卡死修复
                 else {
                     ui.click.cancel();
-                }
-                if (event.aidelay && event.result && event.result.bool) {
                 }
             } //转化牌的概率卡死修复
             ('step 2');
@@ -997,16 +991,11 @@ const content = async function () {
                 if (event.onresult) {
                     event.onresult(event.result);
                 }
+                let info;
                 if ((!event.result || !event.result.bool || event.result._noHidingTimer) && (event.result?.skill || event.logSkill)) {
-                    const info = get.info(event.result.skill || (Array.isArray(event.logSkill) ? event.logSkill[0] : event.logSkill));
+                    info = get.info(event.result.skill || (Array.isArray(event.logSkill) ? event.logSkill[0] : event.logSkill));
                     if (info.direct && !info.clearTime) {
                         _status.noclearcountdown = 'direct';
-                    }
-                }
-                if (event.logSkill) {
-                    if (typeof event.logSkill == 'string') {
-                    } else if (Array.isArray(event.logSkill)) {
-                        player.logSkill.apply(player, event.logSkill);
                     }
                 }
                 if (!event.result.card && event.result.skill) {
@@ -2743,11 +2732,12 @@ const content = async function () {
                         event.finish();
                         return;
                     }
+                    let nextSeat;
                     if (_status.currentPhase) {
-                        const nextSeat = _status.currentPhase.next;
+                        nextSeat = _status.currentPhase.next;
                     } //QQQ
                     else {
-                        const nextSeat = player;
+                        nextSeat = player;
                     }
                     let att = get.attitude(player, nextSeat);
                     if (player.isUnderControl(true) && !_status.auto) {
@@ -5813,7 +5803,8 @@ const content = async function () {
                         event.num++;
                     }
                     ('step 1');
-                    if (event.num == 0) {
+                    const num = event.num;
+                    if (num == 0) {
                         player.gain(event.cards, 'draw');
                         event.finish();
                     } else {
@@ -5825,18 +5816,17 @@ const content = async function () {
                         if (num < 3) {
                             next.set('list', [['牌堆顶', cards], ['获得']]);
                             next.set('filterMove', function (from, to, moved) {
-                                if (to == 1 && moved[0].length <= _status.event.num) {
+                                if (to == 1 && moved[0].length <= num) {
                                     return false;
                                 }
                                 return true;
                             });
                             next.set('filterOk', function (moved) {
-                                return moved[0].length == _status.event.num;
+                                return moved[0].length == num;
                             });
                         } else {
                             next.set('list', [['牌堆顶', cards]]);
                         }
-                        next.set('num', num);
                         next.set('processAI', function (list) {
                             let check = function (card) {
                                 let player = _status.event.player;
@@ -5849,7 +5839,7 @@ const content = async function () {
                                 return number0(next.getUseValue(card, null, true)) * att;
                             };
                             let cards = list[0][1].slice(0), tops = [];
-                            while (tops.length < _status.event.num) {
+                            while (tops.length < num) {
                                 cards.sort((a, b) => check(b) - check(a)); //QQQ
                                 tops.push(cards.shift());
                             }
@@ -5914,8 +5904,9 @@ const content = async function () {
                     if (card.suit != 'diamond') {
                         return false;
                     }
+                    let mod;
                     if (ui.selected.cards[0]) {
-                        const mod = game.checkMod(ui.selected.cards[0], player, 'unchanged', 'cardEnabled2', player);
+                        mod = game.checkMod(ui.selected.cards[0], player, 'unchanged', 'cardEnabled2', player);
                     }
                     if (!mod) {
                         return false;
@@ -6877,7 +6868,7 @@ const content = async function () {
                 } else {
                     game.addVideo('jiuNode', target, true);
                     if (cards && cards.length) {
-                        card = cards[0];
+                        event.card = cards[0];
                     }
                     if (!target.storage.jiu) {
                         target.storage.jiu = 0;
@@ -6892,12 +6883,12 @@ const content = async function () {
                             }
                         },
                         target,
-                        card,
+                        event.card,
                         target == targets[0] && cards.length == 1
                     );
                     if (target == targets[0] && cards.length == 1) {
-                        if (card.clone && (card.clone.parentNode == target.parentNode || card.clone.parentNode == ui.arena)) {
-                            game.addVideo('gain2', target, get.cardsInfo([card]));
+                        if (event.card.clone && (event.card.clone.parentNode == target.parentNode || event.card.clone.parentNode == ui.arena)) {
+                            game.addVideo('gain2', target, get.cardsInfo([event.card]));
                         }
                     }
                 }

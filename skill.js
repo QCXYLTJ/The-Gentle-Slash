@@ -21,7 +21,6 @@
 import { lib, game, ui, get, ai, _status } from '../../noname.js';
 const skill = {
     bug: {
-        _priority: 36,
         trigger: {
             global: ['gameStart'],
         },
@@ -4779,9 +4778,9 @@ const skill = {
                 .chooseButton(['声明一个花色和类型,亮出牌堆顶三张牌,获得与你描述相符的牌.若有两项皆满足的牌,你回复一点体力', '花色', [lib.suits.map((i) => [i, get.translation(i)]), 'tdnodes'], '类型', [lib.type.map((i) => [i, get.translation(i)]), 'tdnodes']], true, 2)
                 .set('filterButton', (button) => {
                     if (ui.selected.buttons.length && lib.suits.includes(ui.selected.buttons[0].link)) {
-                        return type.includes(button.link) && button.link != 'none';
+                        return lib.type.includes(button.link) && button.link != 'none';
                     }
-                    if (ui.selected.buttons.length && type.includes(ui.selected.buttons[0].link)) {
+                    if (ui.selected.buttons.length && lib.type.includes(ui.selected.buttons[0].link)) {
                         return lib.suits.includes(button.link);
                     }
                     return true;

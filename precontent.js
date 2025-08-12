@@ -1008,7 +1008,7 @@ const precontent = async function () {
                 alert('checkMod的card不是一个对象');
                 throw new Error();
             }
-            const skills = [];
+            let skills = [];
             if (typeof player2.getModableSkills == 'function') {
                 skills.addArray(player2.getModableSkills());
             } else if (typeof player2.getSkills == 'function') {
@@ -2267,9 +2267,10 @@ const precontent = async function () {
                     };
                 };
             })();
+            let node1;
             if (!connectMenu) {
                 // 下面使用了var的特性,请不要在这里直接改为let
-                const node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {
+                node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {
                     game.saveConfig('cards', lib.config.all.cards);
                     updateNodes();
                 });
@@ -2553,18 +2554,19 @@ const precontent = async function () {
             get() {
                 return function () {
                     if (QQQ.config.属性杀) {
+                        let nature, num, source;
                         for (let i = 0; i < arguments.length; i++) {
                             if (typeof arguments[i] == 'number') {
-                                let num = arguments[i];
+                                num = arguments[i];
                             } else if (get.itemtype(arguments[i]) == 'player') {
-                                let source = arguments[i];
+                                source = arguments[i];
                             } else if (get.itemtype(arguments[i]) == 'nature' && arguments[i] != 'stab') {
-                                let nature = arguments[i];
+                                nature = arguments[i];
                             } else if (get.itemtype(arguments[i]) == 'natures') {
                                 const natures = arguments[i].split(lib.natureSeparator);
                                 natures.remove('stab');
                                 if (natures.length) {
-                                    let nature = natures.join(lib.natureSeparator);
+                                    nature = natures.join(lib.natureSeparator);
                                 }
                             }
                         }
@@ -3122,6 +3124,7 @@ const precontent = async function () {
                         let newlined = false;
                         let newlined2;
                         let packsource;
+                        let filternode = null;
                         const clickCapt = function (e) {
                             if (_status.dragged) {
                                 return;
@@ -3367,7 +3370,6 @@ const precontent = async function () {
                             packsource = ui.create.div('.tdnode.pointerdiv.shadowed.reduce_radius.reduce_margin');
                             packsource.style.margin = '3px';
                             newlined.appendChild(packsource);
-                            let filternode = null;
                             const clickCaptNode = function (e) {
                                 delete _status.filterCharacter;
                                 ui.window.classList.remove('shortcutpaused');
@@ -6543,10 +6545,11 @@ const precontent = async function () {
                                 .set('processAI', function (list) {
                                     const cards = list[0][1];
                                     const target = _status.currentPhase?.next;
+                                    let att;
                                     if (target) {
-                                        let att = get.sgn(get.attitude(player, target));
+                                        att = get.sgn(get.attitude(player, target));
                                     } else {
-                                        let att = -1;
+                                        att = -1;
                                     }
                                     let top = [];
                                     if (target.countCards('j')) {
@@ -8954,7 +8957,7 @@ const precontent = async function () {
                 //————————————————————————————————————————————郭嘉
                 QQQ_guojia: '郭嘉',
                 QQQ_youyou: '优游',
-                QQQ_youyou_info: '当你的判定牌生效后,你随机获得牌堆\弃牌堆\场上与此牌类型不同的牌各一张.你可以使用或打出<怀隐>牌',
+                QQQ_youyou_info: '当你的判定牌生效后,你随机获得牌堆/弃牌堆/场上与此牌类型不同的牌各一张.你可以使用或打出<怀隐>牌',
                 QQQ_huaiyin: '怀隐',
                 QQQ_huaiyin_info: '每当你受到一点伤害后,你展示牌堆顶两张牌并置于你的的武将牌上,称为<怀隐>.若你以此法展示的两张牌颜色相同,你将血量回复至体力上限,否则,你摸两张牌.你可将任意张牌分别交给任意名角色',
                 QQQ_qingshi: '清识',
