@@ -14,7 +14,9 @@ if (QQQ.config.扩展导入) {
     lib.config.extensions = [];
     game.getFileList('extension', function (fold, file) {
         for (const i of Array.from(fold)) {
-            if (['coin', 'boss', 'wuxing', 'cardpile'].includes(i)) continue;
+            if (['coin', 'boss', 'wuxing', 'cardpile'].includes(i)) {
+                continue;
+            }
             lib.config.extensions.add(i);
         }
         game.saveConfig('extensions', lib.config.extensions);
@@ -35,8 +37,7 @@ if (QQQ.config.扩展全关) {
     }
 } //扩展全部关闭
 if (QQQ.作者模式) {
-    var Q = ['温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', '小镜子', '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS',
-        '太古天庭', '圣歼之战', '真火无敌', '寰宇兴衰', '诸神寰宇', '末日浩劫', '碧蓝航线Q'].unique();
+    const Q = ['温柔一刀', '火灵月影', '缺德扩展', '三国全系列', '雪月风花', '小镜子', '斗破苍穹X阴阳师', '千秋霸业', '梦隐', '猫猫叹气', '活动BOSS', '寰宇兴衰', '诸神寰宇', '末日浩劫', '真火无敌'].unique();
     game.saveConfig('extensions', Q); //扩展修改
 } //扩展修改
 //boot=>(loadJavaScriptExtension/onload)=>loadExtension=>precontent/content
@@ -97,7 +98,9 @@ const sha = function () {
     }
     Reflect.defineProperty(_status, 'withError', {
         get() {
-            if (game.players.some((q) => q.name == 'HL_许劭')) return true;
+            if (game.players.some((q) => q.name == 'HL_许劭')) {
+                return true;
+            }
             return false;
         },
         set() { },
@@ -127,9 +130,13 @@ const yuanxing = function () {
         value(arr) {
             const set1 = new Set(arr);
             const set2 = new Set(this);
-            if (set1.size !== set2.size) return false;
+            if (set1.size !== set2.size) {
+                return false;
+            }
             for (let i of set1) {
-                if (!set2.has(i)) return false;
+                if (!set2.has(i)) {
+                    return false;
+                }
             }
             return true;
         },
@@ -138,7 +145,9 @@ const yuanxing = function () {
     HTMLElement.prototype.lock = function (son) {
         const parent = this;
         const artifact = function () {
-            if (parent.contains(son)) return;
+            if (parent.contains(son)) {
+                return;
+            }
             console.log('神器不可失去');
             parent.appendChild(son);
             son.style.transform = '';
@@ -290,7 +299,9 @@ const boss = function () {
     game.addPlayerQ = function (name) {
         const player = ui.create.player(ui.arena).addTempClass('start');
         player.getId();
-        if (name) player.init(name);
+        if (name) {
+            player.init(name);
+        }
         game.players.push(player);
         player.draw(Math.min(player.maxHp, 20));
         return player;
@@ -312,11 +323,15 @@ const boss = function () {
         target.setIdentity(identity, 'blue');
         target.boss = player;
         target.ai.modAttitudeFrom = function (from, to, att) {
-            if (to == from.boss) return 99;
+            if (to == from.boss) {
+                return 99;
+            }
             return att;
         }; //这里from是本人
         target.ai.modAttitudeTo = function (from, to, att) {
-            if (to.boss == from) return 99;
+            if (to.boss == from) {
+                return 99;
+            }
             return att;
         }; //这里to是本人
         return player;
@@ -371,7 +386,9 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                 if (info.destroy) {
                     delete info.destroy;
                 } //禁止销毁
-                if (!info.content) continue;
+                if (!info.content) {
+                    continue;
+                }
                 if (QQQ.作者模式) {
                     if (info.enable == 'phaseUse') {
                         alert(i + 'enable有问题');
@@ -397,9 +414,15 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     }
                 }
                 if (QQQ.config.卡牌加入牌堆) {
-                    if (lib.cardPack.温柔一刀?.includes(i)) continue; //不重复添加温柔一刀牌堆
-                    if (info.mode && !info.mode.includes(lib.config.mode)) continue;
-                    if (!lib.translate[`${i}_info`]) continue;
+                    if (lib.cardPack.温柔一刀?.includes(i)) {
+                        continue;
+                    } //不重复添加温柔一刀牌堆
+                    if (info.mode && !info.mode.includes(lib.config.mode)) {
+                        continue;
+                    }
+                    if (!lib.translate[`${i}_info`]) {
+                        continue;
+                    }
                     lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
                 }
             } //卡牌加入牌堆
@@ -616,7 +639,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                         FIND.innerHTML = '搜索';
                         const skilllist = [];
                         FIND.onclick = function () {
-                            for (var x of skilllist) {
+                            for (const x of skilllist) {
                                 x.remove();
                             }
                             for (const j in lib.skill) {
@@ -794,9 +817,15 @@ game.addMode(
         },
         get: {
             rawAttitude(from, to) {
-                if (!from) throw new Error();
-                if (!to) throw new Error();
-                if (from.identity == to.identity) return 10;
+                if (!from) {
+                    throw new Error();
+                }
+                if (!to) {
+                    throw new Error();
+                }
+                if (from.identity == to.identity) {
+                    return 10;
+                }
                 return -10;
             },
         },
@@ -843,7 +872,7 @@ lib.element.content.waitForPlayer = function () {
     }
     ui.create.connectPlayers(game.ip);
     if (!window.isNonameServer) {
-        var me = game.connectPlayers[0];
+        const me = game.connectPlayers[0];
         me.setIdentity('zhu');
         me.initOL(get.connectNickname(), lib.config.connect_avatar);
         me.playerid = '1';
@@ -863,7 +892,7 @@ lib.element.content.waitForPlayer = function () {
     if (game.onlineroom) {
         game.send('server', 'config', lib.configOL);
     }
-    for (var i = 0; i < game.connectPlayers.length; i++) {
+    for (let i = 0; i < game.connectPlayers.length; i++) {
         game.connectPlayers[i].delete();
     }
     delete game.connectPlayers;

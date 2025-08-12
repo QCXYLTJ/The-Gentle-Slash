@@ -191,7 +191,7 @@ const windowq = function () {
         config: {}, //温柔一刀菜单
         DEEP(path) {
             const [top, ...deep] = path.split('.');
-            var Q = window[top];
+            let Q = window[top];
             for (const i of deep) {
                 if (Q && Q[i] && typeof Q[i] === 'object') {
                     Q = Q[i];
@@ -214,45 +214,58 @@ windowq();
 const numfunc = function () {
     if (!lib.number) {
         lib.number = [];
-        for (var i = 1; i < 14; i++) {
+        for (let i = 1; i < 14; i++) {
             lib.number.add(i);
         }
     } //添加lib.number
     window.sgn = function (bool) {
-        if (bool) return 1;
+        if (bool) {
+            return 1;
+        }
         return -1;
     }; //true转为1,false转为-1
     window.numberq0 = function (num) {
-        if (isNaN(Number(num))) return 0;
+        if (isNaN(Number(num))) {
+            return 0;
+        }
         return Math.abs(Number(num));
     }; //始终返回正数(取绝对值)
     window.numberq1 = function (num) {
-        if (isNaN(Number(num))) return 1;
+        if (isNaN(Number(num))) {
+            return 1;
+        }
         return Math.max(Math.abs(Number(num)), 1);
     }; //始终返回正数且至少为1(取绝对值)
     window.number0 = function (num) {
-        if (isNaN(Number(num))) return 0;
+        if (isNaN(Number(num))) {
+            return 0;
+        }
         return Math.max(Number(num), 0);
     }; //始终返回正数
     window.number1 = function (num) {
-        if (isNaN(Number(num))) return 1;
+        if (isNaN(Number(num))) {
+            return 1;
+        }
         return Math.max(Number(num), 1);
     }; //始终返回正数且至少为1
-    window.deepClone = function (obj) {
-        if (obj === null || typeof obj !== 'object') {
+    window.deepClone = function (obj, visited = new WeakMap()) {
+        if (obj === null || typeof obj !== 'object' || obj instanceof window.Element) {
             return obj;
         }
-        if (Array.isArray(obj)) {
-            return obj.map((item) => deepClone(item));
-        } else {
-            const clonedObj = {};
-            for (let key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    clonedObj[key] = deepClone(obj[key]);
-                }
-            }
-            return clonedObj;
+        if (visited.has(obj)) {
+            return visited.get(obj);
         }
+        if (Array.isArray(obj)) {
+            return obj.map((item) => deepClone(item, visited));
+        }
+        const clonedObj = {};
+        visited.set(obj, clonedObj);
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                clonedObj[key] = deepClone(obj[key], visited);
+            }
+        }
+        return clonedObj;
     }; //深拷贝对象
     window.factorial = function (num) {
         num = Math.round(num);
@@ -269,10 +282,16 @@ const numfunc = function () {
         return result;
     }; //阶乘
     window.isPrime = function (num) {
-        if (num === 2 || num === 3) return true;
-        if (num < 2 || num % 2 === 0 || num % 3 === 0) return false;
+        if (num === 2 || num === 3) {
+            return true;
+        }
+        if (num < 2 || num % 2 === 0 || num % 3 === 0) {
+            return false;
+        }
         for (let i = 5; i * i <= num; i += 6) {
-            if (num % i === 0 || num % (i + 2) === 0) return false;
+            if (num % i === 0 || num % (i + 2) === 0) {
+                return false;
+            }
         }
         return true;
     }; // 质数
@@ -307,12 +326,18 @@ const precontent = async function () {
                 for (const i in lib.card) {
                     const info = lib.card[i];
                     let range;
-                    let select = get.copy(info.selectTarget);
+                    const select = get.copy(info.selectTarget);
                     if (select == undefined) {
-                        if (info.filterTarget == undefined) range = [0, 0];
-                    } else if (typeof select == 'number') range = [select, select];
-                    else if (get.itemtype(select) == 'select') range = select;
-                    else if (typeof select == 'function') range = select({ name: i }, player);
+                        if (info.filterTarget == undefined) {
+                            range = [0, 0];
+                        }
+                    } else if (typeof select == 'number') {
+                        range = [select, select];
+                    } else if (get.itemtype(select) == 'select') {
+                        range = select;
+                    } else if (typeof select == 'function') {
+                        range = select({ name: i }, player);
+                    }
                     if (!Array.isArray(range)) {
                         alert(i + 'range有问题');
                     }
@@ -414,45 +439,77 @@ const precontent = async function () {
             lib.skill.jiwu = {
                 mod: {
                     aiOrder(player, card, num) {
-                        if (get.type(card) == 'equip' && !player.getEquips(get.subtype(card)).length) return 15;
-                        if (get.type(card) == 'equip' && player.getEquips(get.subtype(card)).length) return 1;
+                        if (get.type(card) == 'equip' && !player.getEquips(get.subtype(card)).length) {
+                            return 15;
+                        }
+                        if (get.type(card) == 'equip' && player.getEquips(get.subtype(card)).length) {
+                            return 1;
+                        }
                     },
                 },
                 derivation: ['qiangxix', 'retieji', 'olxuanfeng', 'rewansha'],
                 audio: 2,
                 enable: 'phaseUse',
                 filter(event, player) {
-                    if (player.countCards('he') == 0) return false;
-                    if (player.hasSkill('qiangxix') && player.hasSkill('retieji') && player.hasSkill('olxuanfeng') && player.hasSkill('rewansha')) return false;
+                    if (player.countCards('he') == 0) {
+                        return false;
+                    }
+                    if (player.hasSkill('qiangxix') && player.hasSkill('retieji') && player.hasSkill('olxuanfeng') && player.hasSkill('rewansha')) {
+                        return false;
+                    }
                     return true;
                 },
                 filterCard: true,
                 position: 'he',
                 check(card, player) {
                     player = _status.event.player;
-                    if (get.subtype(card) == 'equip1') return (6 - get.value(card)) / 6;
-                    if (get.position(card) == 'e' && player.hasSkill('olxuanfeng') && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) return 70 - get.value(card);
-                    if (get.type(card) == 'equip') return (6 - get.value(card)) / 6;
-                    if (card.name == 'sha' && player.countCards('h', { name: 'sha' }) < 3) return (6 - get.value(card)) / 6;
+                    if (get.subtype(card) == 'equip1') {
+                        return (6 - get.value(card)) / 6;
+                    }
+                    if (get.position(card) == 'e' && player.hasSkill('olxuanfeng') && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) {
+                        return 70 - get.value(card);
+                    }
+                    if (get.type(card) == 'equip') {
+                        return (6 - get.value(card)) / 6;
+                    }
+                    if (card.name == 'sha' && player.countCards('h', { name: 'sha' }) < 3) {
+                        return (6 - get.value(card)) / 6;
+                    }
                     return 9 - get.value(card);
                 },
                 content() {
                     'step 0';
-                    var list = [];
-                    if (!player.hasSkill('qiangxix')) list.push('qiangxix');
-                    if (!player.hasSkill('retieji')) list.push('retieji');
-                    if (!player.hasSkill('olxuanfeng')) list.push('olxuanfeng');
-                    if (!player.hasSkill('rewansha')) list.push('rewansha');
+                    let list = [];
+                    if (!player.hasSkill('qiangxix')) {
+                        list.push('qiangxix');
+                    }
+                    if (!player.hasSkill('retieji')) {
+                        list.push('retieji');
+                    }
+                    if (!player.hasSkill('olxuanfeng')) {
+                        list.push('olxuanfeng');
+                    }
+                    if (!player.hasSkill('rewansha')) {
+                        list.push('rewansha');
+                    }
                     if (list.length == 1) {
                         player.addTempSkills(list[0]);
                         event.finish();
                     } else {
                         player
                             .chooseControl(list, function () {
-                                if (list.includes('olxuanfeng') && player.countCards('he', { type: 'equip' }) && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) return 'olxuanfeng';
-                                if (list.includes('qiangxix') && (game.hasPlayer((Q) => player.hp > Q.hp && Q.isEnemiesOf(player)) || player.countCards('he', { subtype: 'equip1' }))) return 'qiangxix';
-                                if (list.includes('retieji') && player.hasSha()) return 'retieji';
-                                if (list.includes('rewansha') && player.getEnemies().length >= 2) return 'rewansha';
+                                if (list.includes('olxuanfeng') && player.countCards('he', { type: 'equip' }) && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) {
+                                    return 'olxuanfeng';
+                                }
+                                if (list.includes('qiangxix') && (game.hasPlayer((Q) => player.hp > Q.hp && Q.isEnemiesOf(player)) || player.countCards('he', { subtype: 'equip1' }))) {
+                                    return 'qiangxix';
+                                }
+                                if (list.includes('retieji') && player.hasSha()) {
+                                    return 'retieji';
+                                }
+                                if (list.includes('rewansha') && player.getEnemies().length >= 2) {
+                                    return 'rewansha';
+                                }
                             })
                             .set('prompt', '选择获得一项技能直到回合结束');
                     }
@@ -461,18 +518,34 @@ const precontent = async function () {
                 },
                 ai: {
                     order(name, player) {
-                        if (player.countCards('he', { type: 'equip' }) && !player.hasSkill('olxuanfeng')) return 99;
-                        if (player.countCards('e') && !player.hasSkill('retieji')) return 13;
-                        if (player.countCards('e') && !player.hasSkill('qiangxix')) return 13;
-                        if (player.countCards('e') && !player.hasSkill('rewansha')) return 13;
+                        if (player.countCards('he', { type: 'equip' }) && !player.hasSkill('olxuanfeng')) {
+                            return 99;
+                        }
+                        if (player.countCards('e') && !player.hasSkill('retieji')) {
+                            return 13;
+                        }
+                        if (player.countCards('e') && !player.hasSkill('qiangxix')) {
+                            return 13;
+                        }
+                        if (player.countCards('e') && !player.hasSkill('rewansha')) {
+                            return 13;
+                        }
                         return 10;
                     },
                     result: {
                         player(player) {
-                            if (player.countCards('he', { type: 'equip' }) && !player.hasSkill('olxuanfeng') && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) return 1;
-                            if (!player.hasSkill('qiangxix') && (game.hasPlayer((Q) => player.hp > Q.hp && Q.isEnemiesOf(player)) || player.countCards('he', { subtype: 'equip1' }))) return 1;
-                            if (!player.hasSkill('retieji') && player.hasSha()) return 1;
-                            if (!player.hasSkill('rewansha') && player.getEnemies().length >= 2) return 1;
+                            if (player.countCards('he', { type: 'equip' }) && !player.hasSkill('olxuanfeng') && game.hasPlayer((Q) => Q.countCards('he') > 0 && Q.isEnemiesOf(player))) {
+                                return 1;
+                            }
+                            if (!player.hasSkill('qiangxix') && (game.hasPlayer((Q) => player.hp > Q.hp && Q.isEnemiesOf(player)) || player.countCards('he', { subtype: 'equip1' }))) {
+                                return 1;
+                            }
+                            if (!player.hasSkill('retieji') && player.hasSha()) {
+                                return 1;
+                            }
+                            if (!player.hasSkill('rewansha') && player.getEnemies().length >= 2) {
+                                return 1;
+                            }
                             return 0;
                         },
                     },
@@ -492,15 +565,19 @@ const precontent = async function () {
                 content() {
                     'step 0';
                     player.chooseToDiscard(get.prompt('boss_zhangwu', trigger.source), 'he', [1, Infinity]).set('ai', function (card) {
-                        if (get.attitude(player, trigger.source) < 0) return 8 - get.value(card);
+                        if (get.attitude(player, trigger.source) < 0) {
+                            return 8 - get.value(card);
+                        }
                         return 0;
                     })('step 1');
                     if (result.bool) {
-                        var num = result.cards.length;
-                        var cnum = get.cnNumber(num);
+                        let num = result.cards.length;
+                        const cnum = get.cnNumber(num);
                         event.num = num;
                         trigger.source.chooseToDiscard('he', `章武:弃置${cnum}张牌,或取消并受到${cnum}点伤害`, num).set('ai', function (card) {
-                            if (!trigger.source.hasSkillTag('nodamage')) return 10 - get.value(card);
+                            if (!trigger.source.hasSkillTag('nodamage')) {
+                                return 10 - get.value(card);
+                            }
                             return 0;
                         });
                     } else {
@@ -529,7 +606,7 @@ const precontent = async function () {
                 group: 'boss_biantian4',
                 content() {
                     'step 0';
-                    for (var i = 0; i < game.players.length; i++) {
+                    for (let i = 0; i < game.players.length; i++) {
                         if (game.players[i].hasSkill('boss_biantian3')) {
                             game.players[i].removeSkill('boss_biantian3');
                             game.players[i].popup('boss_biantian3');
@@ -540,16 +617,19 @@ const precontent = async function () {
                         }
                     }
                     player.judge(function (card) {
-                        var color = get.color(card);
-                        if (color == 'black') return 1;
-                        if (color == 'red') return 0;
+                        const color = get.color(card);
+                        if (color == 'black') {
+                            return 1;
+                        }
+                        if (color == 'red') {
+                            return 0;
+                        }
                         return -1;
                     });
                     ('step 1');
-                    var targets = [],
-                        players = game.players;
+                    let targets = [], players = game.players;
                     if (result.color == 'red') {
-                        for (var i = 0; i < players.length; i++) {
+                        for (let i = 0; i < players.length; i++) {
                             if (players[i].isEnemiesOf(player)) {
                                 players[i].addSkill('boss_biantian3');
                                 players[i].popup('kuangfeng');
@@ -557,7 +637,7 @@ const precontent = async function () {
                             }
                         }
                     } else if (result.color == 'black') {
-                        for (var i = 0; i < players.length; i++) {
+                        for (let i = 0; i < players.length; i++) {
                             if (players[i].isFriendsOf(player)) {
                                 players[i].addSkill('boss_biantian2');
                                 players[i].popup('dawu');
@@ -584,7 +664,7 @@ const precontent = async function () {
                 popup: false,
                 content() {
                     'step 0';
-                    var num = trigger.num;
+                    let num = trigger.num;
                     if (num > 0) {
                         player.storage.xiangxing_count += num;
                     }
@@ -603,21 +683,21 @@ const precontent = async function () {
                         event.finish();
                     }
                     ('step 1');
-                    var list = game.players;
+                    let list = game.players;
                     list.remove(player);
                     list.sort(lib.sort.seat);
-                    var list2 = [];
-                    for (var i = 0; i < list.length; i++) {
+                    const list2 = [];
+                    for (let i = 0; i < list.length; i++) {
                         list2.push(0);
                     }
-                    for (var i = 0; i < 7; i++) {
+                    for (let i = 0; i < 7; i++) {
                         list2[Math.floor(Math.random() * list2.length)]++;
                     }
                     event.list = list;
                     event.list2 = list2;
                     ('step 2');
                     if (event.list.length) {
-                        var target = event.list.shift();
+                        const target = event.list.shift();
                         target.damage(event.list2.shift(), 'thunder');
                         player.line(target, 'thunder');
                         event.redo();
@@ -866,7 +946,7 @@ const precontent = async function () {
                 }
             }
         }
-        for (var i in lib.config.Qrecord) {
+        for (let i in lib.config.Qrecord) {
             if (!lib.config.Qrecord[i].win && !lib.config.Qrecord[i].lose) {
                 delete lib.config.Qrecord[i];
             }
@@ -911,7 +991,9 @@ const precontent = async function () {
             const name = Q[Q.length - 2]; //mod名字
             const player2 = Q[Q.length - 1];
             if (player2.name == 'HL_许劭') {
-                if (name == 'cardUsable') return true;
+                if (name == 'cardUsable') {
+                    return true;
+                }
                 return unchanged;
             } //让许劭可以无视自身mod使用牌
             if (player1?.name == 'HL_许劭') {
@@ -934,7 +1016,7 @@ const precontent = async function () {
                 skills.addArray(lib.skill.global);
                 game.expandSkills(skills);
                 skills = skills.filter(function (skill) {
-                    var info = get.info(skill);
+                    const info = get.info(skill);
                     return info && info.mod;
                 });
                 skills.sort((a, b) => get.priority(a) - get.priority(b));
@@ -942,8 +1024,10 @@ const precontent = async function () {
             const A = Q.slice(0, -2); //切掉最后两个
             if (Array.isArray(skills)) {
                 skills.forEach((skill) => {
-                    var mod = get.info(skill).mod[name];
-                    if (!mod) return;
+                    const mod = get.info(skill).mod[name];
+                    if (!mod) {
+                        return;
+                    }
                     const result = mod.call(this, ...A);
                     if (result != undefined && typeof unchanged != 'object') {
                         unchanged = result;
@@ -974,14 +1058,16 @@ const precontent = async function () {
             );
         }; //展开group
         game.addCardPack = function (pack, packagename) {
-            let extname = _status.extension || '扩展';
+            const extname = _status.extension || '扩展';
             packagename = packagename || extname;
-            let packname = 'mode_extension_' + packagename;
+            const packname = 'mode_extension_' + packagename;
             lib.cardPack[packname] = [];
             lib.cardPackInfo[packname] = pack;
             lib.translate[`${packname}_card_config`] = packagename;
-            for (var i in pack) {
-                if (i == 'mode' || i == 'forbid') continue;
+            for (let i in pack) {
+                if (i == 'mode' || i == 'forbid') {
+                    continue;
+                }
                 if (i == 'list') {
                     if (lib.config[`extension_${extname}_cards_enable`] === undefined) {
                         game.saveExtensionConfig(extname, 'cards_enable', true);
@@ -1072,7 +1158,7 @@ const precontent = async function () {
                     return;
                 }
                 if (local) {
-                    let localmode = typeof local == 'string' ? local : lib.config.mode;
+                    const localmode = typeof local == 'string' ? local : lib.config.mode;
                     if (!lib.config.mode_config[localmode]) {
                         lib.config.mode_config[localmode] = {};
                     }
@@ -1102,14 +1188,26 @@ const precontent = async function () {
             }
             const player = this,
                 info = get.info(card);
-            if (!lib.filter.cardEnabled(card, player)) return false; //卡牌使用限制
-            if (info.notarget) return true;
-            if (!info.filterTarget) return true;
-            if (!info.enable) return true;
+            if (!lib.filter.cardEnabled(card, player)) {
+                return false;
+            } //卡牌使用限制
+            if (info.notarget) {
+                return true;
+            }
+            if (!info.filterTarget) {
+                return true;
+            }
+            if (!info.enable) {
+                return true;
+            }
             return game.hasPlayer(function (current) {
-                if (info.multicheck && !info.multicheck(card, player)) return false;
+                if (info.multicheck && !info.multicheck(card, player)) {
+                    return false;
+                }
                 if (filter) {
-                    if (!lib.filter.targetInRange(card, player, current)) return false; //距离限制
+                    if (!lib.filter.targetInRange(card, player, current)) {
+                        return false;
+                    } //距离限制
                     return lib.filter.targetEnabledx(card, player, current);
                 }
                 return lib.filter.targetEnabled(card, player, current); //目标限制
@@ -1129,13 +1227,25 @@ const precontent = async function () {
             else if (evt.filterCard && evt.filterCard != lib.filter.filterCard) {
                 return evt.filterCard(card, player, evt); //这里也有次数限制
             } else {
-                if (!lib.filter.cardEnabled(card, player)) return false; //卡牌使用限制
-                if (info.notarget) return true;
-                if (!info.filterTarget) return true;
-                if (!info.enable) return true;
-                if (evt.name == 'chooseToRespond') return true; //chooseToRespond无次数距离目标限制
+                if (!lib.filter.cardEnabled(card, player)) {
+                    return false;
+                } //卡牌使用限制
+                if (info.notarget) {
+                    return true;
+                }
+                if (!info.filterTarget) {
+                    return true;
+                }
+                if (!info.enable) {
+                    return true;
+                }
+                if (evt.name == 'chooseToRespond') {
+                    return true;
+                } //chooseToRespond无次数距离目标限制
                 if (filter) {
-                    if (!lib.filter.cardUsable(card, player, evt)) return false; //次数限制
+                    if (!lib.filter.cardUsable(card, player, evt)) {
+                        return false;
+                    } //次数限制
                 }
                 if (evt.filterTarget && evt.filterTarget != lib.filter.filterTarget) {
                     return game.hasPlayer(function (current) {
@@ -1143,9 +1253,13 @@ const precontent = async function () {
                     });
                 }
                 return game.hasPlayer(function (current) {
-                    if (info.multicheck && !info.multicheck(card, player)) return false;
+                    if (info.multicheck && !info.multicheck(card, player)) {
+                        return false;
+                    }
                     if (filter) {
-                        if (!lib.filter.targetInRange(card, player, current)) return false; //距离限制
+                        if (!lib.filter.targetInRange(card, player, current)) {
+                            return false;
+                        } //距离限制
                         return lib.filter.targetEnabledx(card, player, current);
                     }
                     return lib.filter.targetEnabled(card, player, current); //目标限制
@@ -1203,11 +1317,15 @@ const precontent = async function () {
             const list = [];
             game.countPlayer2(function (current) {
                 current.getHistory('lose', function (evt) {
-                    if (evt.position == ui.discardPile) list.addArray(evt.cards);
+                    if (evt.position == ui.discardPile) {
+                        list.addArray(evt.cards);
+                    }
                 });
             });
             game.getGlobalHistory('cardMove', function (evt) {
-                if (evt.name == 'cardsDiscard') list.addArray(evt.cards);
+                if (evt.name == 'cardsDiscard') {
+                    list.addArray(evt.cards);
+                }
             });
             return list;
         }; //获取本回合进入弃牌堆的牌
@@ -1231,12 +1349,18 @@ const precontent = async function () {
                 console.warn(name + '没有卡牌info');
                 return false;
             }
-            if (info.notarget || info.selectTarget == undefined) return false;
+            if (info.notarget || info.selectTarget == undefined) {
+                return false;
+            }
             if (Array.isArray(info.selectTarget)) {
-                if (info.selectTarget[0] < 0) return !info.toself;
+                if (info.selectTarget[0] < 0) {
+                    return !info.toself;
+                }
                 return info.selectTarget[0] != 1 || info.selectTarget[1] != 1;
             } else {
-                if (info.selectTarget < 0) return !info.toself;
+                if (info.selectTarget < 0) {
+                    return !info.toself;
+                }
                 return info.selectTarget != 1;
             }
         }; //多目标牌检测
@@ -1257,9 +1381,6 @@ const precontent = async function () {
             return this;
         }; //引入mp4新逻辑
         HTMLElement.prototype.setBackgroundMp4 = function (src) {
-            if (this.qvideo) {
-                this.qvideo.remove();
-            }
             const video = document.createElement('video');
             video.src = src;
             video.style.cssText = 'bottom: 0%; left: 0%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; position: absolute; z-index: -5;';
@@ -1269,6 +1390,9 @@ const precontent = async function () {
             video.addEventListener('error', function () {
                 video.remove();
             });
+            if (this.qvideo) {
+                this.qvideo.remove();
+            }
             this.qvideo = video;
             return video;
         }; //给父元素添加一个覆盖的背景mp4
@@ -1484,10 +1608,12 @@ const precontent = async function () {
     //—————————————————————————————————————————————————————————————————————————————UI相关本体函数
     const uiq = function () {
         ui.click.mousewheel = function (evt) {
-            if (this.firstElementChild && this.firstElementChild.classList.contains('handcards') && !this.classList.contains('scrollh')) return;
-            var node = this;
-            var num = Number(QQQ.config.滚轮速度); //this._scrollnum || 6;
-            var speed = 3 * num;
+            if (this.firstElementChild && this.firstElementChild.classList.contains('handcards') && !this.classList.contains('scrollh')) {
+                return;
+            }
+            let node = this;
+            let num = Number(QQQ.config.滚轮速度); //this._scrollnum || 6;
+            const speed = 3 * num;
             clearInterval(node.interval);
             if (evt.detail > 0 || evt.wheelDelta < 0) {
                 node.interval = setInterval(function () {
@@ -1517,17 +1643,17 @@ const precontent = async function () {
             const cacheMenuxpages = menuxpages;
             /** @type { HTMLDivElement } */
             // @ts-ignore
-            var start = cacheMenuxpages.shift();
-            var rightPane = start.lastChild;
-            var pileCreated = false;
-            var recreatePile = function () {
+            const start = cacheMenuxpages.shift();
+            const rightPane = start.lastChild;
+            let pileCreated = false;
+            const recreatePile = function () {
                 lib.config.customcardpile.当前牌堆 = [lib.config.bannedpile, lib.config.addedpile];
                 game.saveConfig('customcardpile', lib.config.customcardpile);
                 game.saveConfig('cardpilename', '当前牌堆', true);
                 pileCreated = false;
             };
-            var clickMode = function () {
-                var active = this.parentNode.querySelector('.active');
+            const clickMode = function () {
+                let active = this.parentNode.querySelector('.active');
                 if (active === this) {
                     return;
                 }
@@ -1539,8 +1665,9 @@ const precontent = async function () {
                 if (this.mode == 'cardpile') {
                     this.create();
                 }
-                if (this.link) rightPane.appendChild(this.link);
-                else {
+                if (this.link) {
+                    rightPane.appendChild(this.link);
+                } else {
                     this._initLink();
                     rightPane.appendChild(this.link);
                 }
@@ -1552,60 +1679,82 @@ const precontent = async function () {
                         return;
                     }
                 }
-                if (!node.link) node._initLink();
-                for (var i = 0; i < node.link.childElementCount; i++) {
+                if (!node.link) {
+                    node._initLink();
+                }
+                for (let i = 0; i < node.link.childElementCount; i++) {
                     if (node.link.childNodes[i].updateBanned) {
                         node.link.childNodes[i].updateBanned();
                     }
                 }
             });
-            var updateNodes = function () {
-                for (var i = 0; i < start.firstChild.childNodes.length; i++) {
-                    var node = start.firstChild.childNodes[i];
+            const updateNodes = function () {
+                for (let i = 0; i < start.firstChild.childNodes.length; i++) {
+                    let node = start.firstChild.childNodes[i];
                     if (node.mode) {
                         if (node.mode.startsWith('mode_')) {
                             // 扩展卡牌包开启逻辑
                             if (node.mode.startsWith('mode_extension')) {
                                 const extName = node.mode.slice(15);
-                                if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) continue;
+                                if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) {
+                                    continue;
+                                }
                                 if (lib.config[`extension_${extName}_cards_enable`] == true) {
                                     node.classList.remove('off');
-                                    if (node.link && node.link.firstChild) node.link.firstChild.classList.add('on'); //QQQ
+                                    if (node.link && node.link.firstChild) {
+                                        node.link.firstChild.classList.add('on');
+                                    } //QQQ
                                 } else {
                                     node.classList.add('off');
-                                    if (node.link) node.link.firstChild.classList.remove('on');
+                                    if (node.link) {
+                                        node.link.firstChild.classList.remove('on');
+                                    }
                                 }
                             }
                             continue;
                         }
-                        if (node.mode == 'custom') continue;
-                        if (node.mode == 'cardpile') continue;
+                        if (node.mode == 'custom') {
+                            continue;
+                        }
+                        if (node.mode == 'cardpile') {
+                            continue;
+                        }
                         if (connectMenu) {
                             if (!lib.config.connect_cards.includes(node.mode)) {
                                 node.classList.remove('off');
-                                if (node.link) node.link.firstChild.classList.add('on');
+                                if (node.link) {
+                                    node.link.firstChild.classList.add('on');
+                                }
                             } else {
                                 node.classList.add('off');
-                                if (node.link) node.link.firstChild.classList.remove('on');
+                                if (node.link) {
+                                    node.link.firstChild.classList.remove('on');
+                                }
                             }
                         } else {
                             if (lib.config.cards.includes(node.mode)) {
                                 node.classList.remove('off');
-                                if (node.link) node.link.firstChild.classList.add('on');
+                                if (node.link) {
+                                    node.link.firstChild.classList.add('on');
+                                }
                             } else {
                                 node.classList.add('off');
-                                if (node.link) node.link.firstChild.classList.remove('on');
+                                if (node.link) {
+                                    node.link.firstChild.classList.remove('on');
+                                }
                             }
                         }
                     }
                 }
             };
-            var togglePack = function (bool) {
-                var name = this._link.config._name;
+            const togglePack = function (bool) {
+                let name = this._link.config._name;
                 // 扩展卡牌包开启逻辑
                 if (name.startsWith('mode_extension')) {
                     const extName = name.slice(15);
-                    if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) return false;
+                    if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) {
+                        return false;
+                    }
                     game.saveExtensionConfig(extName, 'cards_enable', bool);
                 }
                 // 原逻辑
@@ -1628,9 +1777,9 @@ const precontent = async function () {
                 }
                 updateNodes();
             };
-            var toggleCardPile = function (bool) {
-                var name = this._link.config._name;
-                var number = this._link.config._number;
+            const toggleCardPile = function (bool) {
+                let name = this._link.config._name;
+                let number = this._link.config._number;
                 if (!lib.config.bannedpile[name]) {
                     lib.config.bannedpile[name] = [];
                 }
@@ -1641,12 +1790,14 @@ const precontent = async function () {
                 }
                 recreatePile();
             };
-            var createModeConfig = function (mode, position) {
-                var info = lib.cardPack[mode];
-                let cardPack = lib.cardPackInfo[mode];
-                if (!lib.cardPile[mode] && cardPack && cardPack.list && Array.isArray(cardPack.list)) lib.cardPile[mode] = cardPack.list;
-                var page = ui.create.div('');
-                var node = ui.create.div('.menubutton.large', lib.translate[`${mode}_card_config`], position, clickMode);
+            const createModeConfig = function (mode, position) {
+                const info = lib.cardPack[mode];
+                const cardPack = lib.cardPackInfo[mode];
+                if (!lib.cardPile[mode] && cardPack && cardPack.list && Array.isArray(cardPack.list)) {
+                    lib.cardPile[mode] = cardPack.list;
+                }
+                const page = ui.create.div('');
+                let node = ui.create.div('.menubutton.large', lib.translate[`${mode}_card_config`], position, clickMode);
                 if (node.innerHTML.length >= 5) {
                     node.classList.add('smallfont');
                 }
@@ -1654,13 +1805,15 @@ const precontent = async function () {
                 node._initLink = function () {
                     node.link = page;
                     const list = [];
-                    for (var i = 0; i < info.length; i++) {
-                        if (!lib.card[info[i]]) continue; //QQQ
+                    for (let i = 0; i < info.length; i++) {
+                        if (!lib.card[info[i]]) {
+                            continue;
+                        } //QQQ
                         list.push([get.translation(get.type(info[i], 'trick')), '', info[i]]);
                     }
-                    var sortCard = function (card) {
-                        var type = lib.card[card[2]].type;
-                        var subtype = lib.card[card[2]].subtype;
+                    const sortCard = function (card) {
+                        const type = lib.card[card[2]].type;
+                        const subtype = lib.card[card[2]].subtype;
                         if (lib.cardType[subtype]) {
                             return lib.cardType[subtype];
                         }
@@ -1699,8 +1852,8 @@ const precontent = async function () {
                         }
                     };
                     list.sort(function (a, b) {
-                        var sort1 = sortCard(a);
-                        var sort2 = sortCard(b);
+                        const sort1 = sortCard(a);
+                        const sort2 = sortCard(b);
                         if (sort1 == sort2) {
                             return b[2] < a[2] ? 1 : -1;
                         } else if (sort1 > sort2) {
@@ -1709,14 +1862,16 @@ const precontent = async function () {
                             return -1;
                         }
                     });
-                    var cfgnode = createConfig({
+                    const cfgnode = createConfig({
                         name: '开启',
                         _name: mode,
                         init: (() => {
                             // 扩展卡牌包开启逻辑
                             if (mode.startsWith('mode_extension')) {
                                 const extName = mode.slice(15);
-                                if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) return false;
+                                if (!game.hasExtension(extName) || !game.hasExtensionLoaded(extName)) {
+                                    return false;
+                                }
                                 // 这块或许应该在加载扩展时候写
                                 if (lib.config[`extension_${extName}_cards_enable`] === undefined) {
                                     game.saveExtensionConfig(extName, 'cards_enable', true);
@@ -1724,7 +1879,9 @@ const precontent = async function () {
                                 return lib.config[`extension_${extName}_cards_enable`] === true;
                             }
                             // 原逻辑
-                            else return lib.config.cards.includes(mode);
+                            else {
+                                return lib.config.cards.includes(mode);
+                            }
                         })(),
                         onclick: togglePack,
                     });
@@ -1733,7 +1890,7 @@ const precontent = async function () {
                     } else {
                         page.style.paddingTop = '8px';
                     }
-                    var banCard = function (e) {
+                    const banCard = function (e) {
                         if (_status.clicked) {
                             _status.clicked = false;
                             return;
@@ -1747,10 +1904,10 @@ const precontent = async function () {
                         _status.clicked = false;
                         delete this._banning;
                     };
-                    var updateBanned = function () {
-                        var list;
+                    const updateBanned = function () {
+                        let list;
                         if (connectMenu) {
-                            var mode = cacheMenux.pages[0].firstChild.querySelector('.active');
+                            const mode = cacheMenux.pages[0].firstChild.querySelector('.active');
                             if (mode && mode.mode) {
                                 list = lib.config[`connect_${mode.mode}_bannedcards`];
                             }
@@ -1763,8 +1920,8 @@ const precontent = async function () {
                             this.classList.remove('banned');
                         }
                     };
-                    var buttons = ui.create.buttons(list, 'vcard', page);
-                    for (var i = 0; i < buttons.length; i++) {
+                    const buttons = ui.create.buttons(list, 'vcard', page);
+                    for (let i = 0; i < buttons.length; i++) {
                         buttons[i].classList.add('noclick');
                         buttons[i].listen(banCard);
                         if (mode != 'mode_banned') {
@@ -1790,8 +1947,8 @@ const precontent = async function () {
                         });
                     }
                     if ((!mode.startsWith('mode_') || (cardPack && cardPack.closeable)) && lib.cardPile[mode]) {
-                        var cardpileNodes = [];
-                        var cardpileexpanded = false;
+                        const cardpileNodes = [];
+                        let cardpileexpanded = false;
                         if (!lib.config.bannedpile[mode]) {
                             lib.config.bannedpile[mode] = [];
                         }
@@ -1801,30 +1958,30 @@ const precontent = async function () {
                         ui.create.div('.config.more.pile', '编辑牌堆 <div>&gt;</div>', page, function () {
                             if (cardpileexpanded) {
                                 this.classList.remove('on');
-                                for (var k = 0; k < cardpileNodes.length; k++) {
+                                for (let k = 0; k < cardpileNodes.length; k++) {
                                     cardpileNodes[k].style.display = 'none';
                                 }
                             } else {
                                 this.classList.add('on');
-                                for (var k = 0; k < cardpileNodes.length; k++) {
+                                for (let k = 0; k < cardpileNodes.length; k++) {
                                     cardpileNodes[k].style.display = '';
                                 }
                             }
                             cardpileexpanded = !cardpileexpanded;
                         });
-                        var cfgnode = ui.create.div(page, '.config.pointerspan.cardpilecfg.toggle');
-                        var cfgaddcard = ui.create.node('button', '', '添加卡牌', cfgnode, function () {
+                        const cfgnode = ui.create.div(page, '.config.pointerspan.cardpilecfg.toggle');
+                        const cfgaddcard = ui.create.node('button', '', '添加卡牌', cfgnode, function () {
                             this.parentNode.nextSibling.classList.toggle('hidden');
                         });
-                        var cfgbancard = ui.create.node('button', '', '全部关闭', cfgnode, function () {
-                            for (var i = 0; i < cardpileNodes.length; i++) {
+                        const cfgbancard = ui.create.node('button', '', '全部关闭', cfgnode, function () {
+                            for (let i = 0; i < cardpileNodes.length; i++) {
                                 if (cardpileNodes[i].type == 'defaultcards' && cardpileNodes[i].classList.contains('on')) {
                                     clickToggle.call(cardpileNodes[i]);
                                 }
                             }
                         });
-                        var cfgenablecard = ui.create.node('button', '', '全部开启', cfgnode, function () {
-                            for (var i = 0; i < cardpileNodes.length; i++) {
+                        const cfgenablecard = ui.create.node('button', '', '全部开启', cfgnode, function () {
+                            for (let i = 0; i < cardpileNodes.length; i++) {
                                 if (cardpileNodes[i].type == 'defaultcards' && !cardpileNodes[i].classList.contains('on')) {
                                     clickToggle.call(cardpileNodes[i]);
                                 }
@@ -1838,12 +1995,14 @@ const precontent = async function () {
                         cfgnode.classList.add('toggle');
                         cfgnode.style.marginTop = '5px';
                         page.appendChild(cfgnode);
-                        var cardpileadd = ui.create.div('.config.toggle.hidden.cardpilecfg.cardpilecfgadd', page);
-                        var pileaddlist = [];
-                        for (var i = 0; i < lib.config.cards.length; i++) {
-                            if (!lib.cardPack[lib.config.cards[i]]) continue;
-                            for (var j = 0; j < lib.cardPack[lib.config.cards[i]].length; j++) {
-                                var cname = lib.cardPack[lib.config.cards[i]][j];
+                        const cardpileadd = ui.create.div('.config.toggle.hidden.cardpilecfg.cardpilecfgadd', page);
+                        const pileaddlist = [];
+                        for (let i = 0; i < lib.config.cards.length; i++) {
+                            if (!lib.cardPack[lib.config.cards[i]]) {
+                                continue;
+                            }
+                            for (let j = 0; j < lib.cardPack[lib.config.cards[i]].length; j++) {
+                                const cname = lib.cardPack[lib.config.cards[i]][j];
                                 pileaddlist.push([cname, get.translation(cname)]);
                                 if (cname == 'sha') {
                                     pileaddlist.push(['huosha', '火杀']);
@@ -1853,11 +2012,11 @@ const precontent = async function () {
                                 }
                             }
                         }
-                        var cardpileaddname = ui.create.selectlist(pileaddlist, null, cardpileadd);
+                        const cardpileaddname = ui.create.selectlist(pileaddlist, null, cardpileadd);
                         cardpileaddname.style.width = '75px';
                         cardpileaddname.style.marginRight = '2px';
                         cardpileaddname.style.marginLeft = '-1px';
-                        var cardpileaddsuit = ui.create.selectlist(
+                        const cardpileaddsuit = ui.create.selectlist(
                             [
                                 ['heart', '♥️️'],
                                 ['diamond', '♦️️'],
@@ -1869,17 +2028,17 @@ const precontent = async function () {
                         );
                         cardpileaddsuit.style.width = '53px';
                         cardpileaddsuit.style.marginRight = '2px';
-                        var cardpileaddnumber = ui.create.selectlist([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], null, cardpileadd);
+                        const cardpileaddnumber = ui.create.selectlist([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], null, cardpileadd);
                         cardpileaddnumber.style.width = '43px';
                         cardpileaddnumber.style.marginRight = '2px';
-                        var button = document.createElement('button');
+                        const button = document.createElement('button');
                         button.innerHTML = '确定';
                         button.style.width = '40px';
-                        var deletecard = function () {
+                        const deletecard = function () {
                             this.parentNode.remove();
-                            var info = this.parentNode._info;
-                            var list = lib.config.addedpile[mode];
-                            for (var i = 0; i < list.length; i++) {
+                            const info = this.parentNode._info;
+                            let list = lib.config.addedpile[mode];
+                            for (let i = 0; i < list.length; i++) {
                                 if (list[i][0] == info[0] && list[i][1] == info[1] && list[i][2] == info[2]) {
                                     list.splice(i, 1);
                                     break;
@@ -1888,13 +2047,13 @@ const precontent = async function () {
                             recreatePile();
                         };
                         button.onclick = function () {
-                            var card = [cardpileaddsuit.value, cardpileaddnumber.value, cardpileaddname.value];
+                            let card = [cardpileaddsuit.value, cardpileaddnumber.value, cardpileaddname.value];
                             lib.config.addedpile[mode].push(card);
                             recreatePile();
-                            var cfgnode = ui.create.div('.config.toggle.cardpilecfg');
+                            const cfgnode = ui.create.div('.config.toggle.cardpilecfg');
                             cfgnode._info = card;
                             cfgnode.innerHTML = get.translation(card[2]) + ' ' + get.translation(card[0]) + get.strNumber(card[1]);
-                            var cfgnodedelete = document.createElement('span');
+                            const cfgnodedelete = document.createElement('span');
                             cfgnodedelete.classList.add('cardpiledelete');
                             cfgnodedelete.innerHTML = '删除';
                             cfgnodedelete.onclick = deletecard;
@@ -1904,12 +2063,12 @@ const precontent = async function () {
                         cardpileadd.appendChild(button);
                         cardpileadd.style.whiteSpace = 'nowrap';
                         cardpileNodes.push(cardpileadd);
-                        for (var i = 0; i < lib.config.addedpile[mode].length; i++) {
-                            var card = lib.config.addedpile[mode][i];
-                            var cfgnode = ui.create.div('.config.toggle.cardpilecfg');
+                        for (let i = 0; i < lib.config.addedpile[mode].length; i++) {
+                            let card = lib.config.addedpile[mode][i];
+                            const cfgnode = ui.create.div('.config.toggle.cardpilecfg');
                             cfgnode._info = card;
                             cfgnode.innerHTML = get.translation(card[2]) + ' ' + get.translation(card[0]) + card[1];
-                            var cfgnodedelete = document.createElement('span');
+                            const cfgnodedelete = document.createElement('span');
                             cfgnodedelete.classList.add('cardpiledelete');
                             cfgnodedelete.innerHTML = '删除';
                             cfgnodedelete.onclick = deletecard;
@@ -1918,9 +2077,9 @@ const precontent = async function () {
                             cardpileNodes.push(cfgnode);
                             page.appendChild(cfgnode);
                         }
-                        for (var i = 0; i < lib.cardPile[mode].length; i++) {
-                            var card = lib.cardPile[mode][i];
-                            var cfgnode = createConfig({
+                        for (let i = 0; i < lib.cardPile[mode].length; i++) {
+                            let card = lib.cardPile[mode][i];
+                            const cfgnode = createConfig({
                                 name: (card[2] == 'sha' && card[3] ? get.translation(card[3]) : '') + get.translation(card[2]) + ' ' + get.translation(card[0]) + get.strNumber(card[1]),
                                 _number: i,
                                 _name: mode,
@@ -1936,35 +2095,44 @@ const precontent = async function () {
                         ui.create.div('.menuplaceholder', page);
                     }
                 };
-                if (!get.config('menu_loadondemand')) node._initLink();
+                if (!get.config('menu_loadondemand')) {
+                    node._initLink();
+                }
                 return node;
             };
             if (!connectMenu && lib.config.show_ban_menu) {
                 lib.cardPack.mode_banned = [];
-                for (var i = 0; i < lib.config.all.mode.length; i++) {
-                    var banned = lib.config[lib.config.all.mode[i] + '_bannedcards'];
+                for (let i = 0; i < lib.config.all.mode.length; i++) {
+                    const banned = lib.config[lib.config.all.mode[i] + '_bannedcards'];
                     if (banned) {
-                        for (var j = 0; j < banned.length; j++) {
+                        for (let j = 0; j < banned.length; j++) {
                             lib.cardPack.mode_banned.add(banned[j]);
                         }
                     }
                 }
-                var bannednode = createModeConfig('mode_banned', start.firstChild);
+                const bannednode = createModeConfig('mode_banned', start.firstChild);
                 if (lib.cardPack.mode_banned.length == 0) {
                     bannednode.style.display = 'none';
                 }
                 delete lib.cardPack.mode_banned;
             }
-            for (var i = 0; i < lib.config.all.cards.length; i++) {
-                if (connectMenu && !lib.connectCardPack.includes(lib.config.all.cards[i])) continue;
+            for (let i = 0; i < lib.config.all.cards.length; i++) {
+                if (connectMenu && !lib.connectCardPack.includes(lib.config.all.cards[i])) {
+                    continue;
+                }
                 createModeConfig(lib.config.all.cards[i], start.firstChild);
             }
-            if (!connectMenu)
+            if (!connectMenu) {
                 Object.keys(lib.cardPack).forEach((key) => {
-                    if (!lib.config.all.cards.includes(key)) createModeConfig(key, start.firstChild);
-                    if (connectMenu) lib.connectCardPack.add(key);
+                    if (!lib.config.all.cards.includes(key)) {
+                        createModeConfig(key, start.firstChild);
+                    }
+                    if (connectMenu) {
+                        lib.connectCardPack.add(key);
+                    }
                 });
-            var active = start.firstChild.querySelector('.active');
+            }
+            let active = start.firstChild.querySelector('.active');
             if (!active) {
                 active = start.firstChild.firstChild;
                 if (active.style.display == 'none') {
@@ -1973,32 +2141,38 @@ const precontent = async function () {
                 active.classList.add('active');
                 updateActiveCard(active);
             }
-            if (!active.link) active._initLink();
+            if (!active.link) {
+                active._initLink();
+            }
             rightPane.appendChild(active.link);
             (function () {
-                if (connectMenu) return;
-                var page = ui.create.div('.menu-buttons');
-                var node = ui.create.div('.menubutton.large', '牌堆', clickMode);
+                if (connectMenu) {
+                    return;
+                }
+                const page = ui.create.div('.menu-buttons');
+                let node = ui.create.div('.menubutton.large', '牌堆', clickMode);
                 start.firstChild.insertBefore(node, start.firstChild.querySelector('.lefttext'));
                 node.link = page;
                 node.mode = 'cardpile';
                 node.create = function () {
-                    if (pileCreated) return;
+                    if (pileCreated) {
+                        return;
+                    }
                     pileCreated = true;
                     page.innerHTML = '';
-                    var pileList = null;
-                    var createList = function () {
+                    let pileList = null;
+                    const createList = function () {
                         if (pileList) {
                             pileList.remove();
                         }
-                        var list = ['默认牌堆'];
+                        let list = ['默认牌堆'];
                         if (lib.config.customcardpile.当前牌堆) {
                             list.push('当前牌堆');
                         }
-                        for (var i in lib.config.customcardpile) {
+                        for (let i in lib.config.customcardpile) {
                             list.add(i);
                         }
-                        var currentpile = get.config('cardpilename');
+                        let currentpile = get.config('cardpilename');
                         if (!currentpile) {
                             if (list.includes('当前牌堆')) {
                                 currentpile = '当前牌堆';
@@ -2012,26 +2186,28 @@ const precontent = async function () {
                         });
                         pileList.style.float = 'right';
                     };
-                    var pileChoose = ui.create.div('.config.toggle.cardpilecfg.nomarginleft', '选择牌堆', page);
+                    const pileChoose = ui.create.div('.config.toggle.cardpilecfg.nomarginleft', '选择牌堆', page);
                     createList();
-                    var pileDel = function () {
+                    const pileDel = function () {
                         delete lib.config.customcardpile[this.parentNode.link];
                         this.parentNode.remove();
                         game.saveConfig('customcardpile', lib.config.customcardpile);
-                        for (var i in lib.config.mode_config) {
-                            if (i == 'global') continue;
+                        for (let i in lib.config.mode_config) {
+                            if (i == 'global') {
+                                continue;
+                            }
                             if (lib.config.mode_config[i].cardpilename == this.parentNode.link) {
                                 game.saveConfig('cardpilename', null, i);
                             }
                         }
                         createList();
                     };
-                    var restart = ui.create.div('.config.more', '重新启动', game.reload, page);
+                    const restart = ui.create.div('.config.more', '重新启动', game.reload, page);
                     restart.style.display = 'none';
-                    var createPileNode = function (name) {
-                        var node = ui.create.div('.config.toggle.cardpilecfg.nomarginleft', name);
+                    const createPileNode = function (name) {
+                        let node = ui.create.div('.config.toggle.cardpilecfg.nomarginleft', name);
                         node.link = name;
-                        var del = document.createElement('span');
+                        const del = document.createElement('span');
                         del.innerHTML = '删除';
                         del.classList.add('cardpiledelete');
                         del.onclick = pileDel;
@@ -2042,10 +2218,10 @@ const precontent = async function () {
                             page.insertBefore(node, restart);
                         }
                     };
-                    for (var i in lib.config.customcardpile) {
+                    for (let i in lib.config.customcardpile) {
                         createPileNode(i);
                     }
-                    var exportCardPile;
+                    let exportCardPile;
                     ui.create.div('.config.more', '保存当前牌堆 <div>&gt;</div>', page, function () {
                         this.classList.toggle('on');
                         if (this.classList.contains('on')) {
@@ -2057,15 +2233,15 @@ const precontent = async function () {
                     exportCardPile = ui.create.div('.config.cardpileadd.indent', page);
                     exportCardPile.classList.add('hidden');
                     ui.create.div('', `名称:<input type='text'><button>确定</button>`, exportCardPile);
-                    var input = exportCardPile.firstChild.lastChild.previousSibling;
+                    const input = exportCardPile.firstChild.lastChild.previousSibling;
                     input.value = '自定义牌堆';
                     input.style.marginRight = '3px';
                     input.style.width = '120px';
                     exportCardPile.firstChild.lastChild.onclick = function () {
-                        var name = input.value;
-                        var ok = true;
+                        let name = input.value;
+                        const ok = true;
                         if (lib.config.customcardpile[name] || name == '默认牌堆' || name == '当前牌堆') {
-                            for (var i = 1; i <= 1000; i++) {
+                            for (let i = 1; i <= 1000; i++) {
                                 if (!lib.config.customcardpile[`${name}(${i})`]) {
                                     name = name + `(${i})`;
                                     break;
@@ -2074,12 +2250,12 @@ const precontent = async function () {
                         }
                         lib.config.customcardpile[name] = [lib.config.bannedpile, lib.config.addedpile];
                         delete lib.config.customcardpile.当前牌堆;
-                        for (var i in lib.mode) {
+                        for (let i in lib.mode) {
                             if (lib.config.mode_config[i] && (lib.config.mode_config[i].cardpilename == '当前牌堆' || !lib.config.mode_config[i].cardpilename)) {
                                 game.saveConfig('cardpilename', name, i);
                             }
                         }
-                        for (var i = 0; i < page.childElementCount; i++) {
+                        for (let i = 0; i < page.childElementCount; i++) {
                             if (page.childNodes[i].link == '当前牌堆') {
                                 page.childNodes[i].remove();
                                 break;
@@ -2093,11 +2269,11 @@ const precontent = async function () {
             })();
             if (!connectMenu) {
                 // 下面使用了var的特性,请不要在这里直接改为let
-                var node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {
+                const node1 = ui.create.div('.lefttext', '全部开启', start.firstChild, function () {
                     game.saveConfig('cards', lib.config.all.cards);
                     updateNodes();
                 });
-                var node2 = ui.create.div('.lefttext', '回复默认', start.firstChild, function () {
+                const node2 = ui.create.div('.lefttext', '回复默认', start.firstChild, function () {
                     game.saveConfig('cards', lib.config.defaultcards);
                     updateNodes();
                 });
@@ -2112,13 +2288,17 @@ const precontent = async function () {
              */
             return function (packName) {
                 // 判断菜单栏有没有加载过这个卡牌包
-                if ([...start.firstChild.children].map((node) => node.mode).includes(packName)) return;
+                if ([...start.firstChild.children].map((node) => node.mode).includes(packName)) {
+                    return;
+                }
                 // 显示不是无名杀自带的卡牌包
                 if (!lib.connectCardPack.includes(packName) && !lib.config.all.cards.includes(packName)) {
                     if (!connectMenu) {
                         createModeConfig(packName, start.firstChild, node1);
                     } //显示衍生牌
-                    if (connectMenu) lib.connectCardPack.add(packName);
+                    if (connectMenu) {
+                        lib.connectCardPack.add(packName);
+                    }
                 } //显示衍生牌
             };
         }; //修复扩展乱斗模式报错,因为本体把扩展中带有衍生标签的卡牌都放进了衍生卡牌包里面,导致原扩展卡牌包变成空的,游戏要添加卡牌包开关按钮,就找不到firstchlid
@@ -2130,7 +2310,9 @@ const precontent = async function () {
             return false;
         };
         get.equipValue = function (card, player) {
-            if (!card) return 0;
+            if (!card) {
+                return 0;
+            }
             player = player ?? get.owner(card) ?? _status.event.player;
             const info = lib.card[card.name];
             if (info?.ai) {
@@ -2162,7 +2344,9 @@ const precontent = async function () {
         get.value = function (card, player, method) {
             let value;
             if (Array.isArray(card)) {
-                if (!card.length) return 0;
+                if (!card.length) {
+                    return 0;
+                }
                 value = 0;
                 for (const i of card) {
                     value += get.value(i, player, method);
@@ -2192,21 +2376,31 @@ const precontent = async function () {
                 return card._modValue(player, method);
             }
             const aii = get.info(card).ai;
-            if (aii && aii.value) value = aii.value;
-            else if (aii && aii.basic) value = aii.basic.value;
-            var geti = function () {
+            if (aii && aii.value) {
+                value = aii.value;
+            } else if (aii && aii.basic) {
+                value = aii.basic.value;
+            }
+            const geti = function () {
                 return player.getCardIndex('hs', card.name, card, 5);
             };
             let result = 0;
             if (typeof value == 'function') {
                 result = value(card, player, geti(), method);
             }
-            if (typeof value == 'number') result = value;
+            if (typeof value == 'number') {
+                result = value;
+            }
             if (Array.isArray(value)) {
-                if (method == 'raw') result = value[0];
-                var num = geti();
-                if (num < value.length) result = value[Math.max(0, num)];
-                else result = value[value.length - 1];
+                if (method == 'raw') {
+                    result = value[0];
+                }
+                let num = geti();
+                if (num < value.length) {
+                    result = value[Math.max(0, num)];
+                } else {
+                    result = value[value.length - 1];
+                }
             }
             result = game.checkMod(player, card, result, 'aiValue', player);
             return result;
@@ -2241,8 +2435,10 @@ const precontent = async function () {
                     }
                     return lib.card.sha;
                 }
-                var name = item.name;
-                if (player !== false) name = get.name(item, player); //这里不能换成自带子属性,不然视为牌不能正常使用(神关羽武神)
+                let name = item.name;
+                if (player !== false) {
+                    name = get.name(item, player);
+                } //这里不能换成自带子属性,不然视为牌不能正常使用(神关羽武神)
                 return lib.card[name];
             } else {
                 if (QQQ.作者模式) {
@@ -2256,9 +2452,13 @@ const precontent = async function () {
             }
         }; //报错取消
         get.type = function (obj, method, player) {
-            if (typeof obj == 'string') obj = { name: obj };
-            if (typeof obj != 'object') return;
-            var name = obj.name;
+            if (typeof obj == 'string') {
+                obj = { name: obj };
+            }
+            if (typeof obj != 'object') {
+                return;
+            }
+            let name = obj.name;
             if (!lib.card[name]) {
                 if (!name) {
                     if (QQQ.作者模式) {
@@ -2268,20 +2468,27 @@ const precontent = async function () {
                     }
                     return;
                 }
-                if (!name.startsWith('sha_')) return;
+                if (!name.startsWith('sha_')) {
+                    return;
+                }
                 if (
                     name
                         .slice(4)
                         .split('_')
                         .every((n) => lib.nature.has(n))
-                )
+                ) {
                     return 'basic';
+                }
             }
-            if (method == 'trick' && lib.card[name].type == 'delay') return 'trick';
+            if (method == 'trick' && lib.card[name].type == 'delay') {
+                return 'trick';
+            }
             return lib.card[name].type;
         };
         get.is.shownCard = function (card) {
-            if (!card) return false;
+            if (!card) {
+                return false;
+            }
             const gaintag = card.gaintag;
             return Array.isArray(gaintag) && gaintag.some((tag) => tag && tag.startsWith('visible_'));
         };
@@ -2346,17 +2553,19 @@ const precontent = async function () {
             get() {
                 return function () {
                     if (QQQ.config.属性杀) {
-                        for (var i = 0; i < arguments.length; i++) {
+                        for (let i = 0; i < arguments.length; i++) {
                             if (typeof arguments[i] == 'number') {
-                                var num = arguments[i];
+                                let num = arguments[i];
                             } else if (get.itemtype(arguments[i]) == 'player') {
-                                var source = arguments[i];
+                                let source = arguments[i];
                             } else if (get.itemtype(arguments[i]) == 'nature' && arguments[i] != 'stab') {
-                                var nature = arguments[i];
+                                let nature = arguments[i];
                             } else if (get.itemtype(arguments[i]) == 'natures') {
-                                var natures = arguments[i].split(lib.natureSeparator);
+                                const natures = arguments[i].split(lib.natureSeparator);
                                 natures.remove('stab');
-                                if (natures.length) var nature = natures.join(lib.natureSeparator);
+                                if (natures.length) {
+                                    let nature = natures.join(lib.natureSeparator);
+                                }
                             }
                         }
                         if (source == undefined) {
@@ -2371,18 +2580,20 @@ const precontent = async function () {
                                 source.discardPlayerCard(this, 'he', 4 * numQ, true);
                                 return game.kong;
                             }
-                            if (this.countCards('h') < 4 * numQ) this.discard(this.getCards('he'));
+                            if (this.countCards('h') < 4 * numQ) {
+                                this.discard(this.getCards('he'));
+                            }
                         }
                         if (nature == 'kami') {
                             this.loseMaxHp(numQ).source = source;
                             return game.kong;
                         }
                     }
-                    var next = game.createEvent('damage');
+                    let next = game.createEvent('damage');
                     next.player = this;
-                    var nocard, nosource;
-                    var event = _status.event;
-                    for (var i = 0; i < arguments.length; i++) {
+                    let nocard, nosource;
+                    const event = _status.event;
+                    for (let i = 0; i < arguments.length; i++) {
                         if (get.itemtype(arguments[i]) == 'cards') {
                             next.cards = arguments[i].slice(0);
                         } else if (get.itemtype(arguments[i]) == 'card') {
@@ -2405,14 +2616,22 @@ const precontent = async function () {
                         } else if (get.itemtype(arguments[i]) == 'nature' && arguments[i] != 'stab') {
                             next.nature = arguments[i];
                         } else if (get.itemtype(arguments[i]) == 'natures') {
-                            var natures = arguments[i].split(lib.natureSeparator);
+                            const natures = arguments[i].split(lib.natureSeparator);
                             natures.remove('stab');
-                            if (natures.length) next.nature = natures.join(lib.natureSeparator);
+                            if (natures.length) {
+                                next.nature = natures.join(lib.natureSeparator);
+                            }
                         }
                     }
-                    if (next.card == undefined && !nocard) next.card = event.card;
-                    if (next.cards == undefined && !nocard) next.cards = event.cards;
-                    if (next.source == undefined && !nosource) next.source = event.customSource || event.player;
+                    if (next.card == undefined && !nocard) {
+                        next.card = event.card;
+                    }
+                    if (next.cards == undefined && !nocard) {
+                        next.cards = event.cards;
+                    }
+                    if (next.source == undefined && !nosource) {
+                        next.source = event.customSource || event.player;
+                    }
                     if (next.source && next.source.isDead()) {
                         delete next.source;
                     }
@@ -2428,18 +2647,27 @@ const precontent = async function () {
                     next.original_num = next.num;
                     next.change_history = [];
                     next.hasNature = function (nature) {
-                        if (!nature) return Boolean(this.nature && this.nature.length);
-                        let natures = get.natureList(nature),
-                            naturesx = get.natureList(this.nature);
-                        if (nature == 'linked') return naturesx.some((n) => lib.linked.includes(n));
+                        if (!nature) {
+                            return Boolean(this.nature && this.nature.length);
+                        }
+                        const natures = get.natureList(nature), naturesx = get.natureList(this.nature);
+                        if (nature == 'linked') {
+                            return naturesx.some((n) => lib.linked.includes(n));
+                        }
                         return get.is.sameNature(natures, naturesx);
                     };
                     next.setContent('damageQ');
                     next.filterStop = function () {
-                        if (this.source && this.source.isDead()) delete this.source;
-                        var num = this.original_num;
-                        for (const i of this.change_history) num += i;
-                        if (num != this.num) this.change_history.push(this.num - num);
+                        if (this.source && this.source.isDead()) {
+                            delete this.source;
+                        }
+                        let num = this.original_num;
+                        for (const i of this.change_history) {
+                            num += i;
+                        }
+                        if (num != this.num) {
+                            this.change_history.push(this.num - num);
+                        }
                         if (this.num <= 0) {
                             delete this.filterStop;
                             this.trigger('damageZero');
@@ -2475,7 +2703,7 @@ const precontent = async function () {
                 }
             } //QQQ
             if (player.hujia > 0 && !player.hasSkillTag('nohujia')) {
-                var damageAudioInfo = lib.natureAudio.hujia_damage[event.nature];
+                let damageAudioInfo = lib.natureAudio.hujia_damage[event.nature];
                 if (!damageAudioInfo || damageAudioInfo == 'normal') {
                     damageAudioInfo = 'effect/hujia_damage' + (num > 1 ? '2' : '') + '.mp3';
                 } else if (damageAudioInfo == 'default') {
@@ -2484,11 +2712,13 @@ const precontent = async function () {
                     damageAudioInfo = damageAudioInfo[num > 1 ? 2 : 1];
                 }
                 game.broadcastAll(function (damageAudioInfo) {
-                    if (lib.config.background_audio) game.playAudio(damageAudioInfo);
+                    if (lib.config.background_audio) {
+                        game.playAudio(damageAudioInfo);
+                    }
                 }, damageAudioInfo);
             } //声音
             else {
-                var damageAudioInfo = lib.natureAudio.damage[event.nature];
+                let damageAudioInfo = lib.natureAudio.damage[event.nature];
                 if (!damageAudioInfo || damageAudioInfo == 'normal') {
                     damageAudioInfo = 'effect/damage' + (num > 1 ? '2' : '') + '.mp3';
                 } else if (damageAudioInfo == 'default') {
@@ -2497,13 +2727,19 @@ const precontent = async function () {
                     damageAudioInfo = damageAudioInfo[num > 1 ? 2 : 1];
                 }
                 game.broadcastAll(function (damageAudioInfo) {
-                    if (lib.config.background_audio) game.playAudio(damageAudioInfo);
+                    if (lib.config.background_audio) {
+                        game.playAudio(damageAudioInfo);
+                    }
                 }, damageAudioInfo);
             } //声音
-            var str = event.unreal ? '视为受到了' : '受到了';
-            if (source) str += `来自<span class='bluetext'>${source == player ? '自己' : get.translation(source)}</span>的`;
+            let str = event.unreal ? '视为受到了' : '受到了';
+            if (source) {
+                str += `来自<span class='bluetext'>${source == player ? '自己' : get.translation(source)}</span>的`;
+            }
             str += get.cnNumber(num) + '点';
-            if (event.nature) str += get.translation(event.nature) + '属性';
+            if (event.nature) {
+                str += get.translation(event.nature) + '属性';
+            }
             str += '伤害';
             game.log(player, str);
             const stat = player.stat;
@@ -2526,10 +2762,18 @@ const precontent = async function () {
             player.getHistory('damage').push(event);
             if (source && source.hasSkill('醉诗')) {
                 player.hujia = 0;
-                if (!player.hp) player.hp = 0;
-                if (player.hp == Infinity) player.hp = 4;
-                if (player.maxHp == Infinity) player.maxHp = 4;
-                if (player.hp > 100) player.hp = player.hp % 100;
+                if (!player.hp) {
+                    player.hp = 0;
+                }
+                if (player.hp == Infinity) {
+                    player.hp = 4;
+                }
+                if (player.maxHp == Infinity) {
+                    player.maxHp = 4;
+                }
+                if (player.hp > 100) {
+                    player.hp = player.hp % 100;
+                }
                 player.hp -= num;
                 player.update();
             } //QQQ
@@ -2544,7 +2788,7 @@ const precontent = async function () {
             }
             if (event.animate !== false) {
                 player.$damage(source);
-                var natures = (event.nature || '').split(lib.natureSeparator);
+                const natures = (event.nature || '').split(lib.natureSeparator);
                 game.broadcastAll(
                     function (natures, player) {
                         if (lib.config.animation && !lib.config.low_performance) {
@@ -2559,10 +2803,12 @@ const precontent = async function () {
                     natures,
                     player
                 );
-                var numx = player.hasSkillTag('nohujia') ? num : Math.max(0, num - player.hujia);
+                let numx = player.hasSkillTag('nohujia') ? num : Math.max(0, num - player.hujia);
                 player.$damagepop(-numx, natures[0]);
             } //动画
-            if (event.unreal) event.goto(6);
+            if (event.unreal) {
+                event.goto(6);
+            }
             if (!event.notrigger) {
                 if (num == 0) {
                     event.trigger('damageZero');
@@ -2605,7 +2851,7 @@ const precontent = async function () {
                     case 'poison':
                         {
                             const cardsq = [];
-                            for (var i = 0; i < num; i++) {
+                            for (let i = 0; i < num; i++) {
                                 cardsq.push(game.createCard('du'));
                             }
                             player.gain(cardsq, 'gain2');
@@ -2635,9 +2881,11 @@ const precontent = async function () {
                 player.dying(event);
             }
             if (source && lib.config.border_style == 'auto') {
-                var dnum = 0;
-                for (var j = 0; j < source.stat.length; j++) {
-                    if (source.stat[j].damage != undefined) dnum += source.stat[j].damage;
+                let dnum = 0;
+                for (let j = 0; j < source.stat.length; j++) {
+                    if (source.stat[j].damage != undefined) {
+                        dnum += source.stat[j].damage;
+                    }
                 }
                 if (dnum >= 2) {
                     if (lib.config.autoborder_start == 'silver') {
@@ -2650,13 +2898,19 @@ const precontent = async function () {
                     source.node.framebg.dataset.decoration = '';
                     if (dnum >= 10) {
                         source.node.framebg.dataset.auto = 'gold';
-                        if (dnum >= 12) source.node.framebg.dataset.decoration = 'gold';
+                        if (dnum >= 12) {
+                            source.node.framebg.dataset.decoration = 'gold';
+                        }
                     } else if (dnum >= 6) {
                         source.node.framebg.dataset.auto = 'silver';
-                        if (dnum >= 8) source.node.framebg.dataset.decoration = 'silver';
+                        if (dnum >= 8) {
+                            source.node.framebg.dataset.decoration = 'silver';
+                        }
                     } else if (dnum >= 2) {
                         source.node.framebg.dataset.auto = 'bronze';
-                        if (dnum >= 4) source.node.framebg.dataset.decoration = 'bronze';
+                        if (dnum >= 4) {
+                            source.node.framebg.dataset.decoration = 'bronze';
+                        }
                     }
                     if (dnum >= 2) {
                         source.classList.add('topcount');
@@ -2665,19 +2919,27 @@ const precontent = async function () {
                     source.node.framebg.dataset.decoration = '';
                     switch (source.node.framebg.dataset.auto) {
                         case 'bronze':
-                            if (dnum >= 4) source.node.framebg.dataset.decoration = 'bronze';
+                            if (dnum >= 4) {
+                                source.node.framebg.dataset.decoration = 'bronze';
+                            }
                             break;
                         case 'silver':
-                            if (dnum >= 8) source.node.framebg.dataset.decoration = 'silver';
+                            if (dnum >= 8) {
+                                source.node.framebg.dataset.decoration = 'silver';
+                            }
                             break;
                         case 'gold':
-                            if (dnum >= 12) source.node.framebg.dataset.decoration = 'gold';
+                            if (dnum >= 12) {
+                                source.node.framebg.dataset.decoration = 'gold';
+                            }
                             break;
                     }
                 }
             }
             ('step 6');
-            if (!event.notrigger) event.trigger('damageSource');
+            if (!event.notrigger) {
+                event.trigger('damageSource');
+            }
         }; //李白加伤//醉酒模式//属性杀
     }; //锁几个函数玩玩
     lockfunc();
@@ -2693,25 +2955,35 @@ const precontent = async function () {
                         let unchanged = Q[Q.length - 3];
                         const name = Q[Q.length - 2];
                         let player2 = Q[Q.length - 1];
-                        if (name == 'targetInRange') return true; //无距离限制使用牌
-                        if (name == 'cardUsable') return true; //无次数限制使用牌
-                        if (typeof player2 === 'object') return unchanged; //无视自身mod使用牌
-                        if (typeof player1 === 'object') return unchanged; //无视对方mod使用牌
+                        if (name == 'targetInRange') {
+                            return true;
+                        } //无距离限制使用牌
+                        if (name == 'cardUsable') {
+                            return true;
+                        } //无次数限制使用牌
+                        if (typeof player2 === 'object') {
+                            return unchanged;
+                        } //无视自身mod使用牌
+                        if (typeof player1 === 'object') {
+                            return unchanged;
+                        } //无视对方mod使用牌
                         if (typeof player2.getModableSkills == 'function') {
                             player2 = player2.getModableSkills();
                         } else if (typeof player2.getSkills == 'function') {
                             player2 = player2.getSkills().concat(lib.skill.global);
                             game.expandSkills(player2);
                             player2 = player2.filter(function (skill) {
-                                var info = get.info(skill);
+                                const info = get.info(skill);
                                 return info && info.mod;
                             });
                             player2.sort((a, b) => get.priority(a) - get.priority(b));
                         }
                         const A = Q.slice(0, -2);
                         player2.forEach((value) => {
-                            var mod = get.info(value).mod[name];
-                            if (!mod) return;
+                            const mod = get.info(value).mod[name];
+                            if (!mod) {
+                                return;
+                            }
                             const result = mod.call(this, ...A);
                             if (result != undefined && typeof unchanged != 'object') {
                                 unchanged = result;
@@ -2737,18 +3009,18 @@ const precontent = async function () {
                 return !lib.character[i];
             }; //取消禁将
             get.gainableSkills = function (func, player) {
-                var list = [];
-                for (var i in lib.character) {
-                    for (var j = 0; j < lib.character[i][3].length; j++) {
+                let list = [];
+                for (let i in lib.character) {
+                    for (let j = 0; j < lib.character[i][3].length; j++) {
                         list.add(lib.character[i][3][j]);
                     }
                 }
                 return list;
             }; //BOSS选将
             get.gainableSkillsName = function (name, func) {
-                var list = [];
+                let list = [];
                 if (name && lib.character[name]) {
-                    for (var j = 0; j < lib.character[name][3].length; j++) {
+                    for (let j = 0; j < lib.character[name][3].length; j++) {
                         list.add(lib.character[name][3][j]);
                     }
                 }
@@ -2757,8 +3029,8 @@ const precontent = async function () {
             Reflect.defineProperty(ui.create, 'characterDialog', {
                 get() {
                     return function () {
-                        var filter, str, noclick, thisiscard, seperate, expandall, onlypack, heightset, precharacter, characterx;
-                        for (var i = 0; i < arguments.length; i++) {
+                        let filter, str, noclick, thisiscard, seperate, expandall, onlypack, heightset, precharacter, characterx;
+                        for (let i = 0; i < arguments.length; i++) {
                             if (arguments[i] === 'thisiscard') {
                                 thisiscard = true;
                             } else if (arguments[i] === 'expandall') {
@@ -2781,16 +3053,16 @@ const precontent = async function () {
                                 noclick = arguments[i];
                             }
                         }
-                        var list = [];
+                        let list = [];
                         const groups = [];
-                        var dialog;
-                        var node = ui.create.div('.caption.pointerspan');
+                        let dialog;
+                        let node = ui.create.div('.caption.pointerspan');
                         if (get.is.phoneLayout()) {
                             node.style.fontSize = '30px';
                         }
-                        var namecapt = [];
-                        var getCapt = function (str) {
-                            var capt;
+                        const namecapt = [];
+                        const getCapt = function (str) {
+                            let capt;
                             if (str.indexOf('_') == -1) {
                                 capt = str[0];
                             } else {
@@ -2803,23 +3075,29 @@ const precontent = async function () {
                             return capt;
                         };
                         if (thisiscard) {
-                            for (var i in lib.card) {
-                                if (!lib.translate[`${i}_info`]) continue;
-                                if (filter && filter(i)) continue;
+                            for (let i in lib.card) {
+                                if (!lib.translate[`${i}_info`]) {
+                                    continue;
+                                }
+                                if (filter && filter(i)) {
+                                    continue;
+                                }
                                 list.push(['', get.translation(lib.card[i].type), i]);
                                 if (namecapt.indexOf(getCapt(i)) == -1) {
                                     namecapt.push(getCapt(i));
                                 }
                             }
                         } else {
-                            var groupnum = {};
-                            for (var i in lib.character) {
+                            const groupnum = {};
+                            for (let i in lib.character) {
                                 list.push(i);
                                 if (get.is.double(i)) {
                                     groups.add('double');
                                 } else {
                                     const Q = lib.character[i][1];
-                                    if (!groupnum[Q]) groupnum[Q] = 0;
+                                    if (!groupnum[Q]) {
+                                        groupnum[Q] = 0;
+                                    }
                                     groupnum[Q]++;
                                     if (groupnum[Q] > 20) {
                                         groups.add(lib.character[i][1]);
@@ -2837,15 +3115,17 @@ const precontent = async function () {
                         if (!thisiscard) {
                             namecapt.remove('自定义');
                             namecapt.push('newline');
-                            for (var i in lib.characterDialogGroup) {
+                            for (let i in lib.characterDialogGroup) {
                                 namecapt.push(i);
                             }
                         }
-                        var newlined = false;
-                        var newlined2;
-                        var packsource;
-                        var clickCapt = function (e) {
-                            if (_status.dragged) return;
+                        let newlined = false;
+                        let newlined2;
+                        let packsource;
+                        const clickCapt = function (e) {
+                            if (_status.dragged) {
+                                return;
+                            }
                             if (dialog.currentcapt2 == '最近' && dialog.currentcaptnode2 != this && !dialog.currentcaptnode2.inited) {
                                 dialog.currentcapt2 = null;
                                 dialog.currentcaptnode2.classList.remove('thundertext');
@@ -2860,7 +3140,7 @@ const precontent = async function () {
                                     if (this.touchlink) {
                                         this.touchlink.classList.remove('active');
                                     }
-                                    for (var i = 0; i < dialog.buttons.length; i++) {
+                                    for (let i = 0; i < dialog.buttons.length; i++) {
                                         if (dialog.currentgroup && dialog.buttons[i].group != dialog.currentgroup) {
                                             dialog.buttons[i].classList.add('nodisplay');
                                         } else if (dialog.currentcapt2 && dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt, true)) {
@@ -2882,7 +3162,7 @@ const precontent = async function () {
                                     if (this.touchlink) {
                                         this.touchlink.classList.add('active');
                                     }
-                                    for (var i = 0; i < dialog.buttons.length; i++) {
+                                    for (let i = 0; i < dialog.buttons.length; i++) {
                                         if (dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt)) {
                                             dialog.buttons[i].classList.add('nodisplay');
                                         } else if (dialog.currentcapt2 && dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt, true)) {
@@ -2911,7 +3191,7 @@ const precontent = async function () {
                                     if (this.touchlink) {
                                         this.touchlink.classList.remove('active');
                                     }
-                                    for (var i = 0; i < dialog.buttons.length; i++) {
+                                    for (let i = 0; i < dialog.buttons.length; i++) {
                                         if (dialog.currentgroup && dialog.buttons[i].group != dialog.currentgroup) {
                                             dialog.buttons[i].classList.add('nodisplay');
                                         } else if (dialog.currentcapt && dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt)) {
@@ -2936,7 +3216,7 @@ const precontent = async function () {
                                         packsource.innerHTML = this.innerHTML;
                                         packsource.classList.add('thundertext');
                                     }
-                                    for (var i = 0; i < dialog.buttons.length; i++) {
+                                    for (let i = 0; i < dialog.buttons.length; i++) {
                                         if (dialog.currentcapt && dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt)) {
                                             dialog.buttons[i].classList.add('nodisplay');
                                         } else if (dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt, true)) {
@@ -2953,7 +3233,7 @@ const precontent = async function () {
                                 }
                             }
                             if (dialog.seperate) {
-                                for (var i = 0; i < dialog.seperate.length; i++) {
+                                for (let i = 0; i < dialog.seperate.length; i++) {
                                     if (!dialog.seperate[i].nextSibling.querySelector('.button:not(.nodisplay)')) {
                                         dialog.seperate[i].style.display = 'none';
                                         dialog.seperate[i].nextSibling.style.display = 'none';
@@ -2970,9 +3250,11 @@ const precontent = async function () {
                                     packsource.classList.remove('thundertext');
                                 }
                             }
-                            if (e) e.stopPropagation();
+                            if (e) {
+                                e.stopPropagation();
+                            }
                         };
-                        for (var i = 0; i < namecapt.length; i++) {
+                        for (let i = 0; i < namecapt.length; i++) {
                             if (namecapt[i] == 'newline') {
                                 newlined = document.createElement('div');
                                 newlined.style.marginTop = '5px';
@@ -2985,7 +3267,7 @@ const precontent = async function () {
                                 newlined.style.textAlign = 'center';
                                 node.appendChild(newlined);
                             } else if (newlined) {
-                                var span = ui.create.div('.tdnode.pointerdiv.shadowed.reduce_radius');
+                                const span = ui.create.div('.tdnode.pointerdiv.shadowed.reduce_radius');
                                 span.style.margin = '3px';
                                 span.style.width = 'auto';
                                 span.innerHTML = ` ${namecapt[i].toUpperCase()} `;
@@ -2999,7 +3281,7 @@ const precontent = async function () {
                                     span._nature = 'wood';
                                 }
                             } else {
-                                var span = document.createElement('span');
+                                const span = document.createElement('span');
                                 span.innerHTML = ` ${namecapt[i].toUpperCase()} `;
                                 span.link = namecapt[i];
                                 span.alphabet = true;
@@ -3008,25 +3290,26 @@ const precontent = async function () {
                             }
                         }
                         if (!thisiscard) {
-                            var natures = ['water', 'soil', 'wood', 'metal'];
-                            var span = document.createElement('span');
+                            const natures = ['water', 'soil', 'wood', 'metal'];
+                            const span = document.createElement('span');
                             newlined.appendChild(span);
                             span.style.margin = '8px';
-                            var clickGroup = function () {
-                                if (_status.dragged) return;
+                            const clickGroup = function () {
+                                if (_status.dragged) {
+                                    return;
+                                }
                                 if (dialog.currentcapt2 == '最近' && dialog.currentcaptnode2 != this && !dialog.currentcaptnode2.inited) {
                                     dialog.currentcapt2 = null;
                                     dialog.currentcaptnode2.classList.remove('thundertext');
                                     dialog.currentcaptnode2.inited = true;
                                     dialog.currentcaptnode2 = null;
                                 }
-                                var node = this,
-                                    link = this.link;
+                                let node = this, link = this.link;
                                 if (node.classList.contains('thundertext')) {
                                     dialog.currentgroup = null;
                                     dialog.currentgroupnode = null;
                                     node.classList.remove('thundertext');
-                                    for (var i = 0; i < dialog.buttons.length; i++) {
+                                    for (let i = 0; i < dialog.buttons.length; i++) {
                                         if (dialog.currentcapt && dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt)) {
                                             dialog.buttons[i].classList.add('nodisplay');
                                         } else if (dialog.currentcapt2 && dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt, true)) {
@@ -3042,17 +3325,23 @@ const precontent = async function () {
                                     dialog.currentgroup = link;
                                     dialog.currentgroupnode = node;
                                     node.classList.add('thundertext');
-                                    for (var i = 0; i < dialog.buttons.length; i++) {
+                                    for (let i = 0; i < dialog.buttons.length; i++) {
                                         if (dialog.currentcapt && dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt)) {
                                             dialog.buttons[i].classList.add('nodisplay');
                                         } else if (dialog.currentcapt2 && dialog.buttons[i].capt != dialog.getCurrentCapt(dialog.buttons[i].link, dialog.buttons[i].capt, true)) {
                                             dialog.buttons[i].classList.add('nodisplay');
                                         } else if (dialog.currentgroup == 'double') {
-                                            if (dialog.buttons[i]._changeGroup) dialog.buttons[i].classList.remove('nodisplay');
-                                            else dialog.buttons[i].classList.add('nodisplay');
+                                            if (dialog.buttons[i]._changeGroup) {
+                                                dialog.buttons[i].classList.remove('nodisplay');
+                                            } else {
+                                                dialog.buttons[i].classList.add('nodisplay');
+                                            }
                                         } else if (dialog.currentgroup == 'ye') {
-                                            if (dialog.buttons[i].group == 'ye') dialog.buttons[i].classList.remove('nodisplay');
-                                            else dialog.buttons[i].classList.add('nodisplay');
+                                            if (dialog.buttons[i].group == 'ye') {
+                                                dialog.buttons[i].classList.remove('nodisplay');
+                                            } else {
+                                                dialog.buttons[i].classList.add('nodisplay');
+                                            }
                                         } else {
                                             if (dialog.buttons[i]._changeGroup || dialog.buttons[i].group != dialog.currentgroup) {
                                                 dialog.buttons[i].classList.add('nodisplay');
@@ -3063,8 +3352,8 @@ const precontent = async function () {
                                     }
                                 }
                             };
-                            for (var i = 0; i < groups.length; i++) {
-                                var span = ui.create.div('.tdnode.pointerdiv.shadowed.reduce_radius.reduce_margin');
+                            for (let i = 0; i < groups.length; i++) {
+                                const span = ui.create.div('.tdnode.pointerdiv.shadowed.reduce_radius.reduce_margin');
                                 span.style.margin = '3px';
                                 newlined.appendChild(span);
                                 span.innerHTML = get.translation(groups[i]);
@@ -3072,14 +3361,14 @@ const precontent = async function () {
                                 span._nature = natures[i];
                                 span.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', clickGroup);
                             }
-                            var span = document.createElement('span');
-                            newlined.appendChild(span);
-                            span.style.margin = '8px';
+                            const span2 = document.createElement('span');
+                            newlined.appendChild(span2);
+                            span2.style.margin = '8px';
                             packsource = ui.create.div('.tdnode.pointerdiv.shadowed.reduce_radius.reduce_margin');
                             packsource.style.margin = '3px';
                             newlined.appendChild(packsource);
-                            var filternode = null;
-                            var clickCaptNode = function (e) {
+                            let filternode = null;
+                            const clickCaptNode = function (e) {
                                 delete _status.filterCharacter;
                                 ui.window.classList.remove('shortcutpaused');
                                 filternode.delete();
@@ -3092,14 +3381,16 @@ const precontent = async function () {
                                 filternode = ui.create.div('.popup-container.filter-character.modenopause');
                                 ui.create.div(filternode);
                                 filternode.listen(function (e) {
-                                    if (this.classList.contains('removing')) return;
+                                    if (this.classList.contains('removing')) {
+                                        return;
+                                    }
                                     delete _status.filterCharacter;
                                     ui.window.classList.remove('shortcutpaused');
                                     this.delete();
                                     this.classList.remove('shown');
                                     e.stopPropagation();
                                 });
-                                for (var i = 0; i < node.childElementCount; i++) {
+                                for (let i = 0; i < node.childElementCount; i++) {
                                     if (node.childNodes[i].tagName.toLowerCase() == 'span') {
                                         node.childNodes[i].style.display = 'none';
                                         node.childNodes[i].touchlink = ui.create.div(filternode.firstChild, clickCaptNode, '.menubutton.large.capt', node.childNodes[i].innerHTML);
@@ -3130,15 +3421,19 @@ const precontent = async function () {
                             newlined2.style.textAlign = 'center';
                             node.appendChild(newlined2);
                             packsource.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', function () {
-                                if (packsource.onlypack) return;
-                                if (_status.dragged) return;
+                                if (packsource.onlypack) {
+                                    return;
+                                }
+                                if (_status.dragged) {
+                                    return;
+                                }
                                 if (get.is.phoneLayout() && lib.config.filternode_button && filternode) {
                                     _status.filterCharacter = true;
                                     ui.window.classList.add('shortcutpaused');
                                     ui.window.appendChild(filternode);
                                     ui.refresh(filternode);
                                     filternode.classList.add('shown');
-                                    var dh = filternode.offsetHeight - filternode.firstChild.offsetHeight;
+                                    const dh = filternode.offsetHeight - filternode.firstChild.offsetHeight;
                                     if (dh > 0) {
                                         filternode.firstChild.style.top = dh / 2 + 'px';
                                     } else {
@@ -3152,18 +3447,20 @@ const precontent = async function () {
                                     }
                                 }
                             });
-                            var packlist = [];
-                            for (var i = 0; i < lib.config.all.characters.length; i++) {
-                                if (!lib.config.characters.includes(lib.config.all.characters[i])) continue;
+                            const packlist = [];
+                            for (let i = 0; i < lib.config.all.characters.length; i++) {
+                                if (!lib.config.characters.includes(lib.config.all.characters[i])) {
+                                    continue;
+                                }
                                 packlist.push(lib.config.all.characters[i]);
                             }
-                            for (var i in lib.characterPack) {
+                            for (let i in lib.characterPack) {
                                 if (lib.config.characters.includes(i) && !lib.config.all.characters.includes(i)) {
                                     packlist.push(i);
                                 }
                             }
-                            for (var i = 0; i < packlist.length; i++) {
-                                var span = document.createElement('div');
+                            for (let i = 0; i < packlist.length; i++) {
+                                const span = document.createElement('div');
                                 span.style.display = 'inline-block';
                                 span.style.width = 'auto';
                                 span.style.margin = '5px';
@@ -3182,10 +3479,10 @@ const precontent = async function () {
                                 }
                             }
                         }
-                        var groupSort;
+                        let groupSort;
                         if (thisiscard) {
                             groupSort = function (name) {
-                                var type = lib.card[name[2]].type;
+                                const type = lib.card[name[2]].type;
                                 if (lib.cardType[type]) {
                                     return lib.cardType[type];
                                 }
@@ -3207,10 +3504,11 @@ const precontent = async function () {
                                 }
                             };
                             list.sort(function (a, b) {
-                                var del = groupSort(a) - groupSort(b);
-                                if (del != 0) return del;
-                                var aa = a,
-                                    bb = b;
+                                const del = groupSort(a) - groupSort(b);
+                                if (del != 0) {
+                                    return del;
+                                }
+                                const aa = a, bb = b;
                                 if (a.includes('_')) {
                                     a = a.slice(a.lastIndexOf('_') + 1);
                                 }
@@ -3238,9 +3536,11 @@ const precontent = async function () {
                             dialog._scrollset = true;
                         }
                         dialog.getCurrentCapt = function (link, capt, noalph) {
-                            var currentcapt = noalph ? this.currentcapt2 : this.currentcapt;
+                            const currentcapt = noalph ? this.currentcapt2 : this.currentcapt;
                             if (this.seperatelist && noalph) {
-                                if (this.seperatelist[currentcapt].includes(link)) return capt;
+                                if (this.seperatelist[currentcapt].includes(link)) {
+                                    return capt;
+                                }
                                 return null;
                             }
                             if (lib.characterDialogGroup[currentcapt]) {
@@ -3275,8 +3575,8 @@ const precontent = async function () {
                                     }
                                     newlined.style.textAlign = 'center';
                                     node.appendChild(newlined);
-                                    for (var i in dialog.seperatelist) {
-                                        var span = document.createElement('span');
+                                    for (let i in dialog.seperatelist) {
+                                        const span = document.createElement('span');
                                         span.style.margin = '3px';
                                         span.innerHTML = i;
                                         span.link = i;
@@ -3285,15 +3585,17 @@ const precontent = async function () {
                                         newlined.appendChild(span);
                                     }
                                 }
-                                for (var i in seperate) {
-                                    if (i == 'list') continue;
-                                    var link = '';
-                                    var linkcontent = seperate[i];
+                                for (let i in seperate) {
+                                    if (i == 'list') {
+                                        continue;
+                                    }
+                                    let link = '';
+                                    const linkcontent = seperate[i];
                                     if (i.includes('_link:')) {
                                         link = i.slice(i.indexOf('_link:') + 6);
                                         i = i.slice(0, i.indexOf('_link:'));
                                     }
-                                    var nodesep = dialog.add(i);
+                                    const nodesep = dialog.add(i);
                                     nodesep.link = link;
                                     dialog.seperate.push(nodesep);
                                     dialog.add([linkcontent, 'vcard'], noclick);
@@ -3311,7 +3613,7 @@ const precontent = async function () {
                             }
                         }
                         dialog.add(ui.create.div('.placeholder'));
-                        for (var i = 0; i < dialog.buttons.length; i++) {
+                        for (let i = 0; i < dialog.buttons.length; i++) {
                             if (thisiscard) {
                                 dialog.buttons[i].capt = getCapt(dialog.buttons[i].link[2]);
                             } else {
@@ -3325,17 +3627,17 @@ const precontent = async function () {
                             }
                         }
                         //仅仅下面是新加的,by Curpond
-                        let container = dialog.querySelector('.content-container>.content');
-                        let Searcher = ui.create.div('.searcher.caption');
-                        let input = document.createElement('input');
+                        const container = dialog.querySelector('.content-container>.content');
+                        const Searcher = ui.create.div('.searcher.caption');
+                        const input = document.createElement('input');
                         input.style.textAlign = 'center';
                         input.style.border = 'solid 2px #294510';
                         input.style.borderRadius = '6px';
                         input.style.fontWeight = 'bold';
                         input.style.fontSize = '21px';
-                        let find = ui.create.button(['find', '搜索'], 'tdnodes');
+                        const find = ui.create.button(['find', '搜索'], 'tdnodes');
                         find.style.display = 'inline';
-                        let clickfind = function (e) {
+                        const clickfind = function (e) {
                             e.stopPropagation();
                             let value = input.value;
                             if (value == '') {
@@ -3344,7 +3646,7 @@ const precontent = async function () {
                                 return;
                             }
                             let list = [];
-                            for (let btn of dialog.buttons) {
+                            for (const btn of dialog.buttons) {
                                 if (new RegExp(value, 'g').test(get.translation(btn.link))) {
                                     btn.classList.remove('nodisplay');
                                 } else {
@@ -3353,7 +3655,9 @@ const precontent = async function () {
                             }
                         };
                         input.addEventListener('keyup', (e) => {
-                            if (e.key == 'Enter') clickfind(e);
+                            if (e.key == 'Enter') {
+                                clickfind(e);
+                            }
                         });
                         find.listen(clickfind);
                         Searcher.appendChild(input);
@@ -3619,13 +3923,13 @@ const precontent = async function () {
                 const nei = Math.ceil(num * 0.2);
                 const zhong = num - 1 - fan - nei;
                 list.push('zhu');
-                for (var i = 0; i < zhong; i++) {
+                for (let i = 0; i < zhong; i++) {
                     list.push('zhong');
                 }
-                for (var i = 0; i < nei; i++) {
+                for (let i = 0; i < nei; i++) {
                     list.push('nei');
                 }
-                for (var i = 0; i < fan; i++) {
+                for (let i = 0; i < fan; i++) {
                     list.push('fan');
                 }
                 lib.config.mode_config.identity.identity[num - 2] = list;
@@ -3682,10 +3986,8 @@ const precontent = async function () {
                 //—————————————————————————————————————————————————————————————————————————————技能标签
                 const style1 = document.createElement('style');
                 style1.innerHTML = '@keyframes QQQ{';
-                for (var i = 1; i <= 20; i++) {
-                    let rand1 = Math.floor(Math.random() * 255),
-                        rand2 = Math.floor(Math.random() * 255),
-                        rand3 = Math.floor(Math.random() * 255);
+                for (let i = 1; i <= 20; i++) {
+                    const rand1 = Math.floor(Math.random() * 255), rand2 = Math.floor(Math.random() * 255), rand3 = Math.floor(Math.random() * 255);
                     style1.innerHTML += i * 5 + `%{text-shadow: black 0 0 1px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 2px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 5px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 10px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 10px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 20px,rgba(${rand1}, ${rand2}, ${rand3}, 0.6) 0 0 20px}`;
                 }
                 style1.innerHTML += '}';
@@ -3693,20 +3995,20 @@ const precontent = async function () {
                 //—————————————————————————————————————————————————————————————————————————————火焰前缀
                 const style2 = document.createElement('style');
                 style2.innerHTML = '@keyframes flame {';
-                for (var i = 0; i <= 100; i++) {
+                for (let i = 0; i <= 100; i++) {
                     // 随着动画进展,颜色逐渐从橙红变为黄色再到白色
-                    let r = Math.min(255, 140 + i * 1.15); // 红色分量逐渐增加
-                    let g = Math.min(255, 30 + i * 2.25); // 绿色分量逐渐增加
+                    const r = Math.min(255, 140 + i * 1.15); // 红色分量逐渐增加
+                    const g = Math.min(255, 30 + i * 2.25); // 绿色分量逐渐增加
                     let b = Math.min(255, i * 2.5); // 蓝色分量逐渐增加,但较慢
                     // 添加一些随机性来模拟火焰的不规则性
-                    let randOffsetX = (Math.random() - 0.5) * 2;
-                    let randOffsetY = (Math.random() - 0.5) * 2;
+                    const randOffsetX = (Math.random() - 0.5) * 2;
+                    const randOffsetY = (Math.random() - 0.5) * 2;
                     // 构建每一帧的样式
                     style2.innerHTML += `${i}% {`;
                     style2.innerHTML += `color: rgba(${r}, ${g}, ${b}, 1);`; // 文字颜色
                     style2.innerHTML += `text-shadow:`;
                     for (let j = 1; j <= 5; j++) {
-                        let intensity = j * 2;
+                        const intensity = j * 2;
                         style2.innerHTML += ` ${randOffsetX}px ${randOffsetY}px ${intensity}px rgba(${r}, ${g}, ${b}, 0.6),`;
                     }
                     style2.innerHTML = style2.innerHTML.slice(0, -1); // 去掉最后一个逗号
@@ -3928,13 +4230,15 @@ const precontent = async function () {
                 QQQ_Messmer: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)',
                 QQQ_lijing: '设计者:裸睡天依(2847826324)<br>编写者:潜在水里的火(1476811518)',
                 QQQ_liaoyuanhuo: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)',
-                QQQ_mengzhuge: '设计者:想去远方(3436289223)<br>编写者:潜在水里的火(1476811518)<br>五丈原上,秋风瑟瑟,诸葛亮身披鹤氅,手执羽扇,端坐于七星灯下.此灯乃按北斗七星之形排列,寓意借天之力,延寿一纪.亮知天命将尽,然心中壮志未酬,故行此法,以求再战中原.<br>魏延者,蜀汉猛将也,素以勇猛著称,然性急躁,不善深思.是夜,魏延巡营至中军大帐外,见七星灯明灭不定,误以为敌袭,遂大步闯入.<br>亮见状,微叹一声,未及言语,魏延已至灯前.众将皆惊,恐灯灭而丞相生命危矣.<br>然魏延虽鲁莽,此刻却似有神助,竟未触及灯盏,仅一步之遥,便止步不前,环顾四周,恍然大悟,自知闯祸,慌忙退出帐外.原来,此乃天意使然,魏延虽无意,却成全了亮之心愿.<br>自此之后,亮身体渐复,精神焕发,乃整顿兵马,誓师北伐.曹魏闻风丧胆,望风而逃.亮率大军北定中原,所向披靡,一时之间,天下震动.<br>既平北方,亮又洞察时局,审时度势,决意东征伐吴.姜维者,凉州上士也,文武双全,忠诚可靠.亮观其言行举止,知其可担大任,遂悉心传授兵法韬略,以及治国安邦之道.<br>亮临终之际,召集诸将,于病榻前指姜维而言曰:<吾平生所学,已尽传于此子,汝等当辅佐之,共谋大业.>言罢而逝,举帐痛哭,声震四野.姜维继丞相之位,秉承遗志,继续北伐,虽屡遭挫折,然忠心不改.<br>此时,蜀汉已据中原,国力强盛.维遂挥师东向,直指江东.吴主孙皓闻之,惊慌失措,急聚群臣商议对策.姜维运用诸葛亮所授兵法,运筹帷幄,决胜千里.吴军节节败退,最终,姜维大军压境,孙皓被迫请降.<br>自此,三国归一,天下太平.姜维功成名就,被尊为<武乡侯>,与诸葛亮齐名.后人论及此事,无不感叹诸葛武侯之智谋与姜维之勇毅,共赞之曰:<前后出师遗表在,令人一览泪沾襟>',
+                QQQ_mengzhuge:
+                    '设计者:想去远方(3436289223)<br>编写者:潜在水里的火(1476811518)<br>五丈原上,秋风瑟瑟,诸葛亮身披鹤氅,手执羽扇,端坐于七星灯下.此灯乃按北斗七星之形排列,寓意借天之力,延寿一纪.亮知天命将尽,然心中壮志未酬,故行此法,以求再战中原.<br>魏延者,蜀汉猛将也,素以勇猛著称,然性急躁,不善深思.是夜,魏延巡营至中军大帐外,见七星灯明灭不定,误以为敌袭,遂大步闯入.<br>亮见状,微叹一声,未及言语,魏延已至灯前.众将皆惊,恐灯灭而丞相生命危矣.<br>然魏延虽鲁莽,此刻却似有神助,竟未触及灯盏,仅一步之遥,便止步不前,环顾四周,恍然大悟,自知闯祸,慌忙退出帐外.原来,此乃天意使然,魏延虽无意,却成全了亮之心愿.<br>自此之后,亮身体渐复,精神焕发,乃整顿兵马,誓师北伐.曹魏闻风丧胆,望风而逃.亮率大军北定中原,所向披靡,一时之间,天下震动.<br>既平北方,亮又洞察时局,审时度势,决意东征伐吴.姜维者,凉州上士也,文武双全,忠诚可靠.亮观其言行举止,知其可担大任,遂悉心传授兵法韬略,以及治国安邦之道.<br>亮临终之际,召集诸将,于病榻前指姜维而言曰:<吾平生所学,已尽传于此子,汝等当辅佐之,共谋大业.>言罢而逝,举帐痛哭,声震四野.姜维继丞相之位,秉承遗志,继续北伐,虽屡遭挫折,然忠心不改.<br>此时,蜀汉已据中原,国力强盛.维遂挥师东向,直指江东.吴主孙皓闻之,惊慌失措,急聚群臣商议对策.姜维运用诸葛亮所授兵法,运筹帷幄,决胜千里.吴军节节败退,最终,姜维大军压境,孙皓被迫请降.<br>自此,三国归一,天下太平.姜维功成名就,被尊为<武乡侯>,与诸葛亮齐名.后人论及此事,无不感叹诸葛武侯之智谋与姜维之勇毅,共赞之曰:<前后出师遗表在,令人一览泪沾襟>',
                 QQQ_Trina: '设计者:想去远方(3436289223)<br>编写者:潜在水里的火(1476811518)',
                 QQQ_SmelterKnights: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)',
                 QQQ_zhushou: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)',
                 QQQ_lunxunq: '设计者:梦婉清(3541725571)<br>编写者:潜在水里的火(1476811518)',
                 QQQ_jiananfeng: '设计者:秋(1138146139)<br>编写者:潜在水里的火(1476811518)',
-                QQQ_xingxiu: '童年,由于宿命蛊昭示其将是未来的人族仙尊,开创智道.三岁时被元始仙尊收为弟子<br>因星宿不练习杀招反贪玩逗弄小狸猫而被元始仙尊带到被异族屠戮一空的村庄进行教训,告诉她要努力修行,成为仙尊,开创智道,将惧怕元始仙尊而躲藏起来的异人的福地洞天推算出来一一铲除,真正奠定人族的盛世<br>数日后星宿和小狸猫小黄分别.因孤独努力的童年暗自哭泣,从心口分出一团星影,取名明皓(取自元始仙尊<明眸皓齿,聪明伶俐>的夸赞),若有来生则替自己好好玩耍,弥补此生遗憾<br>青年,星宿出落成一位妙龄女仙.为了开创智道,不一味地闭关,经常游历四方,充实眼界.在伪装身份行走东海的时候,她结识到了一位蛊仙.因机缘巧合下的多次相遇,携手对敌,剪除异人部族,共探海底深沟等等,情谊浓郁,转为情愫<br>但在心上人重伤显露异人本相后,因为<自己作为人族未来仙尊,要为人族铲除异人蛊仙,如果自己的丈夫是异人,自己会下不了手.而一旦姑息异人,人族又何去何从.>而与异人分别,在治好他后隐藏身形目送他离去<br>因爱不得的心痛心口分出一团星影,取名毓秀(取自心上人<钟灵毓秀>的夸赞),若有来生则替自己好好活着,为自己自私一次,痛快地去爱,淋漓地去哭!<br>晚年,星宿已然成尊,剿除了绝大多数的异人蛊仙,我已经带领人族走向昌盛.在为了天庭未来牺牲自我同化天意前,面对亲如母女的师姐的劝阻,从心口分出一团星影,取名丰雅(取自师姐<丰神雅量>的夸赞),让其服侍在师姐身边,替自己弥补遗憾.并告诉师姐,留下的三个星影,亦是自己重生的布置,并约定自己再次重生,一定为自己而活,不管这世界,不管什么人族!而后前去同化天意<br>当明皓、毓秀、丰雅被唤醒,得到的是巨大的噩耗:宿命蛊毁灭,天庭衰败到了谷底,方源成魔,正消魔涨,中洲危机四伏.面对这种情况,三位亚仙尊于疯魔窟第八层青莲大世界合而为一,化为星宿仙尊.于元境之中补足境界,重登智道道主',
+                QQQ_xingxiu:
+                    '童年,由于宿命蛊昭示其将是未来的人族仙尊,开创智道.三岁时被元始仙尊收为弟子<br>因星宿不练习杀招反贪玩逗弄小狸猫而被元始仙尊带到被异族屠戮一空的村庄进行教训,告诉她要努力修行,成为仙尊,开创智道,将惧怕元始仙尊而躲藏起来的异人的福地洞天推算出来一一铲除,真正奠定人族的盛世<br>数日后星宿和小狸猫小黄分别.因孤独努力的童年暗自哭泣,从心口分出一团星影,取名明皓(取自元始仙尊<明眸皓齿,聪明伶俐>的夸赞),若有来生则替自己好好玩耍,弥补此生遗憾<br>青年,星宿出落成一位妙龄女仙.为了开创智道,不一味地闭关,经常游历四方,充实眼界.在伪装身份行走东海的时候,她结识到了一位蛊仙.因机缘巧合下的多次相遇,携手对敌,剪除异人部族,共探海底深沟等等,情谊浓郁,转为情愫<br>但在心上人重伤显露异人本相后,因为<自己作为人族未来仙尊,要为人族铲除异人蛊仙,如果自己的丈夫是异人,自己会下不了手.而一旦姑息异人,人族又何去何从.>而与异人分别,在治好他后隐藏身形目送他离去<br>因爱不得的心痛心口分出一团星影,取名毓秀(取自心上人<钟灵毓秀>的夸赞),若有来生则替自己好好活着,为自己自私一次,痛快地去爱,淋漓地去哭!<br>晚年,星宿已然成尊,剿除了绝大多数的异人蛊仙,我已经带领人族走向昌盛.在为了天庭未来牺牲自我同化天意前,面对亲如母女的师姐的劝阻,从心口分出一团星影,取名丰雅(取自师姐<丰神雅量>的夸赞),让其服侍在师姐身边,替自己弥补遗憾.并告诉师姐,留下的三个星影,亦是自己重生的布置,并约定自己再次重生,一定为自己而活,不管这世界,不管什么人族!而后前去同化天意<br>当明皓、毓秀、丰雅被唤醒,得到的是巨大的噩耗:宿命蛊毁灭,天庭衰败到了谷底,方源成魔,正消魔涨,中洲危机四伏.面对这种情况,三位亚仙尊于疯魔窟第八层青莲大世界合而为一,化为星宿仙尊.于元境之中补足境界,重登智道道主',
                 QQQ_CosmicStarfish: '一位沉睡的王在水中安息.碎为五片,他翻滚在永恒的噩梦里:一个篡权者夺取了他的王座.但他并非全然不知.第五王看向世界,用不息之火焚尽世界,惩罚那把他流放的叛徒.他的怒火是无可驾驭的.所以,他分享了梦.他们为特定的缘由被选中,他们是他的斗士,命定要以他的荣光共享这世界.命定要用妨碍他者的血沐浴世界,提醒所有人谁为真正的尊主.即便是怀着最盛的饥渴,有时他们也只咬一小口.血祭是其所欲.魂祭是其所需',
             },
             skill: {
@@ -3948,7 +4252,9 @@ const precontent = async function () {
                         player.storage.QQQ_黄金律法 = 3;
                         const dieAfter = lib.element.player.dieAfter;
                         lib.element.player.dieAfter = function () {
-                            if (this.storage && this.storage.QQQ_黄金律法 > 0) return;
+                            if (this.storage && this.storage.QQQ_黄金律法 > 0) {
+                                return;
+                            }
                             dieAfter.apply(this, arguments);
                         }; //死后先不结算
                     },
@@ -4105,10 +4411,12 @@ const precontent = async function () {
                         player.addToExpansion(cards, 'giveAuto', player).gaintag.add('QQQ_buqu');
                         const list = {};
                         for (const i of player.getCards('x')) {
-                            if (!list[i.name]) list[i.name] = [];
+                            if (!list[i.name]) {
+                                list[i.name] = [];
+                            }
                             list[i.name].add(i);
                         }
-                        for (var i in list) {
+                        for (let i in list) {
                             if (list[i].length > 1) {
                                 player.recover(list[i].length);
                                 await player.discard(list[i]);
@@ -4177,7 +4485,9 @@ const precontent = async function () {
                             }
                         } else {
                             for (const i of player.getCards('x')) {
-                                if (!lib.card[i.name].content) continue;
+                                if (!lib.card[i.name].content) {
+                                    continue;
+                                }
                                 if (player.filterCard(i)) {
                                     list.push(i);
                                 }
@@ -4271,8 +4581,12 @@ const precontent = async function () {
                             },
                             set(value) {
                                 game.log(`红温层数由${player.hongwen}变为${value}`);
-                                if (value > player.hongwen) player.hongwen = value;
-                                if (isNaN(value)) player.hongwen++;
+                                if (value > player.hongwen) {
+                                    player.hongwen = value;
+                                }
+                                if (isNaN(value)) {
+                                    player.hongwen++;
+                                }
                             },
                         });
                     },
@@ -4295,7 +4609,9 @@ const precontent = async function () {
                     },
                     mod: {
                         aiOrder(player, card, num) {
-                            if (card.name == 'sha') return 1;
+                            if (card.name == 'sha') {
+                                return 1;
+                            }
                         },
                     },
                 },
@@ -4414,9 +4730,13 @@ const precontent = async function () {
                     },
                     forced: true,
                     filter(event, player) {
-                        if (event.player == player) return false;
+                        if (event.player == player) {
+                            return false;
+                        }
                         for (const i of game.players) {
-                            if (event.player.countCards('h') < i.countCards('h')) return false;
+                            if (event.player.countCards('h') < i.countCards('h')) {
+                                return false;
+                            }
                         }
                         return event.player.countCards('h') > event.player.getHandcardLimit();
                     },
@@ -4426,7 +4746,7 @@ const precontent = async function () {
                         if (result.control == `交给${get.translation(player)}${num}张牌`) {
                             await trigger.player.chooseToGive(player, 'he', num, true);
                         } else {
-                            var num1 = num;
+                            let num1 = num;
                             while (num1-- > 0) {
                                 const sha = player.useCard({ name: 'sha' }, trigger.player);
                                 await sha;
@@ -4472,9 +4792,9 @@ const precontent = async function () {
                     mark: true,
                     intro: {
                         content(storage, player) {
-                            var str = '';
+                            let str = '';
                             if (player.storage.QQQ_huozhong) {
-                                for (var j in player.storage.QQQ_huozhong) {
+                                for (let j in player.storage.QQQ_huozhong) {
                                     str += `已经增加过${j}${player.storage.QQQ_huozhong[j]}点<br>`;
                                 }
                             }
@@ -4498,11 +4818,11 @@ const precontent = async function () {
                         game.playAudio('../extension/温柔一刀/audio/相逢.mp3');
                         const list = ['生命', '智力', '魔力', '速度', '精力'];
                         for (const i of game.players) {
-                            var num = 0;
+                            let num = 0;
                             if (!i.storage.QQQ_huozhong) {
                                 i.storage.QQQ_huozhong = {};
                             } else {
-                                for (var j in i.storage.QQQ_huozhong) {
+                                for (let j in i.storage.QQQ_huozhong) {
                                     num += i.storage.QQQ_huozhong[j];
                                 }
                             }
@@ -4515,7 +4835,7 @@ const precontent = async function () {
                                     game.playAudio('../extension/温柔一刀/audio/她们是引导褪色者的人.mp3');
                                 }
                                 if (i == player) {
-                                    for (var j of result.cards) {
+                                    for (let j of result.cards) {
                                         await player.chooseUseTarget(j, true, false, 'nodistance');
                                     }
                                 } else {
@@ -4688,9 +5008,9 @@ const precontent = async function () {
                         player.storage.QQQ_fenjin = {};
                         for (const i of game.players) {
                             player.storage.QQQ_fenjin[i.playerid] = 0;
-                            for (var j of i.actionHistory) {
+                            for (let j of i.actionHistory) {
                                 if (j.damage.length) {
-                                    for (var x of j.damage) {
+                                    for (const x of j.damage) {
                                         player.storage.QQQ_fenjin[i.playerid] += x.num;
                                     }
                                 }
@@ -4700,7 +5020,7 @@ const precontent = async function () {
                     mark: true,
                     intro: {
                         content(storage, player) {
-                            var str = '当前会被巨人火焰焚烬的角色:';
+                            let str = '当前会被巨人火焰焚烬的角色:';
                             for (const i of game.players) {
                                 if (player.storage.QQQ_fenjin[i.playerid] >= lib.character[i.name]?.hp) {
                                     str += get.translation(i);
@@ -4836,8 +5156,12 @@ const precontent = async function () {
                                 .getCards('h')
                                 .filter((q) => {
                                     const info = lib.card[q.name];
-                                    if (!info.selectTarget) return false;
-                                    if (typeof info.selectTarget == 'number' && info.selectTarget > 1) return false;
+                                    if (!info.selectTarget) {
+                                        return false;
+                                    }
+                                    if (typeof info.selectTarget == 'number' && info.selectTarget > 1) {
+                                        return false;
+                                    }
                                     return !info.notarget && info.content;
                                 })
                                 .randomGet();
@@ -4889,7 +5213,7 @@ const precontent = async function () {
                     },
                     forced: true,
                     async content(event, trigger, player) {
-                        var E = Object.keys(lib.skill).filter((i) => {
+                        const E = Object.keys(lib.skill).filter((i) => {
                             return lib.translate[i + '_info'];
                         });
                         player.addSkillLog(E.randomGet());
@@ -5011,7 +5335,9 @@ const precontent = async function () {
                     },
                     ai: {
                         order(name, player) {
-                            if (player.getCards('h').every((c) => c.storage?.QQQ_meiying)) return 1;
+                            if (player.getCards('h').every((c) => c.storage?.QQQ_meiying)) {
+                                return 1;
+                            }
                             return 20;
                         },
                         result: {
@@ -5132,7 +5458,9 @@ const precontent = async function () {
                                     }
                                 } else {
                                     for (const i of cards) {
-                                        if (!lib.card[i.name].content) continue;
+                                        if (!lib.card[i.name].content) {
+                                            continue;
+                                        }
                                         if (player.filterCard(i)) {
                                             list.push(i);
                                         }
@@ -5218,7 +5546,7 @@ const precontent = async function () {
                     },
                     filter: (event, player) => event.num <= 0,
                     async content(event, trigger, player) {
-                        var num = Math.min(numberq1(trigger.num), 9);
+                        let num = Math.min(numberq1(trigger.num), 9);
                         while (num-- > 0) {
                             const cards1 = get.cards(2);
                             player.showCards(cards1);
@@ -5353,7 +5681,7 @@ const precontent = async function () {
                     async content(event, trigger, player) {
                         player.recover();
                         const cards = [];
-                        for (var i in lib.card) {
+                        for (let i in lib.card) {
                             if (lib.card[i].type == 'food') {
                                 cards.add(i);
                             }
@@ -5496,7 +5824,7 @@ const precontent = async function () {
                     async content(event, trigger, player) {
                         player.draw(3);
                         event.target.draw(3);
-                        var num = 3;
+                        let num = 3;
                         while (num-- > 0) {
                             const { result } = await player.chooseToCompare(event.target, (card) => card.number);
                             if (result) {
@@ -5544,7 +5872,7 @@ const precontent = async function () {
                     },
                     async content(event, trigger, player) {
                         const list = [];
-                        for (var i in lib.skill) {
+                        for (let i in lib.skill) {
                             if (lib.skill[i].limited || lib.skill[i].juexingji) {
                                 list.add(i);
                             }
@@ -5811,7 +6139,9 @@ const precontent = async function () {
                                         const {
                                             result: { control },
                                         } = await boss.chooseControl('失去体力', '回复体力').set('ai', (e, p) => {
-                                            if (get.attitude(boss, player) > 0) return '回复体力';
+                                            if (get.attitude(boss, player) > 0) {
+                                                return '回复体力';
+                                            }
                                             return '失去体力';
                                         });
                                         if (control == '回复体力') {
@@ -5838,7 +6168,7 @@ const precontent = async function () {
                         const { result } = await player.chooseBool(`是否获得${get.translation(card)}`).set('ai', () => true);
                         if (result.bool) {
                             player.gain(card, 'gain2');
-                            var num = 2;
+                            let num = 2;
                             while (num-- > 0) {
                                 const card0 = get.cards()[0];
                                 const q = game.players.filter((q) => q != player).randomGet();
@@ -5968,7 +6298,9 @@ const precontent = async function () {
                             player(player, target, card) {
                                 if (2 * player.hp > player.maxHp) {
                                     //失去了体力
-                                    if (2 * player.hp < 1 + player.maxHp) return 1;
+                                    if (2 * player.hp < 1 + player.maxHp) {
+                                        return 1;
+                                    }
                                 } else {
                                     return (player.maxHp - 2 * player.hp) * 2 - player.countCards('h');
                                 }
@@ -6069,7 +6401,7 @@ const precontent = async function () {
                             if (!player.zhousi) {
                                 player.zhousi = {};
                             }
-                            for (var i in player.zhousi) {
+                            for (let i in player.zhousi) {
                                 num += player.zhousi[i];
                             }
                             return `当前咒死层数${num}`;
@@ -6089,7 +6421,7 @@ const precontent = async function () {
                         trigger.target.markSkill('QQQ_siwangshanyan');
                         if (info[name] > 1) {
                             let num = 0;
-                            for (var i in info) {
+                            for (let i in info) {
                                 num += info[i];
                                 info[i] = 0;
                             }
@@ -6115,7 +6447,7 @@ const precontent = async function () {
                                             next.zhousi.none += damage - numo + num;
                                             next.markSkill('QQQ_siwangshanyan');
                                             let numx = 0;
-                                            for (var i in next.zhousi) {
+                                            for (let i in next.zhousi) {
                                                 numx += next.zhousi[i];
                                             }
                                             if (numx > next.maxHp) {
@@ -6141,7 +6473,7 @@ const precontent = async function () {
                                             previous.zhousi.none += damage - numo + num;
                                             previous.markSkill('QQQ_siwangshanyan');
                                             let numx = 0;
-                                            for (var i in previous.zhousi) {
+                                            for (let i in previous.zhousi) {
                                                 numx += previous.zhousi[i];
                                             }
                                             if (numx > previous.maxHp) {
@@ -6156,7 +6488,7 @@ const precontent = async function () {
                             }
                         } else {
                             let num = 0;
-                            for (var i in info) {
+                            for (let i in info) {
                                 num += info[i];
                             }
                             if (num > trigger.target.maxHp) {
@@ -6182,10 +6514,14 @@ const precontent = async function () {
                     },
                     mod: {
                         cardUsable(card, player, num) {
-                            if (card.storage && card.storage.QQQ_mihuan) return Infinity;
+                            if (card.storage && card.storage.QQQ_mihuan) {
+                                return Infinity;
+                            }
                         },
                         targetInRange(card, player) {
-                            if (card.storage && card.storage.QQQ_mihuan) return true;
+                            if (card.storage && card.storage.QQQ_mihuan) {
+                                return true;
+                            }
                         },
                     },
                     filter(event, player) {
@@ -6205,17 +6541,17 @@ const precontent = async function () {
                                 .set('list', [['牌堆顶', black]])
                                 .set('prompt', '将牌移动到牌堆顶')
                                 .set('processAI', function (list) {
-                                    var cards = list[0][1];
-                                    var target = _status.currentPhase?.next;
+                                    const cards = list[0][1];
+                                    const target = _status.currentPhase?.next;
                                     if (target) {
-                                        var att = get.sgn(get.attitude(player, target));
+                                        let att = get.sgn(get.attitude(player, target));
                                     } else {
-                                        var att = -1;
+                                        let att = -1;
                                     }
-                                    var top = [];
+                                    let top = [];
                                     if (target.countCards('j')) {
                                         for (const i of player.getCards('j')) {
-                                            var judge = get.judge(i);
+                                            const judge = get.judge(i);
                                             cards.sort((a, b) => (judge(b) - judge(a)) * att); //态度大于0就把价值高的牌放前面
                                             top.push(cards.shift());
                                         }
@@ -6353,7 +6689,9 @@ const precontent = async function () {
                     filterCard: true,
                     selectCard: 1,
                     check(card) {
-                        if (['basic', 'trick', 'equip'].includes(get.type(card))) return 8 - get.value(card);
+                        if (['basic', 'trick', 'equip'].includes(get.type(card))) {
+                            return 8 - get.value(card);
+                        }
                         return 0;
                     },
                     filter: (event, player) => _status.QQQ_ronglu.baixiang.includes(player),
@@ -6388,7 +6726,9 @@ const precontent = async function () {
                                 return _status.QQQ_ronglu.baixiang.includes(player) && ['sha', 'shan', 'jiu', 'tao', 'wuxie'].includes(name);
                             },
                             filter(event, player) {
-                                if (!_status.QQQ_ronglu.baixiang.includes(player)) return false;
+                                if (!_status.QQQ_ronglu.baixiang.includes(player)) {
+                                    return false;
+                                }
                                 const list = {
                                     basic: ['sha', 'shan'],
                                     trick: ['jiu', 'tao'],
@@ -6438,8 +6778,12 @@ const precontent = async function () {
                                     return ui.create.dialog('抗揍', [vcard, 'vcard'], Array.from(_status.QQQ_ronglu.childNodes));
                                 },
                                 filter(button) {
-                                    if (!ui.selected.buttons.length) return ['sha', 'shan', 'jiu', 'tao', 'wuxie'].includes(button.link[2]);
-                                    if (button._args[1] != 'card') return false;
+                                    if (!ui.selected.buttons.length) {
+                                        return ['sha', 'shan', 'jiu', 'tao', 'wuxie'].includes(button.link[2]);
+                                    }
+                                    if (button._args[1] != 'card') {
+                                        return false;
+                                    }
                                     const list = {
                                         basic: ['sha', 'shan'],
                                         trick: ['jiu', 'tao'],
@@ -6541,7 +6885,7 @@ const precontent = async function () {
                             const dani = trigger.player.useCard({ name: 'QQQ_wodani' }, player);
                             await dani;
                             let bool = true;
-                            for (var j of player.actionHistory) {
+                            for (let j of player.actionHistory) {
                                 if (j.damage.length) {
                                     for (const evt of j.damage) {
                                         if (evt.getParent((q) => q == dani, true)) {
@@ -6592,8 +6936,12 @@ const precontent = async function () {
                                     cardq.removeArray(cards);
                                     targets[0].addSkill('QQQ_baixiangl_1');
                                     targets[0].gain(cards, 'gain2');
-                                } else break;
-                            } else break;
+                                } else {
+                                    break;
+                                }
+                            } else {
+                                break;
+                            }
                         }
                     },
                     subSkill: {
@@ -6680,7 +7028,9 @@ const precontent = async function () {
                             },
                             forced: true,
                             filter(event, player) {
-                                if (event.player == player) return event.num > 0 && event.source && event.source.countCards('he') < player.countCards('h');
+                                if (event.player == player) {
+                                    return event.num > 0 && event.source && event.source.countCards('he') < player.countCards('h');
+                                }
                                 return player.countCards('h') <= event.player.countCards('he');
                             },
                             async content(event, trigger, player) {
@@ -6705,7 +7055,9 @@ const precontent = async function () {
                     forced: true,
                     filter(event, player) {
                         if (event.player == player) {
-                            if (event.targets?.length == 1 && event.target == player) return false;
+                            if (event.targets?.length == 1 && event.target == player) {
+                                return false;
+                            }
                             return event.targets?.some((q) => q.countCards('he') > player.countCards('h'));
                         }
                         return event.player.countCards('he') > player.countCards('h');
@@ -6777,7 +7129,9 @@ const precontent = async function () {
                                 const str = trigger.name == 'die' ? '当前已即将死亡,请选择时间长河中的一个点并回溯到过去' : '是否选择时间长河中的一个点并回溯到过去';
                                 const list = [str];
                                 for (const i in lib.config.huisu) {
-                                    if (i == 'last') continue;
+                                    if (i == 'last') {
+                                        continue;
+                                    }
                                     const info = lib.config.huisu[i];
                                     list.add([[info.name], 'character']);
                                     const additionalSkills = [];
@@ -6798,7 +7152,9 @@ const precontent = async function () {
                                     .set('filterButton', (button) => lib.config.huisu[button.link])
                                     .set('ai', (button) => {
                                         const info = lib.config.huisu[button.link];
-                                        if (!info.skills.includes('QQQ_chunqiuchan')) return 0;
+                                        if (!info.skills.includes('QQQ_chunqiuchan')) {
+                                            return 0;
+                                        }
                                         const additionalSkills = [];
                                         for (const j in info.additionalSkills) {
                                             additionalSkills.addArray(info.additionalSkills[j]);
@@ -6838,8 +7194,12 @@ const precontent = async function () {
                                     const {
                                         result: { links: links1 },
                                     } = await player.chooseButton(['选择一个技能失去', [skills, 'tdnodes']], true).set('ai', (button) => {
-                                        if (button.link == 'QQQ_chunqiuchan') return 0;
-                                        if (player.GES().concat(player.GTS()).includes(button.link)) return 1;
+                                        if (button.link == 'QQQ_chunqiuchan') {
+                                            return 0;
+                                        }
+                                        if (player.GES().concat(player.GTS()).includes(button.link)) {
+                                            return 1;
+                                        }
                                         return Math.random();
                                     });
                                     if (links1 && links1[0]) {
@@ -6998,9 +7358,15 @@ const precontent = async function () {
                         unequip: true,
                         effect: {
                             player(card) {
-                                if (lib.card[card.name]?.type == 'equip') return 2;
-                                if (card.storage?.wuzhiquanxinjian) return 2;
-                                if (card.cards?.length) return 'zerotarget';
+                                if (lib.card[card.name]?.type == 'equip') {
+                                    return 2;
+                                }
+                                if (card.storage?.wuzhiquanxinjian) {
+                                    return 2;
+                                }
+                                if (card.cards?.length) {
+                                    return 'zerotarget';
+                                }
                             },
                         },
                     },
@@ -7057,7 +7423,9 @@ const precontent = async function () {
                     forced: true,
                     mod: {
                         aiOrder(player, card, num) {
-                            if (card.name == 'sha' && card.storage?.QQQ_xingluan == 1) return 99;
+                            if (card.name == 'sha' && card.storage?.QQQ_xingluan == 1) {
+                                return 99;
+                            }
                         },
                     },
                     filter: (event, player) => event.card.name == 'sha' && event.cards.some((q) => !(q.storage.QQQ_xingluan > 1)),
@@ -7277,7 +7645,9 @@ const precontent = async function () {
                                 if (!_status.fahuan) {
                                     _status.fahuan = {};
                                 }
-                                if (name == 'changeHp') return event.num < 0;
+                                if (name == 'changeHp') {
+                                    return event.num < 0;
+                                }
                                 return event.cards?.length;
                             },
                             async content(event, trigger, player) {
@@ -7345,7 +7715,9 @@ const precontent = async function () {
                                 if (!_status.fahuan) {
                                     _status.fahuan = {};
                                 }
-                                if (name == 'changeHp') return event.num > 0;
+                                if (name == 'changeHp') {
+                                    return event.num > 0;
+                                }
                                 return event.cards?.length;
                             },
                             async content(event, trigger, player) {
@@ -7670,7 +8042,9 @@ const precontent = async function () {
                                 if (!lib.card.QQQ_lebu) {
                                     lib.card.QQQ_lebu = lib.card.lebu;
                                     lib.card.QQQ_lebu.judge = function (card) {
-                                        if (lib.card.QQQ_lebu.suits?.includes(card.suit)) return -2;
+                                        if (lib.card.QQQ_lebu.suits?.includes(card.suit)) {
+                                            return -2;
+                                        }
                                         return 1;
                                     };
                                     lib.translate.QQQ_lebu = '乐不思蜀';
@@ -8656,7 +9030,7 @@ const precontent = async function () {
         _status.gentle.skill0 = yinu.skill;
         _status.gentle.character0 = yinu.character;
         const num = Math.ceil(Object.keys(yinu.character).length / 4);
-        var num1 = 0;
+        let num1 = 0;
         for (const i in yinu.character) {
             const info = yinu.character[i];
             if (info.isBoss) {
@@ -8826,21 +9200,24 @@ const numfunc = function () {
         if (isNaN(Number(num))) return 1;
         return Math.max(Number(num), 1);
     }; //始终返回正数且至少为1
-                window.deepClone = function (obj) {
-                    if (obj === null || typeof obj !== 'object') {
+                window.deepClone = function (obj, visited = new WeakMap()) {
+                    if (obj === null || typeof obj !== 'object' || obj instanceof window.Element) {
                         return obj;
                     }
-                    if (Array.isArray(obj)) {
-                        return obj.map(item => deepClone(item));
-                    } else {
-                        const clonedObj = {};
-                        for (let key in obj) {
-                            if (obj.hasOwnProperty(key)) {
-                                clonedObj[key] = deepClone(obj[key]);
-                            }
-                        }
-                        return clonedObj;
+                    if (visited.has(obj)) {
+                        return visited.get(obj);
                     }
+                    if (Array.isArray(obj)) {
+                        return obj.map((item) => deepClone(item, visited));
+                    }
+                    const clonedObj = {};
+                    visited.set(obj, clonedObj);
+                    for (let key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            clonedObj[key] = deepClone(obj[key], visited);
+                        }
+                    }
+                    return clonedObj;
                 }; //深拷贝对象
                 window.factorial = function (num) {
                     num = Math.round(num);

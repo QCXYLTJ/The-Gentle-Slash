@@ -206,7 +206,9 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                 distance: {
                     attackFrom: -1,
                     attackRange(card, player) {
-                        if (player.storage.轩辕剑) return 4;
+                        if (player.storage.轩辕剑) {
+                            return 4;
+                        }
                         return 2;
                     },
                 },
@@ -290,8 +292,8 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                     result: {
                         player(player, target, card) {
                             //主动技是否发动
-                            var num1 = game.players.filter((q) => q.isEnemiesOf(player)).reduce((acc, curr) => acc + curr.countCards('he'), 0);
-                            var num2 = game.players.filter((q) => q.isFriendsOf(player)).reduce((acc, curr) => acc + curr.countCards('he'), 0);
+                            const num1 = game.players.filter((q) => q.isEnemiesOf(player)).reduce((acc, curr) => acc + curr.countCards('he'), 0);
+                            const num2 = game.players.filter((q) => q.isFriendsOf(player)).reduce((acc, curr) => acc + curr.countCards('he'), 0);
                             return num1 - num2;
                         },
                     },
@@ -335,7 +337,7 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                         player(player, target, card) {
                             //主动技是否发动
                             return game.dead.filter((target) => {
-                                var num = 0;
+                                let num = 0;
                                 const next = target.next;
                                 const previous = target.previous;
                                 if (next) {
@@ -552,8 +554,12 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
             }
         }
         lib.inpile.add(i);
-        if (!QQQ.config.神器牌堆 && info.artifact) continue;
-        if (info.mode && !info.mode.includes(lib.config.mode)) continue;
+        if (!QQQ.config.神器牌堆 && info.artifact) {
+            continue;
+        }
+        if (info.mode && !info.mode.includes(lib.config.mode)) {
+            continue;
+        }
         lib.card.list.push([lib.suits.randomGet(), lib.number.randomGet(), i]);
     }
     lib.config.all.cards.add('温柔一刀');

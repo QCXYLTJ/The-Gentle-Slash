@@ -194,7 +194,7 @@ const config = {
         intro: '开启后,将置空game.delay',
         init: false,
         onclick(result) {
-            var cfg = this._link.config;
+            const cfg = this._link.config;
             game.saveConfig(cfg._name, result);
             if (result) {
                 Reflect.defineProperty(game, 'delay', {
