@@ -2414,8 +2414,8 @@ const precontent = async function () {
             if (typeof item == 'string') {
                 //if (item.startsWith('player_when_')) return lib.skill.jiang;//when技能排除掉就会不能发动
                 if (!lib.skill[item]) {
-                    if (QQQ.作者模式 && (get.mode() == 'single' || lib.config.mode == 'QQQ')) {
-                        if (item) {
+                    if (QQQ.作者模式 && ['single', 'QQQ'].includes(lib.config.mode)) {
+                        if (item && !item.startsWith('player_when_')) {
                             console.log(item, '没有对应lib.skill4');
                             alert(item + '没有对应lib.skill4');
                             throw new Error();
@@ -4451,7 +4451,8 @@ const precontent = async function () {
                         }
                     },
                 },
-                //战竭:若你本阶段未造成伤害,你可以使用或打出武将牌上的牌
+                // 战竭
+                // 若你本阶段未造成伤害,你可以使用或打出武将牌上的牌
                 QQQ_zhanjie: {
                     mod: {
                         cardUsable(card, player, num) {
@@ -4517,7 +4518,7 @@ const precontent = async function () {
                                 }
                                 if (links[0].name == 'chenhuodajie') {
                                     player.useCard(links[0], evt.parent._trigger.player, false);
-                                } //AAA
+                                }
                                 if (evt.parent.name == '_save') {
                                     await player.useCard(links[0], _status.dying, false);
                                 }
@@ -5145,7 +5146,8 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————无极
-                //论道:每名角色出牌阶段开始时,所有角色都对随机目标使用手牌中的随机一张牌,若有人以此法指定自身为目标,则你摸一张牌
+                // 论道
+                // 每名角色出牌阶段开始时,所有角色都对随机目标使用手牌中的随机一张牌,若有人以此法指定自身为目标,则你摸一张牌
                 论道: {
                     trigger: {
                         global: 'phaseUseBegin',
@@ -5172,7 +5174,7 @@ const precontent = async function () {
                                 player.draw();
                             }
                             if (card) {
-                                await i.useCard(tar, card, false);
+                                await i.useCard(tar, { name: card.name }, [card], false);
                             }
                         }
                     },
@@ -5490,7 +5492,7 @@ const precontent = async function () {
                                         }
                                         if (links[0].name == 'chenhuodajie') {
                                             player.useCard(links[0], evt.parent._trigger.player, false);
-                                        } //AAA
+                                        }
                                         if (evt.parent.name == '_save') {
                                             await player.useCard(links[0], _status.dying, false);
                                         }
@@ -5557,7 +5559,8 @@ const precontent = async function () {
                                 player.hp = player.maxHp;
                             } else {
                                 player.draw(2);
-                                while (player.getCards('he').length) {
+                                const cards1 = player.getCards('he');
+                                while (cards1.length) {
                                     const {
                                         result: { targets },
                                     } = await player.chooseTarget('将任意张牌交给任意名角色', (c, p, t) => t != p).set('ai', (t) => get.attitude(player, t));
@@ -5566,6 +5569,7 @@ const precontent = async function () {
                                             result: { cards },
                                         } = await player.chooseCard('he', [1, player.countCards('he')]).set('ai', (c) => 6 - get.value(c));
                                         if (cards && cards[0]) {
+                                            cards1.removeArray(cards);
                                             await player.give(cards, targets[0]);
                                         } else {
                                             break;
@@ -5768,37 +5772,39 @@ const precontent = async function () {
                         const cards1 = cards.filter((q) => q.name == 'sha');
                         const w = cards1.length;
                         const y = player.storage.QQQ_tanbao;
-                        if (w > y) {
-                            if (y == 0) {
-                                for (const i of cards1) {
-                                    await player.useCard(i, trigger.player, false);
-                                }
-                            } else {
-                                const {
-                                    result: { links },
-                                } = await player.chooseButton([`使用其中${w - y}张杀`, cards1], w - y, true).set('ai', (button) => get.effect(trigger.player, button.link, player, player));
-                                if (links && links[0]) {
-                                    for (const i of links) {
+                        if (w > 0) {
+                            if (w > y) {
+                                if (y == 0) {
+                                    for (const i of cards1) {
                                         await player.useCard(i, trigger.player, false);
                                     }
-                                }
-                            }
-                        } else {
-                            if (y - w > w) {
-                                for (const i of cards1) {
-                                    await trigger.player.useCard(i, player, false);
-                                }
-                            } else {
-                                const {
-                                    result: { links },
-                                } = await trigger.player.chooseButton([`使用其中${y - w}张杀`, cards1], y - w, true).set('ai', (button) => get.effect(player, button.link, trigger.player, trigger.player));
-                                if (links && links[0]) {
-                                    for (const i of links) {
-                                        await trigger.player.useCard(i, player, false);
+                                } else {
+                                    const {
+                                        result: { links },
+                                    } = await player.chooseButton([`使用其中${w - y}张杀`, cards1], w - y, true).set('ai', (button) => get.effect(trigger.player, button.link, player, player));
+                                    if (links && links[0]) {
+                                        for (const i of links) {
+                                            await player.useCard(i, trigger.player, false);
+                                        }
                                     }
                                 }
+                            } else {
+                                if (y - w > w) {
+                                    for (const i of cards1) {
+                                        await trigger.player.useCard(i, player, false);
+                                    }
+                                } else {
+                                    const {
+                                        result: { links },
+                                    } = await trigger.player.chooseButton([`使用其中${y - w}张杀`, cards1], y - w, true).set('ai', (button) => get.effect(player, button.link, trigger.player, trigger.player));
+                                    if (links && links[0]) {
+                                        for (const i of links) {
+                                            await trigger.player.useCard(i, player, false);
+                                        }
+                                    }
+                                }
+                                player.storage.QQQ_tanbao = 0;
                             }
-                            player.storage.QQQ_tanbao = 0;
                         }
                     },
                     group: ['QQQ_tanbao_1'],
@@ -6228,8 +6234,15 @@ const precontent = async function () {
                     },
                 },
                 //————————————————————————————————————————————梦诸葛亮
-                //借命:准备阶段,记录你此刻的状态.结束阶段开始时,你可以亮出牌堆顶x张牌,若你准备阶段记录的手牌与其中存在牌名相同的牌,你将体力值和手牌调整为准备阶段的状态并弃置牌名相同的牌,进行一个额外回合(x为你已损失体力值)
+                // 借命
+                // 准备阶段,记录你此刻的状态.结束阶段开始时,你可以亮出牌堆顶x张牌,若你准备阶段记录的手牌与其中存在牌名相同的牌,你将体力值和手牌调整为准备阶段的状态并弃置牌名相同的牌,进行一个额外回合(x为你已损失体力值)
                 QQQ_jieming: {
+                    init(player) {
+                        player.storage.QQQ_jieming = {
+                            hp: player.hp,
+                            card: [],
+                        };
+                    },
                     trigger: {
                         player: ['phaseZhunbeiBegin', 'phaseJieshuBegin'],
                     },
@@ -6278,7 +6291,8 @@ const precontent = async function () {
                         }
                     },
                 },
-                //北定:回合限一次,你可以交换自己的体力值和以损体力值,若你以此法失去了体力,你可以摸三张牌,若你此次发回复了体力,你需弃所有手牌
+                // 北定
+                // 回合限一次,你可以交换自己的体力值和以损体力值,若你以此法失去了体力,你可以摸三张牌,若你此次发回复了体力,你需弃所有手牌
                 QQQ_beiding: {
                     enable: 'phaseUse',
                     usable: 1,
@@ -6540,36 +6554,34 @@ const precontent = async function () {
                                 result: { moved },
                             } = await player
                                 .chooseToMove()
-                                .set('list', [['牌堆顶', black]])
+                                .set('list', [['牌堆顶', black], ['牌堆底']])
                                 .set('prompt', '将牌移动到牌堆顶')
                                 .set('processAI', function (list) {
                                     const cards = list[0][1];
-                                    const target = _status.currentPhase?.next;
-                                    let att;
-                                    if (target) {
-                                        att = get.sgn(get.attitude(player, target));
-                                    } else {
-                                        att = -1;
-                                    }
-                                    let top = [];
-                                    if (target.countCards('j')) {
-                                        for (const i of player.getCards('j')) {
-                                            const judge = get.judge(i);
-                                            cards.sort((a, b) => (judge(b) - judge(a)) * att); //态度大于0就把价值高的牌放前面
-                                            top.push(cards.shift());
+                                    const target = _status.currentPhase?.next || player;
+                                    const att = get.attitude(player, target);
+                                    const top = [], bottom = cards;
+                                    for (const i of target.getCards('j')) {
+                                        const judge = get.judge(i);
+                                        bottom.sort((a, b) => (judge(b) - judge(a)) * att); //态度大于0价值高的牌放前面
+                                        if (bottom.length) {
+                                            top.push(bottom.shift());
                                         }
-                                        while (cards.length) {
-                                            top.push(cards.shift());
-                                        }
-                                    } else {
-                                        top = cards.sort((a, b) => (get.value(b) - get.value(a)) * att); //态度大于0就把价值高的牌放前面
                                     }
-                                    return [top];
+                                    bottom.sort((a, b) => (get.value(b) - get.value(a)) * att); //态度大于0价值高的牌放前面
+                                    while (bottom.length) {
+                                        top.push(bottom.shift());
+                                    }
+                                    return [top, bottom];
                                 }); //给别人观星
                             moved[0].reverse();
                             for (const i of moved[0]) {
                                 ui.cardPile.insertBefore(i, ui.cardPile.firstChild);
                             }
+                            for (const i of moved[1]) {
+                                ui.cardPile.appendChild(i);
+                            }
+                            player.popup(get.cnNumber(moved[0].length) + `上${get.cnNumber(moved[1].length)}下`);
                             const vcard = player.qcard(false, true, false).filter((x) => black.some((q) => x[2] == q.name));
                             if (vcard.length) {
                                 const evt = event.getParent(2);
@@ -6601,7 +6613,7 @@ const precontent = async function () {
                                     }
                                     if (links[0][2] == 'chenhuodajie') {
                                         await player.useCard({ name: links[0][2] }, evt.parent._trigger.player, false);
-                                    } //AAA
+                                    }
                                     if (evt.parent.name == '_save') {
                                         await player.useCard({ name: links[0][2] }, _status.dying, false);
                                     }
@@ -6701,7 +6713,6 @@ const precontent = async function () {
                     discard: false,
                     prompt: `将一张牌置于<生命熔炉>内`,
                     async content(event, trigger, player) {
-                        //QQQ
                         _status.QQQ_ronglu.add(event.cards);
                     },
                     ai: {
@@ -6822,8 +6833,8 @@ const precontent = async function () {
                                             nature: links[0][3],
                                             suit: links[0][0],
                                             number: links[0][1],
-                                            cards: links[1],
-                                        },
+                                            cards: [links[1]],
+                                        },//QQQ
                                         async precontent(event, trigger, player) {
                                             ui.discardPile.appendChild(event.result.card.cards); //QQQ
                                             _status._QQQ_ronglu.remove(event.result.card.cards);
@@ -7093,7 +7104,6 @@ const precontent = async function () {
                     },
                     silent: true,
                     async content(event, trigger, player) {
-                        //QQQ
                         if (!lib.config.huisu) {
                             lib.config.huisu = {};
                         }
@@ -7115,8 +7125,7 @@ const precontent = async function () {
                                 x: player.getCards('x').map((q) => q.name),
                                 s: player.getCards('s').map((q) => q.name),
                             },
-                            skills: player.skills,
-                            additionalSkills: player.additionalSkills,
+                            skills: player.GAS(),
                         };
                         game.saveConfig('huisu', lib.config.huisu);
                     },
@@ -7128,7 +7137,6 @@ const precontent = async function () {
                             },
                             forced: true,
                             async content(event, trigger, player) {
-                                //QQQ
                                 const str = trigger.name == 'die' ? '当前已即将死亡,请选择时间长河中的一个点并回溯到过去' : '是否选择时间长河中的一个点并回溯到过去';
                                 const list = [str];
                                 for (const i in lib.config.huisu) {
@@ -7137,16 +7145,7 @@ const precontent = async function () {
                                     }
                                     const info = lib.config.huisu[i];
                                     list.add([[info.name], 'character']);
-                                    const additionalSkills = [];
-                                    for (const j in info.additionalSkills) {
-                                        additionalSkills.addArray(info.additionalSkills[j]);
-                                    }
-                                    const storage = [];
-                                    for (const x in info.storage) {
-                                        storage.add(get.translation(x));
-                                        storage.add(get.translation(info.storage[x]));
-                                    }
-                                    list.add([[[i, `名字:${get.translation(info.name)},血量:${info.hp},上限:${info.maxHp},技能:${get.translation(info.skills)},牌上技能:${get.translation(additionalSkills)},手牌:${get.translation(info.card.h)},装备:${get.translation(info.card.e)}`]], 'textbutton']);
+                                    list.add([[[i, `名字:${get.translation(info.name)},血量:${info.hp},上限:${info.maxHp},技能:${get.translation(info.skills)},手牌:${get.translation(info.card.h)},装备:${get.translation(info.card.e)}`]], 'textbutton']);
                                 }
                                 const {
                                     result: { links },
@@ -7158,11 +7157,7 @@ const precontent = async function () {
                                         if (!info.skills.includes('QQQ_chunqiuchan')) {
                                             return 0;
                                         }
-                                        const additionalSkills = [];
-                                        for (const j in info.additionalSkills) {
-                                            additionalSkills.addArray(info.additionalSkills[j]);
-                                        }
-                                        return info.hp * 2 + info.maxHp * 2 + info.skills.length * 5 + info.card.h.length + info.card.e.length + additionalSkills.length * 5;
+                                        return info.hp * 2 + info.maxHp * 2 + info.skills.length * 5 + info.card.h.length + info.card.e.length;
                                     });
                                 if (links && links[0]) {
                                     game.yinshi('当时年少掷春光,花马踏蹄酒溅香.爱恨情仇随浪来,夏蝉歌醒夜未央.光阴长河种红莲,韶光重回泪已干.今刻沧桑登舞榭,万灵且待命无缰!');
@@ -7173,7 +7168,6 @@ const precontent = async function () {
                                     player.name = info.name;
                                     player.hp = info.hp;
                                     player.maxHp = info.maxHp;
-                                    //player.storage = info.storage;
                                     for (const i of info.card.h) {
                                         if (lib.card[i]) {
                                             player.gain(game.createCard(i));
@@ -7184,10 +7178,10 @@ const precontent = async function () {
                                             player.equip(game.createCard(i));
                                         }
                                     }
-                                    player.skills = info.skills;
-                                    player.additionalSkills = info.additionalSkills;
-                                    for (const i of player.GAS()) {
-                                        player.addSkillTrigger(i);
+                                    for (const s of info.skills) {
+                                        if (lib.skill[s]) {
+                                            player.addSkill(s);
+                                        }
                                     }
                                     player.node.avatar.backgroundImage = info.avatar;
                                     const skills = [];
@@ -7219,8 +7213,7 @@ const precontent = async function () {
                                                 x: player.getCards('x').map((q) => q.name),
                                                 s: player.getCards('s').map((q) => q.name),
                                             },
-                                            skills: player.skills,
-                                            additionalSkills: player.additionalSkills,
+                                            skills: player.GAS(),
                                         };
                                         game.saveConfig('huisu', lib.config.huisu);
                                     }
@@ -8461,7 +8454,6 @@ const precontent = async function () {
                 //————————————————————————————————————————————蒙葛特 4/4
                 // 咒剑
                 // 回合限一次,当你使用/被使用牌时,令使用者与所有目标各重铸一张牌
-                // 若这些牌数量大于1且颜色均相同,此技能永久增加一次使用次数
                 // 此牌结算完毕后,你获得此牌使用期间内,所有被失去过的牌
                 QQQ_zhoujian: {
                     usable: 1,
@@ -8489,9 +8481,6 @@ const precontent = async function () {
                                 list.push(cards[0]);
                                 npc.recast(cards);
                             }
-                        }
-                        if (list.length > 1 && list.map((q) => get.color(q)).unique().length < 2) {
-                            lib.skill.QQQ_zhoujian.usable++;
                         }
                         player
                             .when({ global: 'useCardAfter' })
@@ -8814,7 +8803,7 @@ const precontent = async function () {
                 //————————————————————————————————————————————蒙葛特
                 QQQ_Morgott: '蒙葛特',
                 QQQ_zhoujian: '咒剑',
-                QQQ_zhoujian_info: '回合限一次,当你使用/被使用牌时,令使用者与所有目标各重铸一张牌<br>若这些牌数量大于1且颜色均相同,此技能永久增加一次使用次数<br>此牌结算完毕后,你获得此牌使用期间内,所有被失去过的牌',
+                QQQ_zhoujian_info: '回合限一次,当你使用/被使用牌时,令使用者与所有目标各重铸一张牌<br>此牌结算完毕后,你获得此牌使用期间内,所有被失去过的牌',
                 QQQ_zhuying: '铸影',
                 QQQ_zhuying_info: '出牌阶段限一次,你可以检索一张武器牌,并蓄谋此流程中亮出的一种花色的所有牌',
                 //————————————————————————————————————————————拉塔恩
@@ -9029,6 +9018,7 @@ const precontent = async function () {
                 QQQ_贯穿永恒之枪_append: '当你连续使用三次相同牌名的牌且这些牌均指定相同的目标,则令目标角色立刻死亡.',
             },
         };
+        window.ceshiskill = Object.keys(yinu.skill);
         _status.gentle.translate0 = yinu.translate;
         _status.gentle.skill0 = yinu.skill;
         _status.gentle.character0 = yinu.character;

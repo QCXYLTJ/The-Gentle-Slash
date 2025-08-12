@@ -763,6 +763,9 @@ game.addMode(
     'QQQ',
     {
         async start(event) {
+            for (const skill1 of ['QQQ_Marikashichui', 'QQQ_chunqiuchan']) {
+                lib.skill[skill1] = {};
+            }
             QQQ.作者模式 = true;
             game.saveConfig('extension_温柔一刀_卡牌全开', true);
             game.saveConfig('extension_温柔一刀_神武再世', true);

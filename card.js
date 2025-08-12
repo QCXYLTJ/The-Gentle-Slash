@@ -490,6 +490,9 @@ game.import('card', function (lib, game, ui, get, ai, _status) {
                             });
                             card.node.name2.innerHTML = `${get.translation(card.suit)}${card.number} ${get.translation(name)}`;
                             const vcard = new lib.element.VCard(card);
+                            const cardSymbol = Symbol('card');
+                            card.cardSymbol = cardSymbol;
+                            card[cardSymbol] = vcard;
                             if (!player.artifact) {
                                 player.artifact = [];
                             }

@@ -52,7 +52,7 @@ const skill = {
                 set() { },
             });
             if (window.ceshiskill) {
-                game.bug = window.ceshiskill.unique().filter((Q) => Q != 'gl_qiji' && Q != 'qqwz_迅疾2'); //改用这个直接获取技能
+                game.bug = window.ceshiskill.unique().filter((Q) => !['QQQ_Marikashichui', 'QQQ_biaoji', 'QQQ_shichui', 'QQQ_bianshen'].includes(Q)); //改用这个直接获取技能
                 game.log(`当前武将包有${game.bug.length}个技能`);
             } //window.ceshiskill = Object.keys(QQQ.skill);
         },
@@ -3585,54 +3585,6 @@ const skill = {
             }
         },
     },
-    摸与杀: {
-        trigger: {
-            global: ['phaseBefore'],
-        },
-        forced: true,
-        async content(event, trigger, player) {
-            player.$skill('摸与杀');
-            const E = Object.keys(lib.skill)
-                .filter((i) => {
-                    return lib.translate[i + '_info'];
-                })
-                .randomGets(4);
-            game.log(E);
-            player.addSkill(E);
-        },
-        group: ['摸与杀_1'],
-        subSkill: {
-            1: {
-                trigger: {
-                    global: ['phaseEnd'],
-                },
-                forced: true,
-                content() {
-                    'step 0';
-                    player.$skill('摸与杀');
-                    const skills = player.GS().remove('摸与杀');
-                    let list = [];
-                    for (const skill of skills) {
-                        list.push([skill, `<div class='popup text' style='width:calc(100% - 10px);display:inline-block'><div class='skill'>【${get.translation(skill)}】</div><div>${lib.translate[skill + '_info']}</div></div>`]);
-                    }
-                    player
-                        .chooseButton(['请选择失去任意个技能', [list, 'textbutton']])
-                        .set('forced', true)
-                        .set('selectButton', Math.ceil(list.length / 3))
-                        .set('ai', function (button) {
-                            return list.randomGets(Math.ceil(list.length / 3));
-                        });
-                    ('step 1');
-                    player.RS(result.links);
-                    game.countPlayer(function (current) {
-                        for (let i in current.storage) {
-                            delete current.storage[i];
-                        }
-                    });
-                },
-            },
-        },
-    },
     普通卖血: {
         trigger: {
             player: ['changeHp'],
@@ -3804,7 +3756,7 @@ const skill = {
                         }
                         if (links[0][2] == 'chenhuodajie') {
                             player.useCard({ name: links[0][2] }, evt.parent._trigger.player, cards, false);
-                        } //AAA
+                        }
                         if (evt.parent.name == '_save') {
                             await player.useCard({ name: links[0][2] }, _status.dying, cards, false);
                         }
@@ -4359,13 +4311,13 @@ const skill = {
                 const cardsx = trigger.cards.map((card) => {
                     const cardx = game.createCard(card);
                     cardx.owner = trigger.player;
-                    cardx._cardid = card.cardid;
+                    cardx._cardid1 = card.cardid;
                     return cardx;
                 });
                 player.directgains(cardsx, null, get.translation(trigger.player));
             } else {
                 for (const card of trigger.cards) {
-                    const cardx = player.getCards('s').find((q) => q._cardid == card.cardid);
+                    const cardx = player.getCards('s').find((q) => q._cardid1 == card.cardid);
                     if (cardx) {
                         cardx.delete();
                     }
@@ -4391,11 +4343,11 @@ const skill = {
                 popup: false,
                 firstDo: true,
                 filter(event, player) {
-                    return event.cards?.some((card) => card._cardid);
+                    return event.cards?.some((card) => card._cardid1);
                 },
                 async content(event, trigger, player) {
-                    for (const card of trigger.cards) {
-                        const cardx = card.owner.getCards('h').find((q) => q.cardid == card._cardid);
+                    for (const card of trigger.cards.filter((card) => card._cardid1)) {
+                        const cardx = card.owner.getCards('h').find((q) => q.cardid == card._cardid1);
                         if (cardx) {
                             cardx.delete();
                         }
@@ -4468,7 +4420,9 @@ const skill = {
                     for (const npc of players) {
                         if (npc.storage.随从) {
                             await npc.die();
-                            npc.delete();
+                            if (npc.isDead()) {
+                                game.removePlayer(npc);
+                            }
                         } else {
                             npc.in();
                         }
@@ -5095,12 +5049,12 @@ const skill = {
                 let card2 = cardx[index];
                 if (!card2) {
                     card2 = game.createCard(card1);
-                    card2._cardid = card1.cardid;
+                    card2._cardid2 = card1.cardid;
                     player.directgains([card2], null, '影火');
                 }
-                if (card2._cardid != card1.cardid) {
+                if (card2._cardid2 != card1.cardid) {
                     card2.init(card1);
-                    card2._cardid = card1.cardid;
+                    card2._cardid2 = card1.cardid;
                 }
             });
         },
@@ -5123,12 +5077,12 @@ const skill = {
                 popup: false,
                 firstDo: true,
                 filter(event, player) {
-                    return event.cards?.some((card) => card._cardid);
+                    return event.cards?.some((card) => card._cardid2);
                 },
                 async content(event, trigger, player) {
                     const cards = Array.from(ui.cardPile.childNodes).slice(0, 4);
                     for (const card of trigger.cards) {
-                        const cardx = cards.find((q) => q.cardid == card._cardid);
+                        const cardx = cards.find((q) => q.cardid == card._cardid2);
                         if (cardx) {
                             cardx.delete();
                         }
@@ -5358,7 +5312,7 @@ const skill = {
                             }
                             if (links[0][2] == 'chenhuodajie') {
                                 player.useCard({ name: links[0][2] }, evt.parent._trigger.player, false);
-                            } //AAA
+                            }
                             //标记(event)=>useskill=>choosetouse(evt)=>damageEnd==_trigger=>damage(player)
                             if (evt.parent.name == '_save') {
                                 await player.useCard({ name: links[0][2] }, _status.dying, false);
@@ -5592,7 +5546,7 @@ const skill = {
             if (player.storage.QQQ_yuepu.length > 2) {
                 const { result } = await player.chooseButton(['选择移除三个音符', [player.storage.QQQ_yuepu, 'tdnodes']], 3);
                 if (result.links && result.links[0]) {
-                    const { result: result1 } = await player.chooseTarget('令一名其他角色根据乐谱执行效果', (c, p, t) => t != p).set('ai', (t) => -get.attitude(player, t));
+                    const { result: result1 } = await player.chooseTarget('令一名其他角色根据乐谱执行效果', (c, p, t) => t != p && t.countCards('he')).set('ai', (t) => -get.attitude(player, t));
                     if (result1.targets && result1.targets[0]) {
                         for (const i of result.links) {
                             player.storage.QQQ_yuepu.remove(i);
@@ -6416,7 +6370,7 @@ const skill = {
                             }
                             if (links[0][2] == 'chenhuodajie') {
                                 player.useCard({ name: links[0][2] }, evt.parent._trigger.player, false);
-                            } //AAA
+                            }
                             if (evt.parent.name == '_save') {
                                 await player.useCard({ name: links[0][2] }, _status.dying, false);
                             }
@@ -6814,8 +6768,6 @@ const translate1 = {
     星陨_info: '每轮开始时,随机对场上其他角色造成九点雷电伤害',
     测试: '测试',
     测试_info: '测试',
-    摸与杀: '摸与杀',
-    摸与杀_info: '回合开始时随机获得四个有描述的技能,回合结束时选择失去三分之一的技能(向上取整)',
     普通卖血: '普通卖血',
     普通卖血_info: '<体力变化/造成伤害/每轮开始>时,你摸等量牌',
     隐伏: '隐伏',

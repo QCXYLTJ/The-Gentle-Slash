@@ -445,7 +445,7 @@ const content = async function () {
             }
         }; //防止NL标记的装备丢失
         lib.element.player.addVirtualEquip = function (card, cards) {
-            if (card.node) {
+            if (card.node && !(get.itemtype(card) == 'card' && card.isViewAsCard)) {
                 console.log(card, 'addVirtualEquip');
                 card = new lib.element.VCard(card);
                 if (QQQ.作者模式) {
@@ -2101,10 +2101,11 @@ const content = async function () {
                         }
                         let value = 0;
                         for (const i of Q) {
+                            let name
                             if (!i.viewAs) {
-                                let name = i.name;
+                                name = i.name;
                             } else {
-                                let name = i.viewAs;
+                                name = i.viewAs;
                             }
                             if (!lib.card[name].ai || !lib.card[name].ai.result) {
                                 continue;
@@ -2124,10 +2125,11 @@ const content = async function () {
                             if (Q.some((i) => i.name == button.link.name && i != button.link)) {
                                 return 0;
                             }
+                            let name;
                             if (!button.link.viewAs) {
-                                let name = button.link.name;
+                                name = button.link.name;
                             } else {
-                                let name = button.link.viewAs;
+                                name = button.link.viewAs;
                             }
                             if (!lib.card[name].ai || !lib.card[name].ai.result) {
                                 return 0;
@@ -3092,7 +3094,7 @@ const content = async function () {
                             if (
                                 es.some((card) => {
                                     return get.type(card) == 'equip' && get.value(card, target) < 0;
-                                }) //AAA
+                                })
                             ) {
                                 return 1;
                             }
@@ -5954,7 +5956,7 @@ const content = async function () {
             }
             if (lib.skill.lingjianduanzao) {
                 lib.skill.lingjianduanzao.process = function (cards) {
-                    let equip;
+                    let equip, name;
                     for (let i = 0; i < cards.length; i++) {
                         if (get.type(cards[i]) == 'equip') {
                             equip = cards[i];
@@ -5963,8 +5965,7 @@ const content = async function () {
                         }
                     }
                     if (equip) {
-                        //QQQ
-                        let name = equip.name;
+                        name = equip.name;
                         let type = get.type(cards[0]);
                         const equipname = equip.name;
                         if (type == 'hslingjian') {
@@ -5976,13 +5977,14 @@ const content = async function () {
                             return name;
                         }
                         lib.card[name] = get.copy(lib.card[equip.name]);
-                        lib.card[name].cardimage = lib.card[name].cardimage || equip.name;
-                        lib.card[name].vanish = true;
-                        lib.card[name].source = [equip.name, cards[0].name];
+                        const info = lib.card[name];
+                        info.cardimage = info.cardimage || equip.name;
+                        info.vanish = true;
+                        info.source = [equip.name, cards[0].name];
                         if (type == 'jiqi') {
-                            lib.card[name].legend = true;
+                            info.legend = true;
                         } else {
-                            lib.card[name].epic = true;
+                            info.epic = true;
                         }
                         const dvalue = type == 'jiqi' ? 3 : 1;
                         const getValue = function (value, dvalue) {
@@ -5998,35 +6000,30 @@ const content = async function () {
                             }
                             return value;
                         };
-                        if (typeof lib.card[name].ai.equipValue == 'number') {
-                            lib.card[name].ai.equipValue = getValue(lib.card[name].ai.equipValue, dvalue);
-                        } else if (typeof lib.card[name].ai.equipValue == 'function') {
-                            lib.card[name].ai.equipValue = function () {
+                        if (typeof info.ai.equipValue == 'number') {
+                            info.ai.equipValue = getValue(info.ai.equipValue, dvalue);
+                        } else if (typeof info.ai.equipValue == 'function') {
+                            info.ai.equipValue = function () {
                                 return getValue(lib.card[equipname].ai.equipValue.apply(this, arguments), dvalue);
                             };
-                        } else if (lib.card[name].ai.basic && typeof lib.card[name].ai.basic.equipValue == 'number') {
-                            lib.card[name].ai.basic.equipValue = getValue(lib.card[name].ai.basic.equipValue, dvalue);
-                        } else if (lib.card[name].ai.basic && typeof lib.card[name].ai.basic.equipValue == 'function') {
-                            lib.card[name].ai.basic.equipValue = function () {
+                        } else if (info.ai.basic && typeof info.ai.basic.equipValue == 'number') {
+                            info.ai.basic.equipValue = getValue(info.ai.basic.equipValue, dvalue);
+                        } else if (info.ai.basic && typeof info.ai.basic.equipValue == 'function') {
+                            info.ai.basic.equipValue = function () {
                                 return getValue(lib.card[equipname].ai.basic.equipValue.apply(this, arguments), dvalue);
                             };
                         } else {
                             if (dvalue == 3) {
-                                lib.card[name].ai.equipValue = 7;
+                                info.ai.equipValue = 7;
                             } else {
-                                lib.card[name].ai.equipValue = dvalue;
+                                info.ai.equipValue = dvalue;
                             }
                         }
-                        if (Array.isArray(lib.card[name].skills)) {
-                            lib.card[name].skills = lib.card[name].skills.slice(0);
+                        if (Array.isArray(info.skills)) {
+                            info.skills = info.skills.slice(0);
                         } else {
-                            lib.card[name].skills = [];
+                            info.skills = [];
                         }
-                        // lib.card[name].filterTarget=function(card,player,target){
-                        // 	return !target.isMin();
-                        // };
-                        // lib.card[name].selectTarget=1;
-                        // lib.card[name].range={global:1};
                         let str = lib.translate[cards[0].name + '_duanzao'];
                         let str2 = get.translation(equip.name, 'skill');
                         lib.translate[name] = str + str2;
@@ -6040,24 +6037,12 @@ const content = async function () {
                             }
                             const name2 = cards[i].name + '_' + get.subtype(equip);
                             if (lib.skill[name2]) {
-                                lib.card[name].skills.add(name2);
+                                info.skills.add(name2);
                                 str2 += `;${lib.translate[name2 + '_info']}`;
                             } //QQQ防止其他位置如equip6装备出错
                         }
                         lib.translate[name + '_info'] = str2;
-                        try {
-                            game.addVideo('newcard', null, {
-                                name: name,
-                                translate: lib.translate[name],
-                                info: str2,
-                                card: equip.name,
-                                legend: type == 'jiqi',
-                                epic: type == 'hslingjian',
-                            });
-                        } catch (e) {
-                            console.log(e);
-                        }
-                    }
+                    } //QQQ
                     return name;
                 };
             }
@@ -7352,7 +7337,6 @@ const content = async function () {
                 forced: true,
                 group: 'dcjincui_advent',
                 async content(event, trigger, player) {
-                    //QQQ
                     const num = Math.min(player.hp, 36);
                     const cardx = get.cards(num);
                     game.cardsGotoOrdering(cardx);
@@ -7362,23 +7346,19 @@ const content = async function () {
                         .set('prompt', '将牌移动到牌堆顶或牌堆底')
                         .set('processAI', function (list) {
                             const cards = list[0][1];
-                            const top = [];
-                            if (player.countCards('j')) {
-                                for (const i of player.getCards('j')) {
-                                    const judge = get.judge(i);
-                                    cards.sort((a, b) => judge(b) - judge(a)); //态度大于0就把价值高的牌放前面//返回正值就是b在a前
-                                    top.push(cards.shift());
-                                }
-                            } else {
-                                cards.sort((a, b) => get.value(b) - get.value(a)); //态度大于0就把价值高的牌放前面
-                                while (cards.length) {
-                                    if (get.value(cards[0]) < 6) {
-                                        break;
-                                    }
-                                    top.push(cards.shift());
+                            const top = [], bottom = cards;
+                            for (const i of player.getCards('j')) {
+                                const judge = get.judge(i);
+                                bottom.sort((a, b) => (judge(b) - judge(a))); //价值高的牌放前面
+                                if (bottom.length) {
+                                    top.push(bottom.shift());
                                 }
                             }
-                            return [top, cards];
+                            bottom.sort((a, b) => (get.value(b) - get.value(a))); //把价值高的牌放前面
+                            while (bottom.length) {
+                                top.push(bottom.shift());
+                            }
+                            return [top, bottom];
                         }); //自己观星
                     result.moved[0].reverse();
                     for (const i of result.moved[0]) {
@@ -8513,7 +8493,7 @@ const content = async function () {
                         tr.appendChild(td);
                         td = document.createElement('td');
                         (function () {
-                            num = 0;
+                            let num = 0;
                             for (let j = 0; j < node.stat.length; j++) {
                                 if (typeof node.stat[j].damage == 'number') {
                                     num += node.stat[j].damage;
