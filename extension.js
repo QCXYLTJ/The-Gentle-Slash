@@ -763,7 +763,7 @@ game.addMode(
     'QQQ',
     {
         async start(event) {
-            for (const skill1 of ['QQQ_Marikashichui', 'QQQ_chunqiuchan']) {
+            for (const skill1 of ['SG_qianchu', 'QQQ_chunqiuchan']) {
                 lib.skill[skill1] = {};
             }
             QQQ.作者模式 = true;

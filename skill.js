@@ -61,7 +61,7 @@ const skill = {
             return game.bug;
         },
         async content(event, trigger, player) {
-            const skills = game.bug.slice(0, 100); //(0, 50)改为要测的区间
+            const skills = game.bug.slice(100, 150); //(0, 50)改为要测的区间
             console.log(skills, 'game.bug');
             const {
                 result: { bool },
@@ -83,9 +83,6 @@ const skill = {
                     return 99;
                 }, //只读
                 set usable(v) { },
-                init(player) {
-                    player.storage.phase = 0;
-                },
                 async content(event, trigger, player) {
                     if (['phaseUse', 'damage'].includes(trigger.name)) {
                         trigger.cancel = game.kongfunc;

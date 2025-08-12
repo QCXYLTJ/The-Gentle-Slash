@@ -9018,7 +9018,6 @@ const precontent = async function () {
                 QQQ_贯穿永恒之枪_append: '当你连续使用三次相同牌名的牌且这些牌均指定相同的目标,则令目标角色立刻死亡.',
             },
         };
-        window.ceshiskill = Object.keys(yinu.skill);
         _status.gentle.translate0 = yinu.translate;
         _status.gentle.skill0 = yinu.skill;
         _status.gentle.character0 = yinu.character;
